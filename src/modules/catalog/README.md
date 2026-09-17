@@ -1,0 +1,1 @@
+﻿# catalog  Own product, supplier, stop and departure administration. Capacity mutations must coordinate with the booking domain.  Boundary reserved for the relevant roadmap phase; no implementation yet.

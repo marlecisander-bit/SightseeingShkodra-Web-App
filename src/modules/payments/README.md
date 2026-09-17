@@ -1,0 +1,1 @@
+﻿# payments  Own provider adapters and verified idempotent payment events. Confirmation uses the booking domain transactional boundary.  Boundary reserved for the relevant roadmap phase; no implementation yet.

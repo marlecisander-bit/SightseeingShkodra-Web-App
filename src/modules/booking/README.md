@@ -1,0 +1,1 @@
+﻿# booking  Own availability, pricing, capacity, holds, orders and booking lifecycle. Other modules and interfaces call this domain; do not duplicate its rules.  Boundary reserved for the relevant roadmap phase; no implementation yet.
