@@ -1,8 +1,8 @@
 # Phase status
 
-Updated: 2026-09-17.
+Updated: 2026-09-20.
 
-Active scope: fresh local project, Phase 1B core schema complete and validated in embedded PostgreSQL. Full Supabase platform validation remains required before the Phase 1 checkpoint. See DECISIONS.md for the user-approved amendment. No legacy code, content or data will be imported. No cloud resources or production services have been changed.
+Active scope: fresh local project, Phase 1C inventory holds and row-level lifecycle constraints complete and validated in embedded PostgreSQL. Full Supabase platform and concurrency validation remain required before the Phase 1 checkpoint. See DECISIONS.md for the user-approved amendment. No legacy code, content or data will be imported. No cloud resources or production services have been changed.
 
 ## Roadmap execution checklist
 
@@ -11,7 +11,7 @@ Active scope: fresh local project, Phase 1B core schema complete and validated i
 - [ ] Phase 0.5 existing-systems audit — SKIPPED by approved fresh-project decision (not audited/passed)
 - [x] Phase 1A structure — COMPLETE; see PHASE_1A_REPORT.md
 - [x] Phase 1B schema — COMPLETE; see PHASE_1B_REPORT.md for validation and platform limitations
-- [ ] Phase 1C holds/states — NOT STARTED
+- [x] Phase 1C holds/states — COMPLETE; see PHASE_1C_REPORT.md for evidence and remaining domain work
 - [ ] Phase 1D auth roles — NOT STARTED
 - [ ] Phase 1E RLS — NOT STARTED
 - [ ] Phase 1F outbox/audit — NOT STARTED

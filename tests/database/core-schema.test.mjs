@@ -8,7 +8,7 @@ const id = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 const tables = ['operators', 'staff_profiles', 'suppliers', 'products', 'stops',
   'departures', 'customers', 'orders', 'booking_items', 'bookings', 'payments',
   'payment_events', 'refunds', 'vehicles', 'vehicle_positions', 'reviews',
-  'content_pages', 'redirects', 'api_keys', 'domain_events', 'audit_logs'];
+  'content_pages', 'redirects', 'api_keys', 'domain_events', 'audit_logs', 'inventory_holds'];
 
 before(async () => {
   // Only the Supabase platform prerequisites are stubbed. Application SQL is unmodified.
@@ -56,6 +56,8 @@ before(async () => {
       values ('${id(1)}','order','${id(11)}','order.created','{}');
     insert into audit_logs(operator_id,actor_id,action,entity_type,entity_id)
       values ('${id(1)}','${id(3)}','created','product','${id(5)}');
+    insert into inventory_holds(id,operator_id,departure_id,session_key,quantity,expires_at)
+      values ('${id(15)}','${id(1)}','${id(9)}','test-session',2,now() + interval '1 hour');
   `);
 });
 
@@ -65,7 +67,7 @@ async function rejects(sql, code) {
   await assert.rejects(db.exec(sql), (err) => err.code === code);
 }
 
-test('fresh migration creates exactly the 21 Phase 1B tables with primary keys and timestamps', async () => {
+test('fresh migrations create all 22 core and hold tables with primary keys and timestamps', async () => {
   const result = await db.query(`select tablename from pg_tables where schemaname='public' order by tablename`);
   assert.deepEqual(result.rows.map((r) => r.tablename), [...tables].sort());
   for (const table of tables) {
@@ -152,7 +154,7 @@ test('unsafe structural inputs and deletion of financial parents are rejected', 
 
 test('all tables enable RLS and explicitly revoke default client privileges', async () => {
   const { rows } = await db.query(`select c.relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='r' and c.relrowsecurity`);
-  assert.equal(rows.length, 21);
+  assert.equal(rows.length, tables.length);
   for (const role of ['anon', 'authenticated']) {
     for (const table of tables) {
       const privileges = await db.query(`select has_table_privilege($1, $2, 'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') as allowed`, [role, `public.${table}`]);
@@ -174,3 +176,177 @@ test('RLS still hides data if a later migration grants SELECT without a policy',
     }
   } finally { await db.exec('rollback'); }
 });
+
+// Each lifecycle scenario rolls back, preserving the Phase 1B regression fixtures.
+async function isolated(run) {
+  await db.exec('begin');
+  try { await run(); } finally { await db.exec('rollback'); }
+}
+
+async function invalid(sql, code = '23514') {
+  await db.exec('savepoint rejected_statement');
+  try { await rejects(sql, code); }
+  finally { await db.exec('rollback to savepoint rejected_statement; release savepoint rejected_statement'); }
+}
+
+const hold = `inventory_holds where id='${id(15)}'`;
+
+test('holds enforce quantity, finite future expiry, session and tenant ownership', () => isolated(async () => {
+  const insert = (values) => `insert into inventory_holds(operator_id,departure_id,session_key,quantity,expires_at) values (${values})`;
+  const base = `'${id(1)}','${id(9)}'`;
+  await invalid(insert(`${base},'session',0,now()+interval '1 hour'`));
+  await invalid(insert(`${base},'  ',1,now()+interval '1 hour'`));
+  await invalid(insert(`${base},'session',1,now()-interval '1 second'`));
+  await invalid(insert(`${base},'session',1,'infinity'`));
+  await invalid(insert(`'${id(2)}','${id(9)}','session',1,now()+interval '1 hour'`), '23503');
+  await invalid(`update inventory_holds set order_id='${id(999)}' where id='${id(15)}'`, '23503');
+  await db.exec(`insert into customers(id,operator_id,name) values ('${id(20)}','${id(2)}','B');
+    insert into orders(id,operator_id,customer_id,subtotal,total) values ('${id(21)}','${id(2)}','${id(20)}',0,0)`);
+  await invalid(`update inventory_holds set order_id='${id(21)}' where id='${id(15)}'`, '23503');
+}));
+
+test('hold attaches to an order and consumes once with immutable timestamp and terms', () => isolated(async () => {
+  await invalid(`update inventory_holds set status='consumed' where id='${id(15)}'`);
+  await db.exec(`update inventory_holds set order_id='${id(11)}' where id='${id(15)}';
+    update inventory_holds set status='consumed' where id='${id(15)}'`);
+  const before = (await db.query(`select ended_at from ${hold}`)).rows[0];
+  assert(before.ended_at);
+  await db.exec(`update inventory_holds set status='consumed' where id='${id(15)}'`);
+  assert.deepEqual((await db.query(`select ended_at from ${hold}`)).rows[0], before);
+  for (const change of ["status='active'", "status='released'", 'quantity=3',
+    "expires_at=expires_at+interval '1 hour'", 'order_id=null', 'ended_at=null']) {
+    await invalid(`update inventory_holds set ${change} where id='${id(15)}'`);
+  }
+}));
+
+test('released holds cannot consume, expire or reactivate', () => isolated(async () => {
+  await invalid(`update inventory_holds set status='expired' where id='${id(15)}'`);
+  await db.exec(`update inventory_holds set status='released' where id='${id(15)}'`);
+  assert((await db.query(`select ended_at from ${hold}`)).rows[0].ended_at);
+  for (const status of ['active', 'consumed', 'expired']) {
+    await invalid(`update inventory_holds set status='${status}' where id='${id(15)}'`);
+  }
+  await db.exec(`update inventory_holds set status='released' where id='${id(15)}'`);
+}));
+
+test('elapsed hold cannot consume even inside a transaction started before expiry', () => isolated(async () => {
+  await db.exec(`insert into inventory_holds(id,operator_id,departure_id,order_id,session_key,quantity,expires_at)
+    values ('${id(30)}','${id(1)}','${id(9)}','${id(11)}','short-lived',1,clock_timestamp()+interval '100 milliseconds')`);
+  // Wait for database time, not a mocked time or a rewritten expiry column.
+  for (let attempt = 0; ; attempt++) {
+    const { rows } = await db.query(`select expires_at <= clock_timestamp() as elapsed from inventory_holds where id=$1`, [id(30)]);
+    if (rows[0].elapsed) break;
+    assert(attempt < 100, 'hold did not expire within test deadline');
+    await new Promise((resolve) => setTimeout(resolve, 20));
+  }
+  await invalid(`update inventory_holds set status='consumed' where id='${id(30)}'`);
+  await db.exec(`update inventory_holds set status='expired' where id='${id(30)}'`);
+  const { rows } = await db.query(`select ended_at >= expires_at as ended_after_expiry from inventory_holds where id=$1`, [id(30)]);
+  assert.equal(rows[0].ended_after_expiry, true);
+  await db.exec(`update inventory_holds set status='expired' where id='${id(30)}'`);
+  await invalid(`update inventory_holds set status='active' where id='${id(30)}'`);
+}));
+
+test('active hold reservation cannot be enlarged, moved, extended or rebound', () => isolated(async () => {
+  for (const change of ['quantity=4', "session_key='other'", `operator_id='${id(2)}'`,
+    `departure_id='${id(999)}'`, "expires_at=expires_at+interval '1 hour'", "created_at=created_at-interval '1 hour'"]) {
+    await invalid(`update inventory_holds set ${change} where id='${id(15)}'`);
+  }
+  await db.exec(`update inventory_holds set order_id='${id(11)}' where id='${id(15)}'`);
+  await invalid(`update inventory_holds set order_id=null where id='${id(15)}'`);
+}));
+
+test('unknown statuses and direct final-state inserts cannot bypass lifecycle guards', () => isolated(async () => {
+  for (const table of ['orders', 'payments', 'bookings', 'booking_items', 'inventory_holds']) {
+    await invalid(`update ${table} set status='not-a-state'`);
+    await invalid(`update ${table} set status=null`);
+  }
+  await invalid(`insert into orders(operator_id,customer_id,subtotal,total,status)
+    values ('${id(1)}','${id(10)}',0,0,'confirmed')`);
+  await invalid(`insert into payments(operator_id,order_id,provider,amount,currency,status)
+    values ('${id(1)}','${id(11)}','stripe',1,'EUR','paid')`);
+  await invalid(`insert into bookings(operator_id,order_id,booking_reference,status)
+    values ('${id(1)}','${id(11)}','ILLEGAL','confirmed')`);
+  await invalid(`insert into booking_items(operator_id,order_id,product_id,quantity,unit_price,total_price,status)
+    values ('${id(1)}','${id(11)}','${id(7)}',1,0,0,'confirmed')`);
+  await invalid(`insert into inventory_holds(operator_id,departure_id,session_key,quantity,expires_at,status)
+    values ('${id(1)}','${id(9)}','bypass',1,now()+interval '1 hour','consumed')`);
+}));
+
+test('checkout proceeds through payment, confirmation and partial/full refunds without reverting', () => isolated(async () => {
+  await invalid("update orders set status='confirmed'");
+  for (const status of ['awaiting_payment', 'paid', 'confirmed', 'partially_refunded', 'refunded']) {
+    await db.exec(`update orders set status='${status}'`);
+    await db.exec(`update orders set status='${status}'`);
+  }
+  for (const status of ['pending', 'paid', 'confirmed', 'cancelled', 'expired']) {
+    await invalid(`update orders set status='${status}'`);
+  }
+}));
+
+test('unpaid orders can expire or cancel but cannot be reopened by late events', () => isolated(async () => {
+  await db.exec("update orders set status='awaiting_payment'; update orders set status='expired'");
+  await invalid("update orders set status='paid'");
+  await invalid("update orders set status='pending'");
+  await db.exec(`insert into orders(id,operator_id,customer_id,subtotal,total) values ('${id(31)}','${id(1)}','${id(10)}',1,1);
+    update orders set status='cancelled' where id='${id(31)}'`);
+  await invalid(`update orders set status='awaiting_payment' where id='${id(31)}'`);
+}));
+
+test('paid order cancellation allows refunds but cannot discard settlement by expiring', () => isolated(async () => {
+  await db.exec("update orders set status='awaiting_payment'; update orders set status='paid'");
+  await invalid("update orders set status='expired'");
+  await db.exec("update orders set status='cancelled'; update orders set status='partially_refunded'; update orders set status='refunded'");
+  await invalid("update orders set status='awaiting_payment'");
+}));
+
+test('new hold cannot forge end timestamps or a future creation date', () => isolated(async () => {
+  await invalid(`insert into inventory_holds(operator_id,departure_id,session_key,quantity,expires_at,ended_at)
+    values ('${id(1)}','${id(9)}','bad-end',1,now()+interval '1 hour',now())`);
+  await invalid(`insert into inventory_holds(operator_id,departure_id,session_key,quantity,created_at,expires_at)
+    values ('${id(1)}','${id(9)}','bad-created',1,now()+interval '1 hour',now()+interval '2 hours')`);
+}));
+
+test('failed payment retries and delayed success are allowed; settled money cannot become failed', () => isolated(async () => {
+  for (const status of ['processing', 'failed', 'processing', 'failed', 'paid']) {
+    await db.exec(`update payments set status='${status}'`);
+  }
+  await invalid("update payments set status='failed'");
+  await invalid('update payments set provider_ref=null');
+  await db.exec("update payments set status='partially_refunded'; update payments set status='refunded'");
+  await invalid("update payments set status='paid'");
+  await db.exec("update payments set status='refunded'");
+}));
+
+test('direct successful provider event needs no observed processing event, but does need a reference', () => isolated(async () => {
+  await db.exec('update payments set provider_ref=null');
+  await invalid("update payments set status='paid'");
+  await db.exec("update payments set provider_ref='pi_verified',status='paid'");
+  await db.exec("update payments set status='refunded'");
+}));
+
+test('booking timestamps are set once, preserved through cancellation and cannot be forged', () => isolated(async () => {
+  await invalid('update bookings set confirmed_at=clock_timestamp()');
+  await db.exec("update bookings set status='confirmed'");
+  const confirmed = (await db.query('select confirmed_at from bookings')).rows[0].confirmed_at;
+  assert(confirmed);
+  await db.exec("update bookings set status='confirmed'");
+  assert.deepEqual((await db.query('select confirmed_at from bookings')).rows[0].confirmed_at, confirmed);
+  await invalid("update bookings set status='expired'");
+  await db.exec("update bookings set status='cancelled'");
+  const { rows } = await db.query('select confirmed_at, cancelled_at >= confirmed_at as ordered from bookings');
+  assert.deepEqual(rows[0].confirmed_at, confirmed);
+  assert.equal(rows[0].ordered, true);
+  await invalid('update bookings set cancelled_at=null');
+  await invalid("update bookings set status='confirmed'");
+}));
+
+test('pending bookings can cancel without a confirmation; items have independent fulfilment states', () => isolated(async () => {
+  await db.exec("update bookings set status='cancelled'");
+  assert.equal((await db.query('select confirmed_at from bookings')).rows[0].confirmed_at, null);
+  await db.exec(`update booking_items set status='confirmed' where id='${id(12)}';
+    update booking_items set status='cancelled' where id='${id(12)}';
+    update booking_items set status='expired' where id='${id(13)}'`);
+  await invalid(`update booking_items set status='confirmed' where id='${id(13)}'`);
+  await invalid(`update booking_items set status='pending' where id='${id(12)}'`);
+}));

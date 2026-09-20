@@ -1,6 +1,8 @@
 # Phase 1B database foundation
 
-Migration: `supabase/migrations/20260917000100_core_schema.sql`.
+Core migration: `supabase/migrations/20260917000100_core_schema.sql`.
+
+Phase 1C adds `20260920000100_inventory_holds_and_states.sql`, bringing the schema to 22 tables. See [Booking state model](BOOKING_STATE_MODEL.md) for current hold and lifecycle constraints. The Phase 1B notes below describe the original structural baseline; the state-related deferrals are now superseded by Phase 1C.
 
 ## Scope and relationships
 
