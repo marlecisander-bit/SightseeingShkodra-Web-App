@@ -1,7 +1,7 @@
 import 'server-only';
 import { withOperatorService } from '../identity/operator-service';
-export type CancellationResult = { version: 1; orderId: string; status: 'cancelled'; refundReviewRequired: boolean };
-export type RefundReviewRequested = { eventType: 'refund.review_requested'; schemaVersion: 1; payload: { orderId: string } };
+import type { CancellationResult } from './contracts';
+export type { CancellationResult, RefundReviewRequested } from './contracts';
 export class CancellationError extends Error {
   constructor(public readonly code: 'INVALID_REQUEST' | 'NOT_FOUND' | 'RECONCILIATION_REQUIRED' | 'UNAVAILABLE') { super(code); }
 }

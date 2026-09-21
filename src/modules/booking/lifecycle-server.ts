@@ -1,6 +1,7 @@
 import 'server-only';
 import { createClient } from '@supabase/supabase-js';
-export type Booking = { id: string; order_id: string; booking_reference: string; status: string; confirmed_at: string | null };
+import type { Booking } from './contracts';
+export type { Booking } from './contracts';
 export class LifecycleError extends Error {
   constructor(public readonly code: 'NOT_FOUND' | 'RECONCILIATION_REQUIRED' | 'UNAVAILABLE') { super(code); }
 }

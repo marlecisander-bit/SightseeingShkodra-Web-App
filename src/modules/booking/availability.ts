@@ -1,9 +1,5 @@
-export type AvailabilityRequest = { version: 1; operatorId: string; productId: string; date: string; guests: number };
-export type AvailabilityQuote = {
-  version: 1; productId: string; date: string; guests: number; asOf: string;
-  currency: 'EUR'; unitPrice: number; total: number;
-  departures: { id: string; startTime: string; remaining: number; available: boolean }[];
-};
+import type { AvailabilityRequest, AvailabilityQuote } from './contracts';
+export type { AvailabilityRequest, AvailabilityQuote } from './contracts';
 export type AvailabilitySnapshot = {
   operator_id: string; product_id: string; service_date: string; as_of: string;
   pricing_rules: unknown;

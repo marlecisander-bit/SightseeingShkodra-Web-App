@@ -1,12 +1,12 @@
 import 'server-only';
 import { createClient } from '@supabase/supabase-js';
-export type PendingOrder = { version: 1; orderId: string; status: string; currency: 'EUR'; total: number; holdId: string; expiresAt: string;
-  items: { id: string; productId: string; departureId: string; quantity: number; unitPrice: number; total: number; status: string }[] };
+import type { PendingOrder, CreatePendingOrderRequest } from './contracts';
+export type { PendingOrder } from './contracts';
 export class CheckoutError extends Error {
   constructor(public readonly code: 'INVALID_REQUEST' | 'NOT_FOUND' | 'HOLD_INACTIVE' | 'CONFLICT' | 'UNAVAILABLE') { super(code); }
 }
 // Session keys come from trusted server session handling, not arbitrary browser input.
-export async function createPendingOrder(input: { operatorId: string; holdId: string; sessionKey: string; customer: { name: string; email: string; phone?: string } }): Promise<PendingOrder> {
+export async function createPendingOrder(input: CreatePendingOrderRequest): Promise<PendingOrder> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL, key = process.env.SUPABASE_SECRET_KEY;
   if (!url || !key) throw new CheckoutError('UNAVAILABLE');
   try {

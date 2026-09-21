@@ -2,6 +2,8 @@
 
 Updated: 2026-09-21.
 
+CURRENT CHECKPOINT: Phase 2F shared contract complete and Phase 2 server-domain audit PASS. See BOOKING_API_V1.md and PHASE_2_AUDIT.md. Next: Phase 3A admin shell. Prior progress notes below are superseded; no public HTTP booking interface or live payment processing exists yet.
+
 CURRENT PHASE: Phase 2E staff cancellation and refund-review hooks implemented; see PHASE_2E_REPORT.md. Next: Phase 2F shared API types/documentation. Earlier status notes are historical.
 
 CURRENT PHASE: Phase 2D booking lifecycle primitives implemented; see PHASE_2D_REPORT.md. Next: Phase 2E cancellation/refund hooks. Earlier scope notes are historical.
@@ -39,8 +41,8 @@ Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, 
 - [x] Phase 2C orders/items — COMPLETE; see PHASE_2C_REPORT.md
 - [x] Phase 2D lifecycle — COMPLETE; see PHASE_2D_REPORT.md
 - [x] Phase 2E cancellation hooks — COMPLETE; see PHASE_2E_REPORT.md
-- [ ] Phase 2F API/types — NOT STARTED
-- [ ] Phase 2 audit/checkpoint — NOT STARTED
+- [x] Phase 2F API/types — COMPLETE; see PHASE_2F_REPORT.md
+- [x] Phase 2 audit/checkpoint — PASS; checkpoint-phase-2-booking-api; see PHASE_2_AUDIT.md
 - [ ] Phase 3A admin shell — NOT STARTED
 - [ ] Phase 3B product management — NOT STARTED
 - [ ] Phase 3C departures/capacity — NOT STARTED

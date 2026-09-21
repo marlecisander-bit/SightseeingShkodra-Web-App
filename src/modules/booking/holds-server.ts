@@ -1,7 +1,8 @@
 import 'server-only';
 import { createClient } from '@supabase/supabase-js';
 
-export type Hold = { id: string; departure_id: string; quantity: number; status: 'active' | 'released' | 'expired' | 'consumed'; expires_at: string };
+import type { Hold, CreateHoldRequest } from './contracts';
+export type { Hold } from './contracts';
 export class HoldError extends Error {
   constructor(public readonly code: 'INVALID_REQUEST' | 'NOT_FOUND' | 'CONFLICT' | 'SOLD_OUT' | 'UNAVAILABLE') { super(code); }
 }
@@ -24,7 +25,7 @@ async function call(name: string, args: Record<string, unknown>): Promise<Hold> 
   } catch (error) { if (error instanceof HoldError) throw error; throw new HoldError('UNAVAILABLE'); }
 }
 // Trusted server callers must derive sessionKey from a secure server-issued session.
-export function createHold(input: { operatorId: string; departureId: string; sessionKey: string; requestId: string; quantity: number }) {
+export function createHold(input: CreateHoldRequest) {
   if (!Number.isInteger(input.quantity) || input.quantity < 1 || input.quantity > 2147483647) throw new HoldError('INVALID_REQUEST');
   return call('create_hold_v1', { p_operator_id: input.operatorId, p_departure_id: input.departureId,
     p_session_key: input.sessionKey, p_request_id: input.requestId, p_quantity: input.quantity });
