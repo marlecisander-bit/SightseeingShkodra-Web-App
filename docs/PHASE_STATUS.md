@@ -2,6 +2,8 @@
 
 Updated: 2026-09-21.
 
+CURRENT PHASE: Phase 2E staff cancellation and refund-review hooks implemented; see PHASE_2E_REPORT.md. Next: Phase 2F shared API types/documentation. Earlier status notes are historical.
+
 CURRENT PHASE: Phase 2D booking lifecycle primitives implemented; see PHASE_2D_REPORT.md. Next: Phase 2E cancellation/refund hooks. Earlier scope notes are historical.
 
 CURRENT: Phase 2C pending orders/items implemented; see PHASE_2C_REPORT.md. Next: Phase 2D lifecycle primitives. Earlier phase notes below are historical.
@@ -36,7 +38,7 @@ Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, 
 - [x] Phase 2B holds — COMPLETE; see PHASE_2B_REPORT.md
 - [x] Phase 2C orders/items — COMPLETE; see PHASE_2C_REPORT.md
 - [x] Phase 2D lifecycle — COMPLETE; see PHASE_2D_REPORT.md
-- [ ] Phase 2E cancellation hooks — NOT STARTED
+- [x] Phase 2E cancellation hooks — COMPLETE; see PHASE_2E_REPORT.md
 - [ ] Phase 2F API/types — NOT STARTED
 - [ ] Phase 2 audit/checkpoint — NOT STARTED
 - [ ] Phase 3A admin shell — NOT STARTED

@@ -11,6 +11,48 @@ import { platformSql, applyMigrations, loadDevelopmentFixtures } from '../helper
 let cluster, directory, observer, first, second;
 const clients = [];
 
+// Registration order is intentional: this fixture is independent of later tests.
+test('staff cancellation releases unpaid inventory and queues paid refund review exactly once', async () => {
+  const op='10000000-0000-4000-8000-000000000001', product='10000000-0000-4000-8000-000000000020';
+  const user=(await observer.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;
+  const actor=(await observer.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'operations') returning id",[op,user])).rows[0].id;
+  await observer.query(`update products set status='published',capacity_rules='{"version":1,"model":"departure_seats"}',pricing_rules='{"version":1,"model":"per_guest","currency":"EUR","unit_price":1250}' where id=$1`,[product]);
+  for (const paid of [false,true]) {
+    const dep=(await observer.query(`insert into departures(operator_id,product_id,service_date,start_time,capacity,status) values($1,$2,'2030-10-01','12:00',1,'scheduled') returning id`,[op,product])).rows[0].id;
+    const session='synthetic-cancellation-session-123456789';
+    const hold=(await first.query('select * from create_hold_v1($1,$2,$3,gen_random_uuid(),1)',[op,dep,session])).rows[0];
+    const order=(await first.query("select create_pending_order_v1($1,$2,$3,'Test','test@example.invalid') as result",[op,hold.id,session])).rows[0].result;
+    if(paid) {
+      await first.query('select prepare_booking_v1($1,$2,$3)',[op,order.orderId,session]);
+      const payment=(await observer.query("insert into payments(operator_id,order_id,provider,provider_ref,amount,currency) values($1,$2,'test',gen_random_uuid()::text,1250,'EUR') returning id",[op,order.orderId])).rows[0].id;
+      await observer.query("update payments set status='paid' where id=$1",[payment]);
+      await first.query('select confirm_booking_v1($1,$2,$3)',[op,order.orderId,payment]);
+    }
+    const sql="select cancel_order_v1($1,$2,$3,'Staff cancellation test') as result", args=[op,order.orderId,actor];
+    await assert.rejects(first.query(sql,[op,order.orderId,user]),error=>error.code==='42501');
+    await first.query('begin');
+    await first.query(sql,args);
+    await first.query('rollback');
+    assert.equal((await observer.query('select status from orders where id=$1',[order.orderId])).rows[0].status,paid?'confirmed':'pending');
+    await first.query('begin');
+    let pending;
+    try {
+      const cancelled=(await first.query(sql,args)).rows[0].result;
+      pending=second.query(sql,args).then(result=>({result}),error=>({error}));
+      await waitForLock();
+      await first.query('commit');
+      const replay=await pending; assert.ifError(replay.error);
+      assert.deepEqual(replay.result.rows[0].result,cancelled);
+      assert.equal(cancelled.refundReviewRequired,paid);
+      assert.equal((await observer.query("select count(*)::int as n from booking_items where order_id=$1 and status='confirmed'",[order.orderId])).rows[0].n,0);
+      assert.equal((await observer.query('select status from inventory_holds where id=$1',[hold.id])).rows[0].status,paid?'consumed':'released');
+      assert.equal((await observer.query("select count(*)::int as n from domain_events where aggregate_id=$1 and event_type='refund.review_requested'",[order.orderId])).rows[0].n,paid?1:0);
+      if(paid) assert.equal((await observer.query('select status from payments where order_id=$1',[order.orderId])).rows[0].status,'paid');
+      assert.equal((await observer.query('select count(*)::int as n from refunds')).rows[0].n,0);
+    } finally { await first.query('rollback'); if(pending)await pending; }
+  }
+});
+
 test('confirmation requires settled evidence and atomically consumes inventory once under concurrent replay', async () => {
   const op='10000000-0000-4000-8000-000000000001', product='10000000-0000-4000-8000-000000000020';
   await observer.query(`update products set status='published',capacity_rules='{"version":1,"model":"departure_seats"}',pricing_rules='{"version":1,"model":"per_guest","currency":"EUR","unit_price":1250}' where id=$1`,[product]);
