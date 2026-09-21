@@ -10,6 +10,59 @@ import { platformSql, applyMigrations, loadDevelopmentFixtures } from '../helper
 
 let cluster, directory, observer, first, second;
 const clients = [];
+
+test('checkout rejects expired/released holds and invalid pricing without creating records', async () => {
+  const op = '10000000-0000-4000-8000-000000000001', product = '10000000-0000-4000-8000-000000000020';
+  const departure = (await observer.query(`insert into departures(operator_id,product_id,service_date,start_time,capacity,status) values($1,$2,'2030-08-02','12:00',8,'scheduled') returning id`,[op,product])).rows[0].id;
+  const session='synthetic-invalid-checkout-session-key';
+  const hold=(await observer.query(`insert into inventory_holds(operator_id,departure_id,session_key,quantity,expires_at) values($1,$2,$3,1,clock_timestamp()+interval '100 milliseconds') returning id`,[op,departure,session])).rows[0].id;
+  const sql='select create_pending_order_v1($1,$2,$3,$4,$5)';
+  await new Promise(resolve=>setTimeout(resolve,160));
+  await assert.rejects(first.query(sql,[op,hold,session,'Test','test@example.invalid']),error=>error.code==='P0001');
+  const active=(await observer.query(`insert into inventory_holds(operator_id,departure_id,session_key,quantity,expires_at) values($1,$2,$3,1,clock_timestamp()+interval '10 minutes') returning id`,[op,departure,session])).rows[0].id;
+  await observer.query(`update products set status='published',capacity_rules='{"version":1,"model":"departure_seats"}',pricing_rules='{}' where id=$1`,[product]);
+  const before=(await observer.query('select count(*)::int as n from customers')).rows[0].n;
+  await assert.rejects(first.query(sql,[op,active,session,'Test','test@example.invalid']),error=>error.code==='22023');
+  assert.equal((await observer.query('select count(*)::int as n from customers')).rows[0].n,before);
+  await first.query('select manage_hold_v1($1,$2,$3,true)',[op,active,session]);
+  await assert.rejects(first.query(sql,[op,active,session,'Test','test@example.invalid']),error=>error.code==='P0001');
+});
+
+test('checkout is atomic, server-priced, idempotent under contention and session scoped', async () => {
+  const op = '10000000-0000-4000-8000-000000000001';
+  const product = '10000000-0000-4000-8000-000000000020';
+  await observer.query(`update products set status='published',capacity_rules='{"version":1,"model":"departure_seats"}',pricing_rules='{"version":1,"model":"per_guest","currency":"EUR","unit_price":1250}' where id=$1`, [product]);
+  const departure = (await observer.query(`insert into departures(operator_id,product_id,service_date,start_time,capacity,status) values($1,$2,'2030-08-01','12:00',4,'scheduled') returning id`, [op,product])).rows[0].id;
+  const session = 'synthetic-checkout-session-key-123456';
+  const hold = (await first.query('select * from create_hold_v1($1,$2,$3,gen_random_uuid(),2)', [op,departure,session])).rows[0];
+  const sql = 'select create_pending_order_v1($1,$2,$3,$4,$5) as result';
+  const args = [op,hold.id,session,'Test Customer','test@example.invalid'];
+  const countBefore = (await observer.query('select count(*)::int as n from orders')).rows[0].n;
+  await first.query('begin');
+  await first.query(sql,args);
+  await first.query('rollback');
+  assert.equal((await observer.query('select count(*)::int as n from orders')).rows[0].n,countBefore);
+  assert.equal((await observer.query('select order_id from inventory_holds where id=$1',[hold.id])).rows[0].order_id,null);
+  await first.query('begin');
+  let pending;
+  try {
+    const order = (await first.query(sql,args)).rows[0].result;
+    assert.equal(order.total,2500);
+    assert.equal(order.status,'pending');
+    assert.equal(order.items[0].quantity,2);
+    pending = second.query(sql,args).then(result=>({result}),error=>({error}));
+    await waitForLock();
+    await first.query('commit');
+    const replay = await pending;
+    assert.ifError(replay.error);
+    assert.deepEqual(replay.result.rows[0].result,order);
+    await assert.rejects(first.query(sql,[op,hold.id,'wrong','Test Customer','test@example.invalid']),error=>error.code==='P0002');
+    await assert.rejects(first.query(sql,[op,hold.id,session,'Changed Customer','test@example.invalid']),error=>error.code==='23505');
+    const persisted = (await observer.query('select status,expires_at from inventory_holds where id=$1',[hold.id])).rows[0];
+    assert.equal(persisted.status,'active');
+    assert.deepEqual(persisted.expires_at,hold.expires_at);
+  } finally { await first.query('rollback'); if(pending)await pending; }
+});
 before(async () => {
   directory = await mkdtemp(path.join(tmpdir(), 'shkodra-postgres-'));
   const socket = createServer();
@@ -93,6 +146,7 @@ test('elapsed hold is reclaimed by allocator and expiry batch is repeatable', as
   const result = await first.query('select * from create_hold_v1($1,$2,$3,gen_random_uuid(),1)', [operator, departure, 'synthetic-session-key-for-expiry-test']);
   assert.equal(result.rows[0].status, 'active');
   assert.equal((await observer.query('select status from inventory_holds where id=$1', [expired])).rows[0].status, 'expired');
+  await first.query('select expire_holds_v1($1,100)', [operator]);
   assert.equal((await first.query('select expire_holds_v1($1,100) as count', [operator])).rows[0].count, 0);
   await assert.rejects(first.query('update inventory_holds set request_id=gen_random_uuid() where id=$1', [result.rows[0].id]), error => error.code === '23514');
 });

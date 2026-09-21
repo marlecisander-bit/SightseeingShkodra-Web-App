@@ -2,6 +2,8 @@
 
 Updated: 2026-09-21.
 
+CURRENT: Phase 2C pending orders/items implemented; see PHASE_2C_REPORT.md. Next: Phase 2D lifecycle primitives. Earlier phase notes below are historical.
+
 LATEST PHASE: Phase 2B transactional hold implementation; see PHASE_2B_REPORT.md for capacity locking, retry and expiry policy. Next development scope is Phase 2C orders/items. Earlier status paragraphs are historical.
 
 LATEST: Phase 2A availability/pricing implemented. 81 tests pass; lint/typecheck/build pass (build rerun after transient Windows EBUSY). See PHASE_2A_REPORT.md and BOOKING_AVAILABILITY_V1.md. Next: Phase 2B transactional holds. Earlier scope notes below are historical.
@@ -30,7 +32,7 @@ Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, 
 - [x] Phase 1 audit/checkpoint — PASS; checkpoint-phase-1-foundations; see PHASE_1_AUDIT.md
 - [x] Phase 2A availability/pricing — COMPLETE; see PHASE_2A_REPORT.md
 - [x] Phase 2B holds — COMPLETE; see PHASE_2B_REPORT.md
-- [ ] Phase 2C orders/items — NOT STARTED
+- [x] Phase 2C orders/items — COMPLETE; see PHASE_2C_REPORT.md
 - [ ] Phase 2D lifecycle — NOT STARTED
 - [ ] Phase 2E cancellation hooks — NOT STARTED
 - [ ] Phase 2F API/types — NOT STARTED
