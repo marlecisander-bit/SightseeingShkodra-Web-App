@@ -2,7 +2,7 @@
 
 Updated: 2026-09-21.
 
-Active scope: fresh local project, Phase 1E operator-scoped read policies and authorized server-only privileged access complete locally. Staff membership reads now pass embedded PostgreSQL RLS tests. Full Supabase sign-in, platform and concurrency validation remain required before the Phase 1 checkpoint. See DECISIONS.md for the user-approved amendment. No legacy imports or production changes.
+Active scope: fresh local project, Phase 1F outbox/audit persistence foundations complete locally. Event/audit idempotency, immutable history and transaction rollback pass embedded PostgreSQL tests. No notification worker or external delivery is connected. Full Supabase sign-in, platform and concurrency validation remain required before the Phase 1 checkpoint. See DECISIONS.md for the user-approved amendment. No legacy imports or production changes.
 
 ## Roadmap execution checklist
 
@@ -14,7 +14,7 @@ Active scope: fresh local project, Phase 1E operator-scoped read policies and au
 - [x] Phase 1C holds/states — COMPLETE; see PHASE_1C_REPORT.md for evidence and remaining domain work
 - [x] Phase 1D auth roles — COMPLETE locally; see PHASE_1D_REPORT.md for integration limitations
 - [x] Phase 1E RLS — COMPLETE locally; see PHASE_1E_REPORT.md for evidence and platform limits
-- [ ] Phase 1F outbox/audit — NOT STARTED
+- [x] Phase 1F outbox/audit — COMPLETE locally; see PHASE_1F_REPORT.md
 - [ ] Phase 1G fixtures — NOT STARTED
 - [ ] Phase 1H tests — NOT STARTED
 - [ ] Phase 1 audit/checkpoint — NOT STARTED

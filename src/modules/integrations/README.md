@@ -1,1 +1,3 @@
-﻿# integrations  Own outbox delivery and retryable notification adapters. Delivery failure must not undo a paid booking.  Boundary reserved for the relevant roadmap phase; no implementation yet.
+﻿# Integrations
+
+Own persisted event delivery and retryable notification adapters. Phase 1F provides idempotent event/audit persistence and the server-only persistStaffActivity adapter. No external notification handler or worker runs yet. See docs/OUTBOX_AND_AUDIT.md for transaction boundaries and integration responsibilities.

@@ -109,7 +109,7 @@ test('cross-operator relationships are rejected across the business graph', asyn
   }
   // Updating ownership alone must fail wherever an existing parent belongs to A.
   for (const table of ['staff_profiles', 'stops', 'departures', 'orders', 'booking_items',
-    'bookings', 'payments', 'payment_events', 'refunds', 'vehicle_positions', 'reviews', 'audit_logs']) {
+    'bookings', 'payments', 'payment_events', 'refunds', 'vehicle_positions', 'reviews']) {
     await rejects(`update ${table} set operator_id='${id(2)}' where operator_id='${id(1)}'`, '23503');
   }
 });
@@ -502,4 +502,105 @@ test('membership deactivation removes access on the next database statement', ()
   await asUser(staffFixtures[0].auth_user_id);
   assert.equal((await db.query('select * from orders')).rows.length, 0);
   assert.equal((await db.query('select * from staff_profiles')).rows.length, 0);
+}));
+
+const activitySql = (key, metadata = "'{}'::jsonb", operator = id(1), actor = `'${id(3)}'`) =>
+  `select * from public.record_domain_activity('${operator}',${actor},'${key}',
+    'product','${id(5)}','product.changed','{"version":1}'::jsonb,'updated',${metadata})`;
+
+test('service records an operator/actor-scoped event and audit pair exactly once', () => isolated(async () => {
+  await db.exec('set local role service_role');
+  const first = (await db.query(activitySql('change-1'))).rows[0];
+  const second = (await db.query(activitySql('change-1'))).rows[0];
+  assert.deepEqual(first, second);
+  const event = (await db.query('select * from domain_events where id=$1', [first.event_id])).rows[0];
+  const audit = (await db.query('select * from audit_logs where id=$1', [first.audit_id])).rows[0];
+  for (const record of [event, audit]) {
+    assert.equal(record.operator_id, id(1)); assert.equal(record.actor_id, id(3));
+  }
+  assert.equal(event.schema_version, 1);
+  assert.equal(event.attempt_count, 0);
+  assert.equal(event.published_at, null);
+  assert.equal((await db.query("select * from domain_events where idempotency_key='change-1'")).rows.length, 1);
+  assert.equal((await db.query("select * from audit_logs where idempotency_key='change-1'")).rows.length, 1);
+}));
+
+test('reusing an idempotency key with different event or audit data fails', () => isolated(async () => {
+  await db.exec('set local role service_role');
+  await db.query(activitySql('collision'));
+  await invalid(activitySql('collision', "'{\"different\":true}'::jsonb"), '23505');
+  await invalid(activitySql('collision').replace('product.changed', 'product.deleted'), '23505');
+  await invalid(activitySql('collision').replace('{"version":1}', '{"version":2}'), '23505');
+}));
+
+test('invalid audit rolls back its new event in the same RPC', () => isolated(async () => {
+  await db.exec('set local role service_role');
+  await invalid(activitySql('atomic-invalid', "'[]'::jsonb"));
+  assert.equal((await db.query("select * from domain_events where idempotency_key='atomic-invalid'")).rows.length, 0);
+  assert.equal((await db.query("select * from audit_logs where idempotency_key='atomic-invalid'")).rows.length, 0);
+}));
+
+test('preexisting conflicting audit rolls back a newly enqueued event', () => isolated(async () => {
+  await db.exec('set local role service_role');
+  await db.query(`select public.append_audit_log('${id(1)}','${id(3)}','audit-conflict','old-action','product','${id(5)}','{}')`);
+  await invalid(activitySql('audit-conflict'), '23505');
+  assert.equal((await db.query("select * from domain_events where idempotency_key='audit-conflict'")).rows.length, 0);
+}));
+
+test('outer domain rollback also rolls back event and audit persistence', () => isolated(async () => {
+  await db.exec('savepoint domain_change; set local role service_role');
+  await db.query(activitySql('outer-rollback'));
+  await db.exec('rollback to savepoint domain_change');
+  assert.equal((await db.query("select * from domain_events where idempotency_key='outer-rollback'")).rows.length, 0);
+  assert.equal((await db.query("select * from audit_logs where idempotency_key='outer-rollback'")).rows.length, 0);
+}));
+
+test('outbox envelopes and audit history are immutable even if table rights are granted', () => isolated(async () => {
+  await invalid("update audit_logs set action='rewritten'");
+  await invalid(`update audit_logs set operator_id='${id(2)}'`);
+  await invalid('delete from audit_logs');
+  await invalid('delete from domain_events');
+  for (const change of ["payload='{}'", `operator_id='${id(2)}'`, "event_type='rewritten'", 'schema_version=2']) {
+    if (change === "payload='{}'") await invalid("update domain_events set payload='{\"changed\":true}'");
+    else await invalid(`update domain_events set ${change}`);
+  }
+}));
+
+test('delivery retry metadata can change without changing a booking or event identity', () => isolated(async () => {
+  await db.exec('set local role service_role');
+  const before = (await db.query('select * from bookings')).rows;
+  const { event_id: eventId } = (await db.query(activitySql('retry'))).rows[0];
+  await db.query(`update domain_events set attempt_count=attempt_count+1, next_attempt_at=now()+interval '1 minute', last_error_code='provider.timeout' where id=$1`, [eventId]);
+  await invalid(`update domain_events set attempt_count=0 where id='${eventId}'`);
+  await invalid(`update domain_events set next_attempt_at='infinity' where id='${eventId}'`);
+  await db.query('update domain_events set published_at=clock_timestamp(),last_error_code=null where id=$1', [eventId]);
+  const published = (await db.query('select published_at from domain_events where id=$1', [eventId])).rows[0];
+  await db.query(activitySql('retry'));
+  assert.deepEqual((await db.query('select published_at from domain_events where id=$1', [eventId])).rows[0], published);
+  await invalid(`update domain_events set published_at=null where id='${eventId}'`);
+  await invalid(`update domain_events set attempt_count=attempt_count+1 where id='${eventId}'`);
+  assert.deepEqual((await db.query('select * from bookings')).rows, before);
+}));
+
+test('cross-operator actors are rejected, system events allow null actors and keys are tenant scoped', () => isolated(async () => {
+  await db.exec('set local role service_role');
+  await invalid(activitySql('wrong-actor', "'{}'::jsonb", id(2)), '23503');
+  await db.query(activitySql('same-key', "'{}'::jsonb", id(1), 'null'));
+  await db.query(activitySql('same-key', "'{}'::jsonb", id(2), 'null'));
+  assert.equal((await db.query("select * from domain_events where idempotency_key='same-key'")).rows.length, 2);
+  await invalid(activitySql('   '));
+}));
+
+test('clients cannot invoke persistence RPCs or mutate audit history through service grants', () => isolated(async () => {
+  for (const role of ['anon','authenticated']) {
+    await db.exec(`set local role ${role}`);
+    await invalid(activitySql('forbidden'), '42501');
+    await invalid(`select public.enqueue_domain_event('${id(1)}',null,'forbidden','product','${id(5)}','changed','{}')`, '42501');
+    await invalid(`select public.append_audit_log('${id(1)}',null,'forbidden','changed','product','${id(5)}','{}')`, '42501');
+    await db.exec('reset role');
+  }
+  await db.exec('set local role service_role');
+  await invalid("update audit_logs set action='rewritten'", '42501');
+  await invalid('delete from audit_logs', '42501');
+  await invalid('delete from domain_events', '42501');
 }));

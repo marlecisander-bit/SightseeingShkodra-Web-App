@@ -14,7 +14,8 @@
     "check": "npm run lint && npm run typecheck && npm run build",
     "test:db": "tsx --test tests/database/*.test.mjs",
     "test:identity": "tsx --test tests/identity/*.test.mjs",
-    "test": "npm run test:identity && npm run test:db"
+    "test": "npm run test:identity && npm run test:integrations && npm run test:db",
+    "test:integrations": "tsx --conditions=react-server --test tests/integrations/*.test.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
