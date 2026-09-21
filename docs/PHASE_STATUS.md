@@ -2,6 +2,8 @@
 
 Updated: 2026-09-21.
 
+LATEST: Phase 2A availability/pricing implemented. 81 tests pass; lint/typecheck/build pass (build rerun after transient Windows EBUSY). See PHASE_2A_REPORT.md and BOOKING_AVAILABILITY_V1.md. Next: Phase 2B transactional holds. Earlier scope notes below are historical.
+
 CURRENT ACCEPTANCE: Phase 1 foundations PASS. Hosted proxy cookie refresh, rejected-refresh session removal and successful idempotent privileged RPC are verified; see PHASE_1_PLATFORM_ACCEPTANCE.md. Earlier progress notes below are historical and superseded. Next scope: Phase 2A availability/pricing contract. No Phase 2 implementation yet.
 
 Hosted identity update: real sign-in, refresh-token exchange, cross-operator reads, direct write denial, protected RPC denial and membership deactivation pass against the development project. Synthetic records were removed. Next.js cookie/expired-session integration remains pending; Phase 1 audit stays PARTIAL. See scripts/verify-supabase-development.mjs and SUPABASE_DEVELOPMENT_SETUP.md.
@@ -24,7 +26,7 @@ Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, 
 - [x] Phase 1G fixtures — COMPLETE; see PHASE_1G_REPORT.md
 - [x] Phase 1H tests — PASS; see PHASE_1H_REPORT.md and PHASE_1_PLATFORM_ACCEPTANCE.md
 - [x] Phase 1 audit/checkpoint — PASS; checkpoint-phase-1-foundations; see PHASE_1_AUDIT.md
-- [ ] Phase 2A availability/pricing — NOT STARTED
+- [x] Phase 2A availability/pricing — COMPLETE; see PHASE_2A_REPORT.md
 - [ ] Phase 2B holds — NOT STARTED
 - [ ] Phase 2C orders/items — NOT STARTED
 - [ ] Phase 2D lifecycle — NOT STARTED
