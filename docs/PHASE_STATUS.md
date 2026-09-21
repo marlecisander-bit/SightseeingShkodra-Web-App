@@ -15,7 +15,7 @@ Active scope: fresh local project, Phase 1F outbox/audit persistence foundations
 - [x] Phase 1D auth roles — COMPLETE locally; see PHASE_1D_REPORT.md for integration limitations
 - [x] Phase 1E RLS — COMPLETE locally; see PHASE_1E_REPORT.md for evidence and platform limits
 - [x] Phase 1F outbox/audit — COMPLETE locally; see PHASE_1F_REPORT.md
-- [ ] Phase 1G fixtures — NOT STARTED
+- [x] Phase 1G fixtures — COMPLETE; see PHASE_1G_REPORT.md
 - [ ] Phase 1H tests — NOT STARTED
 - [ ] Phase 1 audit/checkpoint — NOT STARTED
 - [ ] Phase 2A availability/pricing — NOT STARTED
