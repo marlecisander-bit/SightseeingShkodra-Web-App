@@ -2,6 +2,8 @@
 
 Date: 2026-09-21. Result: **PARTIAL**. Checkpoint: **not created**.
 
+Hosted verification update: scripts/verify-supabase-development.mjs now passes actual Auth sign-in/getUser, refresh-token exchange, authenticated tenant isolation, direct-write and protected-RPC denial, role-change visibility and membership deactivation. Synthetic records were removed. The table below describes the original audit; its platform gap is narrowed to Next.js cookie/expired-session integration and successful privileged RPC execution. See SUPABASE_DEVELOPMENT_SETUP.md for current evidence.
+
 | Requirement | Result | Evidence / remaining verification |
 | --- | --- | --- |
 | Modular Next.js/TypeScript foundation | PASS | src/app, src/modules; production build, lint and typecheck pass. |
