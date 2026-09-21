@@ -46,6 +46,57 @@ after(async () => {
   }
 });
 
+for (const commit of [true, false]) {
+  test(`last seat has one winner after first transaction ${commit ? 'commits' : 'rolls back'}`, async () => {
+    const operator = '10000000-0000-4000-8000-000000000001';
+    const product = '10000000-0000-4000-8000-000000000020';
+    await observer.query(`update products set status='published',capacity_rules='{"version":1,"model":"departure_seats"}' where id=$1`, [product]);
+    const departure = (await observer.query(`insert into departures(operator_id,product_id,service_date,start_time,capacity,status)
+      values ($1,$2,'2030-07-01','12:00',1,'scheduled') returning id`, [operator, product])).rows[0].id;
+    const sql = 'select * from create_hold_v1($1,$2,$3,$4,1)';
+    const requestA = (await observer.query('select gen_random_uuid() as id')).rows[0].id;
+    const requestB = (await observer.query('select gen_random_uuid() as id')).rows[0].id;
+    const session = 'synthetic-session-key-for-last-seat-test';
+    let pending;
+    await first.query('begin');
+    try {
+      const initial = (await first.query(sql, [operator, departure, session, requestA])).rows[0];
+      pending = second.query(sql, [operator, departure, session, requestB]).then(result => ({ result }), error => ({ error }));
+      await waitForLock();
+      await first.query(commit ? 'commit' : 'rollback');
+      const outcome = await pending;
+      if (commit) {
+        assert.equal(outcome.error?.code, 'P0001');
+        const replay = (await first.query(sql, [operator, departure, session, requestA])).rows[0];
+        assert.equal(replay.id, initial.id);
+        assert.deepEqual(replay.expires_at, initial.expires_at);
+        await assert.rejects(first.query(sql, [operator, departure, session + 'wrong', requestA]), error => error.code === '23505');
+        await assert.rejects(first.query('select * from manage_hold_v1($1,$2,$3,true)', [operator, initial.id, 'wrong']), error => error.code === 'P0002');
+        await first.query('select * from manage_hold_v1($1,$2,$3,true)', [operator, initial.id, session]);
+        const replacement = await second.query(sql, [operator, departure, session, requestB]);
+        assert.equal(replacement.rows[0].status, 'active');
+      } else assert.ifError(outcome.error);
+      const count = (await observer.query("select sum(quantity)::int as used from inventory_holds where departure_id=$1 and status='active'", [departure])).rows[0].used;
+      assert.equal(count, 1);
+    } finally { await first.query('rollback'); if (pending) await pending; }
+  });
+}
+
+test('elapsed hold is reclaimed by allocator and expiry batch is repeatable', async () => {
+  const operator = '10000000-0000-4000-8000-000000000001';
+  const product = '10000000-0000-4000-8000-000000000020';
+  const departure = (await observer.query(`insert into departures(operator_id,product_id,service_date,start_time,capacity,status)
+    values ($1,$2,'2030-07-02','12:00',1,'scheduled') returning id`, [operator, product])).rows[0].id;
+  const expired = (await observer.query(`insert into inventory_holds(operator_id,departure_id,session_key,quantity,expires_at)
+    values($1,$2,'short-lived-test',1,clock_timestamp()+interval '100 milliseconds') returning id`, [operator, departure])).rows[0].id;
+  await new Promise(resolve => setTimeout(resolve, 160));
+  const result = await first.query('select * from create_hold_v1($1,$2,$3,gen_random_uuid(),1)', [operator, departure, 'synthetic-session-key-for-expiry-test']);
+  assert.equal(result.rows[0].status, 'active');
+  assert.equal((await observer.query('select status from inventory_holds where id=$1', [expired])).rows[0].status, 'expired');
+  assert.equal((await first.query('select expire_holds_v1($1,100) as count', [operator])).rows[0].count, 0);
+  await assert.rejects(first.query('update inventory_holds set request_id=gen_random_uuid() where id=$1', [result.rows[0].id]), error => error.code === '23514');
+});
+
 async function waitForLock() {
   const until = Date.now() + 5000;
   while (Date.now() < until) {
