@@ -2,7 +2,7 @@
 
 Updated: 2026-09-21.
 
-Active scope: fresh local project, Phase 1F outbox/audit persistence foundations complete locally. Event/audit idempotency, immutable history and transaction rollback pass embedded PostgreSQL tests. No notification worker or external delivery is connected. Full Supabase sign-in, platform and concurrency validation remain required before the Phase 1 checkpoint. See DECISIONS.md for the user-approved amendment. No legacy imports or production changes.
+Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, lint, typecheck, build). Phase 1 audit is PARTIAL pending real Supabase Auth/PostgREST integration. Native PostgreSQL concurrency is verified for existing hold and event/audit primitives. No checkpoint or Phase 2 work yet. See PHASE_1_AUDIT.md and DECISIONS.md. No legacy imports or production changes.
 
 ## Roadmap execution checklist
 
@@ -16,8 +16,8 @@ Active scope: fresh local project, Phase 1F outbox/audit persistence foundations
 - [x] Phase 1E RLS — COMPLETE locally; see PHASE_1E_REPORT.md for evidence and platform limits
 - [x] Phase 1F outbox/audit — COMPLETE locally; see PHASE_1F_REPORT.md
 - [x] Phase 1G fixtures — COMPLETE; see PHASE_1G_REPORT.md
-- [ ] Phase 1H tests — NOT STARTED
-- [ ] Phase 1 audit/checkpoint — NOT STARTED
+- [ ] Phase 1H tests — LOCAL CHECKS PASS; platform integration pending; see PHASE_1H_REPORT.md
+- [ ] Phase 1 audit/checkpoint — PARTIAL; see PHASE_1_AUDIT.md; no checkpoint tag
 - [ ] Phase 2A availability/pricing — NOT STARTED
 - [ ] Phase 2B holds — NOT STARTED
 - [ ] Phase 2C orders/items — NOT STARTED
