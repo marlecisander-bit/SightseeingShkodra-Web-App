@@ -1,5 +1,7 @@
 # Supabase development setup
 
+Current acceptance: Phase 1 foundations PASS; see PHASE_1_PLATFORM_ACCEPTANCE.md. Run the hosted verifier with `node --env-file=.env.local --import tsx scripts/verify-supabase-development.mjs` (tsx is required for the actual proxy import). Earlier pending notes below are historical. A dedicated synthetic audit operator and one immutable event/audit pair are now intentionally retained; all temporary identity fixtures are removed.
+
 Configured on 2026-09-21 for the fresh development project `sightseeing-shkodra-dev`.
 
 - Project reference: `ybngoppqqiohcduojfyg`

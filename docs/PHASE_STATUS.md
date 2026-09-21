@@ -2,6 +2,8 @@
 
 Updated: 2026-09-21.
 
+CURRENT ACCEPTANCE: Phase 1 foundations PASS. Hosted proxy cookie refresh, rejected-refresh session removal and successful idempotent privileged RPC are verified; see PHASE_1_PLATFORM_ACCEPTANCE.md. Earlier progress notes below are historical and superseded. Next scope: Phase 2A availability/pricing contract. No Phase 2 implementation yet.
+
 Hosted identity update: real sign-in, refresh-token exchange, cross-operator reads, direct write denial, protected RPC denial and membership deactivation pass against the development project. Synthetic records were removed. Next.js cookie/expired-session integration remains pending; Phase 1 audit stays PARTIAL. See scripts/verify-supabase-development.mjs and SUPABASE_DEVELOPMENT_SETUP.md.
 
 Supabase setup update: fresh development project `ybngoppqqiohcduojfyg` linked; all five migrations applied and remote history verified. Hosted database/API and Auth endpoint smoke checks pass. Real user/session and authenticated tenant-isolation checks remain pending. See SUPABASE_DEVELOPMENT_SETUP.md.
@@ -20,8 +22,8 @@ Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, 
 - [x] Phase 1E RLS — COMPLETE locally; see PHASE_1E_REPORT.md for evidence and platform limits
 - [x] Phase 1F outbox/audit — COMPLETE locally; see PHASE_1F_REPORT.md
 - [x] Phase 1G fixtures — COMPLETE; see PHASE_1G_REPORT.md
-- [ ] Phase 1H tests — LOCAL CHECKS PASS; platform integration pending; see PHASE_1H_REPORT.md
-- [ ] Phase 1 audit/checkpoint — PARTIAL; see PHASE_1_AUDIT.md; no checkpoint tag
+- [x] Phase 1H tests — PASS; see PHASE_1H_REPORT.md and PHASE_1_PLATFORM_ACCEPTANCE.md
+- [x] Phase 1 audit/checkpoint — PASS; checkpoint-phase-1-foundations; see PHASE_1_AUDIT.md
 - [ ] Phase 2A availability/pricing — NOT STARTED
 - [ ] Phase 2B holds — NOT STARTED
 - [ ] Phase 2C orders/items — NOT STARTED
