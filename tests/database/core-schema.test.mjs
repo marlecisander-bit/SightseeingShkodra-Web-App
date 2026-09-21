@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { after, before, test } from 'node:test';
 import { PGlite } from '@electric-sql/pglite';
+import { staffFixtures } from '../fixtures/staff.mjs';
 
 const db = new PGlite();
 const id = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
@@ -349,4 +350,20 @@ test('pending bookings can cancel without a confirmation; items have independent
     update booking_items set status='expired' where id='${id(13)}'`);
   await invalid(`update booking_items set status='confirmed' where id='${id(13)}'`);
   await invalid(`update booking_items set status='pending' where id='${id(12)}'`);
+}));
+
+test('all staff role fixtures persist; unknown roles and client self-promotion are rejected', () => isolated(async () => {
+  for (const staff of staffFixtures) {
+    await db.query('insert into auth.users(id) values ($1)', [staff.auth_user_id]);
+    await db.query('insert into staff_profiles(id,operator_id,auth_user_id,role) values ($1,$2,$3,$4)',
+      [staff.id, staff.operator_id, staff.auth_user_id, staff.role]);
+  }
+  const { rows } = await db.query('select role,is_active from staff_profiles where id = any($1::uuid[])', [staffFixtures.map((f) => f.id)]);
+  assert.equal(rows.length, 4);
+  assert(rows.every((r) => r.is_active === true));
+  await invalid("update staff_profiles set role='superadmin'");
+  await db.exec(`update staff_profiles set is_active=false where id='${staffFixtures[0].id}'`);
+  assert.equal((await db.query('select is_active from staff_profiles where id=$1', [staffFixtures[0].id])).rows[0].is_active, false);
+  await db.exec('set local role authenticated');
+  await invalid("update staff_profiles set role='owner'", '42501');
 }));
