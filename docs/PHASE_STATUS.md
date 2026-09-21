@@ -2,6 +2,8 @@
 
 Updated: 2026-09-21.
 
+CURRENT: Phase 3B catalog CRUD implemented; database/quality verification recorded in PHASE_3B_REPORT.md. Browser visual/form QA and owner onboarding remain pending. Earlier progress notes below are historical.
+
 CURRENT: Phase 3A admin shell implemented; HTTP authorization checks pass. Desktop/mobile visual QA and owner onboarding remain pending; see PHASE_3A_REPORT.md. No product-management work started.
 
 CURRENT CHECKPOINT: Phase 2F shared contract complete and Phase 2 server-domain audit PASS. See BOOKING_API_V1.md and PHASE_2_AUDIT.md. Next: Phase 3A admin shell. Prior progress notes below are superseded; no public HTTP booking interface or live payment processing exists yet.
@@ -46,7 +48,7 @@ Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, 
 - [x] Phase 2F API/types — COMPLETE; see PHASE_2F_REPORT.md
 - [x] Phase 2 audit/checkpoint — PASS; checkpoint-phase-2-booking-api; see PHASE_2_AUDIT.md
 - [ ] Phase 3A admin shell — IMPLEMENTED; visual QA pending; see PHASE_3A_REPORT.md
-- [ ] Phase 3B product management — NOT STARTED
+- [ ] Phase 3B product management — IMPLEMENTED; browser QA pending; see PHASE_3B_REPORT.md
 - [ ] Phase 3C departures/capacity — NOT STARTED
 - [ ] Phase 3D CMS — NOT STARTED
 - [ ] Phase 3E booking operations — NOT STARTED
