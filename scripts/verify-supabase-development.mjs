@@ -72,6 +72,25 @@ try {
       getAll: () => request.cookies.getAll(), setAll() {},
     } });
   assert.equal(ok(await refreshed.auth.getUser()).user.id, users[0]);
+  if (process.argv.includes('--admin-http')) {
+    const baseUrl = 'http://127.0.0.1:3000';
+    const cookie = request.cookies.getAll().map(({ name, value }) => `${name}=${value}`).join('; ');
+    const anonymous = await fetch(baseUrl + '/admin', { redirect: 'manual' });
+    assert.equal(anonymous.status, 307);
+    assert.ok(anonymous.headers.get('location').includes('/auth/sign-in'));
+    const signedIn = await fetch(`${baseUrl}/admin/${operators[0]}/overview`, { headers: { cookie }, redirect: 'manual' });
+    assert.equal(signedIn.status, 200);
+    assert.ok((await signedIn.text()).includes('Your operator workspace.'));
+    const foreign = await fetch(`${baseUrl}/admin/${operators[1]}/overview`, { headers: { cookie }, redirect: 'manual' });
+    assert.equal(foreign.status, 307);
+    assert.ok(foreign.headers.get('location').includes('error=access'));
+    ok(await admin.from('staff_profiles').update({ role: 'content_editor' }).eq('auth_user_id', users[0]).eq('operator_id', operators[0]));
+    const forbidden = await fetch(`${baseUrl}/admin/${operators[0]}/bookings`, { headers: { cookie }, redirect: 'manual' });
+    assert.equal(forbidden.status, 307);
+    const content = await fetch(`${baseUrl}/admin/${operators[0]}/content`, { headers: { cookie }, redirect: 'manual' });
+    assert.equal(content.status, 200);
+    console.log('PASS: actual HTTP admin routes enforce sign-in, operator isolation and role access');
+  }
   console.log('PASS: actual Next proxy refreshes stale SSR session cookies and forwards verified identity');
   const invalid = new NextRequest('http://localhost:3000/admin', { headers: { cookie: `${base}=base64-invalid` } });
   const invalidResponse = await proxy(invalid);
