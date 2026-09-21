@@ -11,6 +11,57 @@ import { platformSql, applyMigrations, loadDevelopmentFixtures } from '../helper
 let cluster, directory, observer, first, second;
 const clients = [];
 
+test('confirmation requires settled evidence and atomically consumes inventory once under concurrent replay', async () => {
+  const op='10000000-0000-4000-8000-000000000001', product='10000000-0000-4000-8000-000000000020';
+  await observer.query(`update products set status='published',capacity_rules='{"version":1,"model":"departure_seats"}',pricing_rules='{"version":1,"model":"per_guest","currency":"EUR","unit_price":1250}' where id=$1`,[product]);
+  const dep=(await observer.query(`insert into departures(operator_id,product_id,service_date,start_time,capacity,status) values($1,$2,'2030-09-01','12:00',1,'scheduled') returning id`,[op,product])).rows[0].id;
+  const session='synthetic-lifecycle-session-key-123456';
+  const h=(await first.query('select * from create_hold_v1($1,$2,$3,gen_random_uuid(),1)',[op,dep,session])).rows[0];
+  const order=(await first.query("select create_pending_order_v1($1,$2,$3,'Test','test@example.invalid') as result",[op,h.id,session])).rows[0].result;
+  const prepare='select * from prepare_booking_v1($1,$2,$3)';
+  const b=(await first.query(prepare,[op,order.orderId,session])).rows[0];
+  assert.equal(b.status,'pending');
+  assert.equal((await first.query(prepare,[op,order.orderId,session])).rows[0].id,b.id);
+  const pay=(await observer.query("insert into payments(operator_id,order_id,provider,provider_ref,amount,currency) values($1,$2,'test','synthetic-confirmation',1250,'EUR') returning id",[op,order.orderId])).rows[0].id;
+  const sql='select * from confirm_booking_v1($1,$2,$3)', args=[op,order.orderId,pay];
+  await assert.rejects(first.query(sql,args),error=>error.code==='P0001');
+  assert.equal((await observer.query('select status from inventory_holds where id=$1',[h.id])).rows[0].status,'active');
+  // Synthetic evidence only inside this disposable database; no provider payment is performed.
+  await observer.query("update payments set status='paid' where id=$1",[pay]);
+  for (const mutation of [
+    () => first.query('update payments set amount=1 where id=$1',[pay]),
+    () => first.query("update inventory_holds set status='released' where id=$1",[h.id]),
+    () => first.query('update departures set capacity=0 where id=$1',[dep]),
+  ]) {
+    await first.query('begin');
+    try { await mutation(); await assert.rejects(first.query(sql,args),error=>error.code==='P0001'); }
+    finally { await first.query('rollback'); }
+  }
+  await first.query('begin');
+  await first.query(sql,args);
+  await first.query('rollback');
+  assert.equal((await observer.query('select status from inventory_holds where id=$1',[h.id])).rows[0].status,'active');
+  await first.query('begin');
+  let pending;
+  try {
+    const confirmed=(await first.query(sql,args)).rows[0];
+    pending=second.query(sql,args).then(result=>({result}),error=>({error}));
+    await waitForLock();
+    await first.query('commit');
+    const replay=await pending;
+    assert.ifError(replay.error);
+    assert.deepEqual(replay.result.rows[0],confirmed);
+    assert.equal(confirmed.status,'confirmed');
+    assert.ok(confirmed.confirmed_at);
+    assert.equal((await observer.query('select status from inventory_holds where id=$1',[h.id])).rows[0].status,'consumed');
+    assert.equal((await observer.query('select status from orders where id=$1',[order.orderId])).rows[0].status,'confirmed');
+    assert.equal((await observer.query("select count(*)::int as n from domain_events where aggregate_id=$1 and event_type='booking.confirmed'",[b.id])).rows[0].n,1);
+    await observer.query('set role authenticated');
+    try { await assert.rejects(observer.query(sql,args),error=>error.code==='42501'); }
+    finally { await observer.query('reset role'); }
+  } finally { await first.query('rollback'); if(pending)await pending; }
+});
+
 test('checkout rejects expired/released holds and invalid pricing without creating records', async () => {
   const op = '10000000-0000-4000-8000-000000000001', product = '10000000-0000-4000-8000-000000000020';
   const departure = (await observer.query(`insert into departures(operator_id,product_id,service_date,start_time,capacity,status) values($1,$2,'2030-08-02','12:00',8,'scheduled') returning id`,[op,product])).rows[0].id;
