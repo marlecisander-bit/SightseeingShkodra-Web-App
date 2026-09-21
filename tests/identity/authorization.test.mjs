@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import { authorizeStaff, AuthorizationError } from '../../src/modules/identity/authorization.ts';
 import { hasPermission, staffRoles, permissions } from '../../src/modules/identity/roles.ts';
 import { operatorId, staffFixtures } from '../fixtures/staff.mjs';
+import { runAuthorizedOperation } from '../../src/modules/identity/privileged-operation.ts';
 
 const sourceFor = (membership) => ({
   getVerifiedUser: async () => ({ id: membership.auth_user_id }),
@@ -85,4 +86,38 @@ test('provider/database failures expose no internal detail and never allow acces
 test('invalid operator IDs are rejected before reaching auth services', async () => {
   const source = { getVerifiedUser: async () => { assert.fail('must not call'); }, getMembership: async () => null };
   await assert.rejects(authorizeStaff(source, 'invalid', 'catalog.read'), denied('FORBIDDEN'));
+});
+
+test('privileged client is never created when staff authorization is denied', async () => {
+  let created = false;
+  await assert.rejects(runAuthorizedOperation(operatorId, 'staff.manage',
+    async () => { throw new AuthorizationError('FORBIDDEN'); },
+    () => { created = true; return {}; },
+    async () => { assert.fail('operation must not run'); },
+  ), denied('FORBIDDEN'));
+  assert.equal(created, false);
+});
+
+test('privileged callback receives the verified context only after authorization', async () => {
+  const events = [];
+  const expected = { userId: staffFixtures[0].auth_user_id, operatorId, staffProfileId: staffFixtures[0].id, role: 'owner' };
+  const result = await runAuthorizedOperation(operatorId, 'bookings.create',
+    async (operator, permission) => {
+      events.push('authorize'); assert.equal(operator, operatorId); assert.equal(permission, 'bookings.create'); return expected;
+    },
+    () => { events.push('client'); return { testClient: true }; },
+    async (client, context) => {
+      events.push('operation'); assert(client.testClient); assert.deepEqual(context, expected); return 'done';
+    },
+  );
+  assert.equal(result, 'done');
+  assert.deepEqual(events, ['authorize', 'client', 'operation']);
+});
+
+test('missing privileged client configuration cannot run the operation', async () => {
+  await assert.rejects(runAuthorizedOperation(operatorId, 'bookings.create',
+    async () => ({ userId: 'verified', operatorId, staffProfileId: 'profile', role: 'owner' }),
+    () => { throw new AuthorizationError('UNAVAILABLE'); },
+    async () => { assert.fail('operation must not run'); },
+  ), denied('UNAVAILABLE'));
 });

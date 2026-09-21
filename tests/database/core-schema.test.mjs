@@ -3,6 +3,8 @@ import { readFile, readdir } from 'node:fs/promises';
 import { after, before, test } from 'node:test';
 import { PGlite } from '@electric-sql/pglite';
 import { staffFixtures } from '../fixtures/staff.mjs';
+import { hasPermission } from '../../src/modules/identity/roles.ts';
+import { authorizeStaff } from '../../src/modules/identity/authorization.ts';
 
 const db = new PGlite();
 const id = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
@@ -15,7 +17,10 @@ before(async () => {
   // Only the Supabase platform prerequisites are stubbed. Application SQL is unmodified.
   await db.exec(`create schema auth; create table auth.users (id uuid primary key);
     create role anon nologin; create role authenticated nologin;
-    grant usage on schema public to anon, authenticated;
+    create role service_role nologin bypassrls;
+    create function auth.uid() returns uuid language sql stable as
+      $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
+    grant usage on schema public, auth to anon, authenticated, service_role;
     alter default privileges in schema public grant all on tables to anon, authenticated;`);
   const dir = new URL('../../supabase/migrations/', import.meta.url);
   for (const file of (await readdir(dir)).filter((f) => f.endsWith('.sql')).sort()) {
@@ -153,17 +158,20 @@ test('unsafe structural inputs and deletion of financial parents are rejected', 
   await rejects(`delete from auth.users where id='${id(90)}'`, '23503');
 });
 
-test('all tables enable RLS and explicitly revoke default client privileges', async () => {
+test('all tables enable RLS, deny client writes and grant only intended authenticated reads', async () => {
   const { rows } = await db.query(`select c.relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='r' and c.relrowsecurity`);
   assert.equal(rows.length, tables.length);
   for (const role of ['anon', 'authenticated']) {
     for (const table of tables) {
-      const privileges = await db.query(`select has_table_privilege($1, $2, 'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') as allowed`, [role, `public.${table}`]);
+      const privileges = await db.query(`select has_table_privilege($1, $2, 'INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') as allowed`, [role, `public.${table}`]);
       assert.equal(privileges.rows[0].allowed, false, `${role}: ${table}`);
+      const reads = await db.query(`select has_table_privilege($1, $2, 'SELECT') as allowed`, [role, `public.${table}`]);
+      assert.equal(reads.rows[0].allowed, role === 'authenticated' && !['api_keys','domain_events','payment_events'].includes(table));
     }
     await db.exec(`set role ${role}`);
     try {
-      await rejects('select * from orders', '42501');
+      if (role === 'anon') await rejects('select * from orders', '42501');
+      else assert.equal((await db.query('select * from orders')).rows.length, 0);
     } finally { await db.exec('reset role'); }
   }
 });
@@ -366,4 +374,132 @@ test('all staff role fixtures persist; unknown roles and client self-promotion a
   assert.equal((await db.query('select is_active from staff_profiles where id=$1', [staffFixtures[0].id])).rows[0].is_active, false);
   await db.exec('set local role authenticated');
   await invalid("update staff_profiles set role='owner'", '42501');
+}));
+
+async function seedStaff() {
+  for (const staff of staffFixtures) {
+    await db.query('insert into auth.users(id) values ($1)', [staff.auth_user_id]);
+    await db.query('insert into staff_profiles(id,operator_id,auth_user_id,role) values ($1,$2,$3,$4)',
+      [staff.id, staff.operator_id, staff.auth_user_id, staff.role]);
+  }
+}
+
+async function asUser(userId) {
+  await db.query("select set_config('request.jwt.claim.sub', $1, true)", [userId]);
+  await db.exec('set local role authenticated');
+}
+
+// Map read policies to the existing application capability contract, detecting drift.
+const readCapability = {
+  suppliers: 'catalog.read', products: 'catalog.read', stops: 'catalog.read',
+  departures: 'catalog.read', reviews: 'catalog.read',
+  vehicles: 'tracking.manage', vehicle_positions: 'tracking.manage',
+  customers: 'customers.read', orders: 'bookings.read', bookings: 'bookings.read',
+  booking_items: 'bookings.read', inventory_holds: 'bookings.read',
+  content_pages: 'content.manage', redirects: 'content.manage',
+  payments: 'payments.refund', refunds: 'payments.refund', audit_logs: 'audit.read',
+};
+
+for (const staff of staffFixtures) {
+  test(`RLS ${staff.role}: intended reads only, correct operator, no direct writes`, () => isolated(async () => {
+    await seedStaff();
+    await asUser(staff.auth_user_id);
+    const own = await db.query('select * from staff_profiles where auth_user_id=$1 and operator_id=$2', [staff.auth_user_id, staff.operator_id]);
+    assert.equal(own.rows.length, 1, 'session membership lookup is usable');
+    const context = await authorizeStaff({
+      getVerifiedUser: async () => ({ id: staff.auth_user_id }),
+      getMembership: async (userId, operatorId) => (await db.query(
+        'select id,operator_id,auth_user_id,role,is_active from staff_profiles where auth_user_id=$1 and operator_id=$2',
+        [userId, operatorId],
+      )).rows[0] ?? null,
+    }, staff.operator_id, 'catalog.read');
+    assert.equal(context.role, staff.role, 'production authorization consumes real RLS-filtered membership');
+    const roster = await db.query('select * from staff_profiles');
+    assert.equal(roster.rows.length, staff.role === 'owner' ? 5 : 1);
+    assert(roster.rows.every((r) => r.operator_id === staff.operator_id));
+    assert.equal((await db.query('select * from operators')).rows.length, 1);
+    for (const [table, permission] of Object.entries(readCapability)) {
+      const { rows } = await db.query(`select * from ${table}`);
+      assert.equal(rows.length > 0, hasPermission(staff.role, permission), `${staff.role}/${table}`);
+      assert(rows.every((r) => r.operator_id === staff.operator_id), `tenant leak in ${table}`);
+    }
+    for (const table of ['api_keys','domain_events','payment_events']) await invalid(`select * from ${table}`, '42501');
+    for (const table of tables) {
+      await invalid(`update ${table} set id=id`, '42501');
+      await invalid(`insert into ${table} default values`, '42501');
+      await invalid(`delete from ${table}`, '42501');
+    }
+  }));
+}
+
+test('other operator owner sees no A records, even by guessed primary keys', () => isolated(async () => {
+  await db.exec(`insert into auth.users(id) values ('${id(400)}');
+    insert into staff_profiles(operator_id,auth_user_id,role) values ('${id(2)}','${id(400)}','owner')`);
+  await asUser(id(400));
+  for (const table of ['staff_profiles', ...Object.keys(readCapability)]) {
+    const { rows } = await db.query(`select * from ${table}`);
+    assert(rows.every((r) => r.operator_id === id(2)), table);
+    assert.equal((await db.query(`select * from ${table} where operator_id=$1`, [id(1)])).rows.length, 0);
+  }
+  assert.equal((await db.query('select * from orders where id=$1', [id(11)])).rows.length, 0);
+  assert.equal((await db.query('select * from products')).rows.length, 1);
+}));
+
+test('nonstaff, disabled staff and forged role claims gain no records', () => isolated(async () => {
+  await seedStaff();
+  await db.exec(`update staff_profiles set is_active=false where id='${staffFixtures[0].id}'`);
+  for (const userId of [id(999), staffFixtures[0].auth_user_id]) {
+    await asUser(userId);
+    await db.query("select set_config('request.jwt.claims', $1, true)", [JSON.stringify({ sub: userId, user_metadata: { role: 'owner' } })]);
+    for (const table of ['operators','staff_profiles', ...Object.keys(readCapability)]) {
+      assert.equal((await db.query(`select * from ${table}`)).rows.length, 0, table);
+    }
+    await db.exec('reset role');
+  }
+}));
+
+test('a user with two memberships gets each operators own role rather than the highest role everywhere', () => isolated(async () => {
+  await seedStaff();
+  const editor = staffFixtures[3];
+  await db.query("insert into staff_profiles(operator_id,auth_user_id,role) values ($1,$2,'owner')", [id(2), editor.auth_user_id]);
+  await asUser(editor.auth_user_id);
+  assert.equal((await db.query('select * from staff_profiles where auth_user_id=$1', [editor.auth_user_id])).rows.length, 2);
+  assert.equal((await db.query('select * from products')).rows.length, 3);
+  assert.equal((await db.query('select * from orders')).rows.length, 0, 'B ownership must not grant access to A orders');
+}));
+
+test('RLS still blocks writes if table write privileges are accidentally granted', () => isolated(async () => {
+  await seedStaff();
+  await db.exec('grant insert, update, delete on public.orders to authenticated');
+  await asUser(staffFixtures[0].auth_user_id);
+  assert.equal((await db.query('update orders set total=0 returning id')).rows.length, 0);
+  assert.equal((await db.query('delete from orders returning id')).rows.length, 0);
+  await invalid(`insert into orders(operator_id,customer_id,subtotal,total) values ('${id(1)}','${id(10)}',0,0)`, '42501');
+}));
+
+test('privileged role is explicitly capable but still subject to structural constraints', () => isolated(async () => {
+  await db.exec('set local role service_role');
+  assert.equal((await db.query('select * from operators')).rows.length, 2, 'BYPASSRLS is not tenant scoped');
+  await db.query('update products set title=$1 where operator_id=$2 and id=$3', ['Server change', id(1), id(5)]);
+  await invalid(`update products set supplier_id='${id(4)}' where id='${id(6)}'`, '23503');
+}));
+
+test('helper cannot be replaced/called by anon, and authenticated callers cannot target a different user', () => isolated(async () => {
+  await seedStaff();
+  await asUser(staffFixtures[3].auth_user_id);
+  assert.equal((await db.query("select private.has_staff_role($1,array['owner']) as allowed", [id(1)])).rows[0].allowed, false);
+  await invalid('create function private.attack() returns int language sql as $$select 1$$', '42501');
+  await db.exec('set local role anon');
+  await invalid("select private.has_staff_role('00000000-0000-4000-8000-000000000001',array['owner'])", '42501');
+}));
+
+test('membership deactivation removes access on the next database statement', () => isolated(async () => {
+  await seedStaff();
+  await asUser(staffFixtures[0].auth_user_id);
+  assert.equal((await db.query('select * from orders')).rows.length, 1);
+  await db.exec('reset role');
+  await db.query('update staff_profiles set is_active=false where id=$1', [staffFixtures[0].id]);
+  await asUser(staffFixtures[0].auth_user_id);
+  assert.equal((await db.query('select * from orders')).rows.length, 0);
+  assert.equal((await db.query('select * from staff_profiles')).rows.length, 0);
 }));

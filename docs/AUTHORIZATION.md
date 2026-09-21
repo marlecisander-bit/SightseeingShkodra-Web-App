@@ -1,6 +1,6 @@
 # Staff authentication and authorization
 
-Phase 1D adds server-session integration and a central staff permission model. No login UI, user provisioning or usable RLS policy is added yet.
+Phase 1D adds server-session integration and a central staff permission model. Phase 1E adds operator-scoped read policies and server-only privileged access; see [Database access](DATABASE_ACCESS.md). Login UI and user provisioning remain later work.
 
 ## Initial role policy
 
@@ -39,9 +39,9 @@ This follows the [Supabase SSR guide](https://supabase.com/docs/guides/auth/serv
 
 20260921000100_staff_roles.sql constrains roles and adds is_active with default true. It adds no grants or policies. Unknown existing roles fail migration rather than silently gain privileges. First-owner provisioning and later invitations must use trusted audited server operations; there is no public self-promotion path.
 
-For a dedicated development project, set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY in ignored .env.local. Never place a privileged secret in the publishable-key field. SUPABASE_SECRET_KEY is unused by Phase 1D. No cloud project/credentials were supplied or modified.
+For a dedicated development project, set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY in ignored .env.local. Never place a privileged secret in the publishable-key field. Phase 1E uses SUPABASE_SECRET_KEY only for authorized server-side privileged callbacks. No cloud project/credentials were supplied or modified.
 
-**Real staff_profiles reads remain denied until Phase 1E adds the appropriate grant and RLS policy.** requirePermission fails closed in that situation. This phase deliberately does not bypass RLS with a secret client. Phase 1E must provide narrowly scoped membership reads and the remaining operator policies.
+Phase 1E now permits active users to read their own staff_profiles memberships; active owners can also read their operator's roster. requirePermission continues to use the session client and RLS for membership checks, never the privileged client. Local tests exercise this lookup against actual PostgreSQL policies. Hosted PostgREST/Auth validation is still pending.
 
 ## Evidence and limits
 
