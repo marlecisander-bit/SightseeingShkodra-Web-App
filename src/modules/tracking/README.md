@@ -1,5 +1,7 @@
-# Tracking
+# Tracking prototypes (inactive on public pages)
 
-One position source: the existing vehicle_positions table. Phase 6B adds SharedMap view/manage-selection interfaces and readPositions, a server-only, operator-filtered reader. The caller must supply an authorized request-scoped client and trusted operator binding. Manage selection is not permission to write.
+The connected public map is components/public/live-map-embed.tsx, which embeds the independent tracking app. See docs/LIVE_MAP_EMBED.md and the approved amendment in docs/DECISIONS.md.
 
-Local fictional preview: /dev/tracking-preview. Public /live integration and admin writes remain separate phases. No GPS publishing, polling, routing or ETA yet. See docs/PHASE_6B_REPORT.md.
+This directory retains earlier experimental SharedMap presentation, the unused vehicle_positions reader and ported presentation functions. Only development preview/tests use the renderer. They are not the production tracking source and must not be wired as a competing GPS pipeline. No device writer or scheduler exists here.
+
+See docs/PHASE_6_AUDIT.md for the current acceptance boundary.

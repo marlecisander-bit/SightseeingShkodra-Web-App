@@ -2,6 +2,8 @@
 
 Updated: 2026-09-22.
 
+LATEST AUDIT: Phase 6 PASS for the approved local independent-map embed scope; see PHASE_6_AUDIT.md. 139 tests, lint, typecheck and isolated build passed; four HTTP placements and mobile/keyboard recovery checked. Upstream GPS/ETA, intermittent tile reliability and publication propagation are not certified. Next: Phase 7B local site validation, then staging checks when available. No external deployment.
+
 CURRENT APPROACH: Existing public tracking app embedded on `/live` by explicit user decision. Original tracking admin/backend stay independent; deeper consolidation is superseded. Local iframe, fallback link and responsive layout verified in Chrome, including changing upstream distance/ETA and Route control. Lint/typecheck/isolated build passed. See LIVE_MAP_EMBED.md and DECISIONS.md. No external deployment or tracking-service changes. Earlier port entries are historical.
 
 LATEST INTEGRATION: First local public tracking port implemented; see TRACKING_PUBLIC_PORT.md. Original GPS-health/parked-stop behavior ported with baseline parity tests; published GeoJSON routes/stops/POIs render through the shared component. `/live` now mounts it with an explicit unconnected state; fictional geometry stays in the dev preview. 32 integration tests, lint/typecheck and initial isolated build passed. Backend reads, realtime/ETA and admin integration remain pending; no hosted changes.
@@ -107,7 +109,7 @@ Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, 
 - [x] Phase 6B shared map — LOCAL FOUNDATION VERIFIED; see PHASE_6B_REPORT.md
 - [x] Phase 6C public tracking — EMBED VERIFIED locally under approved independent-app amendment; see LIVE_MAP_EMBED.md
 - [ ] Phase 6D admin/regression — ADMIN MERGE SUPERSEDED; existing tracking admin retained; full tracking regression remains external
-- [ ] Phase 6 audit/checkpoint — NOT STARTED
+- [x] Phase 6 audit/checkpoint — LOCAL EMBED SCOPE PASS; checkpoint-phase-6-live-map; see PHASE_6_AUDIT.md
 - [ ] Phase 7A URL migration — NOT APPLICABLE to fresh project; see DECISIONS.md
 - [ ] Phase 7B staging crawl — NOT STARTED
 - [ ] Phase 7C readiness — NOT STARTED
