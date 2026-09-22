@@ -95,6 +95,7 @@ try {
     assert.equal(forbidden.status, 307);
     const content = await fetch(`${baseUrl}/admin/${operators[0]}/content`, { headers: { cookie }, redirect: 'manual' });
     assert.equal(content.status, 200);
+    assert.ok((await content.text()).includes('Create content page'));
     console.log('PASS: actual HTTP admin routes enforce sign-in, operator isolation and role access');
   }
   console.log('PASS: actual Next proxy refreshes stale SSR session cookies and forwards verified identity');

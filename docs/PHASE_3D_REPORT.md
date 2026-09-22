@@ -1,0 +1,11 @@
+# Phase 3D content CMS
+
+Implemented create/edit/publish/archive content-page forms in the protected content workspace, with slug, body, SEO title/description, optional HTTPS social image and required image description when an image is supplied. Saved text preview renders through React escaping. Body V1 is `{version:1,format:"plain_text",text}`; no executable HTML, rich-text engine or public content route was added.
+
+Server Actions authorize content.manage and derive operator/actor from the current staff session. Migration 20260922000200_content_management.sql independently permits active owner/admin/content_editor membership only; validates fields and publication requirements, enforces the existing tenant slug uniqueness and uses an optimistic updated_at check under a row lock. Unknown existing body formats cannot be silently overwritten. Mutation plus content.changed event/audit are atomic. Audit metadata contains status/slug, not the article body.
+
+Published content requires nonempty body, SEO title and description. Drafts may be incomplete. Archiving preserves the row/history. Image URLs are stored only, not fetched by the CMS. The plaintext editor supports up to 50,000 characters. Lists show up to 100 pages; pagination, rich-text/media upload, automatic redirects on slug changes and public page rendering remain outside this implementation. Before public launch, URL-change policy must be settled.
+
+Tests cover content-editor draft/publish/archive, missing publication fields, missing image alt text, stale updates, duplicate slugs, audit persistence, cross-operator denial and operations-role denial. Visual QA and browser form submission remain pending because no browser is connected; HTTP rendering checks are separate evidence. Owner onboarding remains pending. No new environment variables or production changes. Next: Phase 3E booking operations.
+
+Results: all 94 local tests pass. Lint/typecheck pass; the first build encountered Windows EPERM in .next and the retry succeeded. Migration preview selected only the CMS migration and development push succeeded. The hosted Auth/local HTTP verifier confirmed a content editor can render the CMS page while restricted booking routes remain denied; temporary identities were cleaned up. No hosted content pages were fabricated by tests.

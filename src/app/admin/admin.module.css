@@ -17,6 +17,8 @@
 .shell summary { cursor:pointer; min-height:44px; padding:.5rem; }
 .shell input[type=checkbox] { display:inline-block; width:auto; margin:1rem .5rem; }
 .shell label { display:block; }
+.shell textarea { display:block; width:100%; padding:.85rem; margin:.5rem 0 1.25rem; font:inherit; border:1px solid #777; resize:vertical; }
+.shell :is(select,textarea,summary):focus-visible { outline:3px solid #215fa4; outline-offset:4px; }
 .shell form button { margin:.25rem .5rem .25rem 0; }
 .muted { color:#605b56; }
 .list { padding:0; list-style:none; display:grid; gap:1rem; }
