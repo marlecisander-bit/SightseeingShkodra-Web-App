@@ -52,6 +52,36 @@ const finish = (j, outcome) =>
     j.lease_token,
     outcome,
   ]);
+test("exhausted retries stop after five claims while the reservation stays confirmed", async () => {
+  const booking = await create();
+  await enqueue();
+  let job;
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    job = await claim();
+    assert.equal(job.booking_id, booking);
+    assert.equal(job.attempt_count, attempt);
+    await finish(job, "retry");
+    assert.equal(await claim(), undefined);
+    await db.query("update notification_deliveries set next_attempt_at=clock_timestamp() where id=$1", [job.id]);
+  }
+  assert.equal(await claim(), undefined);
+  assert.equal((await db.query("select status from notification_deliveries where id=$1", [job.id])).rows[0].status, "failed");
+  assert.equal((await db.query("select status from bookings where id=$1", [booking])).rows[0].status, "confirmed");
+});
+
+test("expired preparation leases rotate tokens and reject delayed results", async () => {
+  await create();
+  await enqueue();
+  const old = await claim();
+  await db.query("update notification_deliveries set lease_until=clock_timestamp()-interval '1 second' where id=$1", [old.id]);
+  const fresh = await claim();
+  assert.equal(fresh.id, old.id);
+  assert.notEqual(fresh.lease_token, old.lease_token);
+  assert.equal(fresh.attempt_count, 2);
+  await assert.rejects(finish(old, "failed"), (e) => e.code === "P0002");
+  await finish(fresh, "failed");
+});
+
 test("confirmation consumer deduplicates events without consuming the shared outbox", async () => {
   const b = await create();
   assert.equal((await enqueue()).rows[0].n, 1);

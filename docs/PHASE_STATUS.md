@@ -2,6 +2,8 @@
 
 Updated: 2026-09-22.
 
+LATEST REVIEW: Phase 5 audit PARTIAL; local meeting-point booking/notification checks pass, live messaging remains deferred. Two retry defects fixed; 132 tests, lint and typecheck passed. See PHASE_5_AUDIT.md. No Phase 5 checkpoint. Next separately scoped build: Phase 6B shared map under the fresh-project amendment; legacy reuse audit is not applicable.
+
 CURRENT PHASE: Phase 5E local notification foundation implemented; live delivery pending by user decision. Queue, retry worker ports, email fallback simulations and admin status display added. All 129 tests, lint, typecheck and isolated production build passed. Migration tested locally only, not applied to hosted Supabase. No messages sent or providers connected. See PHASE_5E_REPORT.md. Earlier entries below are historical.
 
 CURRENT SETUP: Owner sign-in verified. Van-tour price editor implemented under Products & stops; see ADMIN_BOOKING_SETUP.md. Exact EUR pricing, owner/admin permission, audit and stale-edit guards verified. Eleven targeted database tests, lint/typecheck and isolated build passed; migration applied to development Supabase. Real catalog remains empty for manual entry. Next: enter operational content/tours/stops/departures; notification delivery remains separately scoped. No external deployment.
@@ -92,7 +94,7 @@ Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, 
 - [x] Phase 5C replacement: atomic unpaid meeting-point confirmation — IMPLEMENTED; see MEETING_POINT_BOOKINGS.md
 - [ ] Phase 5D provider refunds — SKIPPED; collected cancellations request manual refund review
 - [ ] Phase 5E notifications — LOCAL FOUNDATION VERIFIED; live providers and activation pending
-- [ ] Phase 5 audit/checkpoint — NOT STARTED
+- [ ] Phase 5 audit/checkpoint — PARTIAL; local checks pass, live notifications deferred; see PHASE_5_AUDIT.md
 - [ ] Phase 6A tracking reuse audit — NOT APPLICABLE to fresh project; see DECISIONS.md
 - [ ] Phase 6B shared map — NOT STARTED
 - [ ] Phase 6C public tracking — NOT STARTED

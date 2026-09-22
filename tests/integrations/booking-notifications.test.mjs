@@ -54,6 +54,23 @@ function fixture(data = { ...confirmation }, jobChanges = {}) {
     },
   };
 }
+test("retry limits report failure and WhatsApp-only transient retries keep their channel", async () => {
+  const exhausted = fixture({ ...confirmation }, { attempt_count: 5 });
+  assert.equal(await deliverNextBookingNotification({
+    enabled: true, operatorId: "op", store: exhausted.store,
+    email: async () => ({ status: "rejected", retryable: true }),
+  }), "failed");
+  assert.deepEqual(exhausted.calls.at(-1), ["failed", "email_rejected"]);
+  const retry = fixture({ ...confirmation, whatsappAllowed: true }, {
+    attempt_count: 2, channel: "whatsapp", last_error_code: "whatsapp_rejected",
+  });
+  assert.equal(await deliverNextBookingNotification({
+    enabled: true, operatorId: "op", store: retry.store,
+    whatsapp: async () => ({ status: "accepted", reference: "wa-retry" }),
+  }), "accepted");
+  assert.equal(retry.calls[1], "whatsapp");
+});
+
 test("notifications are disabled by default and previews preserve unpaid confirmation wording", async () => {
   const f = fixture();
   assert.equal(

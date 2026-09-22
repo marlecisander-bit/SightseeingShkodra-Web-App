@@ -123,7 +123,7 @@ export async function deliverNextBookingNotification(input: {
   const channel =
     canWhatsapp &&
     job.channel !== "email" &&
-    job.last_error_code !== "whatsapp_rejected"
+    !(job.last_error_code === "whatsapp_rejected" && input.email)
       ? "whatsapp"
       : "email";
   const sender = channel === "whatsapp" ? input.whatsapp : input.email;
@@ -178,7 +178,8 @@ export async function deliverNextBookingNotification(input: {
     return "uncertain";
   }
   const retry =
-    (channel === "whatsapp" && Boolean(input.email)) || result.retryable;
+    job.attempt_count < 5 &&
+    ((channel === "whatsapp" && Boolean(input.email)) || result.retryable);
   await input.store.finish(
     job,
     retry ? "retry" : "failed",
