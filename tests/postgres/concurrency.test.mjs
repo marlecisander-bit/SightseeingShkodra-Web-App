@@ -28,8 +28,8 @@ test('staff manual booking reuses domain locks, rolls back invalid customer and 
     pending=second.query(sql,args).then(result=>({result}),error=>({error}));
     await waitForLock();await first.query('commit');
     const replay=await pending;assert.ifError(replay.error);assert.deepEqual(replay.result.rows[0].result,created);
-    assert.equal(created.total,1250);assert.equal(created.status,'pending');
-    assert.equal((await observer.query('select status from orders where id=$1',[created.orderId])).rows[0].status,'awaiting_payment');
+    assert.equal(created.total,1250);assert.equal(created.status,'confirmed');
+    assert.equal((await observer.query('select status from orders where id=$1',[created.orderId])).rows[0].status,'confirmed');
     assert.equal((await observer.query('select count(*)::int as n from payments where order_id=$1',[created.orderId])).rows[0].n,0);
     assert.equal((await observer.query("select count(*)::int as n from audit_logs where entity_id=$1 and actor_id=$2 and action='booking.staff_created'",[created.bookingId,actor])).rows[0].n,1);
   }finally{await first.query('rollback');if(pending)await pending;}
@@ -370,3 +370,76 @@ for (const commit of [true, false]) {
     }
   });
 }
+
+
+test('meeting-point confirmation is atomic, session scoped and retry safe; unpaid seats remain allocated',async()=>{
+  const op='10000000-0000-4000-8000-000000000001', product='10000000-0000-4000-8000-000000000020',session='meeting-point-test-session-1234567890';
+  await observer.query(`update products set status='published',capacity_rules='{"version":1,"model":"departure_seats"}',pricing_rules='{"version":1,"model":"per_guest","currency":"EUR","unit_price":1250}' where id=$1`,[product]);
+  const dep=(await observer.query("insert into departures(operator_id,product_id,service_date,start_time,capacity,status) values($1,$2,'2031-01-01','12:00',1,'scheduled') returning id",[op,product])).rows[0].id;
+  const h=(await first.query('select * from create_hold_v1($1,$2,$3,gen_random_uuid(),1)',[op,dep,session])).rows[0];
+  const sql="select create_meeting_point_booking_v1($1,$2,$3,'Meeting Test',$4) as result",args=[op,h.id,session,'meeting@example.invalid'];
+  await assert.rejects(first.query(sql,[op,h.id,'foreign-session-key-1234567890123456',args[3]]),e=>e.code==='P0002');
+  await assert.rejects(first.query(sql,[...args.slice(0,3),'invalid']),e=>e.code==='22023');
+  await first.query('begin');await first.query(sql,args);await first.query('rollback');
+  assert.equal((await observer.query('select order_id from inventory_holds where id=$1',[h.id])).rows[0].order_id,null);
+  await first.query('begin');let pending,created;
+  try{
+    created=(await first.query(sql,args)).rows[0].result;
+    pending=second.query(sql,args).then(result=>({result}),error=>({error}));await waitForLock();await first.query('commit');
+    const replay=await pending;assert.ifError(replay.error);assert.deepEqual(replay.result.rows[0].result,created);
+  }finally{await first.query('rollback');if(pending)await pending;}
+  assert.equal(created.status,'confirmed');assert.equal(created.paymentStatus,'due');assert.equal(created.total,1250);assert.ok(created.bookingReference);
+  assert.equal((await observer.query('select count(*)::int n from payments where order_id=$1',[created.orderId])).rows[0].n,0);
+  assert.equal((await observer.query('select status from inventory_holds where id=$1',[h.id])).rows[0].status,'consumed');
+  await assert.rejects(first.query('select create_hold_v1($1,$2,$3,gen_random_uuid(),1)',[op,dep,'another-session-key-123456789012345']),e=>e.code==='P0001');
+  await assert.rejects(first.query(sql,[...args.slice(0,3),'changed@example.invalid']),e=>e.code==='23505');
+  assert.equal((await observer.query("select count(*)::int n from domain_events where aggregate_id=(select id from bookings where order_id=$1) and event_type='booking.confirmed'",[created.orderId])).rows[0].n,1);
+  const user=(await observer.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;
+  const actor=(await observer.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'operations') returning id",[op,user])).rows[0].id;
+  const collect='select collect_meeting_point_payment_v1($1,$2,$3) as id',cargs=[op,created.orderId,actor];
+  await assert.rejects(first.query(collect,[op,created.orderId,user]),e=>e.code==='42501');
+  await first.query('begin');let receipt;
+  try{receipt=(await first.query(collect,cargs)).rows[0].id;pending=second.query(collect,cargs).then(result=>({result}),error=>({error}));await waitForLock();await first.query('commit');const replay=await pending;assert.ifError(replay.error);assert.equal(replay.result.rows[0].id,receipt);}finally{await first.query('rollback');if(pending)await pending;}
+  assert.equal((await observer.query('select count(*)::int n from payments where order_id=$1',[created.orderId])).rows[0].n,1);
+  assert.equal((await first.query(sql,args)).rows[0].result.paymentStatus,'paid');
+  await first.query("select set_config('request.jwt.claim.sub',$1,false)",[user]);await first.query('set role authenticated');
+  try{
+    assert.equal((await first.query('select count(*)::int n from payments where id=$1',[receipt])).rows[0].n,1);
+    assert.equal((await first.query("select count(*)::int n from payments where provider<>'meeting_point' or operator_id<>$1",[op])).rows[0].n,0);
+    await assert.rejects(first.query("update payments set amount=0 where id=$1",[receipt]),e=>e.code==='42501');
+  }finally{await first.query('reset role');await first.query("select set_config('request.jwt.claim.sub','',false)");}
+
+  const cancelled=(await first.query("select cancel_order_v1($1,$2,$3,'Changed plans') as result",cargs)).rows[0].result;assert.equal(cancelled.refundReviewRequired,true);
+  assert.equal((await first.query(sql,args)).rows[0].result.bookingStatus,'cancelled');
+  await assert.rejects(first.query(collect,cargs),e=>e.code==='P0001');
+  await first.query('select create_hold_v1($1,$2,$3,gen_random_uuid(),1)',[op,dep,'after-cancellation-session-123456789']);
+});
+
+test('meeting-point expired forms fail; unpaid cancellation releases seats without refund work',async()=>{
+  const op='10000000-0000-4000-8000-000000000001',product='10000000-0000-4000-8000-000000000020',session='meeting-expiry-test-session-123456789';
+  const dep=(await observer.query("insert into departures(operator_id,product_id,service_date,start_time,capacity,status) values($1,$2,'2031-02-01','12:00',1,'scheduled') returning id",[op,product])).rows[0].id;
+  const h=(await observer.query("insert into inventory_holds(operator_id,departure_id,session_key,quantity,expires_at) values($1,$2,$3,1,clock_timestamp()+interval '100 milliseconds') returning id",[op,dep,session])).rows[0].id;
+  await observer.query('select pg_sleep(0.15)');
+  await assert.rejects(first.query("select create_meeting_point_booking_v1($1,$2,$3,'Test','test@example.invalid')",[op,h,session]),e=>e.code==='P0001');
+  const active=(await first.query('select * from create_hold_v1($1,$2,$3,gen_random_uuid(),1)',[op,dep,session])).rows[0];
+  const result=(await first.query("select create_meeting_point_booking_v1($1,$2,$3,'Test','test@example.invalid') as result",[op,active.id,session])).rows[0].result;
+  const actor=(await observer.query("select id from staff_profiles where operator_id=$1 and role='operations' and is_active limit 1",[op])).rows[0].id;
+  const cancel=(await first.query("select cancel_order_v1($1,$2,$3,'No show') as result",[op,result.orderId,actor])).rows[0].result;
+  assert.equal(cancel.refundReviewRequired,false);
+  assert.equal((await observer.query("select count(*)::int n from booking_items where departure_id=$1 and status='confirmed'",[dep])).rows[0].n,0);
+  for(const role of ['anon','authenticated']){await first.query('set role '+role);try{await assert.rejects(first.query("select create_meeting_point_booking_v1($1,$2,$3,'Test','test@example.invalid')",[op,active.id,session]),e=>e.code==='42501');await assert.rejects(first.query('select collect_meeting_point_payment_v1($1,$2,$3)',[op,result.orderId,actor]),e=>e.code==='42501');}finally{await first.query('reset role');}}
+});
+
+
+test('confirmed meeting-point seats survive the original form expiry',async()=>{
+  const op='10000000-0000-4000-8000-000000000001',product='10000000-0000-4000-8000-000000000020',session='confirmed-expiry-session-123456789012';
+  const dep=(await observer.query("insert into departures(operator_id,product_id,service_date,start_time,capacity,status) values($1,$2,'2031-03-01','12:00',1,'scheduled') returning id",[op,product])).rows[0].id;
+  const h=(await observer.query("insert into inventory_holds(operator_id,departure_id,session_key,quantity,expires_at) values($1,$2,$3,1,clock_timestamp()+interval '1 second') returning id",[op,dep,session])).rows[0].id;
+  const sql="select create_meeting_point_booking_v1($1,$2,$3,'Test','expiry@example.invalid') as result",args=[op,h,session];
+  const confirmed=(await first.query(sql,args)).rows[0].result;
+  await observer.query('select pg_sleep(1.05)');
+  await observer.query('select expire_holds_v1($1)',[op]);
+  assert.deepEqual((await first.query(sql,args)).rows[0].result,confirmed);
+  await assert.rejects(first.query('select create_hold_v1($1,$2,$3,gen_random_uuid(),1)',[op,dep,'another-confirmed-expiry-session-123456']),e=>e.code==='P0001');
+  assert.equal((await observer.query('select status from inventory_holds where id=$1',[h])).rows[0].status,'consumed');
+});

@@ -27,6 +27,8 @@ async function send(body: object) {
   return result;
 }
 const messages: Record<string, string> = {
+  RESERVATION_CONFIRMED:
+    "These seats are already confirmed. Check your reservation below; staff can help with cancellation.",
   SOLD_OUT:
     "Those seats are no longer available. Please choose another departure.",
   HOLD_INACTIVE:
@@ -217,7 +219,7 @@ export function CheckoutFlow() {
   return (
     <div className="p-flow">
       <ol className="p-progress" aria-label="Booking progress">
-        {["Selection", "Details", "Payment"].map((label, i) => (
+        {["Selection", "Details", "Confirmation"].map((label, i) => (
           <li
             key={label}
             aria-current={
@@ -231,14 +233,17 @@ export function CheckoutFlow() {
       </ol>
       <h2 ref={heading} tabIndex={-1}>
         {order
-          ? "Your order is pending."
+          ? order.bookingStatus === "confirmed"
+            ? "Your seats are confirmed."
+            : order.status === "cancelled"
+              ? "Your booking was cancelled."
+              : "Your order needs attention."
           : attempt?.hold
             ? "Your seats, for a little while."
             : "Choose your day."}
       </h2>
       <p className="p-preview">
-        Development booking. Use test customer details only. Payments are not
-        open.
+        Reserve online and pay at the meeting point.
       </p>
       <div className="p-flow-summary">
         <span>{chosen.date || "Choose a date"}</span>
@@ -288,22 +293,33 @@ export function CheckoutFlow() {
       )}
       {attempt?.hold ? (
         <>
-          <p role="timer" aria-label="Time remaining">
-            {active
-              ? `Seats reserved for ${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, "0")}`
-              : "Your reserved time has ended. No seats are secured."}
-          </p>
+          {!order && (
+            <p role="timer" aria-label="Time remaining">
+              {active
+                ? `Seats reserved for ${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, "0")}`
+                : "Your reserved time has ended. No seats are secured."}
+            </p>
+          )}
           {order ? (
             <div className="p-empty">
-              <h3>Payment is not available yet.</h3>
+              <h3>
+                {order.status === "cancelled"
+                  ? "No seats are reserved."
+                  : order.paymentStatus === "paid"
+                    ? "Payment received at the meeting point."
+                    : "Payment due at the meeting point."}
+              </h3>
               <p>
-                Your order has been saved as pending. It is not a confirmed
-                ticket. Seats are only reserved until the timer ends.
+                {order.bookingStatus === "confirmed"
+                  ? "Your reservation is confirmed. Keep your reference and show it to staff when you arrive."
+                  : "Contact staff to check this booking before travelling."}
               </p>
-              <p>Order reference: {order.orderId}</p>
-              <button className="p-button" disabled>
-                Payment unavailable
-              </button>
+              <p>
+                Booking reference: {order.bookingReference ?? order.orderId}
+              </p>
+              <p>
+                For cancellation or changes, contact the meeting-point staff.
+              </p>
             </div>
           ) : active ? (
             <form
@@ -359,25 +375,27 @@ export function CheckoutFlow() {
                 />
               </Field>
               <p>
-                The final order price is checked before saving. No payment is
-                taken.
+                Confirm your reservation below. The final price is checked by
+                the booking system. You will pay at the meeting point.
               </p>
               <button className="p-button" disabled={busy || !active}>
                 {busy
                   ? "Saving…"
                   : submitted
-                    ? "Retry saving order"
-                    : "Save pending order"}
+                    ? "Retry confirming reservation"
+                    : "Confirm reservation - pay at meeting point"}
               </button>
             </form>
           ) : null}
-          <button
-            className="p-text-button"
-            disabled={busy}
-            onClick={() => void perform(restart)}
-          >
-            Release seats and return to selection
-          </button>
+          {!order && (
+            <button
+              className="p-text-button"
+              disabled={busy}
+              onClick={() => void perform(restart)}
+            >
+              Release seats and return to selection
+            </button>
+          )}
         </>
       ) : (
         <>

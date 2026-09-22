@@ -2,7 +2,9 @@
 
 Updated: 2026-09-22.
 
-CURRENT CHECKPOINT: Phase 4 public implementation audit PASS for local/development scope under recorded amendments; see PHASE_4_AUDIT.md. All 116 tests, lint, typecheck and isolated production build passed. Real content and production readiness remain pending. Next: Phase 5A Stripe test-mode setup; no live payments or external deployment authorized.
+CURRENT AMENDMENT: Pay-at-meeting-point booking implemented and verified; see MEETING_POINT_BOOKINGS.md and DECISIONS.md. Public/staff reservations confirm immediately without online payment; confirmed seats retain capacity, staff record full collection and cancellation releases inventory. Migration applied to development Supabase. 119 tests across completed runs, hosted HTTP/RPC and mobile confirmation/reload checks passed. Real content remains pending. Stripe/online payment phases skipped by user decision. Next: operational booking setup and separately scoped notifications; local/development only.
+
+PREVIOUS CHECKPOINT: Phase 4 public implementation audit PASS for local/development scope under recorded amendments; see PHASE_4_AUDIT.md. All 116 tests, lint, typecheck and isolated production build passed. Real content and production readiness remain pending. Next: Phase 5A Stripe test-mode setup; no live payments or external deployment authorized.
 
 PREVIOUS REVIEW: Phase 4F local public QA completed; see PHASE_4F_REPORT.md. Responsive checks, keyboard/menu/dialog focus, reduced motion, image behavior and continuous selection verified in Chrome. Distinct route titles and deferred checkout loading implemented. Lint/typecheck, isolated production build and 20 integration tests passed. Field Core Web Vitals and physical-device checks remain unverified. Next: Phase 4 audit; no full checkpoint or production deployment.
 
@@ -81,10 +83,10 @@ Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, 
 - [x] Phase 4E Explore/SEO — IMPLEMENTED; see PHASE_4E_REPORT.md; manual content and Phase 4F QA pending
 - [x] Phase 4F public QA — LOCAL QA COMPLETE; see PHASE_4F_REPORT.md for scope and limits
 - [x] Phase 4 audit/checkpoint — PASS for local implementation; checkpoint-phase-4-public; see PHASE_4_AUDIT.md
-- [ ] Phase 5A Stripe test setup — NOT STARTED
-- [ ] Phase 5B webhooks — NOT STARTED
-- [ ] Phase 5C atomic confirmation — NOT STARTED
-- [ ] Phase 5D refunds — NOT STARTED
+- [ ] Phase 5A Stripe test setup — SKIPPED by pay-at-meeting-point amendment
+- [ ] Phase 5B webhooks — SKIPPED; no online payment provider
+- [x] Phase 5C replacement: atomic unpaid meeting-point confirmation — IMPLEMENTED; see MEETING_POINT_BOOKINGS.md
+- [ ] Phase 5D provider refunds — SKIPPED; collected cancellations request manual refund review
 - [ ] Phase 5E notifications — NOT STARTED
 - [ ] Phase 5 audit/checkpoint — NOT STARTED
 - [ ] Phase 6A tracking reuse audit — NOT APPLICABLE to fresh project; see DECISIONS.md

@@ -46,7 +46,7 @@ export async function readPendingOrder(
   if (!hold.data.order_id) return null;
   const order = await client
     .from("orders")
-    .select("id,status,currency,total")
+    .select("id,status,currency,total,collection_mode")
     .eq("operator_id", operatorId)
     .eq("id", hold.data.order_id)
     .single();
@@ -57,7 +57,26 @@ export async function readPendingOrder(
     .eq("order_id", hold.data.order_id)
     .order("id");
   if (order.error || items.error) throw new CheckoutError("UNAVAILABLE");
+  const booking = await client
+    .from("bookings")
+    .select("booking_reference,status")
+    .eq("operator_id", operatorId)
+    .eq("order_id", hold.data.order_id)
+    .maybeSingle();
+  const payments = await client
+    .from("payments")
+    .select("status")
+    .eq("operator_id", operatorId)
+    .eq("order_id", hold.data.order_id)
+    .eq("provider", "meeting_point");
+  if (booking.error || payments.error) throw new CheckoutError("UNAVAILABLE");
   return {
+    collectionMode: order.data.collection_mode,
+    bookingReference: booking.data?.booking_reference,
+    bookingStatus: booking.data?.status,
+    paymentStatus: payments.data.some((p) => p.status === "paid")
+      ? "paid"
+      : "due",
     version: 1,
     orderId: order.data.id,
     status: order.data.status,
@@ -79,6 +98,7 @@ export async function readPendingOrder(
 // Session keys come from trusted server session handling, not arbitrary browser input.
 export async function createPendingOrder(
   input: CreatePendingOrderRequest,
+  meetingPoint = false,
 ): Promise<PendingOrder> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL,
     key = process.env.SUPABASE_SECRET_KEY;
@@ -95,14 +115,19 @@ export async function createPendingOrder(
           }),
       },
     });
-    const { data, error } = await client.rpc("create_pending_order_v1", {
-      p_operator_id: input.operatorId,
-      p_hold_id: input.holdId,
-      p_session_key: input.sessionKey,
-      p_customer_name: input.customer.name,
-      p_customer_email: input.customer.email,
-      p_customer_phone: input.customer.phone ?? null,
-    });
+    const { data, error } = await client.rpc(
+      meetingPoint
+        ? "create_meeting_point_booking_v1"
+        : "create_pending_order_v1",
+      {
+        p_operator_id: input.operatorId,
+        p_hold_id: input.holdId,
+        p_session_key: input.sessionKey,
+        p_customer_name: input.customer.name,
+        p_customer_email: input.customer.email,
+        p_customer_phone: input.customer.phone ?? null,
+      },
+    );
     if (error) {
       const codes: Record<
         string,

@@ -22,7 +22,7 @@ const ok = (r) => {
   return r.data;
 };
 const base = "http://127.0.0.1:3001";
-let server;
+let server, actorId, authId;
 const holds = new Set();
 let cookie = "";
 async function post(body, auth = cookie, origin = base) {
@@ -40,33 +40,45 @@ async function post(body, auth = cookie, origin = base) {
 }
 try {
   ok(
-    await client
-      .from("operators")
-      .insert({
-        id: operatorId,
-        name: "Synthetic Phase 4D checkout audit fixture",
-        timezone: "Europe/Tirane",
-      }),
+    await client.from("operators").insert({
+      id: operatorId,
+      name: "Synthetic meeting-point booking audit fixture",
+      timezone: "Europe/Tirane",
+    }),
   );
   ok(
-    await client
-      .from("products")
-      .insert({
-        id: productId,
-        operator_id: operatorId,
-        title: "QA Checkout Tour",
-        slug: "checkout-qa",
-        type: "van_tour",
-        status: "published",
-        pricing_rules: {
-          version: 1,
-          model: "per_guest",
-          currency: "EUR",
-          unit_price: 1250,
-        },
-        capacity_rules: { version: 1, model: "departure_seats" },
-      }),
+    await client.from("products").insert({
+      id: productId,
+      operator_id: operatorId,
+      title: "QA Checkout Tour",
+      slug: "checkout-qa",
+      type: "van_tour",
+      status: "published",
+      pricing_rules: {
+        version: 1,
+        model: "per_guest",
+        currency: "EUR",
+        unit_price: 1250,
+      },
+      capacity_rules: { version: 1, model: "departure_seats" },
+    }),
   );
+  const auth = await client.auth.admin.createUser({
+    email: `meeting-qa-${operatorId}@example.invalid`,
+  });
+  if (auth.error) throw Error("Unable to create synthetic staff identity");
+  authId = auth.data.user.id;
+  actorId = ok(
+    await client
+      .from("staff_profiles")
+      .insert({
+        operator_id: operatorId,
+        auth_user_id: authId,
+        role: "operations",
+      })
+      .select("id")
+      .single(),
+  ).id;
   const snapshot = ok(
     await client.rpc("read_public_homepage_v1", {
       p_operator_id: operatorId,
@@ -74,17 +86,15 @@ try {
     }),
   );
   ok(
-    await client
-      .from("departures")
-      .insert({
-        id: departureId,
-        operator_id: operatorId,
-        product_id: productId,
-        service_date: snapshot.service_date,
-        start_time: "23:59:59",
-        capacity: 2,
-        status: "scheduled",
-      }),
+    await client.from("departures").insert({
+      id: departureId,
+      operator_id: operatorId,
+      product_id: productId,
+      service_date: snapshot.service_date,
+      start_time: "23:59:59",
+      capacity: 2,
+      status: "scheduled",
+    }),
   );
   server = spawn(
     process.execPath,
@@ -181,7 +191,9 @@ try {
   const order = await post({ action: "order", holdId, customer });
   assert.equal(order.response.status, 200, JSON.stringify(order.data));
   assert.equal(order.data.order.total, 2500);
-  assert.equal(order.data.order.status, "pending");
+  assert.equal(order.data.order.status, "confirmed");
+  assert.equal(order.data.order.paymentStatus, "due");
+  assert.ok(order.data.order.bookingReference);
   assert.deepEqual(
     (await post({ action: "order", holdId, customer })).data.order,
     order.data.order,
@@ -200,17 +212,45 @@ try {
   assert.equal(recovered.data.order.orderId, order.data.order.orderId);
   assert.ok(!JSON.stringify(recovered.data).includes(customer.email));
   assert.equal(
-    (await post({ action: "release", holdId })).data.hold.status,
-    "released",
+    (await post({ action: "release", holdId })).response.status,
+    409,
   );
   const quote = await (
     await fetch(
       `${base}/api/public/availability?date=${snapshot.service_date}&guests=2`,
     )
   ).json();
-  assert.equal(quote.quote.departures[0].available, true);
+  assert.equal(quote.quote.departures[0].available, false);
+  const collectionArgs = {
+    p_operator_id: operatorId,
+    p_order_id: order.data.order.orderId,
+    p_actor_id: actorId,
+  };
+  const payment = ok(
+    await client.rpc("collect_meeting_point_payment_v1", collectionArgs),
+  );
+  assert.equal(
+    ok(await client.rpc("collect_meeting_point_payment_v1", collectionArgs)),
+    payment,
+  );
+  assert.equal(
+    (await post({ action: "read", holdId })).data.order.paymentStatus,
+    "paid",
+  );
+  ok(
+    await client.rpc("cancel_order_v1", {
+      ...collectionArgs,
+      p_reason: "Synthetic audit cleanup",
+    }),
+  );
+  const availableAgain = await (
+    await fetch(
+      `${base}/api/public/availability?date=${snapshot.service_date}&guests=2`,
+    )
+  ).json();
+  assert.equal(availableAgain.quote.departures[0].available, true);
   console.log(
-    "PASS: same-origin/session guards, hold retry/conflict, cross-session denial, validated pending order, exact replay, recovery and release capacity",
+    "PASS: same-origin/session guards, hold retry/conflict, cross-session denial, confirmed pay-on-arrival reservation, exact replay, recovery, staff collection and cancellation capacity",
   );
   console.log(`Synthetic audit operator retained: ${operatorId}`);
   if (process.argv.includes("--browser")) {
@@ -226,6 +266,32 @@ try {
     const exited = once(server, "exit");
     server.kill();
     await exited;
+  }
+  // Retain immutable financial/audit history; cancel only this synthetic operator's reservations.
+  if (actorId) {
+    const reservations = ok(
+      await client
+        .from("orders")
+        .select("id")
+        .eq("operator_id", operatorId)
+        .eq("status", "confirmed"),
+    );
+    for (const order of reservations)
+      ok(
+        await client.rpc("cancel_order_v1", {
+          p_operator_id: operatorId,
+          p_order_id: order.id,
+          p_actor_id: actorId,
+          p_reason: "Synthetic browser audit cleanup",
+        }),
+      );
+    ok(
+      await client
+        .from("staff_profiles")
+        .update({ is_active: false })
+        .eq("operator_id", operatorId)
+        .eq("id", actorId),
+    );
   }
   // Retain immutable financial/audit history; retire only this exact synthetic catalog.
   const active = ok(
@@ -259,6 +325,6 @@ try {
       .eq("operator_id", operatorId),
   );
   console.log(
-    "PASS: synthetic active holds released and catalog archived; immutable test order/audit history retained, owner untouched",
+    "PASS: synthetic bookings cancelled, staff disabled, active holds released and catalog archived; immutable test order/audit history retained, owner untouched",
   );
 }

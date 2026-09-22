@@ -139,6 +139,8 @@ export async function POST(request: Request) {
         body.holdId,
         sessionKey,
       );
+      if (body.action === "release" && hold.status === "consumed")
+        return fail("RESERVATION_CONFIRMED", 409);
       return Response.json(
         {
           hold,
@@ -171,16 +173,19 @@ export async function POST(request: Request) {
           (typeof customer.phone !== "string" || customer.phone.length > 50))
       )
         return fail("INVALID_REQUEST");
-      const order = await createPendingOrder({
-        operatorId,
-        holdId: body.holdId,
-        sessionKey,
-        customer: {
-          name: customer.name,
-          email: customer.email,
-          phone: customer.phone as string | undefined,
+      const order = await createPendingOrder(
+        {
+          operatorId,
+          holdId: body.holdId,
+          sessionKey,
+          customer: {
+            name: customer.name,
+            email: customer.email,
+            phone: customer.phone as string | undefined,
+          },
         },
-      });
+        true,
+      );
       return Response.json(
         { order, serverNow: new Date().toISOString() },
         { headers },
