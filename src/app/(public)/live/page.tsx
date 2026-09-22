@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { RoutePreview } from "@/components/public/route-preview";
-import { SharedMap } from "@/modules/tracking/shared-map";
+import styles from "./live-map.module.css";
 import { SectionHeading, PreviewNote } from "@/components/public/ui";
 export const metadata: Metadata = { title: "Live map | Sightseeing Shkodra" };
 
@@ -14,8 +14,18 @@ export default function Live() {
         <br />
         <em>Less waiting.</em>
       </h1>
-      <p>Live vehicle updates are not connected yet. Please confirm departure details with staff.</p>
-      <SharedMap mode="view" snapshot={{state: "unavailable", positions: []}} publishedMap={{state: "empty", routes: [], points: []}} />
+      <iframe
+        className={styles.map}
+        src="https://sightseeingshkodralivetrackingapp.netlify.app/live-map.html?project=sightseeing-shkodra&embed=1"
+        title="Sightseeing Shkodra live van map"
+        loading="lazy"
+        allow="geolocation"
+        referrerPolicy="strict-origin-when-cross-origin"
+      />
+      <p>
+        If the map does not load, {" "}
+        <a href="https://sightseeingshkodralivetrackingapp.netlify.app/live-map.html?project=sightseeing-shkodra" target="_blank" rel="noopener noreferrer">open the live map in a new tab</a>.
+      </p>
       <section className="p-section">
         <SectionHeading
           eyebrow="WHILE YOU’RE HERE"

@@ -2,6 +2,8 @@
 
 Updated: 2026-09-22.
 
+CURRENT APPROACH: Existing public tracking app embedded on `/live` by explicit user decision. Original tracking admin/backend stay independent; deeper consolidation is superseded. Local iframe, fallback link and responsive layout verified in Chrome, including changing upstream distance/ETA and Route control. Lint/typecheck/isolated build passed. See LIVE_MAP_EMBED.md and DECISIONS.md. No external deployment or tracking-service changes. Earlier port entries are historical.
+
 LATEST INTEGRATION: First local public tracking port implemented; see TRACKING_PUBLIC_PORT.md. Original GPS-health/parked-stop behavior ported with baseline parity tests; published GeoJSON routes/stops/POIs render through the shared component. `/live` now mounts it with an explicit unconnected state; fictional geometry stays in the dev preview. 32 integration tests, lint/typecheck and initial isolated build passed. Backend reads, realtime/ETA and admin integration remain pending; no hosted changes.
 
 LATEST DIRECTION: User supplied the existing tracking app and authorized reuse to form one product. Phase 6A source reuse audit completed locally; see TRACKING_REUSE_AUDIT.md and DECISIONS.md. Found incompatible tracking/tenant schemas and multiple source modes requiring reconciliation. Phase 6B's new-map foundation remains available, but its reuse acceptance must now be revisited. Next: local port of the supplied public tracking behavior and shared tests; no live service changes or migration authorized.
@@ -103,8 +105,8 @@ Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, 
 - [ ] Phase 5 audit/checkpoint — PARTIAL; local checks pass, live notifications deferred; see PHASE_5_AUDIT.md
 - [x] Phase 6A tracking reuse audit — SOURCE REVIEW COMPLETE under tracking reuse amendment; active hosted mode remains unverified
 - [x] Phase 6B shared map — LOCAL FOUNDATION VERIFIED; see PHASE_6B_REPORT.md
-- [ ] Phase 6C public tracking — PARTIAL local presentation port; live backend/refresh/ETA pending; see TRACKING_PUBLIC_PORT.md
-- [ ] Phase 6D admin/regression — NOT STARTED
+- [x] Phase 6C public tracking — EMBED VERIFIED locally under approved independent-app amendment; see LIVE_MAP_EMBED.md
+- [ ] Phase 6D admin/regression — ADMIN MERGE SUPERSEDED; existing tracking admin retained; full tracking regression remains external
 - [ ] Phase 6 audit/checkpoint — NOT STARTED
 - [ ] Phase 7A URL migration — NOT APPLICABLE to fresh project; see DECISIONS.md
 - [ ] Phase 7B staging crawl — NOT STARTED

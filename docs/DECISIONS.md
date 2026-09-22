@@ -1,5 +1,9 @@
 # Approved roadmap amendments
 
+## 2026-09-22 - Embed the independent public tracking app
+
+The user explicitly approved connecting only the existing public live map while keeping its app and admin independent. Embed the hosted public page with `project=sightseeing-shkodra&embed=1` on this site's `/live` route. Continue map editing/publishing in the original tracking admin. Its existing refresh behavior owns map/GPS updates; this website does not copy tracking data, run processors or merge authentication. This supersedes the deeper code/database/admin consolidation plan below. Existing experimental port code is retained as inactive development work, not the public tracking implementation. No external deployment or original-service modification is authorized. The original roadmap remains unchanged.
+
 ## 2026-09-22 - Reuse the supplied tracking app
 
 The user requested integrating their existing van-tracking product, including admin and public pages, to avoid separate development, then supplied files from the sibling Sightseeing Shkodra Map App folder. This supersedes the no-legacy-code-import decision specifically for that tracking source. Inspect and reuse its working features within this project's public/staff experience; preserve one authoritative tracking pipeline. No permission to migrate live data, change existing services, provision credentials or cut over production is implied. The fresh-project rules continue to apply outside tracking. See TRACKING_REUSE_AUDIT.md for schema/authentication conflicts and the staged integration plan. The original roadmap remains unchanged.
