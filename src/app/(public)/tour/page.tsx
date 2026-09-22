@@ -5,7 +5,8 @@ import {
   PreviewNote,
   SectionHeading,
 } from "@/components/public/ui";
-import { RoutePreview, TrackingShell } from "@/components/public/route-preview";
+import { RoutePreview } from "@/components/public/route-preview";
+import { LiveMapEmbed } from "@/components/public/live-map-embed";
 import { experience } from "@/modules/public-preview/contracts";
 import { getHomepage } from "@/modules/content/homepage-server";
 import { PublishedStops } from "@/components/public/published-stops";
@@ -160,7 +161,7 @@ export default async function Tour() {
           eyebrow="STAY CLOSE TO YOUR NEXT RIDE"
           title="Your van, when you need it."
         />
-        <TrackingShell />
+        <LiveMapEmbed />
         <ActionLink href="/live">Open live map</ActionLink>
       </section>
       <section id="how" className="p-section p-narrow">
@@ -215,8 +216,9 @@ export default async function Tour() {
         <details>
           <summary>Can I see the van live?</summary>
           <p>
-            The live map is not connected yet. We will only display location and
-            arrival estimates when reliable data is available.
+            Yes. <a href="/live">Open the live van map</a> to see the route,
+            stops and the latest location reported by our tracking app. Check
+            the map for GPS status and any available arrival estimates.
           </p>
         </details>
       </section>

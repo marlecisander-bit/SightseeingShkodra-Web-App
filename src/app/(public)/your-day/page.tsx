@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ActionLink, SectionHeading } from "@/components/public/ui";
-import { TrackingShell } from "@/components/public/route-preview";
+import { LiveMapEmbed } from "@/components/public/live-map-embed";
 import { destinations } from "@/modules/public-preview/contracts";
 export const metadata: Metadata = {
   title: "Your day preview | Sightseeing Shkodra",
@@ -49,7 +49,7 @@ export default function YourDay() {
           </button>
         </section>
         <div>
-          <TrackingShell />
+          <LiveMapEmbed />
           <ActionLink href="/live">Track van</ActionLink>
           <nav className="p-section-nav" aria-label="Travel support">
             <Link href="/tour#timetable">Timetable & boarding</Link>

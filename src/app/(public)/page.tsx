@@ -6,7 +6,8 @@ import {
   PreviewNote,
   SectionHeading,
 } from "@/components/public/ui";
-import { RoutePreview, TrackingShell } from "@/components/public/route-preview";
+import { RoutePreview } from "@/components/public/route-preview";
+import { LiveMapEmbed } from "@/components/public/live-map-embed";
 import { destinations } from "@/modules/public-preview/contracts";
 import { getHomepage } from "@/modules/content/homepage-server";
 import { PublishedStops } from "@/components/public/published-stops";
@@ -151,7 +152,7 @@ export default async function Home() {
           <div>
             <span>ALWAYS CLOSE BY</span>
             <strong>Follow your van</strong>
-            <small>Live tracking coming soon</small>
+            <small>View the live van map</small>
           </div>
         </div>
       </section>
@@ -232,11 +233,11 @@ export default async function Home() {
             </h2>
             <p>
               When you’re ready for your next stop, find your van. Live tracking
-              will keep the journey close at hand.
+              keeps the journey close at hand.
             </p>
             <ActionLink href="/live">Open live map</ActionLink>
           </div>
-          <TrackingShell />
+          <LiveMapEmbed />
         </div>
       </section>
       <section className="p-section p-container">

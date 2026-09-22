@@ -1,3 +1,4 @@
+.embed { min-width: 0; width: 100%; }
 .map {
   display: block;
   width: 100%;

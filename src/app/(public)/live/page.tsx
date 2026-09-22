@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { RoutePreview } from "@/components/public/route-preview";
-import { LiveMapEmbed } from "./live-map-embed";
+import { LiveMapEmbed } from "@/components/public/live-map-embed";
 import { SectionHeading, PreviewNote } from "@/components/public/ui";
 export const metadata: Metadata = { title: "Live map | Sightseeing Shkodra" };
 

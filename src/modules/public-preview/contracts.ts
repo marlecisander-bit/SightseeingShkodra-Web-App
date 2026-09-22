@@ -24,19 +24,6 @@ export const previewBookingGateway: PublicBookingGateway = {
     };
   },
 };
-export type TrackingView =
-  | { state: "unavailable"; message: string }
-  | {
-      state: "live";
-      latitude: number;
-      longitude: number;
-      observedAt: string;
-      reliableEtaMinutes: number | null;
-    };
-export const previewTracking: TrackingView = {
-  state: "unavailable",
-  message: "Live location is not available yet.",
-};
 export const experience = {
   title: "The Shkodra day tour",
   price: "Price coming soon",
