@@ -1,0 +1,38 @@
+[
+  {
+    "id": "lake",
+    "title": "Shkodra lake from Rozafa castle HD.jpg",
+    "author": "Julianruizp",
+    "source": "https://commons.wikimedia.org/wiki/File:Shkodra_lake_from_Rozafa_castle_HD.jpg",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "changes": "Resized, converted to WebP; displayed with responsive crops. Adapted image remains under the source license."
+  },
+  {
+    "id": "castle",
+    "title": "Kalaja e Rozafes.jpg",
+    "author": "Exinvert",
+    "source": "https://commons.wikimedia.org/wiki/File:Kalaja_e_Rozafes.jpg",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "changes": "Resized, converted to WebP; displayed with responsive crops. Adapted image remains under the source license."
+  },
+  {
+    "id": "bridge-view",
+    "title": "The Mes Bridge is an 18th-century Ottoman bridge located over the Kir River near Shkodra, Albania.jpg",
+    "author": "Julianruizp",
+    "source": "https://commons.wikimedia.org/wiki/File:The_Mes_Bridge_is_an_18th-century_Ottoman_bridge_located_over_the_Kir_River_near_Shkodra,_Albania.jpg",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "changes": "Resized, converted to WebP; displayed with responsive crops. Adapted image remains under the source license."
+  },
+  {
+    "id": "centre",
+    "title": "Pedonalja Shkodër.jpg",
+    "author": "Ambra Doci",
+    "source": "https://commons.wikimedia.org/wiki/File:Pedonalja_Shkod%C3%ABr.jpg",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "changes": "Resized, converted to WebP; displayed with responsive crops. Adapted image remains under the source license."
+  }
+]
