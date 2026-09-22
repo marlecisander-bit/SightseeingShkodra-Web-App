@@ -2,6 +2,8 @@
 
 Updated: 2026-09-22.
 
+CURRENT ONBOARDING: Activation and password-setup pages implemented and checked with a temporary account in Chrome, including token replay denial, password sign-in and 390px layout. Lint/typecheck/build and 15 identity tests pass. The owner's private setup file is ready; the user still needs to redeem it and choose a password. No email sent. See OWNER_ONBOARDING.md. Phase 3 remains PARTIAL pending the full admin acceptance matrix.
+
 CURRENT ACCEPTANCE: Phase 3F usability fixes implemented, including inline mutation errors, in-page draft retention and pending submission guards; Phase 3 audit PARTIAL, no checkpoint. All 95 tests, lint/typecheck/build and development hosted Auth/local HTTP checks passed after the form changes. Chrome is now connected and `/admin` reached staff sign-in, but full interactive/mobile QA remains unverified. The user-specified pending owner account and active membership now exist; activation/password setup is still pending. See OWNER_ONBOARDING.md, PHASE_3F_REPORT.md and PHASE_3_AUDIT.md. Earlier notes below are historical.
 
 CURRENT: Phase 3E booking operations implemented; see PHASE_3E_REPORT.md. Browser form/visual QA and owner onboarding remain pending. Next is Phase 3F usability/mobile QA and Phase 3 audit. Earlier notes are historical.
