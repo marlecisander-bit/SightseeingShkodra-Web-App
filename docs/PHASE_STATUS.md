@@ -2,7 +2,9 @@
 
 Updated: 2026-09-22.
 
-CURRENT AMENDMENT: Pay-at-meeting-point booking implemented and verified; see MEETING_POINT_BOOKINGS.md and DECISIONS.md. Public/staff reservations confirm immediately without online payment; confirmed seats retain capacity, staff record full collection and cancellation releases inventory. Migration applied to development Supabase. 119 tests across completed runs, hosted HTTP/RPC and mobile confirmation/reload checks passed. Real content remains pending. Stripe/online payment phases skipped by user decision. Next: operational booking setup and separately scoped notifications; local/development only.
+CURRENT SETUP: Owner sign-in verified. Van-tour price editor implemented under Products & stops; see ADMIN_BOOKING_SETUP.md. Exact EUR pricing, owner/admin permission, audit and stale-edit guards verified. Eleven targeted database tests, lint/typecheck and isolated build passed; migration applied to development Supabase. Real catalog remains empty for manual entry. Next: enter operational content/tours/stops/departures; notification delivery remains separately scoped. No external deployment.
+
+PREVIOUS AMENDMENT: Pay-at-meeting-point booking implemented and verified; see MEETING_POINT_BOOKINGS.md and DECISIONS.md. Public/staff reservations confirm immediately without online payment; confirmed seats retain capacity, staff record full collection and cancellation releases inventory. Migration applied to development Supabase. 119 tests across completed runs, hosted HTTP/RPC and mobile confirmation/reload checks passed. Real content remains pending. Stripe/online payment phases skipped by user decision. Next: operational booking setup and separately scoped notifications; local/development only.
 
 PREVIOUS CHECKPOINT: Phase 4 public implementation audit PASS for local/development scope under recorded amendments; see PHASE_4_AUDIT.md. All 116 tests, lint, typecheck and isolated production build passed. Real content and production readiness remain pending. Next: Phase 5A Stripe test-mode setup; no live payments or external deployment authorized.
 

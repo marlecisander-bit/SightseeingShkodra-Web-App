@@ -2,6 +2,8 @@
 
 Updated: 2026-09-22.
 
+Current status: owner activation/sign-in completed. The user reported access, and Chrome verified the authenticated Sightseeing Shkodra admin workspace with the owner role during the pricing-editor work. Earlier preparation notes below are historical; a fresh activation is not required. The private setup file can be deleted by the user after use.
+
 The user supplied the intended owner email in chat. An exact-email Auth lookup found no existing account. Created a pending, unconfirmed Auth account without a password, then created the real development operator and its active owner membership. No invitation or other email was sent, and email ownership was not marked verified.
 
 - Project: `ybngoppqqiohcduojfyg` (development only).
