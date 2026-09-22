@@ -13,7 +13,7 @@ export async function saveContent(operatorId:string,form:FormData) {
       const id=form.get('id'), updated=form.get('updated_at');
       const {error}=await client.rpc('save_content_page_v1',{p_operator_id:context.operatorId,p_actor_id:context.staffProfileId,
         p_id:typeof id==='string'&&id?id:null,p_data:data,p_expected_updated_at:typeof updated==='string'&&updated?updated:null});
-      if(error)result=error.code==='40001'?'stale':'error';
+      if(error)result=error.code==='PT409'?'stale':'error';
     });
   } catch {result='error';}
   if(result!=='saved')return {error:result==='stale'?'This page changed on the server. Your draft is preserved here; copy it before reloading the latest version.':'Unable to save. Check the unique slug, body and SEO fields, and image alt text. Your entries are preserved.'};

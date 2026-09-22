@@ -1,5 +1,7 @@
 # Phase 3F admin usability review
 
+Follow-up: real browser review and the hosted stale-edit correction are recorded in PHASE_3_BROWSER_REVIEW.md. Its evidence supersedes the browser-unavailable notes below. Phase 3 remains PARTIAL for the remaining acceptance cases.
+
 Date: 2026-09-22. Result: PARTIAL — code/HTTP checks completed; interactive mobile/browser acceptance blocked by unavailable browser connection.
 
 ## Changes

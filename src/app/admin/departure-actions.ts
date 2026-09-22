@@ -12,7 +12,7 @@ export async function saveDeparture(operatorId:string,form:FormData) {
       const {error}=await client.rpc('save_departure_v1',{p_operator_id:context.operatorId,p_actor_id:context.staffProfileId,
         p_id:value('id')||null,p_product_id:value('product_id'),p_vehicle_id:value('vehicle_id')||null,
         p_date:value('service_date'),p_time:value('start_time'),p_capacity:Number(quantity),p_status:value('status'),p_expected_updated_at:value('updated_at')||null});
-      if(error) { result=error.code==='40001'?'stale':error.code==='P0001'?'inventory':'error'; }
+      if(error) { result=error.code==='PT409'?'stale':error.code==='P0001'?'inventory':'error'; }
     });
   } catch {result='error';}
   if(result!=='saved')return {error:result==='stale'?'This departure changed. Your entries are preserved; copy them before reloading the current record.':result==='inventory'?'Reserved inventory or booking history prevents this edit. Resolve affected bookings first. Your entries are preserved.':'Unable to save. Check the date, time, whole-number capacity and linked records. Your entries are preserved.'};

@@ -18,7 +18,7 @@ test('content editor can draft, publish and archive; validation and stale edits 
   await assert.rejects(save(id,{...draft,og_image:'https://example.com/image.jpg'},stamp),e=>e.code==='22023');
   const published={...draft,status:'published',meta_title:'Explore Shkodra',meta_description:'Places in Shkodra',og_image:'https://example.com/image.jpg',og_image_alt:'Lake shore'};
   await save(id,published,stamp);
-  await assert.rejects(save(id,draft,stamp),e=>e.code==='40001');
+  await assert.rejects(save(id,draft,stamp),e=>e.code==='PT409');
   const row=(await db.query('select body,updated_at::text as stamp from content_pages where id=$1',[id])).rows[0];
   assert.deepEqual(row.body,{version:1,format:'plain_text',text:draft.text});
   await save(id,{...published,status:'archived'},row.stamp);

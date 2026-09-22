@@ -2,6 +2,8 @@
 
 Date: 2026-09-22. Result: **PARTIAL**. No Phase 3 checkpoint tag.
 
+Latest evidence: see PHASE_3_BROWSER_REVIEW.md. Chrome is connected; core catalog, scheduling, booking/cancellation, content and role-demotion workflows now have interactive evidence. A hosted stale-edit retry defect was fixed and verified. All 97 tests, lint/typecheck/build and extended hosted checks pass. The table below is the earlier baseline; outstanding acceptance cases are now specifically listed in that review, rather than blocked by a missing browser.
+
 | Requirement | Evidence | Status |
 | --- | --- | --- |
 | Protected shell / role navigation | requirePermission on workspace pages, admin-navigation tests, real Auth/local HTTP tests for tenant and role rejection | PASS for code/HTTP; browser flow pending |

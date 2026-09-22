@@ -53,7 +53,7 @@ test('staff capacity edits and hold allocation serialize without overselling', a
       assert.equal((await pending).error?.code,'P0001');
       const result=(await observer.query(`select capacity,(select coalesce(sum(quantity),0)::int from inventory_holds where departure_id=$1 and status='active') as used from departures where id=$1`,[dep.id])).rows[0];
       assert.ok(result.used<=result.capacity);
-      if(!holdFirst)await assert.rejects(first.query(edit,args),e=>e.code==='40001');
+      if(!holdFirst)await assert.rejects(first.query(edit,args),e=>e.code==='PT409');
       await assert.rejects(first.query(edit,[op,user,dep.id,product,dep.stamp]),e=>e.code==='42501');
       if(holdFirst) {
         await assert.rejects(first.query("select save_departure_v1($1,$2,$3,$4,null,'2030-11-02','12:00',1,'scheduled',$5)",args),e=>e.code==='P0001');
