@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import { TrackingShell, RoutePreview } from "@/components/public/route-preview";
 import { SectionHeading, PreviewNote } from "@/components/public/ui";
+export const metadata: Metadata = { title: "Live map | Sightseeing Shkodra" };
+
 export default function Live() {
   return (
     <main id="main-content" className="p-subpage p-container">

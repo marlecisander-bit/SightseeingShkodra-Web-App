@@ -2,7 +2,9 @@
 
 Updated: 2026-09-22.
 
-CURRENT REVIEW: Phase 4E Explore guides and SEO implemented; see PHASE_4E_REPORT.md. Published guide routes, canonical metadata, safe structured data and gated robots/sitemap verified. Lint/typecheck, isolated production build and 20 integration tests passed; hosted HTTP checks passed and temporary fixtures were removed. Localhost remains non-indexable. Real content entry and full public QA remain pending. Next: Phase 4F. No production deployment or full Phase 4 checkpoint.
+CURRENT REVIEW: Phase 4F local public QA completed; see PHASE_4F_REPORT.md. Responsive checks, keyboard/menu/dialog focus, reduced motion, image behavior and continuous selection verified in Chrome. Distinct route titles and deferred checkout loading implemented. Lint/typecheck, isolated production build and 20 integration tests passed. Field Core Web Vitals and physical-device checks remain unverified. Next: Phase 4 audit; no full checkpoint or production deployment.
+
+PREVIOUS REVIEW: Phase 4E Explore guides and SEO implemented; see PHASE_4E_REPORT.md. Published guide routes, canonical metadata, safe structured data and gated robots/sitemap verified. Lint/typecheck, isolated production build and 20 integration tests passed; hosted HTTP checks passed and temporary fixtures were removed. Localhost remains non-indexable. Real content entry and full public QA remain pending. Next: Phase 4F. No production deployment or full Phase 4 checkpoint.
 
 PREVIOUS REVIEW: Phase 4D expiring seat holds and validated pending orders implemented; see PHASE_4D_REPORT.md. Signed private sessions, retry-safe holds/orders, countdown, release and reload recovery verified. Lint/typecheck, final isolated build, 17 integration tests and 14 native PostgreSQL tests passed; hosted HTTP and mobile browser checks passed. Synthetic holds released/catalog archived; immutable test order/audit history retained under an isolated operator. Next: Phase 4E Explore/SEO. Real content remains unpublished; local/development only, no payments or full Phase 4 checkpoint. Older notes below are historical.
 
@@ -75,7 +77,7 @@ Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, 
 - [x] Phase 4C booking selection - COMPLETE; see PHASE_4C_REPORT.md
 - [x] Phase 4D hold/customer/order - COMPLETE; see PHASE_4D_REPORT.md
 - [x] Phase 4E Explore/SEO — IMPLEMENTED; see PHASE_4E_REPORT.md; manual content and Phase 4F QA pending
-- [ ] Phase 4F public QA — NOT STARTED
+- [x] Phase 4F public QA — LOCAL QA COMPLETE; see PHASE_4F_REPORT.md for scope and limits
 - [ ] Phase 4 audit/checkpoint — NOT STARTED
 - [ ] Phase 5A Stripe test setup — NOT STARTED
 - [ ] Phase 5B webhooks — NOT STARTED

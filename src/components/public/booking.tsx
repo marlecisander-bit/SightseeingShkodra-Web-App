@@ -18,8 +18,13 @@ import {
   type BookingSelection,
 } from "@/modules/public-preview/contracts";
 import { Field } from "./ui";
-import { CheckoutFlow } from "./checkout-flow";
+import dynamic from "next/dynamic";
 import { useAvailability, displayMoney } from "./use-availability";
+
+const CheckoutFlow = dynamic(
+  () => import("./checkout-flow").then((module) => module.CheckoutFlow),
+  { loading: () => <p role="status">Loading your booking selection...</p> },
+);
 
 type BookingContextValue = {
   selection: BookingSelection;
@@ -60,7 +65,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         onKeyDown={(event) => {
           if (event.key !== "Tab") return;
           const controls = event.currentTarget.querySelectorAll<HTMLElement>(
-            "button:not(:disabled), input, select, a[href]",
+            "button:not(:disabled), input:not(:disabled), select:not(:disabled), a[href]",
           );
           const first = controls[0];
           const last = controls[controls.length - 1];
@@ -285,6 +290,7 @@ export function Header() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menu, setMenu] = useState(false);
+  const menuToggle = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     const update = () => setScrolled(window.scrollY > 80);
     update();
@@ -295,11 +301,18 @@ export function Header() {
     <>
       <header
         className={`p-header ${pathname !== "/" || scrolled || menu ? "p-header-solid" : ""}`}
+        onKeyDown={(event) => {
+          if (event.key === "Escape" && menu) {
+            setMenu(false);
+            menuToggle.current?.focus();
+          }
+        }}
       >
         <Link className="p-wordmark" href="/" onClick={() => setMenu(false)}>
           <BrandLogo light={pathname === "/" && !scrolled && !menu} />
         </Link>
         <button
+          ref={menuToggle}
           className="p-menu-toggle"
           aria-expanded={menu}
           aria-controls="public-navigation"

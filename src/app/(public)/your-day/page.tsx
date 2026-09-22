@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ActionLink, SectionHeading } from "@/components/public/ui";
 import { TrackingShell } from "@/components/public/route-preview";
 import { destinations } from "@/modules/public-preview/contracts";
+export const metadata: Metadata = {
+  title: "Your day preview | Sightseeing Shkodra",
+};
+
 export default function YourDay() {
   return (
     <main id="main-content" className="p-subpage p-container">

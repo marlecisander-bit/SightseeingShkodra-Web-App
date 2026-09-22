@@ -1,4 +1,9 @@
+import type { Metadata } from "next";
 import credits from "../../../../public/images/credits.json";
+export const metadata: Metadata = {
+  title: "Photography credits | Sightseeing Shkodra",
+};
+
 export default function Credits() {
   return (
     <main id="main-content" className="p-subpage p-container p-narrow">
