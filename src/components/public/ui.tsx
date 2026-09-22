@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { BrandLogo } from "./brand-logo";
 import type { ComponentProps, ReactNode } from "react";
 
 export function ActionLink({
@@ -81,7 +82,7 @@ export function Footer() {
     <footer className="p-footer">
       <div>
         <Link className="p-wordmark" href="/">
-          sightseeing<span>SHKODRA</span>
+          <BrandLogo />
         </Link>
         <p>
           A little closer to the place.

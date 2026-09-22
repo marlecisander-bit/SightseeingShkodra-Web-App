@@ -1,5 +1,9 @@
 # Approved roadmap amendments
 
+## 2026-09-22 - Logo integration on local server
+
+The user requested updating and publishing the supplied logo, then clarified: "no no just publish in the local server". Use derived web SVG versions in the public header and footer, preserving the original artwork. This authorizes the local branding update only; no hosting deployment or existing-site change is requested. See [brand asset registry](brand/README.md).
+
 ## 2026-09-22 - User-supplied logo versions
 
 The user explicitly requested recording the supplied `SIGHTSEEING SHKODRA LOGO 2 VERSIONET 2 (2).svg` as Sightseeing Shkodra logo versions. The unchanged original and provenance are retained in [the brand asset registry](brand/README.md). Use this artwork as the logo reference for future integration. This authorizes retaining the supplied brand asset within the fresh project; it does not change the roadmap phase or authorize legacy-site imports. App logo replacement is not part of this recording task.

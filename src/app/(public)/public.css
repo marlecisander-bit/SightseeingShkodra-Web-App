@@ -178,17 +178,16 @@
   height: 84px;
 }
 .public-site .p-wordmark {
-  font: italic 24px/1 var(--p-display);
-  letter-spacing: -0.04em;
   display: inline-flex;
-  flex-direction: column;
+  flex-shrink: 0;
   min-height: 44px;
+  align-items: center;
   justify-content: center;
 }
-.public-site .p-wordmark span {
-  font: 600 12px/1.8 var(--p-ui);
-  letter-spacing: 0.35em;
-  margin-left: 2px;
+.public-site .p-brand-logo {
+  display: block;
+  width: 200px;
+  height: auto;
 }
 .public-site .p-navigation {
   display: flex;
@@ -1077,11 +1076,8 @@ body:has(.p-booking-dialog[open]) {
   .public-site .p-header-solid {
     height: 76px;
   }
-  .public-site .p-wordmark {
-    font-size: 21px;
-  }
-  .public-site .p-wordmark span {
-    font-size: 10px;
+  .public-site .p-brand-logo {
+    width: 120px;
   }
   .public-site .p-header-book {
     font-size: 12px;

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { BrandLogo } from "./brand-logo";
 import {
   createContext,
   useContext,
@@ -206,7 +207,7 @@ export function Header() {
         className={`p-header ${pathname !== "/" || scrolled || menu ? "p-header-solid" : ""}`}
       >
         <Link className="p-wordmark" href="/" onClick={() => setMenu(false)}>
-          sightseeing<span>SHKODRA</span>
+          <BrandLogo light={pathname === "/" && !scrolled && !menu} />
         </Link>
         <button
           className="p-menu-toggle"
