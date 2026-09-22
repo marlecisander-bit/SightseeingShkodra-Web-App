@@ -1,5 +1,9 @@
 # Approved roadmap amendments
 
+## 2026-09-22 - Reuse the supplied tracking app
+
+The user requested integrating their existing van-tracking product, including admin and public pages, to avoid separate development, then supplied files from the sibling Sightseeing Shkodra Map App folder. This supersedes the no-legacy-code-import decision specifically for that tracking source. Inspect and reuse its working features within this project's public/staff experience; preserve one authoritative tracking pipeline. No permission to migrate live data, change existing services, provision credentials or cut over production is implied. The fresh-project rules continue to apply outside tracking. See TRACKING_REUSE_AUDIT.md for schema/authentication conflicts and the staged integration plan. The original roadmap remains unchanged.
+
 ## 2026-09-22 - Confirm seats now, pay at the meeting point
 
 The user explicitly skipped Stripe and online payments, requested online van-seat reservations with payment at the meeting point, and approved implementation. This supersedes the paid-before-confirmed rule for new meeting-point reservations and Stripe Phase 5A-D. The original roadmap remains unchanged.
