@@ -2,7 +2,7 @@
 
 Updated: 2026-09-22.
 
-CURRENT ACCEPTANCE: Phase 3F usability fixes implemented; Phase 3 audit PARTIAL, no checkpoint. Browser provider has no connected apps/browsers, so interactive/mobile QA remains unverified. See PHASE_3F_REPORT.md and PHASE_3_AUDIT.md. Owner onboarding awaits user email. Earlier notes below are historical.
+CURRENT ACCEPTANCE: Phase 3F usability fixes implemented, including inline mutation errors, in-page draft retention and pending submission guards; Phase 3 audit PARTIAL, no checkpoint. All 95 tests, lint/typecheck/build and development hosted Auth/local HTTP checks passed again. Browser provider has no connected apps/browsers, so interactive/mobile QA (including new retention behavior) remains unverified. See PHASE_3F_REPORT.md and PHASE_3_AUDIT.md. Owner onboarding awaits user email. Earlier notes below are historical.
 
 CURRENT: Phase 3E booking operations implemented; see PHASE_3E_REPORT.md. Browser form/visual QA and owner onboarding remain pending. Next is Phase 3F usability/mobile QA and Phase 3 audit. Earlier notes are historical.
 

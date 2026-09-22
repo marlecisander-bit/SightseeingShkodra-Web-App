@@ -13,6 +13,6 @@ Date: 2026-09-22. Result: **PARTIAL**. No Phase 3 checkpoint tag.
 
 Reviewed isolation boundaries and found no new frontend booking calculations or raw privileged database writes in UI components. Actions reauthorize and mutations go through tenant-scoped audited SQL/domain interfaces. No production data or configuration changed. Existing tests do not replace interactive Server Action validation or mobile visual inspection.
 
-Before checkpoint: complete the 3F viewport/keyboard/form matrix, address input loss and field feedback, verify full authorized and denied workflows, and rerun affected checks. Owner onboarding is a separate user-input dependency. Do not mark Phase 3 complete or proceed to Phase 3.5 based only on successful builds.
+Before checkpoint: complete the 3F viewport/keyboard/form matrix, verify the implemented inline-error/draft-retention changes and assess remaining field-specific feedback, verify full authorized and denied workflows, and rerun affected checks. Owner onboarding is a separate user-input dependency. Do not mark Phase 3 complete or proceed to Phase 3.5 based only on successful builds.
 
 Automated evidence: 95 local tests pass; lint/typecheck/build pass; hosted Auth/local HTTP verifier passes including streamed redirect checks. No Phase 3 checkpoint was created. Existing README.md and AGENTS.md edits remain outside the phase commit.

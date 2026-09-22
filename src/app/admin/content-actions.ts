@@ -16,6 +16,7 @@ export async function saveContent(operatorId:string,form:FormData) {
       if(error)result=error.code==='40001'?'stale':'error';
     });
   } catch {result='error';}
+  if(result!=='saved')return {error:result==='stale'?'This page changed on the server. Your draft is preserved here; copy it before reloading the latest version.':'Unable to save. Check the unique slug, body and SEO fields, and image alt text. Your entries are preserved.'};
   const path=`/admin/${encodeURIComponent(operatorId)}/content`;
   revalidatePath(path);redirect(`${path}?result=${result}`);
 }

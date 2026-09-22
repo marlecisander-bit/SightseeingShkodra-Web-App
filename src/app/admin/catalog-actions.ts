@@ -18,6 +18,7 @@ export async function saveCatalog(operatorId: string, entity: string, form: Form
       if(error) throw Error('Catalog save failed');
     });
   } catch { failed=true; }
+  if(failed)return {error:'Unable to save. Check the unique slug or stop position, required SEO/image fields and linked records. Removal requires confirmation; linked suppliers cannot be deleted. Your entries are preserved.'};
   const path=`/admin/${encodeURIComponent(operatorId)}/catalog`;
   revalidatePath(path);
   redirect(`${path}?result=${failed?'error':'saved'}`);

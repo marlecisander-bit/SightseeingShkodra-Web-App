@@ -12,6 +12,7 @@
 .nav a[aria-current=page] { background:#eadfdc; font-weight:700; }
 .panel { background:white; border:1px solid #ddd6cc; border-radius:6px; padding:clamp(1rem,3vw,2rem); line-height:1.6; overflow-wrap:anywhere; }
 .form { width:100%; max-width:28rem; }
+.mutationFields { border:0; padding:0; margin:0; min-width:0; }
 .shell select { display:block; width:100%; padding:.85rem; margin:.5rem 0 1.25rem; font:inherit; background:white; border:1px solid #777; }
 .shell details { border-bottom:1px solid #ddd6cc; padding:1rem 0; }
 .shell summary { cursor:pointer; min-height:44px; padding:.5rem; }

@@ -3,10 +3,11 @@ import { requirePermission } from '../../modules/identity/require-permission';
 import { saveDeparture } from './departure-actions';
 import { SubmitButton } from './submit-button';
 import Link from 'next/link';
+import { MutationForm } from './mutation-form';
 type Departure={id?:string;product_id?:string;vehicle_id?:string|null;service_date?:string;start_time?:string;capacity?:number;status?:string;updated_at?:string};
 type Choice={id:string;label:string};
 function Editor({operatorId,row,products,vehicles}:{operatorId:string;row:Departure;products:Choice[];vehicles:Choice[]}) {
-  return <form action={saveDeparture.bind(null,operatorId)}>
+  return <MutationForm action={saveDeparture.bind(null,operatorId)}>
     <input type="hidden" name="id" value={row.id ?? ''}/><input type="hidden" name="updated_at" value={row.updated_at ?? ''}/>
     <label>Product<select name="product_id" required defaultValue={row.product_id ?? ''}><option value="">Choose product</option>{products.map(p=><option key={p.id} value={p.id}>{p.label}</option>)}</select></label>
     <label>Vehicle<select name="vehicle_id" defaultValue={row.vehicle_id ?? ''}><option value="">Unassigned</option>{vehicles.map(v=><option key={v.id} value={v.id}>{v.label}</option>)}</select></label>
@@ -16,7 +17,7 @@ function Editor({operatorId,row,products,vehicles}:{operatorId:string;row:Depart
     <label>Status<select name="status" defaultValue={row.status ?? 'draft'}>{['draft','scheduled','cancelled'].map(s=><option key={s}>{s}</option>)}</select></label>
     <SubmitButton disabled={products.length===0}>{row.id?'Save departure':'Create departure'}</SubmitButton>
     {products.length===0&&<p>Create a product before scheduling a departure.</p>}
-  </form>;
+  </MutationForm>;
 }
 export async function DeparturesPanel({operatorId,date,result}:{operatorId:string;date?:string;result?:string}) {
   await requirePermission(operatorId,'departures.manage');

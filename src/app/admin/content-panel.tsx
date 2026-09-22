@@ -2,10 +2,11 @@ import { createSessionClient } from '../../modules/identity/supabase-server';
 import { requirePermission } from '../../modules/identity/require-permission';
 import { saveContent } from './content-actions';
 import { SubmitButton } from './submit-button';
+import { MutationForm } from './mutation-form';
 type Page={id?:string;title?:string;slug?:string;status?:string;body?:{version?:number;format?:string;text?:string};meta_title?:string|null;meta_description?:string|null;og_image?:string|null;og_image_alt?:string|null;updated_at?:string};
 function Editor({operatorId,page}:{operatorId:string;page:Page}) {
   if(page.body?.format && page.body.format!=='plain_text')return <p>This content format cannot be edited with the plain-text editor.</p>;
-  return <form action={saveContent.bind(null,operatorId)}>
+  return <MutationForm action={saveContent.bind(null,operatorId)}>
     <input type="hidden" name="id" value={page.id??''}/><input type="hidden" name="updated_at" value={page.updated_at??''}/>
     <label>Page title<input name="title" required maxLength={200} defaultValue={page.title}/></label>
     <label>URL slug<input name="slug" required pattern="[a-z0-9]+(-[a-z0-9]+)*" maxLength={200} defaultValue={page.slug}/></label>
@@ -17,7 +18,7 @@ function Editor({operatorId,page}:{operatorId:string;page:Page}) {
     <label>Publication status<select name="status" defaultValue={page.status??'draft'}>{['draft','published','archived'].map(s=><option key={s}>{s}</option>)}</select></label>
     <SubmitButton>{page.id?'Save page':'Create page'}</SubmitButton>
     {page.body?.text&&<details><summary>Saved text preview</summary><div style={{whiteSpace:'pre-wrap'}}>{page.body.text}</div></details>}
-  </form>;
+  </MutationForm>;
 }
 export async function ContentPanel({operatorId,result}:{operatorId:string;result?:string}) {
   await requirePermission(operatorId,'content.manage');

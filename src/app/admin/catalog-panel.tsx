@@ -2,6 +2,7 @@ import { createSessionClient } from '../../modules/identity/supabase-server';
 import { requirePermission } from '../../modules/identity/require-permission';
 import { saveCatalog } from './catalog-actions';
 import { SubmitButton } from './submit-button';
+import { MutationForm } from './mutation-form';
 
 type Row = Record<string,string | number | null>;
 const fields: Record<string,{ key:string; label:string; type?:string; required?:boolean; options?:string[] }[]>={
@@ -13,7 +14,7 @@ const fields: Record<string,{ key:string; label:string; type?:string; required?:
   stop:[{key:'name',label:'Stop name',required:true},{key:'lat',label:'Latitude',type:'number',required:true},{key:'lng',label:'Longitude',type:'number',required:true},{key:'sort_order',label:'Route position (0, 1, 2…)',type:'number',required:true}],
 };
 function Editor({entity,row,operatorId,products,suppliers}:{entity:string;row:Row;operatorId:string;products:Row[];suppliers:Row[]}) {
-  return <form action={saveCatalog.bind(null,operatorId,entity)} className="catalog-form">
+  return <MutationForm action={saveCatalog.bind(null,operatorId,entity)} className="catalog-form">
     <input type="hidden" name="id" value={row.id ?? ''}/>
     {fields[entity].map(field=><label key={field.key}>{field.label}{field.options ? <select name={field.key} defaultValue={String(row[field.key] ?? field.options[0])}>{field.options.map(value=><option key={value}>{value}</option>)}</select> :
       <input name={field.key} type={field.type ?? 'text'} step={field.type==='number'?(field.key==='sort_order'?'1':'any'):undefined} required={field.required} defaultValue={row[field.key] ?? ''} maxLength={field.type==='number'?undefined:field.key==='meta_description'?500:field.key==='og_image'?2000:200}/> }</label>)}
@@ -22,7 +23,7 @@ function Editor({entity,row,operatorId,products,suppliers}:{entity:string;row:Ro
     <SubmitButton name="operation" value="save" disabled={entity==='stop' && products.length===0}>{row.id?'Save changes':'Create'}</SubmitButton>
     {entity==='stop' && products.length===0 && <p>Create a product before adding its route stops.</p>}
     {row.id && <div><label><input type="checkbox" name="confirm_remove" value="yes"/> Confirm {entity==='product'?'archive':'deletion'}</label><SubmitButton name="operation" value="remove" formNoValidate>{entity==='product'?'Archive product':`Delete ${entity}`}</SubmitButton></div>}
-  </form>;
+  </MutationForm>;
 }
 export async function CatalogPanel({operatorId,result}:{operatorId:string;result?:string}) {
   await requirePermission(operatorId,'catalog.manage');

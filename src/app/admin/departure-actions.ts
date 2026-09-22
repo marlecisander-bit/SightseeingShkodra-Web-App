@@ -15,6 +15,7 @@ export async function saveDeparture(operatorId:string,form:FormData) {
       if(error) { result=error.code==='40001'?'stale':error.code==='P0001'?'inventory':'error'; }
     });
   } catch {result='error';}
+  if(result!=='saved')return {error:result==='stale'?'This departure changed. Your entries are preserved; copy them before reloading the current record.':result==='inventory'?'Reserved inventory or booking history prevents this edit. Resolve affected bookings first. Your entries are preserved.':'Unable to save. Check the date, time, whole-number capacity and linked records. Your entries are preserved.'};
   const path=`/admin/${encodeURIComponent(operatorId)}/departures`;
   revalidatePath(path);
   redirect(`${path}?result=${result}`);
