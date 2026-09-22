@@ -84,6 +84,9 @@ try {
     const catalog = await fetch(`${baseUrl}/admin/${operators[0]}/catalog`, { headers: { cookie }, redirect: 'manual' });
     assert.equal(catalog.status, 200);
     assert.ok((await catalog.text()).replace(/<!--.*?-->/g, '').includes('Create product'));
+    const departures = await fetch(`${baseUrl}/admin/${operators[0]}/departures`, { headers: { cookie }, redirect: 'manual' });
+    assert.equal(departures.status, 200);
+    assert.ok((await departures.text()).includes('Create departure'));
     const foreign = await fetch(`${baseUrl}/admin/${operators[1]}/overview`, { headers: { cookie }, redirect: 'manual' });
     assert.equal(foreign.status, 307);
     assert.ok(foreign.headers.get('location').includes('error=access'));

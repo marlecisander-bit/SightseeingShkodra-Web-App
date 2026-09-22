@@ -11,6 +11,36 @@ import { platformSql, applyMigrations, loadDevelopmentFixtures } from '../helper
 let cluster, directory, observer, first, second;
 const clients = [];
 
+test('staff capacity edits and hold allocation serialize without overselling', async () => {
+  const op='10000000-0000-4000-8000-000000000001', product='10000000-0000-4000-8000-000000000020';
+  const user=(await observer.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;
+  const actor=(await observer.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'operations') returning id",[op,user])).rows[0].id;
+  await observer.query(`update products set status='published',capacity_rules='{"version":1,"model":"departure_seats"}' where id=$1`,[product]);
+  const edit="select save_departure_v1($1,$2,$3,$4,null,'2030-11-01','12:00',0,'scheduled',$5)";
+  for(const holdFirst of [true,false]) {
+    const dep=(await observer.query(`insert into departures(operator_id,product_id,service_date,start_time,capacity,status) values($1,$2,'2030-11-01','12:00',1,'scheduled') returning id,updated_at::text as stamp`,[op,product])).rows[0];
+    const args=[op,actor,dep.id,product,dep.stamp];
+    const hold='select * from create_hold_v1($1,$2,$3,gen_random_uuid(),1)', hargs=[op,dep.id,'synthetic-capacity-race-session-key'];
+    await first.query('begin'); let pending;
+    try {
+      if(holdFirst)await first.query(hold,hargs);else await first.query(edit,args);
+      pending=(holdFirst?second.query(edit,args):second.query(hold,hargs)).then(result=>({result}),error=>({error}));
+      await waitForLock(); await first.query('commit');
+      assert.equal((await pending).error?.code,'P0001');
+      const result=(await observer.query(`select capacity,(select coalesce(sum(quantity),0)::int from inventory_holds where departure_id=$1 and status='active') as used from departures where id=$1`,[dep.id])).rows[0];
+      assert.ok(result.used<=result.capacity);
+      if(!holdFirst)await assert.rejects(first.query(edit,args),e=>e.code==='40001');
+      await assert.rejects(first.query(edit,[op,user,dep.id,product,dep.stamp]),e=>e.code==='42501');
+      if(holdFirst) {
+        await assert.rejects(first.query("select save_departure_v1($1,$2,$3,$4,null,'2030-11-02','12:00',1,'scheduled',$5)",args),e=>e.code==='P0001');
+        await assert.rejects(first.query("select save_departure_v1($1,$2,$3,$4,null,'2030-11-01','12:00',1,'cancelled',$5)",args),e=>e.code==='P0001');
+      }
+    } finally {await first.query('rollback');if(pending)await pending;}
+  }
+  const created=(await first.query("select save_departure_v1($1,$2,null,$3,null,'2030-11-03','12:00',4,'draft') as id",[op,actor,product])).rows[0].id;
+  assert.equal((await observer.query("select count(*)::int as n from audit_logs where entity_id=$1 and action='departure.changed'",[created])).rows[0].n,1);
+});
+
 // Registration order is intentional: this fixture is independent of later tests.
 test('staff cancellation releases unpaid inventory and queues paid refund review exactly once', async () => {
   const op='10000000-0000-4000-8000-000000000001', product='10000000-0000-4000-8000-000000000020';

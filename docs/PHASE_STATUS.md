@@ -1,6 +1,8 @@
 # Phase status
 
-Updated: 2026-09-21.
+Updated: 2026-09-22.
+
+CURRENT: Phase 3C departures/capacity implemented with transactional capacity and stale-edit protection; see PHASE_3C_REPORT.md. Browser visual/form QA and owner onboarding remain pending. Earlier status notes are historical.
 
 CURRENT: Phase 3B catalog CRUD implemented; database/quality verification recorded in PHASE_3B_REPORT.md. Browser visual/form QA and owner onboarding remain pending. Earlier progress notes below are historical.
 
@@ -49,7 +51,7 @@ Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, 
 - [x] Phase 2 audit/checkpoint — PASS; checkpoint-phase-2-booking-api; see PHASE_2_AUDIT.md
 - [ ] Phase 3A admin shell — IMPLEMENTED; visual QA pending; see PHASE_3A_REPORT.md
 - [ ] Phase 3B product management — IMPLEMENTED; browser QA pending; see PHASE_3B_REPORT.md
-- [ ] Phase 3C departures/capacity — NOT STARTED
+- [ ] Phase 3C departures/capacity — IMPLEMENTED; browser QA pending; see PHASE_3C_REPORT.md
 - [ ] Phase 3D CMS — NOT STARTED
 - [ ] Phase 3E booking operations — NOT STARTED
 - [ ] Phase 3F mobile QA — NOT STARTED
