@@ -175,13 +175,17 @@ export function BookingFields() {
     </div>
   );
 }
-export function BookingBar() {
+export function BookingBar({
+  facts = experience,
+}: {
+  facts?: { price: string; frequency: string };
+}) {
   return (
     <div className="p-booking-bar" id="booking">
       <BookingFields />
       <BookButton>Plan your day</BookButton>
       <p>
-        Preview only. {experience.price}. {experience.frequency}.
+        Booking preview only. {facts.price}. {facts.frequency}.
       </p>
     </div>
   );

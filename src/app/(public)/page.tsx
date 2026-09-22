@@ -7,12 +7,36 @@ import {
   SectionHeading,
 } from "@/components/public/ui";
 import { RoutePreview, TrackingShell } from "@/components/public/route-preview";
-import { destinations, experience } from "@/modules/public-preview/contracts";
+import { destinations } from "@/modules/public-preview/contracts";
+import { getHomepage } from "@/modules/content/homepage-server";
+import { PublishedStops } from "@/components/public/published-stops";
+import type { Metadata } from "next";
 
-export default function Home() {
+const excerpt = (value: string, length: number) =>
+  value.length > length ? `${value.slice(0, length).trimEnd()}…` : value;
+export async function generateMetadata(): Promise<Metadata> {
+  const home = await getHomepage();
+  const hero = home.content["homepage-hero"];
+  return {
+    title: hero?.metaTitle ?? "Sightseeing Shkodra",
+    description:
+      hero?.metaDescription ??
+      "Discover Shkodra. Tour details and booking information coming soon.",
+  };
+}
+export default async function Home() {
+  const home = await getHomepage();
+  const hero = home.content["homepage-hero"];
+  const intro = home.content["homepage-intro"];
+  const final = home.content["homepage-final"];
+  const routeFacts = home.product?.stops.length
+    ? `${home.product.stops.length} published stops`
+    : "Route to be announced";
   return (
     <main id="main-content" className="p-home">
-      <section className="p-hero">
+      <section
+        className={`p-hero ${hero || home.product ? "p-hero-managed" : ""}`}
+      >
         <Media
           src="/images/lake.webp"
           alt="The Buna River and Lake Shkodra stretching towards the mountains, viewed from Rozafa Castle"
@@ -20,16 +44,26 @@ export default function Home() {
         />
         <div className="p-hero-content">
           <p className="p-eyebrow">SHKODËR, ALBANIA · GO A LITTLE FURTHER</p>
-          <h1>
-            Discover Shkodra.
-            <br />
-            <em>Your way.</em>
-          </h1>
-          <p>
-            A day between the city, the castle and the lake.
-            <br />
-            Hop on. Wander off. Make it yours.
-          </p>
+          {hero ? (
+            <h1>{excerpt(hero.title, 100)}</h1>
+          ) : (
+            <h1>
+              Discover Shkodra.
+              <br />
+              <em>Your way.</em>
+            </h1>
+          )}
+          {hero || home.product?.description ? (
+            <p className="p-content-text">
+              {excerpt(hero?.text ?? home.product!.description!, 300)}
+            </p>
+          ) : (
+            <p>
+              A day between the city, the castle and the lake.
+              <br />
+              Hop on. Wander off. Make it yours.
+            </p>
+          )}
           <div className="p-actions">
             <BookButton>Book your day</BookButton>
             <Link className="p-hero-track" href="/live">
@@ -38,24 +72,44 @@ export default function Home() {
           </div>
         </div>
         <div className="p-hero-bottom">
-          <span>{experience.price} · Day tour preview</span>
-          <span>City · Castle · Lake · Bridge</span>
+          <span>{home.price} · Booking opens soon</span>
+          <span>{routeFacts}</span>
           <a href="#booking">Discover your day ↓</a>
         </div>
       </section>
       <div className="p-container">
-        <BookingBar />
+        <BookingBar facts={home} />
       </div>
       <section className="p-section p-container p-intro">
         <PreviewNote />
+        {home.state === "unavailable" && (
+          <p role="alert" className="p-empty">
+            Tour information is temporarily unavailable. Please try again later.
+          </p>
+        )}
+        {(home.state === "empty" || home.state === "unconfigured") && (
+          <p className="p-preview">
+            Our tour and timetable have not been published yet. The places below
+            are inspiration for your visit.
+          </p>
+        )}
         <SectionHeading
           eyebrow="A DAY WITH POSSIBILITIES"
-          title="One ticket. One day.\nShkodra at your pace."
+          title={
+            intro?.title ??
+            home.product?.title ??
+            "One ticket. One day.\nShkodra at your pace."
+          }
         >
-          <p>
-            A coffee in the old town. A castle above the rivers. An unhurried
-            afternoon by the lake. Leave space for the moments you didn’t plan.
-          </p>
+          {intro ? (
+            <p className="p-content-text">{excerpt(intro.text, 700)}</p>
+          ) : (
+            <p>
+              A coffee in the old town. A castle above the rivers. An unhurried
+              afternoon by the lake. Leave space for the moments you didn’t
+              plan.
+            </p>
+          )}
           <Link className="p-text-link" href="/tour">
             Meet your day tour ↗
           </Link>
@@ -63,18 +117,28 @@ export default function Home() {
         <div className="p-facts">
           <div>
             <span>01 / HOP ON</span>
-            <strong>{experience.price}</strong>
-            <small>Daily ticket details before launch</small>
+            <strong>{home.price}</strong>
+            <small>
+              {home.product?.title ?? "Ticket details before launch"}
+            </small>
           </div>
           <div>
             <span>02 / EXPLORE</span>
-            <strong>City, castle & lake</strong>
-            <small>Discover the destinations below</small>
+            <strong>{routeFacts}</strong>
+            <small>
+              {home.product
+                ? "See published boarding stops below"
+                : "Discover the places below"}
+            </small>
           </div>
           <div>
             <span>03 / HOP BACK ON</span>
-            <strong>{experience.frequency}</strong>
-            <small>Final stops and frequency to follow</small>
+            <strong>{home.frequency}</strong>
+            <small>
+              {home.timezone
+                ? `Local time · ${home.timezone}`
+                : "Operating details before launch"}
+            </small>
           </div>
           <div>
             <span>ALWAYS CLOSE BY</span>
@@ -93,7 +157,11 @@ export default function Home() {
             destination and imagine your day.
           </p>
         </SectionHeading>
-        <RoutePreview />
+        {home.product ? (
+          <PublishedStops stops={home.product.stops} />
+        ) : (
+          <RoutePreview />
+        )}
       </section>
       <section className="p-section p-container" id="destinations">
         <SectionHeading
@@ -118,8 +186,15 @@ export default function Home() {
                 <Media src={place.image} alt={place.alt} />
               </Link>
               <p className="p-eyebrow">{place.tag}</p>
-              <h3>{place.name}</h3>
-              <p>{place.text}</p>
+              <h3>
+                {home.content[`explore-${place.id}`]?.title ?? place.name}
+              </h3>
+              <p>
+                {excerpt(
+                  home.content[`explore-${place.id}`]?.text ?? place.text,
+                  260,
+                )}
+              </p>
               <Link className="p-text-link" href={`/explore#${place.id}`}>
                 Discover {place.name} ↗
               </Link>
@@ -178,11 +253,40 @@ export default function Home() {
           </Link>
         </SectionHeading>
         <div className="p-empty">
-          <strong>Departures will be published here.</strong>
-          <p>
-            No timetable is available yet. Check back before planning your
-            journey.
-          </p>
+          {home.schedule === "ready" ? (
+            <>
+              <strong>{home.frequency}</strong>
+              <p>
+                {home.date} · {home.timezone}. Scheduled times; booking is not
+                open yet.
+              </p>
+              {home.departures.length > 0 && (
+                <ul
+                  className="p-departure-times"
+                  aria-label="Upcoming departures today"
+                >
+                  {home.departures.slice(0, 6).map((departure, index) => (
+                    <li key={`${departure.time}-${index}`}>
+                      <time dateTime={`${home.date}T${departure.time}`}>
+                        {departure.time}
+                      </time>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {home.departures.length > 6 && (
+                <p>Showing the next six departures.</p>
+              )}
+            </>
+          ) : (
+            <>
+              <strong>Departures will be published here.</strong>
+              <p>
+                No timetable is available yet. Check back before planning your
+                journey.
+              </p>
+            </>
+          )}
         </div>
       </section>
       <section className="p-section p-container p-review">
@@ -237,11 +341,18 @@ export default function Home() {
         />
         <div>
           <p className="p-eyebrow">LESS RUSH. MORE SHKODRA.</p>
-          <h2>
-            A day you’ll
-            <br />
-            <em>make your own.</em>
-          </h2>
+          {final ? (
+            <>
+              <h2>{excerpt(final.title, 100)}</h2>
+              <p className="p-content-text">{excerpt(final.text, 300)}</p>
+            </>
+          ) : (
+            <h2>
+              A day you’ll
+              <br />
+              <em>make your own.</em>
+            </h2>
+          )}
           <BookButton>Book your day</BookButton>
           <PreviewNote />
         </div>

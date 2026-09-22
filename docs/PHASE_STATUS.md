@@ -2,7 +2,7 @@
 
 Updated: 2026-09-22.
 
-CURRENT REVIEW: Phase 3.5 design foundation PASS; checkpoint-phase-3-5-design-foundation. Seven public preview routes, reusable design components, responsive booking sheet, three-step flow and sample travel companion implemented. All 97 regression tests, lint/typecheck/build and HTTP smoke checks pass; Chrome checks cover selection retention, keyboard focus and 360-1280px layouts. See PHASE_3_5_REPORT.md and PHASE_3_5_AUDIT.md. All operational data remains unavailable/mock; no booking/payment/tracking integration or production changes. Next: Phase 4A homepage with real structured content. Older notes below are historical.
+CURRENT REVIEW: Phase 4A homepage data connection implemented and verified; see PHASE_4A_REPORT.md. Published product, route stops and CMS copy are scoped to the configured operator; price and today's departures use the shared booking domain. All 107 tests and lint/typecheck/build passed, plus hosted Supabase/HTTP publication checks and Chrome responsive checks. Synthetic fixtures removed. Real business content and prices remain unpublished for later manual entry by user choice. Next: Phase 4B product page. No production changes or full Phase 4 checkpoint. Older notes below are historical.
 
 CURRENT ONBOARDING: Activation and password-setup pages implemented and checked with a temporary account in Chrome, including token replay denial, password sign-in and 390px layout. Lint/typecheck/build and 15 identity tests pass. The owner's private setup file is ready; the user still needs to redeem it and choose a password. No email sent. See OWNER_ONBOARDING.md. Phase 3 remains PARTIAL pending the full admin acceptance matrix.
 
@@ -68,7 +68,7 @@ Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, 
 - [x] Phase 3 audit/checkpoint - PASS; checkpoint-phase-3-admin; see PHASE_3_AUDIT.md
 - [x] Phase 3.5 design foundation - COMPLETE; see PHASE_3_5_REPORT.md
 - [x] Phase 3.5 audit/checkpoint - PASS; checkpoint-phase-3-5-design-foundation; see PHASE_3_5_AUDIT.md
-- [ ] Phase 4A homepage — NOT STARTED
+- [x] Phase 4A homepage - CONNECTION COMPLETE; manual business content pending; see PHASE_4A_REPORT.md
 - [ ] Phase 4B product page — NOT STARTED
 - [ ] Phase 4C booking selection — NOT STARTED
 - [ ] Phase 4D hold/customer/order — NOT STARTED
