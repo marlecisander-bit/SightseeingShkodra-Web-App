@@ -1,8 +1,10 @@
+import { classify, type TrackingState } from "./tracking-state";
 export type Position = {
   vehicleId: string;
   lat: number;
   lng: number;
   updatedAt: string;
+  tracking?: TrackingState;
 };
 export type Snapshot = {
   state: "ready" | "empty" | "unavailable";
@@ -12,6 +14,10 @@ export const staleAfterMs = 120_000;
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const validOperator = (value: string) => uuid.test(value);
 export function positionStatus(position: Position, now: number) {
+  if (position.tracking) {
+    const labels: Record<string, string> = { GPS_OFFLINE: "Last known position - GPS offline", GPS_DELAYED: "GPS update delayed", MOVING: "Van moving", STATIONARY: "Van stationary", PARKED_AT_STOP: "Van parked at stop", UNKNOWN: "Movement unknown" };
+    return labels[classify(position.tracking, now)];
+  }
   const age = now - Date.parse(position.updatedAt);
   return Number.isFinite(age) && age >= -30_000 && age <= staleAfterMs
     ? "Recent position"

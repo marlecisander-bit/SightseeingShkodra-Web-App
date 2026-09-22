@@ -1,0 +1,25 @@
+/* Health comes from fix time; equal coordinates never make a fix stale. */
+(function(root) {
+    function classify(position, now) {
+        if (!position) return 'GPS_OFFLINE';
+        var time = Date.parse(position.source_recorded_at);
+        var age = (now === undefined ? Date.now() : now) - time;
+        if (!Number.isFinite(time) || age < -60000 || age > Number(position.offline_seconds || 120) * 1000) return 'GPS_OFFLINE';
+        if (age > Number(position.delayed_seconds || 20) * 1000) return 'GPS_DELAYED';
+        return ['MOVING', 'PARKED_AT_STOP', 'STATIONARY'].includes(position.movement_state) ? position.movement_state : 'UNKNOWN';
+    }
+    // Preserve last-reported stop context independently of transport freshness.
+    // This presentation evidence never creates arrivals or resets a tour.
+    function stoppedAt(position, now) {
+        if (!position) return null;
+        var confirmed = position.movement_state === 'PARKED_AT_STOP';
+        if (!confirmed && position.reported_stopped !== true) return null;
+        var number = confirmed ? position.current_stop_number : position.reported_stop_number;
+        if (number === null || number === undefined) return null;
+        var health = classify(position, now);
+        return { number: String(number), name: confirmed ? position.current_stop_name : position.reported_stop_name,
+            label: !confirmed ? 'Last reported stopped at' :
+                health === 'GPS_DELAYED' || health === 'GPS_OFFLINE' ? 'Last seen parked at' : 'Van parked at' };
+    }
+    root.trackingState = { classify: classify, stoppedAt: stoppedAt };
+})(typeof window !== 'undefined' ? window : globalThis);

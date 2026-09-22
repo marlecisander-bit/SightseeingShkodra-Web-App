@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { TrackingShell, RoutePreview } from "@/components/public/route-preview";
+import { RoutePreview } from "@/components/public/route-preview";
+import { SharedMap } from "@/modules/tracking/shared-map";
 import { SectionHeading, PreviewNote } from "@/components/public/ui";
 export const metadata: Metadata = { title: "Live map | Sightseeing Shkodra" };
 
@@ -13,7 +14,8 @@ export default function Live() {
         <br />
         <em>Less waiting.</em>
       </h1>
-      <TrackingShell />
+      <p>Live vehicle updates are not connected yet. Please confirm departure details with staff.</p>
+      <SharedMap mode="view" snapshot={{state: "unavailable", positions: []}} publishedMap={{state: "empty", routes: [], points: []}} />
       <section className="p-section">
         <SectionHeading
           eyebrow="WHILE YOU’RE HERE"
