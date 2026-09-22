@@ -2,7 +2,7 @@
 
 Updated: 2026-09-22.
 
-CURRENT REVIEW: Phase 4B tour page connected to published product/route facts and shared booking price/today's schedule; see PHASE_4B_REPORT.md. Server rendering, hosted publication/withdrawal checks and desktop/mobile review passed. All 107 tests passed across completed runs (database suite retried serially after parallel Node crashes); lint/typecheck/build passed. Synthetic records removed. Manual business content remains pending by user choice. Next: Phase 4C booking selection. Local only; no production deployment or full Phase 4 checkpoint. Older notes below are historical.
+CURRENT REVIEW: Phase 4C live date/guest/departure selection implemented; see PHASE_4C_REPORT.md. Server-bound published tour, domain quotes, stale-request cancellation, refresh and unavailable-state guards verified. 15 integration tests, lint/typecheck and final isolated build passed; hosted API and browser capacity-change checks passed. Default build cleanup has a Windows EPERM artifact issue documented in the report. Synthetic records removed. Next: Phase 4D holds/customer/order. Business content remains unpublished; local/development only. Older notes below are historical.
 
 CURRENT ONBOARDING: Activation and password-setup pages implemented and checked with a temporary account in Chrome, including token replay denial, password sign-in and 390px layout. Lint/typecheck/build and 15 identity tests pass. The owner's private setup file is ready; the user still needs to redeem it and choose a password. No email sent. See OWNER_ONBOARDING.md. Phase 3 remains PARTIAL pending the full admin acceptance matrix.
 
@@ -70,7 +70,7 @@ Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, 
 - [x] Phase 3.5 audit/checkpoint - PASS; checkpoint-phase-3-5-design-foundation; see PHASE_3_5_AUDIT.md
 - [x] Phase 4A homepage - CONNECTION COMPLETE; manual business content pending; see PHASE_4A_REPORT.md
 - [x] Phase 4B product page - CONNECTION COMPLETE; manual business content pending; see PHASE_4B_REPORT.md
-- [ ] Phase 4C booking selection — NOT STARTED
+- [x] Phase 4C booking selection - COMPLETE; see PHASE_4C_REPORT.md
 - [ ] Phase 4D hold/customer/order — NOT STARTED
 - [ ] Phase 4E Explore/SEO — NOT STARTED
 - [ ] Phase 4F public QA — NOT STARTED

@@ -210,6 +210,22 @@ try {
     "Homepage copy must not become tour copy",
   );
   assert.match(tour, /noindex/);
+  const availabilityUrl = `http://127.0.0.1:3001/api/public/availability?date=${snapshot.service_date}&guests=2`;
+  const availableResponse = await fetch(availabilityUrl);
+  assert.equal(availableResponse.status, 200);
+  assert.equal(availableResponse.headers.get("cache-control"), "no-store");
+  const available = await availableResponse.json();
+  assert.equal(available.quote.total, 2500);
+  assert.equal(available.quote.departures[0].available, true);
+  const tooMany = await (
+    await fetch(availabilityUrl.replace("guests=2", "guests=3"))
+  ).json();
+  assert.equal(tooMany.quote.total, 3750);
+  assert.equal(tooMany.quote.departures[0].available, false);
+  assert.equal(
+    (await fetch(`${availabilityUrl}&operatorId=${ids.operators[1]}`)).status,
+    400,
+  );
   ok(
     await client
       .from("products")
@@ -233,6 +249,10 @@ try {
   assert.ok(!withdrawnTour.includes("QA Published Boarding Stop"));
   assert.ok(!withdrawnTour.includes("12.50 per guest"));
   assert.match(withdrawnTour, /This tour has not been published yet/);
+  assert.equal((await fetch(availabilityUrl)).status, 404);
+  console.log(
+    "PASS: public availability uses domain totals/group capacity, rejects tenant overrides and hides archived products",
+  );
   console.log(
     "PASS: homepage and tour HTTP render published facts, isolate page copy, and remove archived content on next request; homepage CMS text escaped",
   );
@@ -256,6 +276,19 @@ try {
     );
     process.stdin.resume();
     await once(process.stdin, "data");
+    if (process.argv.includes("--availability-change")) {
+      ok(
+        await client
+          .from("departures")
+          .update({ capacity: 0 })
+          .eq("id", ids.departures[0])
+          .eq("operator_id", operator),
+      );
+      console.log(
+        "CAPACITY NOW ZERO: refresh the browser selection and verify continuation is blocked; press Enter to clean up",
+      );
+      await once(process.stdin, "data");
+    }
     process.stdin.pause();
   }
 } finally {

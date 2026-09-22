@@ -95,6 +95,15 @@
   color: var(--p-muted);
   letter-spacing: 0.02em;
 }
+.public-site .p-availability-status {
+  grid-column: 1 / -1;
+  font-size: 14px;
+  color: var(--p-muted);
+  min-width: 0;
+}
+.public-site .p-availability-status p {
+  margin-bottom: 8px;
+}
 .public-site .p-lead {
   font-size: 20px;
   line-height: 1.6;
