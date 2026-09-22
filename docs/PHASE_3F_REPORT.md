@@ -1,6 +1,6 @@
 # Phase 3F admin usability review
 
-Follow-up: real browser review and the hosted stale-edit correction are recorded in PHASE_3_BROWSER_REVIEW.md. Its evidence supersedes the browser-unavailable notes below. Phase 3 remains PARTIAL for the remaining acceptance cases.
+Final follow-up: PASS for development admin acceptance. PHASE_3_BROWSER_REVIEW.md records the completed core browser matrix, responsive inspection, keyboard workflows, interruption/retry and double-click checks. All 97 tests, quality checks and hosted verification pass. PHASE_3_AUDIT.md accepts the Phase 3 checkpoint. Physical-device/soft-keyboard testing and the documented usability debt remain release follow-ups. Owner activation is still pending through the existing private setup file; no email is required from the user again. The remaining paragraphs below are historical implementation notes, superseded where they describe unavailable browser access or incomplete acceptance.
 
 Date: 2026-09-22. Result: PARTIAL — code/HTTP checks completed; interactive mobile/browser acceptance blocked by unavailable browser connection.
 

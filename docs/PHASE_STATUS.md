@@ -2,7 +2,7 @@
 
 Updated: 2026-09-22.
 
-CURRENT REVIEW: Real Chrome admin workflows exercised; found and fixed hosted stale-edit retry stalls using migration `20260922000400_non_retryable_stale_edits.sql` (applied to development). All 97 tests, quality checks and extended hosted verification pass. CMS responsive captures and core booking/catalog/content flows now have browser evidence; remaining acceptance cases are listed in PHASE_3_BROWSER_REVIEW.md. Phase 3 remains PARTIAL, no checkpoint; Phase 3.5 not started. Synthetic QA membership disabled/account banned; real owner activation still pending. Older notes below are historical.
+CURRENT REVIEW: Phase 3 development admin acceptance PASS; checkpoint-phase-3-admin. Core Chrome forms, errors/retries, duplicate submission, keyboard cancellation and responsive layouts verified; all 97 tests, lint/typecheck/build and extended hosted checks pass. See PHASE_3_BROWSER_REVIEW.md and PHASE_3_AUDIT.md for exact evidence and remaining nonblocking limits. QA signed out, membership disabled/account banned. Real owner activation remains a separate user action. Next scope: Phase 3.5 design foundation (not started). All older status paragraphs below are historical and superseded.
 
 CURRENT ONBOARDING: Activation and password-setup pages implemented and checked with a temporary account in Chrome, including token replay denial, password sign-in and 390px layout. Lint/typecheck/build and 15 identity tests pass. The owner's private setup file is ready; the user still needs to redeem it and choose a password. No email sent. See OWNER_ONBOARDING.md. Phase 3 remains PARTIAL pending the full admin acceptance matrix.
 
@@ -59,13 +59,13 @@ Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, 
 - [x] Phase 2E cancellation hooks — COMPLETE; see PHASE_2E_REPORT.md
 - [x] Phase 2F API/types — COMPLETE; see PHASE_2F_REPORT.md
 - [x] Phase 2 audit/checkpoint — PASS; checkpoint-phase-2-booking-api; see PHASE_2_AUDIT.md
-- [ ] Phase 3A admin shell — IMPLEMENTED; visual QA pending; see PHASE_3A_REPORT.md
-- [ ] Phase 3B product management — IMPLEMENTED; browser QA pending; see PHASE_3B_REPORT.md
-- [ ] Phase 3C departures/capacity — IMPLEMENTED; browser QA pending; see PHASE_3C_REPORT.md
-- [ ] Phase 3D CMS — IMPLEMENTED; browser QA pending; see PHASE_3D_REPORT.md
-- [ ] Phase 3E booking operations — IMPLEMENTED; browser QA pending; see PHASE_3E_REPORT.md
-- [ ] Phase 3F mobile QA — PARTIAL; code fixes applied, browser acceptance pending
-- [ ] Phase 3 audit/checkpoint — PARTIAL; see PHASE_3_AUDIT.md; no checkpoint
+- [x] Phase 3A admin shell - ACCEPTED; see PHASE_3_BROWSER_REVIEW.md and PHASE_3_AUDIT.md
+- [x] Phase 3B product management - ACCEPTED; see PHASE_3_BROWSER_REVIEW.md and PHASE_3_AUDIT.md
+- [x] Phase 3C departures/capacity - ACCEPTED; see PHASE_3_BROWSER_REVIEW.md and PHASE_3_AUDIT.md
+- [x] Phase 3D CMS - ACCEPTED; see PHASE_3_BROWSER_REVIEW.md and PHASE_3_AUDIT.md
+- [x] Phase 3E booking operations - ACCEPTED; see PHASE_3_BROWSER_REVIEW.md and PHASE_3_AUDIT.md
+- [x] Phase 3F mobile QA - ACCEPTED; see PHASE_3_BROWSER_REVIEW.md and PHASE_3_AUDIT.md
+- [x] Phase 3 audit/checkpoint - PASS; checkpoint-phase-3-admin; see PHASE_3_AUDIT.md
 - [ ] Phase 3.5 design foundation — NOT STARTED
 - [ ] Phase 3.5 audit/checkpoint — NOT STARTED
 - [ ] Phase 4A homepage — NOT STARTED
