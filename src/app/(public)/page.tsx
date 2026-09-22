@@ -11,6 +11,7 @@ import { destinations } from "@/modules/public-preview/contracts";
 import { getHomepage } from "@/modules/content/homepage-server";
 import { PublishedStops } from "@/components/public/published-stops";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/modules/content/seo";
 
 const excerpt = (value: string, length: number) =>
   value.length > length ? `${value.slice(0, length).trimEnd()}…` : value;
@@ -18,6 +19,13 @@ export async function generateMetadata(): Promise<Metadata> {
   const home = await getHomepage();
   const hero = home.content["homepage-hero"];
   return {
+    ...pageMetadata(
+      "/",
+      hero?.metaTitle ?? "Sightseeing Shkodra",
+      hero?.metaDescription ??
+        "Discover Shkodra. Tour details and booking information coming soon.",
+      Boolean(home.product || hero),
+    ),
     title: hero?.metaTitle ?? "Sightseeing Shkodra",
     description:
       hero?.metaDescription ??
@@ -180,7 +188,11 @@ export default async function Home() {
               className={i % 2 ? "p-story p-story-offset" : "p-story"}
             >
               <Link
-                href={`/explore#${place.id}`}
+                href={
+                  home.content[`explore-${place.id}`]
+                    ? `/explore/${place.id}`
+                    : `/explore#${place.id}`
+                }
                 aria-label={`Discover ${place.name}`}
               >
                 <Media src={place.image} alt={place.alt} />
@@ -195,7 +207,14 @@ export default async function Home() {
                   260,
                 )}
               </p>
-              <Link className="p-text-link" href={`/explore#${place.id}`}>
+              <Link
+                className="p-text-link"
+                href={
+                  home.content[`explore-${place.id}`]
+                    ? `/explore/${place.id}`
+                    : `/explore#${place.id}`
+                }
+              >
                 Discover {place.name} ↗
               </Link>
             </article>
@@ -310,7 +329,14 @@ export default async function Home() {
         <div className="p-editorial">
           {[destinations[0], destinations[1], destinations[2]].map(
             (place, i) => (
-              <Link href={`/explore#${place.id}`} key={place.id}>
+              <Link
+                href={
+                  home.content[`explore-${place.id}`]
+                    ? `/explore/${place.id}`
+                    : `/explore#${place.id}`
+                }
+                key={place.id}
+              >
                 <Media src={place.image} alt={place.alt} />
                 <p className="p-eyebrow">
                   {

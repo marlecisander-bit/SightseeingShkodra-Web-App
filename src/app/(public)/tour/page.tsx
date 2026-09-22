@@ -10,10 +10,20 @@ import { experience } from "@/modules/public-preview/contracts";
 import { getHomepage } from "@/modules/content/homepage-server";
 import { PublishedStops } from "@/components/public/published-stops";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/modules/content/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { product } = await getHomepage();
   return {
+    ...pageMetadata(
+      "/tour",
+      product
+        ? `${product.title} | Sightseeing Shkodra`
+        : "Day tour | Sightseeing Shkodra",
+      product?.description ??
+        "Explore the Shkodra day tour, published boarding stops and timetable.",
+      Boolean(product),
+    ),
     title: product
       ? `${product.title} | Sightseeing Shkodra`
       : "Day tour | Sightseeing Shkodra",

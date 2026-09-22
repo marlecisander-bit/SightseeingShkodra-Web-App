@@ -95,6 +95,9 @@
   color: var(--p-muted);
   letter-spacing: 0.02em;
 }
+.public-site .p-guide-body p {
+  white-space: pre-wrap;
+}
 .public-site .p-availability-status {
   grid-column: 1 / -1;
   font-size: 14px;
