@@ -18,6 +18,7 @@ import {
   type BookingSelection,
 } from "@/modules/public-preview/contracts";
 import { Field } from "./ui";
+import { CheckoutFlow } from "./checkout-flow";
 import { useAvailability, displayMoney } from "./use-availability";
 
 type BookingContextValue = {
@@ -344,112 +345,5 @@ export function Header() {
   );
 }
 export function BookingFlow() {
-  const { selection, availability } = useBooking();
-  const quote = availability.quote;
-  const selected = quote?.departures.find(
-    (d) => d.id === selection.departureId && d.available,
-  );
-  const [step, setStep] = useState(0);
-  const [name, setName] = useState("");
-  const heading = useRef<HTMLHeadingElement>(null);
-  function go(next: number) {
-    setStep(next);
-    requestAnimationFrame(() => {
-      heading.current?.focus({ preventScroll: true });
-      heading.current?.scrollIntoView({ block: "center" });
-    });
-  }
-  return (
-    <div className="p-flow">
-      <ol className="p-progress" aria-label="Booking progress">
-        {["Selection", "Details", "Payment"].map((label, i) => (
-          <li key={label} aria-current={step === i ? "step" : undefined}>
-            <span>{i + 1}</span>
-            {label}
-          </li>
-        ))}
-      </ol>
-      <h2 ref={heading} tabIndex={-1}>
-        {["Choose your day.", "Make it your day.", "One last step."][step]}
-      </h2>
-      <p className="p-preview">
-        Booking preview · No seats reserved. Do not enter real personal or
-        payment details.
-      </p>
-      <div className="p-flow-summary">
-        <span>{selection.date || "Date not selected"}</span>
-        <span>
-          {selection.guests} {selection.guests === 1 ? "guest" : "guests"}
-        </span>
-        <span>
-          {selected
-            ? `${selected.startTime.slice(0, 5)} · ${availability.timezone}`
-            : "Choose an available departure"}
-        </span>
-        <strong>
-          Total:{" "}
-          {quote ? displayMoney(quote.total, quote.currency) : "not available"}
-        </strong>
-      </div>
-      {step === 0 ? (
-        <>
-          <BookingFields />
-          <button
-            className="p-button"
-            disabled={!selected}
-            onClick={() => go(1)}
-          >
-            Continue to details →
-          </button>
-        </>
-      ) : step === 1 ? (
-        <>
-          <AvailabilityStatus />
-          {!selected && (
-            <p role="alert">
-              Return to selection and choose an available departure before
-              continuing.
-            </p>
-          )}
-          <Field label="Preview guest name (fictional only)">
-            <input
-              autoComplete="off"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Alex Example"
-            />
-          </Field>
-          <p>Your entries stay in this preview tab and are not submitted.</p>
-          <button
-            className="p-button"
-            disabled={!selected}
-            onClick={() => go(2)}
-          >
-            Continue to payment preview →
-          </button>
-        </>
-      ) : (
-        <>
-          <div className="p-empty">
-            <h3>Payments are not open yet.</h3>
-            <p>
-              A confirmed price and secure payment options will appear here when
-              booking opens.
-            </p>
-            <button className="p-button" disabled>
-              Payment unavailable
-            </button>
-          </div>
-          <Link className="p-text-link" href="/your-day">
-            View the sample ticket screen →
-          </Link>
-        </>
-      )}
-      {step > 0 && (
-        <button className="p-text-button" onClick={() => go(step - 1)}>
-          ← Back to {step === 1 ? "selection" : "details"}
-        </button>
-      )}
-    </div>
-  );
+  return <CheckoutFlow />;
 }

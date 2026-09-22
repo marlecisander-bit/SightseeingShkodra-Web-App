@@ -11,7 +11,7 @@ async function call(name: string, args: Record<string, unknown>): Promise<Hold> 
   if (!url || !key) throw new HoldError('UNAVAILABLE');
   try {
     const client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false },
-      global: { fetch: (input, init) => fetch(input, { ...init, cache: 'no-store' }) } });
+      global: { fetch: (input, init) => fetch(input, { ...init, cache: 'no-store', signal: AbortSignal.timeout(10000) }) } });
     const { data, error } = await client.rpc(name, args);
     if (error) {
       const codes: Record<string, ConstructorParameters<typeof HoldError>[0]> = {

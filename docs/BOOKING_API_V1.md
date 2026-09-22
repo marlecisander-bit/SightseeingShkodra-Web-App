@@ -1,5 +1,7 @@
 # Booking API V1
 
+Public transport update (2026-09-22): Phase 4C adds the fixed-site GET availability adapter; Phase 4D adds signed-cookie POST session/hold/read/release/order adapters at `/api/public/checkout`. See PHASE_4C_REPORT.md and PHASE_4D_REPORT.md. The earlier statement below that no public HTTP handlers exist describes the Phase 2 baseline. `readPendingOrder(operatorId, holdId, sessionKey)` now provides session-scoped recovery without customer contact data. Payment preparation/confirmation remain server-only and are not exposed by these handlers.
+
 Canonical DTOs: `src/modules/booking/contracts.ts`. Use `import type` from this module in Admin/Public/partner clients. It imports no server modules, credentials or business logic. Existing type exports from individual modules remain compatible. Status types enumerate the database lifecycle states rather than accepting arbitrary strings.
 
 This is the modular monolith's server-domain API, backed by service-only versioned SQL RPCs. There are no public HTTP endpoints, routes, HTTP status guarantees, customer login/session issuance, rate limiting or partner credentials yet. Earlier phase notes that suggested HTTP adapters in 2F are superseded: 2F consolidates the actual contract; HTTP handlers belong with their authenticated consuming interfaces. Do not expose the raw privileged RPCs to browser or partner clients.
