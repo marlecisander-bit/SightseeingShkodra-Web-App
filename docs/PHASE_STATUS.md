@@ -2,6 +2,8 @@
 
 Updated: 2026-09-22.
 
+LATEST BUILD: Phase 6B shared map foundation implemented and locally verified; see PHASE_6B_REPORT.md. Shared view/manage-selection interfaces, existing vehicle_positions reader and development-only fictional preview added. 29 integration tests, lint, typecheck, isolated build and desktop/narrow Chrome checks passed. No migrations or hosted writes. Next: Phase 6C public read-only tracking connection. Earlier entries below are historical.
+
 LATEST REVIEW: Phase 5 audit PARTIAL; local meeting-point booking/notification checks pass, live messaging remains deferred. Two retry defects fixed; 132 tests, lint and typecheck passed. See PHASE_5_AUDIT.md. No Phase 5 checkpoint. Next separately scoped build: Phase 6B shared map under the fresh-project amendment; legacy reuse audit is not applicable.
 
 CURRENT PHASE: Phase 5E local notification foundation implemented; live delivery pending by user decision. Queue, retry worker ports, email fallback simulations and admin status display added. All 129 tests, lint, typecheck and isolated production build passed. Migration tested locally only, not applied to hosted Supabase. No messages sent or providers connected. See PHASE_5E_REPORT.md. Earlier entries below are historical.
@@ -96,7 +98,7 @@ Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, 
 - [ ] Phase 5E notifications — LOCAL FOUNDATION VERIFIED; live providers and activation pending
 - [ ] Phase 5 audit/checkpoint — PARTIAL; local checks pass, live notifications deferred; see PHASE_5_AUDIT.md
 - [ ] Phase 6A tracking reuse audit — NOT APPLICABLE to fresh project; see DECISIONS.md
-- [ ] Phase 6B shared map — NOT STARTED
+- [x] Phase 6B shared map — LOCAL FOUNDATION VERIFIED; see PHASE_6B_REPORT.md
 - [ ] Phase 6C public tracking — NOT STARTED
 - [ ] Phase 6D admin/regression — NOT STARTED
 - [ ] Phase 6 audit/checkpoint — NOT STARTED

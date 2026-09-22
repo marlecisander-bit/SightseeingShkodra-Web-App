@@ -1,0 +1,8 @@
+.shell { margin: 0; padding: 0; width: 100%; max-width: none; border: 1px solid #d8d0c6; border-radius: 12px; overflow: hidden; background: #faf8f4; color: #292622; }
+.canvas { height: clamp(280px, 55vh, 520px); width: 100%; isolation: isolate; background: #e9e5de; }
+.details { padding: 1rem; }
+.details ul { padding-left: 1.25rem; }
+.details li { margin: 1rem 0; overflow-wrap: anywhere; }
+.details span { font-size: .9rem; }
+.details button { display: block; margin-top: .5rem; padding: .6rem 1rem; cursor: pointer; }
+.shell :global(.leaflet-control a):focus-visible, .details button:focus-visible { outline: 3px solid #792335; outline-offset: 2px; }
