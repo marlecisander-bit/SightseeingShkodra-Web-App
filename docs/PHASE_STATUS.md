@@ -2,6 +2,8 @@
 
 Updated: 2026-09-22.
 
+CURRENT: Phase 3E booking operations implemented; see PHASE_3E_REPORT.md. Browser form/visual QA and owner onboarding remain pending. Next is Phase 3F usability/mobile QA and Phase 3 audit. Earlier notes are historical.
+
 CURRENT: Phase 3D content CMS implemented; see PHASE_3D_REPORT.md. Browser visual/form QA and owner onboarding remain pending. Next: Phase 3E booking operations. Earlier status notes are historical.
 
 CURRENT: Phase 3C departures/capacity implemented with transactional capacity and stale-edit protection; see PHASE_3C_REPORT.md. Browser visual/form QA and owner onboarding remain pending. Earlier status notes are historical.
@@ -55,7 +57,7 @@ Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, 
 - [ ] Phase 3B product management — IMPLEMENTED; browser QA pending; see PHASE_3B_REPORT.md
 - [ ] Phase 3C departures/capacity — IMPLEMENTED; browser QA pending; see PHASE_3C_REPORT.md
 - [ ] Phase 3D CMS — IMPLEMENTED; browser QA pending; see PHASE_3D_REPORT.md
-- [ ] Phase 3E booking operations — NOT STARTED
+- [ ] Phase 3E booking operations — IMPLEMENTED; browser QA pending; see PHASE_3E_REPORT.md
 - [ ] Phase 3F mobile QA — NOT STARTED
 - [ ] Phase 3 audit/checkpoint — NOT STARTED
 - [ ] Phase 3.5 design foundation — NOT STARTED

@@ -9,7 +9,8 @@ import styles from '../../admin.module.css';
 import { CatalogPanel } from '../../catalog-panel';
 import { DeparturesPanel } from '../../departures-panel';
 import { ContentPanel } from '../../content-panel';
-export default async function Workspace({ params, searchParams }: { params: Promise<{ operatorId: string; section: string }>; searchParams: Promise<{ result?: string; date?:string }> }) {
+import { BookingsPanel } from '../../bookings-panel';
+export default async function Workspace({ params, searchParams }: { params: Promise<{ operatorId: string; section: string }>; searchParams: Promise<{ result?: string; date?:string; email?:string; requestId?:string }> }) {
   const { operatorId, section } = await params;
   const selected = adminSections.find(item => item.slug === section);
   if (!selected) notFound();
@@ -24,5 +25,5 @@ export default async function Workspace({ params, searchParams }: { params: Prom
   return <main className={styles.shell}><a className={styles.skip} href="#workspace-content">Skip to content</a>
     <header className={styles.header}><div><strong>{operator?.name ?? 'Operator workspace'}</strong><p className={styles.muted}>{context.role.replace('_',' ')}</p></div><Link href="/admin">Switch workspace</Link><form action={signOut}><button>Sign out</button></form></header>
     <div className={styles.workspace}><nav className={styles.nav} aria-label="Admin navigation">{navigationFor(context.role).map(item => <Link key={item.slug} href={`/admin/${context.operatorId}/${item.slug}`} aria-current={section === item.slug ? 'page' : undefined}>{item.label}</Link>)}</nav>
-      <div id="workspace-content" className={styles.panel}><h1>{selected.label}</h1>{section==='catalog'?<CatalogPanel operatorId={context.operatorId} result={(await searchParams).result}/>:section==='departures'?<DeparturesPanel operatorId={context.operatorId} {...await searchParams}/>:section==='content'?<ContentPanel operatorId={context.operatorId} result={(await searchParams).result}/>:<><p>{selected.description}</p><p className={styles.muted}>Management tools are being added in the next development phases.</p></>}</div></div></main>;
+      <div id="workspace-content" className={styles.panel}><h1>{selected.label}</h1>{section==='catalog'?<CatalogPanel operatorId={context.operatorId} result={(await searchParams).result}/>:section==='departures'?<DeparturesPanel operatorId={context.operatorId} {...await searchParams}/>:section==='content'?<ContentPanel operatorId={context.operatorId} result={(await searchParams).result}/>:section==='bookings'?<BookingsPanel operatorId={context.operatorId} {...await searchParams}/>:<><p>{selected.description}</p><p className={styles.muted}>Management tools are being added in the next development phases.</p></>}</div></div></main>;
 }

@@ -11,6 +11,30 @@ import { platformSql, applyMigrations, loadDevelopmentFixtures } from '../helper
 let cluster, directory, observer, first, second;
 const clients = [];
 
+test('staff manual booking reuses domain locks, rolls back invalid customer and is idempotent',async()=>{
+  const op='10000000-0000-4000-8000-000000000001',product='10000000-0000-4000-8000-000000000020';
+  const user=(await observer.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;
+  const actor=(await observer.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'operations') returning id",[op,user])).rows[0].id;
+  await observer.query(`update products set status='published',capacity_rules='{"version":1,"model":"departure_seats"}',pricing_rules='{"version":1,"model":"per_guest","currency":"EUR","unit_price":1250}' where id=$1`,[product]);
+  const dep=(await observer.query(`insert into departures(operator_id,product_id,service_date,start_time,capacity,status) values($1,$2,'2030-12-01','12:00',1,'scheduled') returning id`,[op,product])).rows[0].id;
+  const request=(await observer.query('select gen_random_uuid() as id')).rows[0].id;
+  const sql='select create_staff_booking_v1($1,$2,$3,$4,1,$5,$6) as result',args=[op,actor,dep,request,'Test','test@example.invalid'];
+  await assert.rejects(first.query(sql,[...args.slice(0,5),'invalid']),e=>e.code==='22023');
+  assert.equal((await observer.query('select count(*)::int as n from inventory_holds where departure_id=$1',[dep])).rows[0].n,0);
+  await assert.rejects(first.query(sql,[op,user,...args.slice(2)]),e=>e.code==='42501');
+  await first.query('begin');let pending;
+  try{
+    const created=(await first.query(sql,args)).rows[0].result;
+    pending=second.query(sql,args).then(result=>({result}),error=>({error}));
+    await waitForLock();await first.query('commit');
+    const replay=await pending;assert.ifError(replay.error);assert.deepEqual(replay.result.rows[0].result,created);
+    assert.equal(created.total,1250);assert.equal(created.status,'pending');
+    assert.equal((await observer.query('select status from orders where id=$1',[created.orderId])).rows[0].status,'awaiting_payment');
+    assert.equal((await observer.query('select count(*)::int as n from payments where order_id=$1',[created.orderId])).rows[0].n,0);
+    assert.equal((await observer.query("select count(*)::int as n from audit_logs where entity_id=$1 and actor_id=$2 and action='booking.staff_created'",[created.bookingId,actor])).rows[0].n,1);
+  }finally{await first.query('rollback');if(pending)await pending;}
+});
+
 test('staff capacity edits and hold allocation serialize without overselling', async () => {
   const op='10000000-0000-4000-8000-000000000001', product='10000000-0000-4000-8000-000000000020';
   const user=(await observer.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;
