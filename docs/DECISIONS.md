@@ -1,5 +1,9 @@
 # Approved roadmap amendments
 
+## 2026-09-22 - User-supplied logo versions
+
+The user explicitly requested recording the supplied `SIGHTSEEING SHKODRA LOGO 2 VERSIONET 2 (2).svg` as Sightseeing Shkodra logo versions. The unchanged original and provenance are retained in [the brand asset registry](brand/README.md). Use this artwork as the logo reference for future integration. This authorizes retaining the supplied brand asset within the fresh project; it does not change the roadmap phase or authorize legacy-site imports. App logo replacement is not part of this recording task.
+
 ## 2026-09-22 - Website reference; business details entered later
 
 The user supplied https://sightseeingshkodra.com/ for reference and said they will enter details such as prices manually later. Reading the public site for context is authorized. This does not authorize importing legacy code, copying operational data into the new database, or changing the old service. Phase 4A connects the homepage to published structured data while leaving the owner's empty catalog unpublished. The reference site's age-based pricing is not adopted automatically: the existing V1 domain supports one per-guest rate; age bands require a separately scoped extension. The retained roadmap is unchanged.
