@@ -34,3 +34,7 @@ The V4 Next.js/TypeScript, Supabase, Vercel, modular-monolith, shared booking-do
 Future tracking will be a new implementation with one position data source, rather than reuse of unavailable legacy code. Legacy migration/redirect work in Phase 7 is not applicable unless the user later requests replacing an existing domain/site. Deployment and launch verification still apply.
 
 This amendment overrides conflicting legacy-reuse and import requirements in the retained V4 text. The original DOCX is unchanged.
+
+## 2026-09-22 - Local notification testing first
+
+The user requested building and testing locally before setting up WhatsApp or email providers. Phase 5E is limited to a local queue, provider ports, message preview and simulated tests. No messages, hosted migration or scheduler activation in this phase. Live delivery remains pending; original roadmap unchanged.

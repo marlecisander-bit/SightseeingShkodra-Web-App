@@ -108,7 +108,7 @@ export async function BookingsPanel({
       ),
     client
       .from("bookings")
-      .select("order_id,booking_reference,status")
+      .select("id,order_id,booking_reference,status")
       .eq("operator_id", operatorId)
       .in("order_id", ids),
     client
@@ -137,6 +137,24 @@ export async function BookingsPanel({
     holds.error
   )
     return <p role="alert">Booking details are temporarily unavailable.</p>;
+  const deliveries = await client
+    .from("notification_deliveries")
+    .select("booking_id,status,channel,attempt_count,last_error_code")
+    .eq("operator_id", operatorId)
+    .in(
+      "booking_id",
+      bookings.data.map((b) => b.id),
+    );
+  const confirmationLabels: Record<string, string> = {
+    pending: "Queued",
+    leased: "Preparing",
+    sending: "Sending",
+    retry: "Will retry",
+    accepted: "Accepted by provider (delivery not verified)",
+    uncertain: "Delivery uncertain - staff review required",
+    failed: "Failed - staff review required",
+    skipped: "Skipped",
+  };
   const messages: Record<string, string> = {
     created: "Reservation confirmed. Payment is due at the meeting point.",
     collected: "Full payment recorded at the meeting point.",
@@ -260,6 +278,21 @@ export async function BookingsPanel({
               Total: {order.currency} {(order.total / 100).toFixed(2)}
             </p>
             <p>Booking: {booking?.status ?? "Not prepared"}</p>
+            {deliveries.error ? (
+              <p>Confirmation status is temporarily unavailable.</p>
+            ) : (
+              <p>
+                Confirmation message:{" "}
+                {(() => {
+                  const delivery = deliveries.data.find(
+                    (d) => d.booking_id === booking?.id,
+                  );
+                  return delivery
+                    ? `${confirmationLabels[delivery.status] ?? delivery.status} - ${delivery.attempt_count} attempt(s)`
+                    : "Not queued. Message delivery is not configured yet.";
+                })()}
+              </p>
+            )}
             {holds.data
               .filter((h) => h.order_id === order.id && h.status !== "consumed")
               .map((h, index) => (

@@ -443,3 +443,14 @@ test('confirmed meeting-point seats survive the original form expiry',async()=>{
   await assert.rejects(first.query('select create_hold_v1($1,$2,$3,gen_random_uuid(),1)',[op,dep,'another-confirmed-expiry-session-123456']),e=>e.code==='P0001');
   assert.equal((await observer.query('select status from inventory_holds where id=$1',[h])).rows[0].status,'consumed');
 });
+
+
+test('notification consumers skip locked deliveries and rollback leaves the job available',async()=>{
+ const op='10000000-0000-4000-8000-000000000001',product='10000000-0000-4000-8000-000000000020',session='notification-concurrency-session-123456';
+ const dep=(await observer.query("insert into departures(operator_id,product_id,service_date,start_time,capacity,status) values($1,$2,'2031-04-01','12:00',1,'scheduled') returning id",[op,product])).rows[0].id;
+ const hold=(await first.query('select * from create_hold_v1($1,$2,$3,gen_random_uuid(),1)',[op,dep,session])).rows[0];
+ const order=(await first.query("select create_meeting_point_booking_v1($1,$2,$3,'Test','queue@example.invalid') as result",[op,hold.id,session])).rows[0].result;
+ await observer.query("insert into notification_deliveries(operator_id,event_id,booking_id) select e.operator_id,e.id,b.id from bookings b join domain_events e on e.operator_id=b.operator_id and e.aggregate_id=b.id and e.event_type='booking.confirmed' where b.order_id=$1",[order.orderId]);
+ await first.query('begin');try{const job=(await first.query('select * from claim_booking_notification_v1($1)',[op])).rows[0];assert.ok(job.id);assert.equal((await second.query('select * from claim_booking_notification_v1($1)',[op])).rows.length,0);await first.query('rollback');const retried=(await first.query('select * from claim_booking_notification_v1($1)',[op])).rows[0];assert.equal(retried.id,job.id);assert.equal(retried.attempt_count,1);}finally{await first.query('rollback');}
+ assert.equal((await observer.query('select status from orders where id=$1',[order.orderId])).rows[0].status,'confirmed');
+});

@@ -17,6 +17,7 @@
     "test": "npm run test:identity && npm run test:integrations && npm run test:db && npm run test:postgres",
     "test:integrations": "tsx --conditions=react-server --test tests/integrations/*.test.mjs",
     "fixtures:preview": "node scripts/preview-fixtures.mjs",
+    "notifications:preview": "node --import tsx scripts/preview-booking-confirmation.mjs",
     "test:postgres": "node --test tests/postgres/*.test.mjs"
   },
   "dependencies": {

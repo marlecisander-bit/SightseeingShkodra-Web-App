@@ -11,7 +11,7 @@ const id = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 const tables = ['operators', 'staff_profiles', 'suppliers', 'products', 'stops',
   'departures', 'customers', 'orders', 'booking_items', 'bookings', 'payments',
   'payment_events', 'refunds', 'vehicles', 'vehicle_positions', 'reviews',
-  'content_pages', 'redirects', 'api_keys', 'domain_events', 'audit_logs', 'inventory_holds'];
+  'content_pages', 'redirects', 'api_keys', 'domain_events', 'audit_logs', 'inventory_holds', 'notification_deliveries'];
 
 before(async () => {
   // Only the Supabase platform prerequisites are stubbed. Application SQL is unmodified.
@@ -73,7 +73,7 @@ async function rejects(sql, code) {
   await assert.rejects(db.exec(sql), (err) => err.code === code);
 }
 
-test('fresh migrations create all 22 core and hold tables with primary keys and timestamps', async () => {
+test('fresh migrations create all core, hold and notification tables with primary keys and timestamps', async () => {
   const result = await db.query(`select tablename from pg_tables where schemaname='public' order by tablename`);
   assert.deepEqual(result.rows.map((r) => r.tablename), [...tables].sort());
   for (const table of tables) {
