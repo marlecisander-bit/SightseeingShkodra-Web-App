@@ -2,7 +2,17 @@
 
 Recorded on 2026-09-22 at the user's request as the supplied Sightseeing Shkodra logo versions. These supplied assets are the reference for future logo integration.
 
-## Original supplied artwork
+## Current artwork - replacement supplied 2026-09-22
+
+The user supplied `SIGHTSEEING SHKODRA LOGO 2 VERSIONET 2 (3).svg` and requested replacing the existing app logos on localhost. This is now the active logo source; the earlier file is retained only as history.
+
+- [Current original SVG](source/sightseeing-shkodra-logo-versions-v2.svg), preserved unchanged: 38,495 bytes.
+- SHA-256: `B4F2EA18214E9F04FE02D380EC28CC59B87AA73780268A916479C1D67F71A621`.
+- Replaced `public/brand/logo-light.svg` using the upper artwork, viewBox `45 95 345 103`.
+- Replaced `public/brand/logo-color.svg` using the lower artwork, viewBox `45 397 345 103`.
+- Removed the presentation background from web derivatives; original vector paths and colors retained. Both cropped variants rendered successfully and localhost serves the exact replacement files. Header/footer component and responsive sizing remain in use.
+
+## Earlier supplied artwork (superseded)
 
 - [Logo versions - original SVG](source/sightseeing-shkodra-logo-versions-original.svg)
 - Original filename: `SIGHTSEEING SHKODRA LOGO 2 VERSIONET 2 (2).svg`
@@ -13,7 +23,7 @@ Recorded on 2026-09-22 at the user's request as the supplied Sightseeing Shkodra
 
 The retained source is byte-for-byte identical to the supplied file. Preserve this original and derive any future optimized or individually cropped logo variants as separate files, documenting their relationship here.
 
-## Local app integration - 2026-09-22
+## Initial local app integration - 2026-09-22 (historical)
 
 The user requested updating the logo and clarified that publishing means the local server only. Header and footer now use the supplied artwork through `BrandLogo` with accessible alternative text. The white-letter variant appears over the homepage photograph; the red-letter variant appears in the footer, solid header and open mobile menu.
 

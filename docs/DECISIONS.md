@@ -1,5 +1,9 @@
 # Approved roadmap amendments
 
+## 2026-09-22 - Replacement logo artwork
+
+The user's newly supplied `SIGHTSEEING SHKODRA LOGO 2 VERSIONET 2 (3).svg` supersedes the earlier `(2).svg` for app logos. Both public web variants are replaced from this source and served on localhost only, as explicitly requested. The earlier source remains archived; [the brand registry](brand/README.md) identifies the current artwork and its hash.
+
 ## 2026-09-22 - Logo integration on local server
 
 The user requested updating and publishing the supplied logo, then clarified: "no no just publish in the local server". Use derived web SVG versions in the public header and footer, preserving the original artwork. This authorizes the local branding update only; no hosting deployment or existing-site change is requested. See [brand asset registry](brand/README.md).
