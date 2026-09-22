@@ -1,6 +1,7 @@
 import { createSessionClient } from '../../modules/identity/supabase-server';
 import { requirePermission } from '../../modules/identity/require-permission';
 import { saveContent } from './content-actions';
+import { SubmitButton } from './submit-button';
 type Page={id?:string;title?:string;slug?:string;status?:string;body?:{version?:number;format?:string;text?:string};meta_title?:string|null;meta_description?:string|null;og_image?:string|null;og_image_alt?:string|null;updated_at?:string};
 function Editor({operatorId,page}:{operatorId:string;page:Page}) {
   if(page.body?.format && page.body.format!=='plain_text')return <p>This content format cannot be edited with the plain-text editor.</p>;
@@ -14,7 +15,7 @@ function Editor({operatorId,page}:{operatorId:string;page:Page}) {
     <label>Social image HTTPS URL<input type="url" name="og_image" maxLength={2000} defaultValue={page.og_image??''}/></label>
     <label>Image description<input name="og_image_alt" maxLength={500} defaultValue={page.og_image_alt??''}/></label>
     <label>Publication status<select name="status" defaultValue={page.status??'draft'}>{['draft','published','archived'].map(s=><option key={s}>{s}</option>)}</select></label>
-    <button>{page.id?'Save page':'Create page'}</button>
+    <SubmitButton>{page.id?'Save page':'Create page'}</SubmitButton>
     {page.body?.text&&<details><summary>Saved text preview</summary><div style={{whiteSpace:'pre-wrap'}}>{page.body.text}</div></details>}
   </form>;
 }

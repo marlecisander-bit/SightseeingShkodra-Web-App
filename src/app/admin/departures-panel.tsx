@@ -1,6 +1,8 @@
 import { createSessionClient } from '../../modules/identity/supabase-server';
 import { requirePermission } from '../../modules/identity/require-permission';
 import { saveDeparture } from './departure-actions';
+import { SubmitButton } from './submit-button';
+import Link from 'next/link';
 type Departure={id?:string;product_id?:string;vehicle_id?:string|null;service_date?:string;start_time?:string;capacity?:number;status?:string;updated_at?:string};
 type Choice={id:string;label:string};
 function Editor({operatorId,row,products,vehicles}:{operatorId:string;row:Departure;products:Choice[];vehicles:Choice[]}) {
@@ -12,7 +14,8 @@ function Editor({operatorId,row,products,vehicles}:{operatorId:string;row:Depart
     <label>Local departure time<input name="start_time" type="time" step="1" required defaultValue={row.start_time}/></label>
     <label>Seat capacity<input name="capacity" type="number" min="0" max="2147483647" step="1" required defaultValue={row.capacity ?? 0}/></label>
     <label>Status<select name="status" defaultValue={row.status ?? 'draft'}>{['draft','scheduled','cancelled'].map(s=><option key={s}>{s}</option>)}</select></label>
-    <button type="submit">{row.id?'Save departure':'Create departure'}</button>
+    <SubmitButton disabled={products.length===0}>{row.id?'Save departure':'Create departure'}</SubmitButton>
+    {products.length===0&&<p>Create a product before scheduling a departure.</p>}
   </form>;
 }
 export async function DeparturesPanel({operatorId,date,result}:{operatorId:string;date?:string;result?:string}) {
@@ -29,7 +32,7 @@ export async function DeparturesPanel({operatorId,date,result}:{operatorId:strin
   const p=products.data.map(r=>({id:r.id,label:r.title})),v=vehicles.data.map(r=>({id:r.id,label:r.name}));
   const messages:Record<string,string>={saved:'Departure saved.',stale:'This departure changed. Review the latest values before saving.',inventory:'Reserved inventory or booking history prevents this change. Resolve affected bookings before changing the schedule.',error:'Unable to save. Check the date, time, capacity and linked records.'};
   return <div>{result&&<p role="status">{messages[result]??messages.error}</p>}<p>All departure dates and times use {operator.data.timezone}. Capacity changes are checked against current reservations.</p>
-    <form method="get"><label>Browse calendar date<input type="date" name="date" defaultValue={day}/></label><button>Show departures</button></form>
+    <form method="get"><label>Browse calendar date<input type="date" name="date" defaultValue={day}/></label><button>Show departures</button> <Link href={`/admin/${operatorId}/departures`}>Clear filter</Link></form>
     <details><summary>Create departure</summary><Editor operatorId={operatorId} row={{service_date:day}} products={p} vehicles={v}/></details>
     {departures.data.length===0&&<p>No departures found.</p>}
     {departures.data.map(row=><details key={row.id}><summary>{row.service_date} · {row.start_time} · {p.find(item=>item.id===row.product_id)?.label ?? 'Product'} · {row.status} · {row.capacity} seats</summary><Editor operatorId={operatorId} row={row} products={p} vehicles={v}/></details>)}

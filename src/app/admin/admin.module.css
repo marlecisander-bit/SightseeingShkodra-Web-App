@@ -1,5 +1,5 @@
 .shell { max-width: 78rem; padding: clamp(1rem,4vw,3rem); gap: 2rem; min-height: 100svh; }
-.header { display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; border-bottom:1px solid #d8d2ca; padding-bottom:1.5rem; }
+.header { display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; border-bottom:1px solid #d8d2ca; padding-bottom:1.5rem; overflow-wrap:anywhere; }
 .shell h1 { font-size:clamp(2rem,5vw,3.5rem); margin:.5rem 0 1.5rem; }
 .shell h2 { font-size:1.25rem; }
 .shell a { color:#78202d; text-underline-offset:.2em; }
@@ -15,7 +15,12 @@
 .shell select { display:block; width:100%; padding:.85rem; margin:.5rem 0 1.25rem; font:inherit; background:white; border:1px solid #777; }
 .shell details { border-bottom:1px solid #ddd6cc; padding:1rem 0; }
 .shell summary { cursor:pointer; min-height:44px; padding:.5rem; }
-.shell input[type=checkbox] { display:inline-block; width:auto; margin:1rem .5rem; }
+.shell input[type=checkbox] { display:inline-block; width:1.25rem; height:1.25rem; margin:.75rem .5rem; vertical-align:middle; }
+.shell label:has(input[type=checkbox]) { min-height:44px; padding:.25rem; cursor:pointer; }
+.shell button:disabled { opacity:.65; cursor:wait; }
+.header a { display:inline-flex; align-items:center; min-height:44px; }
+.panel { min-width:0; }
+.shell :is(input,select,textarea) { min-width:0; max-width:100%; font-size:1rem; }
 .shell label { display:block; }
 .shell textarea { display:block; width:100%; padding:.85rem; margin:.5rem 0 1.25rem; font:inherit; border:1px solid #777; resize:vertical; }
 .shell :is(select,textarea,summary):focus-visible { outline:3px solid #215fa4; outline-offset:4px; }

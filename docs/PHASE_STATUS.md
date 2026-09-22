@@ -2,6 +2,8 @@
 
 Updated: 2026-09-22.
 
+CURRENT ACCEPTANCE: Phase 3F usability fixes implemented; Phase 3 audit PARTIAL, no checkpoint. Browser provider has no connected apps/browsers, so interactive/mobile QA remains unverified. See PHASE_3F_REPORT.md and PHASE_3_AUDIT.md. Owner onboarding awaits user email. Earlier notes below are historical.
+
 CURRENT: Phase 3E booking operations implemented; see PHASE_3E_REPORT.md. Browser form/visual QA and owner onboarding remain pending. Next is Phase 3F usability/mobile QA and Phase 3 audit. Earlier notes are historical.
 
 CURRENT: Phase 3D content CMS implemented; see PHASE_3D_REPORT.md. Browser visual/form QA and owner onboarding remain pending. Next: Phase 3E booking operations. Earlier status notes are historical.
@@ -58,8 +60,8 @@ Active scope: Phase 1G fixtures complete; Phase 1H local checks pass (74 tests, 
 - [ ] Phase 3C departures/capacity — IMPLEMENTED; browser QA pending; see PHASE_3C_REPORT.md
 - [ ] Phase 3D CMS — IMPLEMENTED; browser QA pending; see PHASE_3D_REPORT.md
 - [ ] Phase 3E booking operations — IMPLEMENTED; browser QA pending; see PHASE_3E_REPORT.md
-- [ ] Phase 3F mobile QA — NOT STARTED
-- [ ] Phase 3 audit/checkpoint — NOT STARTED
+- [ ] Phase 3F mobile QA — PARTIAL; code fixes applied, browser acceptance pending
+- [ ] Phase 3 audit/checkpoint — PARTIAL; see PHASE_3_AUDIT.md; no checkpoint
 - [ ] Phase 3.5 design foundation — NOT STARTED
 - [ ] Phase 3.5 audit/checkpoint — NOT STARTED
 - [ ] Phase 4A homepage — NOT STARTED

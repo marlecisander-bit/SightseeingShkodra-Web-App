@@ -19,6 +19,19 @@ function ok(result) {
   if (result.error) throw new Error(`Supabase operation failed: ${result.error.code ?? result.error.status ?? 'unknown'}`);
   return result.data;
 }
+async function assertAuthRedirect(response, expected) {
+  if (response.status === 307) {
+    assert.ok(response.headers.get('location')?.includes(expected));
+    return;
+  }
+  // A loading boundary may flush HTTP 200 before Next emits its redirect meta.
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  const meta = html.match(/<meta[^>]*id="__next-page-redirect"[^>]*>/)?.[0];
+  assert.ok(meta?.includes(expected));
+  assert.ok(!html.includes('Your operator workspace.'));
+  assert.ok(!html.includes('Create manual booking'));
+}
 let cleanupFailed = false;
 try {
   ok(await admin.from('operators').insert(operators.map((id, i) => ({ id, name: `Integration test ${run} ${i}` }))));
@@ -76,8 +89,7 @@ try {
     const baseUrl = 'http://127.0.0.1:3000';
     const cookie = request.cookies.getAll().map(({ name, value }) => `${name}=${value}`).join('; ');
     const anonymous = await fetch(baseUrl + '/admin', { redirect: 'manual' });
-    assert.equal(anonymous.status, 307);
-    assert.ok(anonymous.headers.get('location').includes('/auth/sign-in'));
+    await assertAuthRedirect(anonymous, '/auth/sign-in');
     const signedIn = await fetch(`${baseUrl}/admin/${operators[0]}/overview`, { headers: { cookie }, redirect: 'manual' });
     assert.equal(signedIn.status, 200);
     assert.ok((await signedIn.text()).includes('Your operator workspace.'));
@@ -91,11 +103,10 @@ try {
     assert.equal(bookingPage.status, 200);
     assert.ok((await bookingPage.text()).includes('Create manual booking'));
     const foreign = await fetch(`${baseUrl}/admin/${operators[1]}/overview`, { headers: { cookie }, redirect: 'manual' });
-    assert.equal(foreign.status, 307);
-    assert.ok(foreign.headers.get('location').includes('error=access'));
+    await assertAuthRedirect(foreign, 'error=access');
     ok(await admin.from('staff_profiles').update({ role: 'content_editor' }).eq('auth_user_id', users[0]).eq('operator_id', operators[0]));
     const forbidden = await fetch(`${baseUrl}/admin/${operators[0]}/bookings`, { headers: { cookie }, redirect: 'manual' });
-    assert.equal(forbidden.status, 307);
+    await assertAuthRedirect(forbidden, 'error=access');
     const content = await fetch(`${baseUrl}/admin/${operators[0]}/content`, { headers: { cookie }, redirect: 'manual' });
     assert.equal(content.status, 200);
     assert.ok((await content.text()).includes('Create content page'));
