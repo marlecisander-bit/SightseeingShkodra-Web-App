@@ -183,8 +183,8 @@ try {
     await new Promise((resolve) => setTimeout(resolve, 250));
   }
   assert.ok(ready, "QA server did not become ready");
-  async function html() {
-    const response = await fetch("http://127.0.0.1:3001", {
+  async function html(path = "/") {
+    const response = await fetch(`http://127.0.0.1:3001${path}`, {
       signal: AbortSignal.timeout(15000),
     });
     assert.equal(response.status, 200);
@@ -198,6 +198,18 @@ try {
   assert.ok(!published.includes("<script>qaUnsafe()"));
   assert.ok(!published.includes("MUST NOT APPEAR"));
   assert.match(published, /noindex/);
+  const tour = await html("/tour");
+  assert.match(tour, /QA Published Tour/);
+  assert.match(tour, /QA Published Boarding Stop/);
+  assert.match(tour, /12\.50 per guest/);
+  assert.match(tour, /23:59/);
+  assert.match(tour, /Europe\/Tirane/);
+  assert.ok(!tour.includes("MUST NOT APPEAR"));
+  assert.ok(
+    !tour.includes("QA Published Homepage"),
+    "Homepage copy must not become tour copy",
+  );
+  assert.match(tour, /noindex/);
   ok(
     await client
       .from("products")
@@ -216,8 +228,13 @@ try {
   assert.ok(!withdrawn.includes("QA Published Homepage"));
   assert.ok(!withdrawn.includes("QA Published Boarding Stop"));
   assert.ok(!withdrawn.includes("12.50 per guest"));
+  const withdrawnTour = await html("/tour");
+  assert.ok(!withdrawnTour.includes("QA Published Tour"));
+  assert.ok(!withdrawnTour.includes("QA Published Boarding Stop"));
+  assert.ok(!withdrawnTour.includes("12.50 per guest"));
+  assert.match(withdrawnTour, /This tour has not been published yet/);
   console.log(
-    "PASS: real Next HTTP renders published data, escapes CMS text, and removes archived content on next request",
+    "PASS: homepage and tour HTTP render published facts, isolate page copy, and remove archived content on next request; homepage CMS text escaped",
   );
   if (process.argv.includes("--browser")) {
     ok(
