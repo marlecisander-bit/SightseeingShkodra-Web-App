@@ -3,6 +3,7 @@ import { requirePermission } from "../../modules/identity/require-permission";
 import { saveCatalog, saveProductPricing } from "./catalog-actions";
 import { SubmitButton } from "./submit-button";
 import { MutationForm } from "./mutation-form";
+import { ProductNameFields } from "./product-name-fields";
 
 type Row = Record<string, string | number | null>;
 const fields: Record<
@@ -40,29 +41,16 @@ const fields: Record<
     { key: "name", label: "Supplier name", required: true },
     { key: "type", label: "Supplier type", options: ["owned", "partner"] },
   ],
-  stop: [
-    { key: "name", label: "Stop name", required: true },
-    { key: "lat", label: "Latitude", type: "number", required: true },
-    { key: "lng", label: "Longitude", type: "number", required: true },
-    {
-      key: "sort_order",
-      label: "Route position (0, 1, 2…)",
-      type: "number",
-      required: true,
-    },
-  ],
 };
 function Editor({
   entity,
   row,
   operatorId,
-  products,
   suppliers,
 }: {
   entity: string;
   row: Row;
   operatorId: string;
-  products: Row[];
   suppliers: Row[];
 }) {
   return (
@@ -71,7 +59,9 @@ function Editor({
       className="catalog-form"
     >
       <input type="hidden" name="id" value={row.id ?? ""} />
-      {fields[entity].map((field) => (
+      {entity === "product" && !row.id && <ProductNameFields />}
+      {fields[entity].filter(field => !(entity === "product" && !row.id &&
+        (field.key === "title" || field.key === "slug"))).map((field) => (
         <label key={field.key}>
           {field.label}
           {field.options ? (
@@ -125,33 +115,12 @@ function Editor({
           </select>
         </label>
       )}
-      {entity === "stop" && (
-        <label>
-          Product
-          <select
-            name="product_id"
-            required
-            defaultValue={String(row.product_id ?? "")}
-          >
-            <option value="">Choose product</option>
-            {products.map((p) => (
-              <option key={p.id} value={String(p.id)}>
-                {p.title}
-              </option>
-            ))}
-          </select>
-        </label>
-      )}
       <SubmitButton
         name="operation"
         value="save"
-        disabled={entity === "stop" && products.length === 0}
       >
         {row.id ? "Save changes" : "Create"}
       </SubmitButton>
-      {entity === "stop" && products.length === 0 && (
-        <p>Create a product before adding its route stops.</p>
-      )}
       {row.id && (
         <div>
           <label>
@@ -175,7 +144,7 @@ export async function CatalogPanel({
 }) {
   await requirePermission(operatorId, "catalog.manage");
   const client = await createSessionClient();
-  const [p, s, t] = await Promise.all([
+  const [p, s] = await Promise.all([
     client
       .from("products")
       .select(
@@ -190,14 +159,8 @@ export async function CatalogPanel({
       .eq("operator_id", operatorId)
       .order("name")
       .limit(100),
-    client
-      .from("stops")
-      .select("id,name,product_id,lat,lng,sort_order")
-      .eq("operator_id", operatorId)
-      .order("sort_order")
-      .limit(100),
   ]);
-  if (p.error || s.error || t.error)
+  if (p.error || s.error)
     return <p role="alert">Catalog is temporarily unavailable.</p>;
   const products = (p.data ?? []).map(({ pricing_rules, ...row }) => ({
       ...row,
@@ -216,7 +179,7 @@ export async function CatalogPanel({
         <p role="status">
           {result === "saved"
             ? "Changes saved."
-            : "Unable to save. Check the required fields, unique slug/route position and linked records."}
+            : "Unable to save. Check the required fields, unique slug and linked records."}
         </p>
       )}
       <p>
@@ -225,14 +188,13 @@ export async function CatalogPanel({
         checkouts use the current price; already saved reservations keep their
         agreed total.
       </p>
-      {(["product", "supplier", "stop"] as const).map((entity) => (
+      <p>Manage route stops, routes and GPS in the live map app.</p>
+      {(["product", "supplier"] as const).map((entity) => (
         <div key={entity}>
           <h2>
             {entity === "product"
               ? "Products"
-              : entity === "supplier"
-                ? "Suppliers"
-                : "Route stops"}
+              : "Suppliers"}
           </h2>
           <details>
             <summary>Create {entity}</summary>
@@ -240,15 +202,12 @@ export async function CatalogPanel({
               entity={entity}
               row={{}}
               operatorId={operatorId}
-              products={products}
               suppliers={suppliers}
             />
           </details>
           {(entity === "product"
             ? products
-            : entity === "supplier"
-              ? suppliers
-              : (t.data ?? [])
+            : suppliers
           ).map((row) => (
             <details key={row.id}>
               <summary>{"title" in row ? row.title : row.name}</summary>
@@ -256,7 +215,6 @@ export async function CatalogPanel({
                 entity={entity}
                 row={row}
                 operatorId={operatorId}
-                products={products}
                 suppliers={suppliers}
               />
               {entity === "product" &&

@@ -7,6 +7,8 @@ export async function saveCatalog(
   entity: string,
   form: FormData,
 ) {
+  if (entity !== "product" && entity !== "supplier")
+    return { error: "Route stops are managed in the live map app." };
   let failed = false;
   try {
     await withOperatorService(
@@ -25,10 +27,6 @@ export async function saveCatalog(
           "meta_description",
           "og_image",
           "og_image_alt",
-          "product_id",
-          "lat",
-          "lng",
-          "sort_order",
         ]) {
           const value = form.get(key);
           if (typeof value === "string") data[key] = value;
@@ -54,7 +52,7 @@ export async function saveCatalog(
   if (failed)
     return {
       error:
-        "Unable to save. Check the unique slug or stop position, required SEO/image fields and linked records. Removal requires confirmation; linked suppliers cannot be deleted. Your entries are preserved.",
+        "Unable to save. Check the unique slug, required SEO/image fields and linked records. Removal requires confirmation; linked suppliers cannot be deleted. Your entries are preserved.",
     };
   const path = `/admin/${encodeURIComponent(operatorId)}/catalog`;
   revalidatePath(path);
