@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { BrandLogo } from "./brand-logo";
 import type { ComponentProps, ReactNode } from "react";
+import { initialWebsiteContent, type WebsiteContent } from "@/modules/content/website-schema";
 
 export function ActionLink({
   children,
@@ -39,22 +40,33 @@ export function Media({
   alt,
   hero = false,
   className = "",
+  mobileSrc,
 }: {
   src: string;
   alt: string;
   hero?: boolean;
   className?: string;
+  mobileSrc?: string;
 }) {
   return (
     <div className={`p-media ${className}`}>
+      {mobileSrc ? (
+        <picture>
+          <source media="(max-width: 700px)" srcSet={mobileSrc} />
+          {/* Uploaded images retain their original quality; picture selects one source. */}
+          <img src={src} alt={alt} fetchPriority={hero ? "high" : "auto"} loading={hero ? "eager" : "lazy"} style={{ position: "absolute", width: "100%", height: "100%", objectFit: "cover" }} />
+        </picture>
+      ) : (
       <Image
         src={src}
         alt={alt}
         fill
         sizes={hero ? "100vw" : "(max-width: 700px) 100vw, 50vw"}
         preload={hero}
+        unoptimized={src.startsWith("https://")}
         style={{ objectFit: "cover" }}
       />
+      )}
     </div>
   );
 }
@@ -77,7 +89,7 @@ export function PreviewNote() {
     <p className="p-preview">Website preview · Bookings are not open yet.</p>
   );
 }
-export function Footer() {
+export function Footer({ content: c = initialWebsiteContent }: { content?: WebsiteContent }) {
   return (
     <footer className="p-footer">
       <div>
@@ -85,22 +97,17 @@ export function Footer() {
           <BrandLogo />
         </Link>
         <p>
-          A little closer to the place.
-          <br />A little more of your own pace.
+          {c["footer.line1"]}
+          <br />{c["footer.line2"]}
         </p>
       </div>
       <nav aria-label="Footer">
-        <Link href="/tour">The day tour</Link>
-        <Link href="/live">Live map</Link>
-        <Link href="/explore">Explore Shkodra</Link>
-        <Link href="/tour#faq">Questions & answers</Link>
-        <Link href="/credits">Photography credits</Link>
-        <Link href="/admin">Staff sign-in</Link>
+        {[0, 1, 2, 3, 4, 5].map(i => <Link key={i} href={c[`footer.${i}.link`]}>{c[`footer.${i}.label`]}</Link>)}
       </nav>
       <div className="p-footer-bottom">
-        <span>Shkodër, Albania</span>
-        <span>English · More languages coming soon</span>
-        <span>Contact and legal information before launch</span>
+        <span>{c["footer.location"]}</span>
+        <span>{c["footer.language"]}</span>
+        <span>{c["footer.contact"]}</span>
       </div>
     </footer>
   );

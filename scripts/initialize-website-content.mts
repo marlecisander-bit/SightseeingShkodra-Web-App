@@ -1,0 +1,12 @@
+﻿import assert from 'node:assert/strict';
+import {createClient} from '@supabase/supabase-js';
+import {initialWebsiteContent} from '../src/modules/content/website-schema.ts';
+assert.equal(process.env.APP_ENV,'development');
+assert.equal(process.env.NEXT_PUBLIC_SUPABASE_URL,'https://ybngoppqqiohcduojfyg.supabase.co');
+const op=process.env.PUBLIC_OPERATOR_ID;
+const client=createClient(process.env.NEXT_PUBLIC_SUPABASE_URL,process.env.SUPABASE_SECRET_KEY,{auth:{persistSession:false}});
+const old=await client.from('content_pages').select('slug').eq('operator_id',op).eq('status','published').in('slug',['homepage-hero','homepage-intro','homepage-final']);
+assert.ifError(old.error);assert.equal(old.data.length,0,'Published legacy slots require a reviewed content merge before initialization');
+const actor=await client.from('staff_profiles').select('id').eq('operator_id',op).eq('role','owner').eq('is_active',true).single();assert.ifError(actor.error);
+const result=await client.rpc('save_website_content_v1',{p_operator_id:op,p_actor_id:actor.data.id,p_content:initialWebsiteContent,p_expected_updated_at:null,p_operation:'initialize'});assert.ifError(result.error);
+console.log('Existing homepage initialized idempotently; published fields:',Object.keys(result.data.body.content).length);

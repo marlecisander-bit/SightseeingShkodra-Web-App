@@ -3,6 +3,9 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { withOperatorService } from '../../modules/identity/operator-service';
 export async function saveContent(operatorId:string,form:FormData) {
+  const slug = form.get('slug');
+  if (typeof slug === 'string' && (slug.startsWith('homepage-') || slug === 'website-homepage'))
+    return {error:'Use the Homepage section cards above to edit homepage content.'};
   let result='saved';
   try {
     await withOperatorService(operatorId,'content.manage',async(client,context)=>{

@@ -1,0 +1,11 @@
+.editor { min-width:0; }
+.editor fieldset { border:0; padding:0; margin:0; min-width:0; }
+.field { margin:1rem 0; min-width:0; }
+.editor input, .editor textarea { box-sizing:border-box; width:100%; max-width:100%; font:inherit; }
+.thumbnail { width:100%; max-width:24rem; height:9rem; object-fit:cover; border-radius:6px; display:block; }
+.actions { display:flex; flex-wrap:wrap; gap:1rem; align-items:center; }
+.actions a, .actions button { min-height:44px; padding:.7rem 1rem; }
+.cards { display:grid; gap:1rem; }
+.card { border:1px solid #ddd6cc; border-radius:6px; padding:1rem; min-width:0; }
+.card summary { cursor:pointer; min-height:44px; }
+.status { font-size:.9rem; color:#555; }

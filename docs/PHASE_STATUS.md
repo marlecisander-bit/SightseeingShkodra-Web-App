@@ -2,6 +2,8 @@
 
 Updated: 2026-09-23.
 
+CURRENT USER TASK: Existing homepage connected to structured Website content cards, draft/published snapshots, same-component private preview, separate desktop/mobile hero sources and media upload action. Development migration 20260923000100 applied and current local content imported. All 123 fields passed actual browser Admin → Supabase → `/` publication checks; original content restored exactly. 141 automated tests and isolated optimized build passed. Mobile/admin checks recorded in HOMEPAGE-CMS-CONNECTION-AUDIT.md. Browser file-upload transport verification remains pending Chrome extension file-URL permission; do not mark the entire user definition of done complete until that check passes. No external deployment or map-service change.
+
 CURRENT READINESS: Phase 7C local readiness assessment completed; production NO-GO. Fresh 139-test regression and isolated optimized build passed. See PHASE_7C_READINESS.md for configuration review, backup/restore and rollback rehearsal, and launch blockers. Staging/content, recovery evidence, monitoring, deployment smoke tests and notification launch scope remain pending. No deployment or hosted changes. Next: resolve these acceptance gates; Phase 7D is not ready.
 
 CURRENT VALIDATION: Phase 7B local checks PASS; full staging acceptance PENDING. Seven public pages and 141 internal links passed the read-only crawl, with local noindex/robots/sitemap and unknown-page 404 checks. Corrected sample-ticket wording for payment at the meeting point. 32 integration tests, lint and typecheck passed. See PHASE_7B_REPORT.md. Next: staging validation with approved published content when a deployment is available. No external deployment or Phase 7 checkpoint.

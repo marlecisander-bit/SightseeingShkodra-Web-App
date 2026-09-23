@@ -3,6 +3,7 @@ import { requirePermission } from '../../modules/identity/require-permission';
 import { saveContent } from './content-actions';
 import { SubmitButton } from './submit-button';
 import { MutationForm } from './mutation-form';
+import { WebsitePanel } from './website-panel';
 type Page={id?:string;title?:string;slug?:string;status?:string;body?:{version?:number;format?:string;text?:string};meta_title?:string|null;meta_description?:string|null;og_image?:string|null;og_image_alt?:string|null;updated_at?:string};
 function Editor({operatorId,page}:{operatorId:string;page:Page}) {
   if(page.body?.format && page.body.format!=='plain_text')return <p>This content format cannot be edited with the plain-text editor.</p>;
@@ -25,10 +26,10 @@ export async function ContentPanel({operatorId,result}:{operatorId:string;result
   const client=await createSessionClient();
   const {data,error}=await client.from('content_pages').select('id,title,slug,status,body,meta_title,meta_description,og_image,og_image_alt,updated_at').eq('operator_id',operatorId).order('title').limit(100);
   if(error)return <p role="alert">Content is temporarily unavailable.</p>;
-  return <div>{result&&<p role="status">{result==='saved'?'Page saved.':result==='stale'?'This page changed. Review the current version before saving.':'Unable to save. Check the unique slug, publication fields and image description.'}</p>}
+  return <div><WebsitePanel operatorId={operatorId}/><details><summary>Explore guides and other content pages</summary>{result&&<p role="status">{result==='saved'?'Page saved.':result==='stale'?'This page changed. Review the current version before saving.':'Unable to save. Check the unique slug, publication fields and image description.'}</p>}
     <p>Publishing requires body text, SEO title and description. Images require descriptive alt text. HTML is treated as text.</p>
     <details><summary>Create content page</summary><Editor operatorId={operatorId} page={{}}/></details>
     {data.length===0&&<p>No content pages yet.</p>}
-    {data.map(page=><details key={page.id}><summary>{page.title} · {page.status}</summary><Editor operatorId={operatorId} page={page}/></details>)}
-    <p>Showing up to 100 pages. Archive a page to withdraw it without deleting its history.</p></div>;
+    {data.filter(page=>!page.slug.startsWith('homepage-')&&page.slug!=='website-homepage').map(page=><details key={page.id}><summary>{page.title} · {page.status}</summary><Editor operatorId={operatorId} page={page}/></details>)}
+    <p>Showing up to 100 pages. Archive a page to withdraw it without deleting its history.</p></details></div>;
 }

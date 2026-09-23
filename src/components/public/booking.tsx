@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { initialWebsiteContent, type WebsiteContent } from "@/modules/content/website-schema";
 import { BrandLogo } from "./brand-logo";
 import {
   createContext,
@@ -286,7 +287,7 @@ export function BookingBar({
     </div>
   );
 }
-export function Header() {
+export function Header({ content: c = initialWebsiteContent }: { content?: WebsiteContent }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menu, setMenu] = useState(false);
@@ -325,34 +326,20 @@ export function Header() {
           className={menu ? "p-navigation is-open" : "p-navigation"}
           aria-label="Main navigation"
         >
-          <Link href="/tour" onClick={() => setMenu(false)}>
-            Tour
-          </Link>
-          <Link href="/#route" onClick={() => setMenu(false)}>
-            Route
-          </Link>
-          <Link href="/explore" onClick={() => setMenu(false)}>
-            Explore Shkodra
-          </Link>
-          <Link href="/live" onClick={() => setMenu(false)}>
-            Live map
-          </Link>
-          <Link href="/tour#faq" onClick={() => setMenu(false)}>
-            FAQ
-          </Link>
+          {[0, 1, 2, 3, 4].map(i => <Link key={i} href={c[`nav.${i}.link`]} onClick={() => setMenu(false)}>{c[`nav.${i}.label`]}</Link>)}
           <span className="p-language" title="More languages coming soon">
             EN
           </span>
         </nav>
-        <BookButton className="p-header-book">Book now</BookButton>
+        <BookButton className="p-header-book">{c["nav.book"]}</BookButton>
       </header>
       <div
         className={`p-mobile-actions ${scrolled && pathname !== "/book" ? "is-visible" : ""}`}
       >
         <Link href="/live">
-          <span aria-hidden="true">◎</span> Live van
+          <span aria-hidden="true">◎</span> {c["nav.mobileMap"]}
         </Link>
-        <BookButton>Book your day</BookButton>
+        <BookButton>{c["nav.mobileBook"]}</BookButton>
       </div>
     </>
   );

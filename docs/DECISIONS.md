@@ -1,5 +1,13 @@
 # Approved roadmap amendments
 
+## 2026-09-23 - Connect the existing homepage to structured admin content
+
+The user supplied the detailed Homepage CMS task and explicitly authorized connecting the existing `/` page, importing its current local content, structured section editors, draft/preview/publish, responsive hero images, Supabase media uploads and end-to-end verification. Preserve the existing public layout and components; do not create a replacement homepage or generic builder. Extend `content_pages` publishing rather than duplicate operational sources. Preview may extract existing markup into a shared component. This is a specifically requested CMS extension after Phase 7C, not launch authorization. See HOMEPAGE-CMS-MAP.md and HOMEPAGE-CMS-CONNECTION-AUDIT.md. The original roadmap is unchanged.
+
+## 2026-09-23 - Route administration belongs to the independent map app
+
+The user explicitly requested removing route stops from this website's admin because stops, routes and GPS are managed in the live map app. Remove the catalog stop editor and stop query, rename navigation to Products & suppliers, and reject stop submissions in the website catalog server action. The independent map remains authoritative. Existing database tables/history are preserved; this is not authorization to delete data or change the map service. This supersedes the roadmap's stop-management UI requirement for this website; the original roadmap remains unchanged.
+
 ## 2026-09-22 - Embed the independent public tracking app
 
 The user explicitly approved connecting only the existing public live map while keeping its app and admin independent. Embed the hosted public page with `project=sightseeing-shkodra&embed=1` on this site's `/live` route. Continue map editing/publishing in the original tracking admin. Its existing refresh behavior owns map/GPS updates; this website does not copy tracking data, run processors or merge authentication. This supersedes the deeper code/database/admin consolidation plan below. Existing experimental port code is retained as inactive development work, not the public tracking implementation. No external deployment or original-service modification is authorized. The original roadmap remains unchanged.

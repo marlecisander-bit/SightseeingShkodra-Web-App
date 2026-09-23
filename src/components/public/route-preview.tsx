@@ -3,16 +3,16 @@ import { useState } from "react";
 import { destinations } from "@/modules/public-preview/contracts";
 import { Media } from "./ui";
 
-export function RoutePreview() {
+export function RoutePreview({ places = destinations }: { places?: readonly { id: string; name: string; tag: string; image: string; alt: string; detail: string }[] }) {
   const [selected, setSelected] = useState(0);
-  const place = destinations[selected];
+  const place = places[selected];
   return (
     <div className="p-route-layout">
       <div className="p-route-list">
         <p className="p-preview">
           Places to discover · Illustrative route, not a published timetable.
         </p>
-        {destinations.map((stop, i) => (
+        {places.map((stop, i) => (
           <button
             key={stop.id}
             aria-pressed={selected === i}
