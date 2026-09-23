@@ -39,9 +39,9 @@ export default function YourDay() {
           >
             <span aria-hidden="true">▧</span>
             <p>
-              Your ticket QR will appear
+              Sample QR placeholder. Not valid for travel.
               <br />
-              after confirmed payment.
+              Payment for confirmed bookings is due at the meeting point.
             </p>
           </div>
           <button className="p-button" disabled>

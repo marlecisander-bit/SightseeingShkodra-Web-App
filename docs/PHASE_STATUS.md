@@ -1,6 +1,8 @@
 # Phase status
 
-Updated: 2026-09-22.
+Updated: 2026-09-23.
+
+CURRENT VALIDATION: Phase 7B local checks PASS; full staging acceptance PENDING. Seven public pages and 141 internal links passed the read-only crawl, with local noindex/robots/sitemap and unknown-page 404 checks. Corrected sample-ticket wording for payment at the meeting point. 32 integration tests, lint and typecheck passed. See PHASE_7B_REPORT.md. Next: staging validation with approved published content when a deployment is available. No external deployment or Phase 7 checkpoint.
 
 LATEST AUDIT: Phase 6 PASS for the approved local independent-map embed scope; see PHASE_6_AUDIT.md. 139 tests, lint, typecheck and isolated build passed; four HTTP placements and mobile/keyboard recovery checked. Upstream GPS/ETA, intermittent tile reliability and publication propagation are not certified. Next: Phase 7B local site validation, then staging checks when available. No external deployment.
 
