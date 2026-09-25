@@ -53,3 +53,5 @@ LOCAL ONLY — NOTHING DEPLOYED
 
 ## Publication follow-up
 User authorized publication on 25 September 2026. Three booking migrations applied together and recorded in migration history. Existing business fields verified unchanged. Website publication in progress; email activation remains excluded.
+
+Publication verified: GitHub main commit 9269b19390b1afe2ef654795ee8e3a29096aab97, Netlify deployment 6ab683509124bc000772b363 ready and published at https://sightseeingapp.netlify.app. Exact isolated release passed lint/typecheck/build and 236 tests (15 identity, 71 integration, 128 database, 22 PostgreSQL concurrency). Homepage, /book and /booking/manage returned HTTP 200. Production management endpoint read an existing booking with matching reference and no-store; malformed token rejected with 404. No production booking mutation or email send tested. Separate email-admin/scheduler work remains unpublished.

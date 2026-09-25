@@ -1,4 +1,5 @@
 "use client";
+import { clearCheckoutSession, freshBookingSelection } from "@/modules/booking/checkout-browser-state";
 import styles from "./booking-dialog.module.css";
 import { passengerCount, passengerKeys, passengerLabels, ageLabel, type PassengerCounts } from "@/modules/booking/passengers";
 
@@ -10,6 +11,7 @@ import { resolveWebsiteLink, initialWebsiteContent, type WebsiteContent } from "
 import { BrandLogo } from "./brand-logo";
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -37,6 +39,8 @@ type BookingContextValue = {
   setSelection: Dispatch<SetStateAction<BookingSelection>>;
   open: () => void;
   close: () => void;
+  reset: () => void;
+  generation: number;
   availability: ReturnType<typeof useAvailability>;
 };
 const BookingContext = createContext<BookingContextValue | null>(null);
@@ -51,6 +55,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     guests: 1,
     departureId: "",
   });
+  const [generation, setGeneration] = useState(0);
+  const reset = useCallback(() => { clearCheckoutSession(); setSelection(freshBookingSelection()); setGeneration(value=>value+1); }, []);
   const dialog = useRef<HTMLDialogElement>(null);
   const [opened, setOpened] = useState(false);
   useEffect(() => {
@@ -60,11 +66,13 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     Object.assign(document.body.style, {position:"fixed", top:`-${y}px`, width:"100%"});
     return () => { Object.assign(document.body.style, previous); window.scrollTo(0,y); };
   }, [opened]);
-  const availability = useAvailability(selection.date, selection.guests,selection.passengers);
+  const availability = useAvailability(selection.date, selection.guests,selection.passengers,generation);
   return (
     <BookingContext.Provider
       value={{
         selection,
+        reset,
+        generation,
         setSelection,
         availability,
         open: () => { dialog.current?.showModal(); setOpened(true); },
@@ -93,7 +101,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
           }
         }}
       >
-        <BookingDialogContent />
+        <BookingDialogContent key={generation} />
       </dialog>
     </BookingContext.Provider>
   );
@@ -386,5 +394,6 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
   );
 }
 export function BookingFlow() {
-  return <CheckoutFlow />;
+  const {generation} = useBooking();
+  return <CheckoutFlow key={generation} />;
 }

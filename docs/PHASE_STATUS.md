@@ -212,3 +212,10 @@ Audited existing engine before implementing user's updated rules. Three LOCAL mi
 
 ### Booking management publication - 25 September 2026
 User authorized publication. Migrations 20260925000600, 20260925000700 and 20260925000800 applied atomically to linked Supabase; existing fields preserved for 7 bookings, 9 orders/items/holds and 24 departures. Opaque management tokens backfilled; anonymous RPC execution denied, service role allowed. Website release verification pending. Separate email admin/scheduler and migration 005 excluded.
+
+Publication verified: GitHub main commit 9269b19390b1afe2ef654795ee8e3a29096aab97, Netlify deployment 6ab683509124bc000772b363 ready and published at https://sightseeingapp.netlify.app. Exact isolated release passed lint/typecheck/build and 236 tests (15 identity, 71 integration, 128 database, 22 PostgreSQL concurrency). Homepage, /book and /booking/manage returned HTTP 200. Production management endpoint read an existing booking with matching reference and no-store; malformed token rejected with 404. No production booking mutation or email send tested. Separate email-admin/scheduler work remains unpublished.
+
+### Cancellation to new booking fix — 25 September 2026
+Local UI fix resets cancelled checkout restoration and shared booking state, adds Book Again and refreshes authoritative availability. Existing transactional cancellation, seat accounting, cutoff and notification events retained. No migration/deployment/email send. Build/lint/typecheck passed; 254 tests passed across runs, six mocked browser flows at 390/1440px passed. See CANCELLATION-REBOOKING.md.
+
+User authorized publishing the cancellation/rebooking fix on 25 September 2026. Release verification pending; unrelated email admin/scheduler remains excluded.

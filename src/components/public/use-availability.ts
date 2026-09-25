@@ -4,7 +4,7 @@ import { passengerCount, type PassengerCategories, type PassengerCounts } from "
 import { useEffect, useState } from "react";
 import type { AvailabilityQuote } from "@/modules/booking/contracts";
 
-export function useAvailability(date: string, guests: number, passengers?:PassengerCounts) {
+export function useAvailability(date: string, guests: number, passengers?:PassengerCounts, generation = 0) {
   const [categories,setCategories]=useState<PassengerCategories>();
   const [revision, setRevision] = useState(0);
   const [result, setResult] = useState<{
@@ -15,7 +15,7 @@ export function useAvailability(date: string, guests: number, passengers?:Passen
   }>();
   const counts=JSON.stringify(passengers??{adult:guests,child:0,infant:0});
   let validation="";try{passengerCount(JSON.parse(counts));}catch(e){validation=e instanceof Error?e.message:"Invalid passengers";}
-  const key = `${date}/${counts}/${revision}`;
+  const key = `${date}/${counts}/${revision}/${generation}`;
   useEffect(() => {
     if (!date || validation) return;
     const controller = new AbortController();

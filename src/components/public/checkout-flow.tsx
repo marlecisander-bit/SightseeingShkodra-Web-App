@@ -1,4 +1,5 @@
 "use client";
+import { checkoutStorageKey } from "@/modules/booking/checkout-browser-state";
 import { passengerLabels } from "@/modules/booking/passengers";
 
 import { BookingPassCard } from "./booking-pass";
@@ -17,7 +18,7 @@ type Attempt = {
   total: number;
   hold?: Hold;
 };
-const storageKey = "shkodra-checkout-v1";
+const storageKey = checkoutStorageKey;
 async function send(body: object) {
   const response = await fetch("/api/public/checkout", {
     method: "POST",
@@ -46,7 +47,7 @@ const messages: Record<string, string> = {
   SESSION_REQUIRED: "Your booking session has ended. Please start again.",
 };
 export function CheckoutFlow() {
-  const { selection, setSelection, availability } = useBooking();
+  const { selection, setSelection, availability, reset } = useBooking();
   const [attempt, setAttempt] = useState<Attempt | null>(null);
   const [order, setOrder] = useState<PendingOrder | null>(null);
   const [customer, setCustomer] = useState({ name: "", email: "", phone: "" });
@@ -91,6 +92,7 @@ export function CheckoutFlow() {
         if (saved.hold) {
           const result = await send({ action: "read", holdId: saved.hold.id });
           if (live) {
+            if (result.order?.status === "cancelled" || result.order?.bookingStatus === "cancelled") { reset(); return; }
             deadline.current =
               performance.now() +
               Math.max(
@@ -120,7 +122,7 @@ export function CheckoutFlow() {
     return () => {
       live = false;
     };
-  }, [setSelection]);
+  }, [setSelection, reset]);
   useEffect(() => {
     const timer = setInterval(
       () =>
@@ -305,7 +307,7 @@ export function CheckoutFlow() {
           )}
           {attempt.hold.passengerSnapshot&&<div aria-label="Your tickets">{attempt.hold.passengerSnapshot.lines.map(l=><p key={l.category}>{l.quantity} {passengerLabels[l.category]}  |  {displayMoney(l.unitPrice,"EUR")} = {displayMoney(l.total,"EUR")}</p>)}<strong>Total: {displayMoney(attempt.hold.passengerSnapshot.total,"EUR")}</strong></div>}
           {order ? (
-            <BookingPassCard order={order}/>
+            <><BookingPassCard order={order}/>{order.status === "cancelled" && <Button className="p-button p-button-booking" onClick={reset}>Book Again</Button>}</>
           ) : active ? (
             <form
               onSubmit={(event) => {

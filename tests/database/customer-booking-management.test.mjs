@@ -29,3 +29,14 @@ test('an otherwise modifiable booking cannot move to a closed target; hold start
  await setTestClock(db,'2030-06-04T06:00:00Z');const d=await departure('13:00','2030-06-04'),later=await departure('15:00','2030-06-04');const b=await book(later,{adult:1,child:0,infant:0});await setTestClock(db,'2030-06-04T10:44:00Z');const h=(await db.query('select * from create_hold_v1($1,$2,$3,$4,1)',[op,d,session,randomUUID()])).rows[0];assert.equal(new Date(h.expires_at).toISOString(),'2030-06-04T10:45:00.000Z');await setTestClock(db,'2030-06-04T10:45:00Z');await assert.rejects(modify(b,d,{adult:1,child:0,infant:0}),/closed/);await assert.rejects(db.query("select create_meeting_point_booking_v1($1,$2,$3,'Test','test@example.test')",[op,h.id,session]),/inactive/i);assert.equal((await read(b)).departureId,later);
 });
 test('management RPCs reject direct anonymous/authenticated execution',async()=>{for(const role of ['anon','authenticated']){await db.exec('begin;set local role '+role);try{await assert.rejects(db.query('select customer_booking_v1($1)',['a'.repeat(64)]),e=>e.code==='42501');}finally{await db.exec('rollback');}}});
+test('cancel then rebook preserves history, releases exact occupied seats once, and creates independent notifications',async()=>{
+ await setTestClock(db,'2030-06-05T06:00:00Z');
+ for(const counts of [{adult:2,child:0,infant:0},{adult:2,child:2,infant:0},{adult:2,child:1,infant:1}]){
+ const d=await departure('13:00','2030-06-05'),b=await book(d,counts);
+ const occupied=async()=>Number((await db.query("select coalesce(sum(occupied_seats),0) n from booking_items where departure_id=$1 and status='confirmed'",[d])).rows[0].n);
+ assert.equal(await occupied(),counts.adult+counts.child);
+ await db.query('select cancel_customer_booking_v1($1)',[b.managementToken]);await db.query('select cancel_customer_booking_v1($1)',[b.managementToken]);assert.equal(await occupied(),0);assert.equal((await read(b)).status,'cancelled');
+ assert.equal((await db.query("select count(*)::int n from domain_events where event_type='order.cancelled' and payload->>'orderId'=$1",[b.orderId])).rows[0].n,1);
+ const fresh=await book(d,counts);assert.notEqual(fresh.orderId,b.orderId);assert.notEqual(fresh.bookingReference,b.bookingReference);assert.notEqual(fresh.managementToken,b.managementToken);assert.equal(await occupied(),counts.adult+counts.child);assert.equal((await read(b)).status,'cancelled');assert.equal((await read(fresh)).status,'confirmed');
+ }
+});

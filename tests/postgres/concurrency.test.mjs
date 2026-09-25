@@ -543,3 +543,12 @@ test('customer allocation concurrency: last seats and moving bookings never over
   try{if(moveFirst)await move(first);else await book(first,z,4);pending=(moveFirst?book(second,z,4):move(second)).then(result=>({result}),error=>({error}));await waitForLock();await first.query('commit');assert.equal((await pending).error?.code,'P0001');assert.equal((await observer.query('select departure_id from booking_items where order_id=$1',[b.orderId])).rows[0].departure_id,moveFirst?z:a);assert.equal((await observer.query("select sum(occupied_seats)::int n from booking_items where departure_id=$1 and status='confirmed'",[z])).rows[0].n,8);}finally{await first.query('rollback');if(pending)await pending;}
  }
 });
+test('cancellation racing a new reservation serializes seat release without overselling',async()=>{
+ const op='10000000-0000-4000-8000-000000000001',session='cancel-race-session-12345678901234567890';
+ const product=(await observer.query(`insert into products(operator_id,type,title,slug,status,pricing_rules,capacity_rules) values($1,'van_tour','Cancel race',gen_random_uuid()::text,'published','{"version":1,"model":"per_guest","currency":"EUR","unit_price":1000}','{"version":1,"model":"departure_seats"}') returning id`,[op])).rows[0].id;
+ for(const cancelFirst of [true,false]){const d=(await observer.query("insert into departures(operator_id,product_id,service_date,start_time,capacity,status) values($1,$2,'2030-12-02','13:00',8,'scheduled') returning id",[op,product])).rows[0].id;
+ const book=async(client,n)=>{const h=(await client.query('select * from create_hold_v1($1,$2,$3,gen_random_uuid(),$4)',[op,d,session,n])).rows[0];return(await client.query("select create_meeting_point_booking_v1($1,$2,$3,'Test','test@example.test') b",[op,h.id,session])).rows[0].b;};
+ const old=await book(observer,4);const cancel=c=>c.query('select cancel_customer_booking_v1($1)',[old.managementToken]);await first.query('begin');let pending;
+ try{if(cancelFirst)await cancel(first);else await book(first,4);pending=(cancelFirst?book(second,8):cancel(second)).then(result=>({result}),error=>({error}));await waitForLock();await first.query('commit');assert.ifError((await pending).error);await cancel(observer);assert.equal((await observer.query("select sum(occupied_seats)::int n from booking_items where departure_id=$1 and status='confirmed'",[d])).rows[0].n,cancelFirst?8:4);}finally{await first.query('rollback');if(pending)await pending;}
+ }
+});
