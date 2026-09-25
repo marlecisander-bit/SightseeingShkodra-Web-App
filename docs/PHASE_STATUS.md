@@ -190,3 +190,8 @@ Development migration 20260924000300 applied; public/shared editor connections i
 
 ## 2026-09-24 - Homepage Hero V2
 Implemented locally and development migration 20260924000400 applied. Hero/header, active navigation, image focal controls and dedicated amenity editor verified. Database 106, integrations 42, identity 15 and expanded CMS proof 138 passed; lint/typecheck/build passed. Twelve requested viewport sizes and 0-12 amenity counts checked. Real amenities remain empty until owner publishes approved entries. See HOMEPAGE-HERO-V2.md for evidence and browser/device limits.
+
+### Local /live mobile audit — 25 September 2026
+Scoped responsive map-first layout, shared compact planner, visible-page schedule refresh and loading feedback implemented. No tracking engine or database changes. Browser matrix 320–1920px and synthetic booking flow at 360/390px checked; build/typecheck/lint passed. See docs/LIVE-MOBILE-AUDIT.md for evidence and device-testing limitations. Local only; not deployed.
+
+Publication authorized by user on 25 September 2026. Publishing the audited website changes through GitHub main to the existing Netlify website; independent map deployment unchanged.

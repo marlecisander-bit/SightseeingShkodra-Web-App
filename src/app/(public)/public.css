@@ -1399,3 +1399,20 @@ body:has(.p-booking-dialog[open]) {
 .public-site .p-day-planner li { font-size:14px; line-height:1.7; }
 @media(max-width:1023px) and (min-width:701px) { .public-site .p-day-planner { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media(max-width:700px) { .public-site .p-day-planner { grid-template-columns:1fr; } }
+
+/* Live page: operational map first; shared planner and booking remain authoritative. */
+.public-site .p-live-page { padding-top:calc(88px + env(safe-area-inset-top)); }
+.public-site .p-live-page > .p-eyebrow { margin-bottom:8px; }
+.public-site .p-live-page > h1 { font-size:clamp(1.6rem,4vw,2.5rem); line-height:1.15; margin:0 0 12px; }
+.public-site .p-live-page > h1 br { display:none; }
+.public-site .p-live-page > h1 em::before { content:' '; }
+.public-site .p-live-page > .p-lead { font-size:16px; line-height:1.5; margin:0 0 20px; }
+.public-site .p-live-page iframe { height:clamp(340px,62svh,680px); }
+.public-site .p-live-service { margin-top:28px; }
+.public-site .p-live-service h2 { font-size:clamp(1.4rem,3vw,2rem); }
+.public-site .p-live-service .p-day-planner { margin:16px 0; padding:16px; gap:20px; }
+.public-site .p-live-service .p-day-planner small { overflow-wrap:anywhere; }
+.public-site .p-planner-dialog { padding-bottom:calc(24px + env(safe-area-inset-bottom)); }
+@media(min-width:768px) { .public-site .p-live-page { padding-top:104px; } }
+
+@media(min-width:430px) { .public-site .p-live-service .p-day-planner-compact { grid-template-columns:repeat(2,minmax(0,1fr)); } }

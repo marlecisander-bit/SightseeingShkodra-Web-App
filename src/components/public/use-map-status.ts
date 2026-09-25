@@ -1,9 +1,10 @@
 'use client';
 import {useEffect,useState} from 'react';
 const origin='https://sightseeingshkodralivetrackingapp.netlify.app';
-export function useMapStatus() {
+export function useMapStatus(enabled=true) {
  const [status,setStatus]=useState<string|null>(null);
  useEffect(()=>{
+  if(!enabled)return;
   let expires:ReturnType<typeof setTimeout>|undefined;
   const frames=()=>Array.from(document.querySelectorAll<HTMLIFrameElement>('iframe')).filter(f=>f.src.startsWith(origin+'/live-map.html?'));
   const request=()=>frames().forEach(f=>f.contentWindow?.postMessage({type:'shkodra:request-status'},origin));
@@ -16,6 +17,6 @@ export function useMapStatus() {
   };
   window.addEventListener('message',receive);request();const timer=setInterval(request,15000);
   return()=>{window.removeEventListener('message',receive);clearInterval(timer);clearTimeout(expires);};
- },[]);
+ },[enabled]);
  return status;
 }

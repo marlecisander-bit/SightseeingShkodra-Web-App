@@ -314,7 +314,7 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
         <BookButton className="p-header-book">{c["nav.book"]}</BookButton>
       </header>
       <div
-        className={`p-mobile-actions ${scrolled && pathname !== "/book" ? "is-visible" : ""}`}
+        className={`p-mobile-actions ${scrolled && pathname !== "/book" && pathname !== "/live" ? "is-visible" : ""}`}
       >
         <Link href="/live">
           {c["nav.mobileMap"]}
