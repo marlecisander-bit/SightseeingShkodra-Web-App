@@ -1,7 +1,8 @@
 "use client";
-import { passengerKeys, passengerLabels, ageLabel, type PassengerCounts } from "@/modules/booking/passengers";
+import styles from "./booking-dialog.module.css";
+import { passengerCount, passengerKeys, passengerLabels, ageLabel, type PassengerCounts } from "@/modules/booking/passengers";
 
-import { Button, ButtonContent } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 import Link from "next/link";
 import { activeNavigation } from "@/modules/content/navigation";
@@ -51,6 +52,14 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     departureId: "",
   });
   const dialog = useRef<HTMLDialogElement>(null);
+  const [opened, setOpened] = useState(false);
+  useEffect(() => {
+    if (!opened) return;
+    const y = window.scrollY;
+    const previous = {position: document.body.style.position, top: document.body.style.top, width: document.body.style.width};
+    Object.assign(document.body.style, {position:"fixed", top:`-${y}px`, width:"100%"});
+    return () => { Object.assign(document.body.style, previous); window.scrollTo(0,y); };
+  }, [opened]);
   const availability = useAvailability(selection.date, selection.guests,selection.passengers);
   return (
     <BookingContext.Provider
@@ -58,20 +67,21 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         selection,
         setSelection,
         availability,
-        open: () => dialog.current?.showModal(),
+        open: () => { dialog.current?.showModal(); setOpened(true); },
         close: () => dialog.current?.close(),
       }}
     >
       {children}
       <dialog
         ref={dialog}
-        className="p-booking-dialog"
+        className={`p-booking-dialog ${styles.dialog}`}
+        onClose={() => setOpened(false)}
         aria-labelledby="booking-dialog-title"
         onKeyDown={(event) => {
           if (event.key !== "Tab") return;
-          const controls = event.currentTarget.querySelectorAll<HTMLElement>(
+          const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>(
             "button:not(:disabled), input:not(:disabled), select:not(:disabled), a[href]",
-          );
+          )).filter(control => control.getClientRects().length > 0);
           const first = controls[0];
           const last = controls[controls.length - 1];
           if (event.shiftKey && document.activeElement === first) {
@@ -83,30 +93,77 @@ export function BookingProvider({ children }: { children: ReactNode }) {
           }
         }}
       >
-        <div className="p-dialog-top">
-          <p className="p-eyebrow">Your day starts here</p>
-          <button
-            className="p-icon-button"
-            aria-label="Close booking"
-            onClick={() => dialog.current?.close()}
-          >
-            ×
-          </button>
-        </div>
-        <h2 id="booking-dialog-title">Make room for Shkodra.</h2>
-        <p>Check live availability. No reservation or payment will be made.</p>
-        <BookingFields />
-        <Link
-          className="p-button p-button-booking"
-          href="/book"
-          onClick={() => dialog.current?.close()}
-        >
-          <ButtonContent>Review selection</ButtonContent>
-        </Link>
+        <BookingDialogContent />
       </dialog>
     </BookingContext.Provider>
   );
 }
+
+function BookingDialogContent() {
+  const {selection, setSelection, availability, close} = useBooking();
+  const [step,setStep] = useState(1);
+  const heading = useRef<HTMLHeadingElement>(null);
+  const scroll = useRef<HTMLDivElement>(null);
+  const counts = selection.passengers ?? {adult:selection.guests,child:0,infant:0};
+  const selected = availability.quote?.departures.find(d=>d.id===selection.departureId && d.available);
+  const price = selected?.passengerQuote;
+  let validation = "";
+  try { passengerCount(counts); } catch(e) { validation = e instanceof Error ? e.message : "Check your guests."; }
+  const ready = Boolean(selected && !availability.loading && !availability.error && !validation);
+  function move(next:number) { setStep(next); scroll.current?.scrollTo(0,0); requestAnimationFrame(()=>heading.current?.focus()); }
+  const dateText = selection.date ? new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"UTC"}).format(new Date(selection.date+"T12:00:00Z")) : "Select date";
+  return <>
+    <header className={styles.header}>
+      <div><h2 id="booking-dialog-title">Book your day</h2><p>Make room for Shkodra.</p></div>
+      <button type="button" className={styles.close} aria-label="Close booking" onClick={close}>×</button>
+    </header>
+    <div className={styles.progress} aria-live="polite">Step {step} of 3 · {step===1?"When":step===2?"Guests":"Review"}</div>
+    <div className={styles.content} ref={scroll}>
+      <div className={styles.desktop}><BookingFields /></div>
+      <div className={styles.mobile}>
+        <h3 ref={heading} tabIndex={-1}>{step===1?"When are you visiting?":step===2?"Who's coming?":"Review your day"}</h3>
+        {step===1 && <>
+          <label className={styles.date}>
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6m10-6v6M3 11h18"/></svg>
+            <span>{dateText}</span>
+            <input aria-label="Your date" type="date" value={selection.date} onChange={e=>{const date=e.target.value;setSelection(current=>({...current,date,departureId:""}));}} />
+          </label>
+          {selection.date && <div className={styles.departures} aria-busy={availability.loading}>
+            <h4>Choose departure</h4>
+            {availability.loading && <p role="status">Checking departures…</p>}
+            <div className={styles.chips}>{availability.quote?.departures.map(d=><button key={d.id} type="button" disabled={!d.available} aria-pressed={d.id===selection.departureId} onClick={()=>setSelection(current=>({...current,departureId:d.id}))}><strong>{d.startTime.slice(0,5)}</strong><span>{!d.available?"Unavailable":d.id===selection.departureId?"Selected":"Available"}</span></button>)}</div>
+            {availability.quote?.departures.length===0 && <p>No upcoming departures. Try another date.</p>}
+          </div>}
+        </>}
+        {step===2 && <QuantityStepper preserveDeparture />}
+        {step===3 && <dl className={styles.review}>
+          <div><dt>Your day</dt><dd>{dateText}<br/>{selected?.startTime.slice(0,5) ?? "Choose a departure"} {selected && "departure"}</dd></div>
+          <div><dt>Guests</dt><dd>{passengerKeys.filter(k=>counts[k]>0).map(k=><div key={k}>{counts[k]} {passengerLabels[k]}</div>)}</dd></div>
+          {price && <div><dt>Total</dt><dd>{displayMoney(price.total,availability.quote!.currency)}</dd></div>}
+        </dl>}
+        <div className={styles.feedback} role="status">
+          {step!==1 && availability.loading && <p>Checking your group and total…</p>}
+          {(validation || availability.error) && <p>{validation || availability.error}</p>}
+          {step===1 && validation && <button type="button" className="p-text-button" onClick={()=>move(2)}>Check guests</button>}
+          {!availability.loading && availability.quote && selection.departureId && !selected && <p>Selected departure is no longer available for your group. <button type="button" className="p-text-button" onClick={()=>move(1)}>Choose another departure</button></p>}
+          {availability.error && !validation && <button type="button" className="p-text-button" onClick={availability.refresh}>Try again</button>}
+        </div>
+      </div>
+    </div>
+    <footer className={styles.footer}>
+      <div className={styles.mobile}>
+        {price && !availability.loading && <p className={styles.total}>{displayMoney(price.total,availability.quote!.currency)} total</p>}
+        <div className={styles.actions}>
+          {step>1 && <button type="button" className="p-button" onClick={()=>move(step-1)}>Back</button>}
+          {step<3 ? <button type="button" className="p-button p-button-booking" disabled={!ready} onClick={()=>move(step+1)}>Continue</button> : ready ? <Link className="p-button p-button-booking" href="/book" onClick={close}>Continue to booking</Link> : <button className="p-button p-button-booking" disabled>Continue to booking</button>}
+        </div>
+      </div>
+      <div className={styles.desktop}><Link className="p-button p-button-booking" href="/book" onClick={close}>Review selection</Link></div>
+      <p className={styles.note}>No seats held yet. Payment is at the meeting point.</p>
+    </footer>
+  </>;
+}
+
 export function BookButton({
   children = "Book your day",
   className = "",
@@ -121,10 +178,10 @@ export function BookButton({
     </Button>
   );
 }
-export function QuantityStepper() {
+export function QuantityStepper({ preserveDeparture = false }: { preserveDeparture?: boolean }) {
  const {selection,setSelection,availability}=useBooking();const counts=selection.passengers??{adult:selection.guests,child:0,infant:0};
- function change(k:keyof PassengerCounts,n:number){const passengers={...counts,[k]:n};setSelection({...selection,passengers,guests:passengerKeys.reduce((sum,key)=>sum+passengers[key],0),departureId:""});}
- return <div className="p-passengers">{passengerKeys.map(k=><div key={k}><span>{passengerLabels[k]} {availability.categories&&<small>{ageLabel(availability.categories[k])}</small>}</span><div className="p-stepper" role="group" aria-label={passengerLabels[k]}><button type="button" disabled={counts[k]===0} aria-label={"Remove one "+k} onClick={()=>change(k,counts[k]-1)}>-</button><output aria-live="polite">{counts[k]}</output><button type="button" disabled={selection.guests>=100} aria-label={"Add one "+k} onClick={()=>change(k,counts[k]+1)}>+</button></div></div>)}</div>;
+ function change(k:keyof PassengerCounts,n:number){const passengers={...counts,[k]:n};setSelection({...selection,passengers,guests:passengerKeys.reduce((sum,key)=>sum+passengers[key],0),departureId:preserveDeparture?selection.departureId:""});}
+ return <div className="p-passengers">{passengerKeys.map(k=><div key={k}><span>{passengerLabels[k]} {availability.categories&&<small>{ageLabel(availability.categories[k])}</small>}</span><div className="p-stepper" role="group" aria-label={passengerLabels[k]}><button type="button" disabled={counts[k]===0 || (k==="adult" && counts.adult===1 && (counts.child>0 || counts.infant>0))} aria-label={"Remove one "+k} onClick={()=>change(k,counts[k]-1)}>-</button><output aria-live="polite">{counts[k]}</output><button type="button" disabled={selection.guests>=100 || (k!=="adult" && counts.adult===0)} aria-label={"Add one "+k} onClick={()=>change(k,counts[k]+1)}>+</button></div></div>)}</div>;
 }
 export function BookingFields() {
   const { selection, setSelection, availability } = useBooking();
