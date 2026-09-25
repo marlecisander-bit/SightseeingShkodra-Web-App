@@ -37,8 +37,8 @@ test('midnight follows Europe/Tirane, not UTC date',async()=>{
  assert.deepEqual(await at('2026-09-24T22:30:00Z','2026-09-25'),all);
  assert.deepEqual(await at('2026-09-24T22:30:00Z','2026-09-24'),[]);
 });
-test('09:00 cutoff follows both DST changes and exact departure instant',async()=>{
- for(const [date,before,after] of [['2026-03-29','2026-03-29T06:59:00Z','2026-03-29T07:00:00Z'],['2026-10-25','2026-10-25T07:59:00Z','2026-10-25T08:00:00Z']]){
+test('09:00 cutoff follows both DST changes and exact 15-minute boundary',async()=>{
+ for(const [date,before,after] of [['2026-03-29','2026-03-29T06:44:59Z','2026-03-29T06:45:00Z'],['2026-10-25','2026-10-25T07:44:59Z','2026-10-25T07:45:00Z']]){
   assert.deepEqual(await at(before,date),all);assert.deepEqual(await at(after,date),all.slice(1));
  }
 });
@@ -60,4 +60,14 @@ test('full inventory remains visible but disabled, not mistaken for a past time'
  const quote=quoteAvailability({version:1,operatorId:op,productId:product,date:'2026-09-25',guests:1},await snapshot('2026-09-25'));
  assert.equal(quote.departures[0].startTime,'09:00:00');assert.equal(quote.departures[0].available,false);assert.equal(quote.departures[0].remaining,0);
  assert.ok(quote.departures.slice(1).every(d=>d.available));
+});
+
+test('specified intraday cutoffs and next operational date follow the existing calendar',async()=>{
+ for(const [time,index] of [['06:44:00',0],['06:45:00',1],['08:44:00',1],['08:45:00',2],['10:00:00',2],['10:44:00',2],['10:44:59',2],['10:45:00',3],['10:45:01',3],['12:44:00',3],['12:45:00',4]]){
+  assert.deepEqual(await at('2026-09-24T'+time+'Z','2026-09-24'),all.slice(index));
+ }
+ const stamp=(await db.query('select updated_at::text as stamp from service_schedules where id=$1',[schedule])).rows[0].stamp;
+ await db.query("select save_schedule_exception_v1($1,$2,$3,'2026-09-25',true,'[]','Closed test day',false,$4)",[op,actor,schedule,stamp]);
+ const response=(await db.query('select read_passenger_availability_v1($1,$2,$3,$4) a',[op,product,'2026-09-24',{adult:1,child:0,infant:0}])).rows[0].a;
+ assert.equal(response.next_operational_date,'2026-09-26');assert.equal(response.business_date,'2026-09-24');
 });

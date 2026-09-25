@@ -59,7 +59,7 @@ export async function readPendingOrder(
   if (order.error || items.error) throw new CheckoutError("UNAVAILABLE");
   const booking = await client
     .from("bookings")
-    .select("booking_reference,status,qr_token,qr_created_at,checked_in_at")
+    .select("management_token,booking_reference,status,qr_token,qr_created_at,checked_in_at")
     .eq("operator_id", operatorId)
     .eq("order_id", hold.data.order_id)
     .maybeSingle();
@@ -74,6 +74,7 @@ export async function readPendingOrder(
     .eq("operator_id",operatorId).in("id",items.data.map(i=>i.departure_id));
   if(departures.error) throw new CheckoutError("UNAVAILABLE");
   return {
+    managementToken: booking.data?.management_token,
     pass: booking.data?.qr_token ? {
       token: booking.data.qr_token, createdAt: booking.data.qr_created_at, checkedInAt: booking.data.checked_in_at,
       departures: items.data.flatMap(i=>{

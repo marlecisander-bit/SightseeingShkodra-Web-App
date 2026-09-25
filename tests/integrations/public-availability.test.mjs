@@ -52,6 +52,7 @@ test("public availability binds product server-side and returns shared quote wit
         productId,
         date: quote.date,
         guests: 2,
+        passengers: undefined,
       });
       return quote;
     },
@@ -84,7 +85,7 @@ test("provider errors and bad pricing configuration expose no internals", async 
       },
       quote: () => assert.fail(),
     });
-    assert.equal(response.status, 503);
-    assert.deepEqual(await response.json(), { error: "UNAVAILABLE" });
+    assert.equal(response.status, error instanceof AvailabilityError ? 409 : 503);
+    assert.deepEqual(await response.json(), { error: error instanceof AvailabilityError ? "PRICING_UNAVAILABLE" : "UNAVAILABLE" });
   }
 });

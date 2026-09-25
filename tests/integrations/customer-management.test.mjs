@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';import {test} from 'node:test';import {POST} from '../../src/app/api/public/booking-management/route.ts';import {bookingEmailTemplate} from '../../src/modules/integrations/booking-email-template.ts';
+test('management endpoint rejects cross-origin and invalid bearer credentials without privileged lookup',async()=>{
+ for(const origin of ['https://evil.example','']){const response=await POST(new Request('https://site.example/api/public/booking-management',{method:'POST',headers:{host:'site.example',origin,'content-type':'application/json'},body:JSON.stringify({action:'read',token:'a'.repeat(64)})}));assert.equal(response.status,403);}
+ const response=await POST(new Request('https://site.example/api/public/booking-management',{method:'POST',headers:{host:'site.example',origin:'https://site.example','content-type':'application/json'},body:JSON.stringify({action:'read',token:'predictable-booking-id'})}));assert.equal(response.status,404);assert.equal(response.headers.get('cache-control'),'no-store');assert.equal(response.headers.get('referrer-policy'),'no-referrer');
+});
+test('customer creation and modification emails use private management URL; cancellation omits it',()=>{
+ const booking={managementToken:'a'.repeat(64),reference:'SS-test',name:'Test',status:'confirmed',currency:'EUR',total:1000,paymentStatuses:[],refundStatuses:[],items:[],collectionMode:'meeting_point'};const envelope={siteUrl:'https://example.test',replyTo:'reply@example.test'};
+ for(const event of ['BOOKING_CREATED','BOOKING_MODIFIED']){const email=bookingEmailTemplate(event,'customer',booking,envelope,'operator','raw-booking-id');assert(email.text.includes('/booking/manage#token='));assert(email.html.includes('Manage your booking'));assert(email.html.includes('https://maps.app.goo.gl/rssrPnaBYZVWp316A'));assert(email.text.includes('https://maps.app.goo.gl/rssrPnaBYZVWp316A'));assert(!email.text.includes('raw-booking-id'));}
+ assert(!bookingEmailTemplate('BOOKING_CANCELLED','customer',booking,envelope,'operator','id').html.includes('/booking/manage'));
+});

@@ -131,8 +131,8 @@ function BookingDialogContent() {
           {selection.date && <div className={styles.departures} aria-busy={availability.loading}>
             <h4>Choose departure</h4>
             {availability.loading && <p role="status">Checking departures…</p>}
-            <div className={styles.chips}>{availability.quote?.departures.map(d=><button key={d.id} type="button" disabled={!d.available} aria-pressed={d.id===selection.departureId} onClick={()=>setSelection(current=>({...current,departureId:d.id}))}><strong>{d.startTime.slice(0,5)}</strong><span>{!d.available?"Unavailable":d.id===selection.departureId?"Selected":"Available"}</span></button>)}</div>
-            {availability.quote?.departures.length===0 && <p>No upcoming departures. Try another date.</p>}
+            <div className={styles.chips}>{availability.quote?.departures.map(d=><button key={d.id} type="button" disabled={!d.available} aria-pressed={d.id===selection.departureId} onClick={()=>setSelection(current=>({...current,departureId:d.id}))}><strong>{d.startTime.slice(0,5)}</strong><span>{!d.available?(d.remaining===0?"Sold out":"Not enough seats"):d.id===selection.departureId?"Selected":`${d.remaining} seats available`}</span></button>)}</div>
+            {availability.quote?.departures.length===0 && <NoDepartures />}
           </div>}
         </>}
         {step===2 && <QuantityStepper preserveDeparture />}
@@ -243,6 +243,10 @@ export function BookingFields() {
     </div>
   );
 }
+function NoDepartures() {
+ const {selection,setSelection,availability}=useBooking();const q=availability.quote;
+ return <div><p>{q?.businessDate===selection.date?"No more departures available for today.":"No bookable departures on this date."} Booking closes 15 minutes before departure.</p>{q?.nextOperationalDate&&<button type="button" className="p-text-button" onClick={()=>setSelection({...selection,date:q.nextOperationalDate!,departureId:""})}>Next operational date: {q.nextOperationalDate}</button>}</div>;
+}
 export function AvailabilityStatus() {
   const { selection, availability } = useBooking();
   const quote = availability.quote;
@@ -264,7 +268,7 @@ export function AvailabilityStatus() {
           </p>
           {price&&<div>{price.lines.map(line=><p key={line.category}>{line.quantity} {passengerLabels[line.category]}  |  {displayMoney(line.unitPrice,"EUR")} = {displayMoney(line.total,"EUR")}{line.offer?.label&&`  |  ${line.offer.label}`}</p>)}</div>}
           {quote.departures.length === 0 ? (
-            <p>No upcoming departures for this date. Try another day.</p>
+            <NoDepartures />
           ) : !quote.departures.some((d) => d.available) ? (
             <p>
               No departure has enough seats for your group. Try another date or
@@ -371,7 +375,7 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
         <BookButton className="p-header-book">{c["nav.book"]}</BookButton>
       </header>
       <div
-        className={`p-mobile-actions ${scrolled && pathname !== "/book" && pathname !== "/live" ? "is-visible" : ""}`}
+        className={`p-mobile-actions ${scrolled && pathname !== "/book" && !pathname.startsWith("/booking/manage") && pathname !== "/live" ? "is-visible" : ""}`}
       >
         <Link href="/live">
           {c["nav.mobileMap"]}

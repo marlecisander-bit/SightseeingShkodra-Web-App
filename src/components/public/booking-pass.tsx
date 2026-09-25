@@ -1,3 +1,4 @@
+import { meetingPoint } from "@/modules/booking/meeting-point";
 import { passengerLabels } from "@/modules/booking/passengers";
 import type { PendingOrder } from '@/modules/booking/contracts';
 import { bookingQrMatrix } from '@/modules/booking/qr-matrix';
@@ -20,6 +21,9 @@ export function BookingPassCard({order}:{order:PendingOrder}) {
     <p className={styles.reference}>Booking reference<br/><strong>{order.bookingReference??order.orderId}</strong></p>
     {order.pass?.checkedInAt&&<p>Checked in: {new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeStyle:'short',timeZone:'Europe/Tirane'}).format(new Date(order.pass.checkedInAt))}</p>}
     <p className={styles.payment}>{order.status==='cancelled'?'Reservation cancelled.':order.paymentStatus==='paid'?'Payment received.':'Payment due at the meeting point.'}</p>
-    <p className={styles.instructions}>Keep a screenshot or printed copy. For cancellation or changes, contact the meeting-point staff.</p>
+    <p>Occupied seats: {order.items.reduce((n,i)=>n+(i.passengerSnapshot?i.passengerSnapshot.counts.adult+i.passengerSnapshot.counts.child:i.quantity),0)}</p>
+    <p><a href={meetingPoint.url} target="_blank" rel="noreferrer">{meetingPoint.label}</a></p>
+    {order.managementToken&&<a className="p-button p-button-booking" href={"/booking/manage#token="+order.managementToken}>Manage booking</a>}
+    <p className={styles.instructions}>Keep your booking pass and private management link. Online changes close 15 minutes before departure.</p>
   </section>;
 }

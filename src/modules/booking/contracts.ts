@@ -20,6 +20,7 @@ export type AvailabilityRequest = {
   guests: number;
 };
 export type AvailabilityQuote = {
+  businessDate?: string; nextOperationalDate?: string|null;
   categories?: PassengerCategories;
   version: 1;
   productId: string;
@@ -66,6 +67,7 @@ export type BookingPass = {
   departures: { date: string; time: string; guests: number }[];
 };
 export type PendingOrder = {
+  managementToken?: string;
   pass?: BookingPass;
   version: 1;
   orderId: string;

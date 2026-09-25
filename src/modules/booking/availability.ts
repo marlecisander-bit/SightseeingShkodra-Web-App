@@ -4,6 +4,7 @@ export type { AvailabilityRequest, AvailabilityQuote } from './contracts';
 export type AvailabilitySnapshot = {
   operator_id: string; product_id: string; service_date: string; as_of: string;
   pricing_rules: unknown;
+  business_date?: string; next_operational_date?: string|null;
   categories?: PassengerCategories;
   departures: { id: string; start_time: string; capacity: number; passenger_quote?: PassengerSnapshot; committed: number; held: number }[];
 };
@@ -31,10 +32,10 @@ export function quoteAvailability(request: AvailabilityRequest, snapshot: Availa
     || typeof price.unit_price !== 'number' || !Number.isSafeInteger(price.unit_price) || price.unit_price < 0
     || !Number.isSafeInteger(price.unit_price * request.guests)) throw new AvailabilityError('INVALID_CONFIGURATION');
   return { version: 1, productId: request.productId, date: request.date, guests: request.guests,
-    categories:snapshot.categories, asOf: snapshot.as_of, currency: 'EUR', unitPrice: price.unit_price, total: price.unit_price * request.guests,
+    businessDate:snapshot.business_date,nextOperationalDate:snapshot.next_operational_date,categories:snapshot.categories, asOf: snapshot.as_of, currency: 'EUR', unitPrice: price.unit_price, total: price.unit_price * request.guests,
     departures: snapshot.departures.map((departure) => {
       if (![departure.capacity, departure.committed, departure.held].every((n) => Number.isSafeInteger(n) && n >= 0)) throw new AvailabilityError('INVALID_CONFIGURATION');
       const remaining = Math.max(0, departure.capacity - departure.committed - departure.held);
-      return { passengerQuote:departure.passenger_quote, id: departure.id, startTime: departure.start_time, remaining, available: remaining >= request.guests };
+      return { passengerQuote:departure.passenger_quote, id: departure.id, startTime: departure.start_time, remaining, available: remaining >= (request.passengers ? request.passengers.adult + request.passengers.child : request.guests) };
     }) };
 }
