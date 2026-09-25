@@ -219,3 +219,11 @@ Publication verified: GitHub main commit 9269b19390b1afe2ef654795ee8e3a29096aab9
 Local UI fix resets cancelled checkout restoration and shared booking state, adds Book Again and refreshes authoritative availability. Existing transactional cancellation, seat accounting, cutoff and notification events retained. No migration/deployment/email send. Build/lint/typecheck passed; 254 tests passed across runs, six mocked browser flows at 390/1440px passed. See CANCELLATION-REBOOKING.md.
 
 User authorized publishing the cancellation/rebooking fix on 25 September 2026. Release verification pending; unrelated email admin/scheduler remains excluded.
+
+Publication verified: commit 7e21f0169ce83bb4d036c1d75ac6234fb8884ec7, Netlify deploy 6ab68878787ac500083c826a ready at https://sightseeingapp.netlify.app. Homepage/book/manage HTTP 200; existing booking read and invalid token rejection passed. Published 390px UI passed Book Again and stale cancelled-session recovery with mocked booking APIs. No real booking mutation or email send.
+
+### Production admin authentication audit — 25 September 2026
+Existing Supabase Auth, SSR cookies, staff_profiles membership and permission/RLS model retained. Added generic recovery-request UI/action using existing verification/password setup, clearer login errors, logout router-cache invalidation and bfcache revalidation. No migration, role assignment, message or deployment. 257 tests and lint/typecheck/build passed; logged-out route/storage-spoof and public-route checks passed. Manual real-account session/email acceptance remains. See ADMIN-AUTH-AUDIT.md, ADMIN-RLS-INVENTORY.md and FIRST-ADMIN-ASSIGNMENT.sql.
+
+### Staff login UI â€” 25 September 2026
+Split-screen brand/photo login with form-first mobile layout implemented on existing route. Only presentation components changed; authentication/authorization/recovery unchanged. Seven viewport checks, submit interaction checks and 17 identity tests passed; isolated lint/typecheck/build passed. Review at localhost:3007/auth/sign-in. No deployment. See STAFF-LOGIN-DESIGN.md.

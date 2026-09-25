@@ -27,3 +27,5 @@ Six local browser scenarios at 390px and 1440px completed a new mocked booking: 
 No database migration. No second booking system or unrelated backend redesign. LOCAL ONLY — NOT DEPLOYED.
 
 Publication authorized by user on 25 September 2026. Releasing the tested UI fix through GitHub main and Netlify; no migration or email activation.
+
+Published and verified: 7e21f01 / Netlify 6ab68878787ac500083c826a. Live page/API read checks passed; published mobile Book Again and cancelled restoration flows passed with mocked mutations. No customer reservation changed during verification.
