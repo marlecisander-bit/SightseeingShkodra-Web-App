@@ -1,7 +1,11 @@
 "use client";
+import { passengerKeys, passengerLabels, ageLabel, type PassengerCounts } from "@/modules/booking/passengers";
+
+import { Button, ButtonContent } from "@/components/ui/button";
 
 import Link from "next/link";
-import { initialWebsiteContent, type WebsiteContent } from "@/modules/content/website-schema";
+import { activeNavigation } from "@/modules/content/navigation";
+import { resolveWebsiteLink, initialWebsiteContent, type WebsiteContent } from "@/modules/content/website-schema";
 import { BrandLogo } from "./brand-logo";
 import {
   createContext,
@@ -47,7 +51,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     departureId: "",
   });
   const dialog = useRef<HTMLDialogElement>(null);
-  const availability = useAvailability(selection.date, selection.guests);
+  const availability = useAvailability(selection.date, selection.guests,selection.passengers);
   return (
     <BookingContext.Provider
       value={{
@@ -93,11 +97,11 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         <p>Check live availability. No reservation or payment will be made.</p>
         <BookingFields />
         <Link
-          className="p-button"
+          className="p-button p-button-booking"
           href="/book"
           onClick={() => dialog.current?.close()}
         >
-          Review selection <span aria-hidden="true">→</span>
+          <ButtonContent>Review selection</ButtonContent>
         </Link>
       </dialog>
     </BookingContext.Provider>
@@ -112,51 +116,15 @@ export function BookButton({
 }) {
   const { open } = useBooking();
   return (
-    <button className={`p-button ${className}`} onClick={open}>
+    <Button type="button" size="lg" className={`p-button p-button-booking ${className}`} onClick={open}>
       {children}
-      <span aria-hidden="true">↗</span>
-    </button>
+    </Button>
   );
 }
 export function QuantityStepper() {
-  const { selection, setSelection, availability } = useBooking();
-  return (
-    <div className="p-stepper" role="group" aria-label="Guests">
-      <button
-        type="button"
-        aria-label="Remove one guest"
-        disabled={selection.guests <= 1}
-        onClick={() => {
-          availability.refresh();
-          setSelection({
-            ...selection,
-            guests: selection.guests - 1,
-            departureId: "",
-          });
-        }}
-      >
-        −
-      </button>
-      <output aria-live="polite">
-        {selection.guests} {selection.guests === 1 ? "guest" : "guests"}
-      </output>
-      <button
-        type="button"
-        aria-label="Add one guest"
-        disabled={selection.guests >= 2147483647}
-        onClick={() => {
-          availability.refresh();
-          setSelection({
-            ...selection,
-            guests: selection.guests + 1,
-            departureId: "",
-          });
-        }}
-      >
-        +
-      </button>
-    </div>
-  );
+ const {selection,setSelection,availability}=useBooking();const counts=selection.passengers??{adult:selection.guests,child:0,infant:0};
+ function change(k:keyof PassengerCounts,n:number){const passengers={...counts,[k]:n};setSelection({...selection,passengers,guests:passengerKeys.reduce((sum,key)=>sum+passengers[key],0),departureId:""});}
+ return <div className="p-passengers">{passengerKeys.map(k=><div key={k}><span>{passengerLabels[k]} {availability.categories&&<small>{ageLabel(availability.categories[k])}</small>}</span><div className="p-stepper" role="group" aria-label={passengerLabels[k]}><button type="button" disabled={counts[k]===0} aria-label={"Remove one "+k} onClick={()=>change(k,counts[k]-1)}>-</button><output aria-live="polite">{counts[k]}</output><button type="button" disabled={selection.guests>=100} aria-label={"Add one "+k} onClick={()=>change(k,counts[k]+1)}>+</button></div></div>)}</div>;
 }
 export function BookingFields() {
   const { selection, setSelection, availability } = useBooking();
@@ -221,6 +189,7 @@ export function BookingFields() {
 export function AvailabilityStatus() {
   const { selection, availability } = useBooking();
   const quote = availability.quote;
+  const price=quote?.departures.find(d=>d.id===selection.departureId)?.passengerQuote;
   return (
     <div className="p-availability-status" role="status" aria-live="polite">
       {!selection.date ? (
@@ -232,10 +201,11 @@ export function AvailabilityStatus() {
       ) : quote ? (
         <>
           <p>
-            <strong>Total: {displayMoney(quote.total, quote.currency)}</strong>{" "}
+            <strong>{price?`Total: ${displayMoney(price.total,quote.currency)}`:"Select a departure to see your total"}</strong>{" "}
             for {quote.guests} {quote.guests === 1 ? "guest" : "guests"}. Local
             time: {availability.timezone}.
           </p>
+          {price&&<div>{price.lines.map(line=><p key={line.category}>{line.quantity} {passengerLabels[line.category]}  |  {displayMoney(line.unitPrice,"EUR")} = {displayMoney(line.total,"EUR")}{line.offer?.label&&`  |  ${line.offer.label}`}</p>)}</div>}
           {quote.departures.length === 0 ? (
             <p>No upcoming departures for this date. Try another day.</p>
           ) : !quote.departures.some((d) => d.available) ? (
@@ -289,19 +259,29 @@ export function BookingBar({
 }
 export function Header({ content: c = initialWebsiteContent }: { content?: WebsiteContent }) {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
+  const [heroVisible, setHeroVisible] = useState(true);
+  const [hash, setHash] = useState("");
+  const headerRef = useRef<HTMLElement>(null);
+  const scrolled = pathname !== "/" || !heroVisible;
+  const links = ["/", ...[0,1,2,3,4].map(i=>resolveWebsiteLink(c[`nav.${i}.link`]))];
+  const active = activeNavigation(pathname,hash,links);
   const [menu, setMenu] = useState(false);
   const menuToggle = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    const update = () => setScrolled(window.scrollY > 80);
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    return () => window.removeEventListener("scroll", update);
-  }, []);
+    const updateHash = () => setHash(window.location.hash);
+    updateHash();window.addEventListener('hashchange',updateHash);window.addEventListener('popstate',updateHash);
+    const hero = document.getElementById('home-hero');
+    let observer: IntersectionObserver | undefined;
+    if(pathname === '/' && hero){
+      const headerHeight=headerRef.current?.getBoundingClientRect().height??76;
+      observer=new IntersectionObserver(([entry])=>setHeroVisible(entry.isIntersecting && entry.intersectionRatio > 0.2),{rootMargin:'-'+headerHeight+'px 0px 0px 0px',threshold:[0,0.2]});observer.observe(hero);
+    }
+    return ()=>{observer?.disconnect();window.removeEventListener('hashchange',updateHash);window.removeEventListener('popstate',updateHash);};
+  }, [pathname]);
   return (
     <>
-      <header
-        className={`p-header ${pathname !== "/" || scrolled || menu ? "p-header-solid" : ""}`}
+      <header ref={headerRef}
+        className={`p-header ${pathname === "/" ? "p-header-home" : ""} ${pathname !== "/" || scrolled || menu ? "p-header-solid" : ""}`}
         onKeyDown={(event) => {
           if (event.key === "Escape" && menu) {
             setMenu(false);
@@ -310,7 +290,7 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
         }}
       >
         <Link className="p-wordmark" href="/" onClick={() => setMenu(false)}>
-          <BrandLogo light={pathname === "/" && !scrolled && !menu} />
+          <BrandLogo light />
         </Link>
         <button
           ref={menuToggle}
@@ -326,7 +306,7 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
           className={menu ? "p-navigation is-open" : "p-navigation"}
           aria-label="Main navigation"
         >
-          {[0, 1, 2, 3, 4].map(i => <Link key={i} href={c[`nav.${i}.link`]} onClick={() => setMenu(false)}>{c[`nav.${i}.label`]}</Link>)}
+          {links.map((href,i)=><Link key={i} href={href} aria-current={active===i ? (href.includes("#") ? "location" : "page") : undefined} onClick={()=>{setMenu(false);setHash(href.includes("#")?"#"+href.split("#")[1]:"");}}>{i===0?c["nav.home"]:c[`nav.${i-1}.label`]}</Link>)}
           <span className="p-language" title="More languages coming soon">
             EN
           </span>
@@ -337,7 +317,7 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
         className={`p-mobile-actions ${scrolled && pathname !== "/book" ? "is-visible" : ""}`}
       >
         <Link href="/live">
-          <span aria-hidden="true">◎</span> {c["nav.mobileMap"]}
+          {c["nav.mobileMap"]}
         </Link>
         <BookButton>{c["nav.mobileBook"]}</BookButton>
       </div>

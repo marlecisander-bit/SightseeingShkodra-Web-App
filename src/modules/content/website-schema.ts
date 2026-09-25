@@ -1,19 +1,24 @@
+import { parseAmenities, focalPositions } from "./hero-amenities";
+import { pageSections } from "./page-sections";
 import { destinations } from "../public-preview/contracts";
 
 export type WebsiteContent = Record<string, string>;
-export type WebsiteField = { key: string; label: string; initial: string; kind: "text" | "image" | "link"; max: number };
+export type WebsiteField = { key: string; label: string; initial: string; kind: "text" | "image" | "link" | "position" | "amenities"; max: number };
 const field = (key: string, label: string, initial: string, kind: WebsiteField["kind"] = "text"): WebsiteField => ({ key, label, initial, kind, max: kind === "text" ? 700 : 2000 });
 const f = field;
 export const websiteSections = [
+  ...pageSections,
   { id: "hero", title: "Hero", fields: [
     f("hero.eyebrow", "Eyebrow", "SHKODËR, ALBANIA · GO A LITTLE FURTHER"),
     f("hero.title", "Main heading", "Discover Shkodra."), f("hero.emphasis", "Emphasized heading", "Your way."),
     f("hero.description", "Description", "A day between the city, the castle and the lake."), f("hero.subtitle", "Second description line", "Hop on. Wander off. Make it yours."),
     f("hero.desktop", "Desktop hero image", "/images/lake.webp", "image"), f("hero.mobile", "Mobile hero image", "/images/lake.webp", "image"),
+    f("hero.desktopPosition", "Desktop focal position", "center center", "position"), f("hero.mobilePosition", "Mobile focal position", "center center", "position"),
     f("hero.alt", "Hero image description", "The Buna River and Lake Shkodra stretching towards the mountains, viewed from Rozafa Castle"),
     f("hero.book", "Booking button label", "Book your day"), f("hero.track", "Map link label", "Track live"),
     f("hero.discover", "Scroll link label", "Discover your day"),
   ] },
+  { id: "heroAmenities", title: "Hero amenities", fields: [{key:"hero.amenities", label:"Hero amenities", initial:"[]", kind:"amenities" as const, max:30000}] },
   { id: "intro", title: "A day with possibilities", fields: [
     f("intro.eyebrow", "Eyebrow", "A DAY WITH POSSIBILITIES"), f("intro.title", "Heading", "One ticket. One day.\nShkodra at your pace."),
     f("intro.text", "Description", "A coffee in the old town. A castle above the rivers. An unhurried afternoon by the lake. Leave space for the moments you didn’t plan."),
@@ -41,14 +46,14 @@ export const websiteSections = [
     ...[["Choose your day", "One daily ticket. Room for your own plans."], ["Hop on", "Find your boarding point and settle in."], ["Follow your curiosity", "Step off and enjoy the places you came for."], ["Find your next ride", "Check the live map and hop back on."]].flatMap(([title, text], i) => [f(`how.${i}.title`, `Step ${i + 1} title`, title), f(`how.${i}.text`, `Step ${i + 1} description`, text)]),
   ] },
   { id: "departures", title: "Today, at a glance", fields: [f("departures.eyebrow", "Eyebrow", "TODAY, AT A GLANCE"), f("departures.title", "Heading", "Where will the day take you?"), f("departures.linkLabel", "Timetable link label", "Timetable & boarding")] },
-  { id: "reviews", title: "Days worth sharing", fields: [f("reviews.eyebrow", "Eyebrow", "DAYS WORTH SHARING"), f("reviews.title", "Heading", "Your stories belong here."), f("reviews.text", "First line", "Traveler reviews will appear here with their original sources."), f("reviews.second", "Second line", "Until then, let the places speak for themselves.")] },
+  { id: "reviews", title: "Days worth sharing", fields: [f("reviews.eyebrow", "Eyebrow", "LOVED BY OUR GUESTS"), f("reviews.title", "Heading", "Your stories belong here."), f("reviews.text", "First line", "Real experiences from people who explored Shkodra with us."), f("reviews.second", "Second line", "Until then, let the places speak for themselves.")] },
   { id: "notebook", title: "The local notebook", fields: [f("notebook.eyebrow", "Eyebrow", "THE LOCAL NOTEBOOK"), f("notebook.title", "Heading", "A little more Shkodra."), f("notebook.linkLabel", "Guide link label", "Explore the guide"),
     ...["A DAY IN THE CITY", "ABOVE IT ALL", "THE SLOW AFTERNOON"].flatMap((tag, i) => [f(`notebook.${i}.tag`, `Card ${i + 1} eyebrow`, tag), f(`notebook.${i}.title`, `Card ${i + 1} heading`, ["How would you spend a day in Shkodra?", "Make time for Rozafa.", "Meet the lake. Forget the hurry."][i]), f(`notebook.${i}.linkLabel`, `Card ${i + 1} link label`, "Take a closer look")]),
   ] },
   { id: "final", title: "Final booking invitation", fields: [f("final.eyebrow", "Eyebrow", "LESS RUSH. MORE SHKODRA."), f("final.title", "Heading", "A day you’ll"), f("final.emphasis", "Emphasized heading", "make your own."), f("final.book", "Booking button label", "Book your day"), f("final.image", "Banner image", "/images/castle.webp", "image"), f("final.alt", "Image description", "Rozafa Castle and the green landscape around Shkodra")] },
-  { id: "navigation", title: "Navigation", fields: [
+  { id: "navigation", title: "Navigation", fields: [f("nav.home", "Home link label", "Home"),
     ...[["Tour", "/tour"], ["Route", "/#route"], ["Explore Shkodra", "/explore"], ["Live map", "/live"], ["FAQ", "/tour#faq"]].flatMap(([label, link], i) => [f(`nav.${i}.label`, `Link ${i + 1} label`, label), f(`nav.${i}.link`, `Link ${i + 1} destination`, link, "link")]),
-    f("nav.book", "Header booking button", "Book now"), f("nav.mobileBook", "Mobile booking button", "Book your day"), f("nav.mobileMap", "Mobile map link label", "Live van"),
+    f("nav.book", "Header booking button", "Book your day"), f("nav.mobileBook", "Mobile booking button", "Book your day"), f("nav.mobileMap", "Mobile map link label", "Live van"),
   ] },
   { id: "footer", title: "Footer", fields: [f("footer.line1", "Tagline first line", "A little closer to the place."), f("footer.line2", "Tagline second line", "A little more of your own pace."),
     ...[["The day tour", "/tour"], ["Live map", "/live"], ["Explore Shkodra", "/explore"], ["Questions & answers", "/tour#faq"], ["Photography credits", "/credits"], ["Staff sign-in", "/admin"]].flatMap(([label, link], i) => [f(`footer.${i}.label`, `Link ${i + 1} label`, label), f(`footer.${i}.link`, `Link ${i + 1} destination`, link, "link")]),
@@ -56,6 +61,13 @@ export const websiteSections = [
   ] },
   { id: "seo", title: "Homepage SEO", fields: [f("seo.title", "Search title", "Sightseeing Shkodra"), f("seo.description", "Search description", "Discover Shkodra. Tour details and booking information coming soon."), f("seo.image", "Social image", "/images/lake.webp", "image"), f("seo.alt", "Social image description", "Lake Shkodra and the Buna River seen from Rozafa Castle")] },
 ];
+// Retain the stored schema and historical showcase headings without offering obsolete controls.
+export const homepageEditorSections = websiteSections.filter(s => !["how","destinations","navigation","footer","seo",...pageSections.map(p=>p.id)].includes(s.id)).map(s => s.id === "reviews" ? {...s,title:"Guest Reviews",fields:s.fields.filter(f => f.key !== "reviews.second")} : s.id === "notebook" ? {...s,fields:s.fields.filter(f=>!/^notebook\.[0-9]+\./.test(f.key)||f.key==="notebook.0.linkLabel").map(f=>f.key==="notebook.0.linkLabel"?{...f,label:"Destination card link label"}:f)} : s);
+export const destinationEditorSections = websiteSections.filter(s => s.id === "destinations").map(s => ({ ...s, title: "Destination content", fields: s.fields.filter(f => f.key.startsWith("place.")) }));
+export const globalEditorSections = websiteSections.filter(s=>["navigation","footer","seo"].includes(s.id));
+export const publicPageEditorSections = [...pageSections, ...websiteSections.filter(s=>s.id === "how").map(s=>({...s,title:"Tour ? How it works"}))];
+export const editableWebsiteSections = [...homepageEditorSections, ...globalEditorSections, ...publicPageEditorSections];
+export const websiteEditorGroups = {homepage:homepageEditorSections,destinations:destinationEditorSections,pages:publicPageEditorSections,global:globalEditorSections};
 export const websiteFields = websiteSections.flatMap(section => section.fields);
 export const initialWebsiteContent: WebsiteContent = Object.fromEntries(websiteFields.map(field => [field.key, field.initial]));
 export function safeWebsiteLink(value: string) {
@@ -71,10 +83,17 @@ export function validateWebsiteContent(value: unknown): WebsiteContent {
   if (Object.keys(record).length !== websiteFields.length) throw Error("Invalid homepage fields");
   for (const field of websiteFields) {
     const v = record[field.key];
+    if (field.kind === "position" && !focalPositions.includes(v as typeof focalPositions[number])) throw Error("Invalid focal position");
+    if (field.kind === "amenities") parseAmenities(v);
     if (typeof v !== "string" || !v.trim() || v.length > field.max || (field.kind === "link" && !safeWebsiteLink(v)) || (field.kind === "image" && !safeWebsiteImage(v))) throw Error(`Check ${field.label}`);
   }
   return { ...record };
 }
 export function websitePlaces(content: WebsiteContent) {
-  return destinations.map(place => ({ ...place, ...Object.fromEntries(["name", "tag", "text", "detail", "image", "alt", "link"].map(key => [key, content[`place.${place.id}.${key}`]])) })) as Array<{id:string;name:string;tag:string;text:string;detail:string;image:string;alt:string;link:string}>;
+  return destinations.map(place => ({ ...place, ...Object.fromEntries(["name", "tag", "text", "detail", "image", "alt", "link"].map(key => [key, key === "link" ? resolveWebsiteLink(content[`place.${place.id}.${key}`]) : content[`place.${place.id}.${key}`]])) })) as Array<{id:string;name:string;tag:string;text:string;detail:string;image:string;alt:string;link:string}>;
+}
+
+// Resolve retired homepage anchors without changing saved editorial records.
+export function resolveWebsiteLink(link: string) {
+  return link === "/#booking" ? "/book" : link === "/#destinations" ? "/explore" : link;
 }

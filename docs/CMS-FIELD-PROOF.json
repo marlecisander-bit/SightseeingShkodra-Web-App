@@ -1,0 +1,968 @@
+[
+  {
+    "field": "hero.eyebrow",
+    "value": "CMS_AUDIT_hero_eyebrow",
+    "adminOwner": "Hero",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "hero.title",
+    "value": "CMS_AUDIT_hero_title",
+    "adminOwner": "Hero",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "hero.emphasis",
+    "value": "CMS_AUDIT_hero_emphasis",
+    "adminOwner": "Hero",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "hero.description",
+    "value": "CMS_AUDIT_hero_description",
+    "adminOwner": "Hero",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "hero.subtitle",
+    "value": "CMS_AUDIT_hero_subtitle",
+    "adminOwner": "Hero",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "hero.desktop",
+    "value": "/images/CMS_AUDIT_hero_desktop.webp",
+    "adminOwner": "Hero",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "hero.mobile",
+    "value": "/images/CMS_AUDIT_hero_mobile.webp",
+    "adminOwner": "Hero",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "hero.desktopPosition",
+    "value": "right bottom",
+    "adminOwner": "Hero",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "hero.mobilePosition",
+    "value": "right bottom",
+    "adminOwner": "Hero",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "hero.alt",
+    "value": "CMS_AUDIT_hero_alt",
+    "adminOwner": "Hero",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "hero.book",
+    "value": "CMS_AUDIT_hero_book",
+    "adminOwner": "Hero",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "hero.track",
+    "value": "CMS_AUDIT_hero_track",
+    "adminOwner": "Hero",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "hero.discover",
+    "value": "CMS_AUDIT_hero_discover",
+    "adminOwner": "Hero",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "hero.amenities",
+    "value": "[{\"id\":\"10000000-0000-4000-8000-000000000099\",\"icon\":\"wifi\",\"title\":\"CMS_AUDIT_hero_amenities\",\"description\":\"QA fixture\",\"published\":true,\"display_order\":1,\"created_at\":\"2026-09-24T00:00:00Z\",\"updated_at\":\"2026-09-24T00:00:00Z\"}]",
+    "adminOwner": "Hero amenities",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "intro.eyebrow",
+    "value": "CMS_AUDIT_intro_eyebrow",
+    "adminOwner": "A day with possibilities",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "intro.title",
+    "value": "CMS_AUDIT_intro_title",
+    "adminOwner": "A day with possibilities",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "intro.text",
+    "value": "CMS_AUDIT_intro_text",
+    "adminOwner": "A day with possibilities",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "intro.linkLabel",
+    "value": "CMS_AUDIT_intro_linkLabel",
+    "adminOwner": "A day with possibilities",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "intro.link",
+    "value": "/tour",
+    "adminOwner": "A day with possibilities",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "route.eyebrow",
+    "value": "CMS_AUDIT_route_eyebrow",
+    "adminOwner": "The places between",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "route.title",
+    "value": "CMS_AUDIT_route_title",
+    "adminOwner": "The places between",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "route.text",
+    "value": "CMS_AUDIT_route_text",
+    "adminOwner": "The places between",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "live.eyebrow",
+    "value": "CMS_AUDIT_live_eyebrow",
+    "adminOwner": "Your day, without the guesswork",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "live.title",
+    "value": "CMS_AUDIT_live_title",
+    "adminOwner": "Your day, without the guesswork",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "live.emphasis",
+    "value": "CMS_AUDIT_live_emphasis",
+    "adminOwner": "Your day, without the guesswork",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "live.text",
+    "value": "CMS_AUDIT_live_text",
+    "adminOwner": "Your day, without the guesswork",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "live.linkLabel",
+    "value": "CMS_AUDIT_live_linkLabel",
+    "adminOwner": "Your day, without the guesswork",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "how.eyebrow",
+    "value": "CMS_AUDIT_how_eyebrow",
+    "adminOwner": "Keep it beautifully simple",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "how.title",
+    "value": "CMS_AUDIT_how_title",
+    "adminOwner": "Keep it beautifully simple",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "how.0.title",
+    "value": "CMS_AUDIT_how_0_title",
+    "adminOwner": "Keep it beautifully simple",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "how.0.text",
+    "value": "CMS_AUDIT_how_0_text",
+    "adminOwner": "Keep it beautifully simple",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "how.1.title",
+    "value": "CMS_AUDIT_how_1_title",
+    "adminOwner": "Keep it beautifully simple",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "how.1.text",
+    "value": "CMS_AUDIT_how_1_text",
+    "adminOwner": "Keep it beautifully simple",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "how.2.title",
+    "value": "CMS_AUDIT_how_2_title",
+    "adminOwner": "Keep it beautifully simple",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "how.2.text",
+    "value": "CMS_AUDIT_how_2_text",
+    "adminOwner": "Keep it beautifully simple",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "how.3.title",
+    "value": "CMS_AUDIT_how_3_title",
+    "adminOwner": "Keep it beautifully simple",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "how.3.text",
+    "value": "CMS_AUDIT_how_3_text",
+    "adminOwner": "Keep it beautifully simple",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "departures.eyebrow",
+    "value": "CMS_AUDIT_departures_eyebrow",
+    "adminOwner": "Today, at a glance",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "departures.title",
+    "value": "CMS_AUDIT_departures_title",
+    "adminOwner": "Today, at a glance",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "departures.linkLabel",
+    "value": "CMS_AUDIT_departures_linkLabel",
+    "adminOwner": "Today, at a glance",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "reviews.eyebrow",
+    "value": "CMS_AUDIT_reviews_eyebrow",
+    "adminOwner": "Guest Reviews",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "reviews.title",
+    "value": "CMS_AUDIT_reviews_title",
+    "adminOwner": "Guest Reviews",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "reviews.text",
+    "value": "CMS_AUDIT_reviews_text",
+    "adminOwner": "Guest Reviews",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "notebook.eyebrow",
+    "value": "CMS_AUDIT_notebook_eyebrow",
+    "adminOwner": "The local notebook",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "notebook.title",
+    "value": "CMS_AUDIT_notebook_title",
+    "adminOwner": "The local notebook",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "notebook.linkLabel",
+    "value": "CMS_AUDIT_notebook_linkLabel",
+    "adminOwner": "The local notebook",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "notebook.0.tag",
+    "value": "CMS_AUDIT_notebook_0_tag",
+    "adminOwner": "The local notebook",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "notebook.0.title",
+    "value": "CMS_AUDIT_notebook_0_title",
+    "adminOwner": "The local notebook",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "notebook.0.linkLabel",
+    "value": "CMS_AUDIT_notebook_0_linkLabel",
+    "adminOwner": "The local notebook",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "notebook.1.tag",
+    "value": "CMS_AUDIT_notebook_1_tag",
+    "adminOwner": "The local notebook",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "notebook.1.title",
+    "value": "CMS_AUDIT_notebook_1_title",
+    "adminOwner": "The local notebook",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "notebook.1.linkLabel",
+    "value": "CMS_AUDIT_notebook_1_linkLabel",
+    "adminOwner": "The local notebook",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "notebook.2.tag",
+    "value": "CMS_AUDIT_notebook_2_tag",
+    "adminOwner": "The local notebook",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "notebook.2.title",
+    "value": "CMS_AUDIT_notebook_2_title",
+    "adminOwner": "The local notebook",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "notebook.2.linkLabel",
+    "value": "CMS_AUDIT_notebook_2_linkLabel",
+    "adminOwner": "The local notebook",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "final.eyebrow",
+    "value": "CMS_AUDIT_final_eyebrow",
+    "adminOwner": "Final booking invitation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "final.title",
+    "value": "CMS_AUDIT_final_title",
+    "adminOwner": "Final booking invitation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "final.emphasis",
+    "value": "CMS_AUDIT_final_emphasis",
+    "adminOwner": "Final booking invitation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "final.book",
+    "value": "CMS_AUDIT_final_book",
+    "adminOwner": "Final booking invitation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "final.image",
+    "value": "/images/CMS_AUDIT_final_image.webp",
+    "adminOwner": "Final booking invitation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "final.alt",
+    "value": "CMS_AUDIT_final_alt",
+    "adminOwner": "Final booking invitation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.centre.name",
+    "value": "CMS_AUDIT_place_centre_name",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.centre.tag",
+    "value": "CMS_AUDIT_place_centre_tag",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.centre.text",
+    "value": "CMS_AUDIT_place_centre_text",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.centre.detail",
+    "value": "CMS_AUDIT_place_centre_detail",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.centre.image",
+    "value": "/images/CMS_AUDIT_place_centre_image.webp",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.centre.alt",
+    "value": "CMS_AUDIT_place_centre_alt",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.centre.link",
+    "value": "/live",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.castle.name",
+    "value": "CMS_AUDIT_place_castle_name",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.castle.tag",
+    "value": "CMS_AUDIT_place_castle_tag",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.castle.text",
+    "value": "CMS_AUDIT_place_castle_text",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.castle.detail",
+    "value": "CMS_AUDIT_place_castle_detail",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.castle.image",
+    "value": "/images/CMS_AUDIT_place_castle_image.webp",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.castle.alt",
+    "value": "CMS_AUDIT_place_castle_alt",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.castle.link",
+    "value": "/explore",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.lake.name",
+    "value": "CMS_AUDIT_place_lake_name",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.lake.tag",
+    "value": "CMS_AUDIT_place_lake_tag",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.lake.text",
+    "value": "CMS_AUDIT_place_lake_text",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.lake.detail",
+    "value": "CMS_AUDIT_place_lake_detail",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.lake.image",
+    "value": "/images/CMS_AUDIT_place_lake_image.webp",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.lake.alt",
+    "value": "CMS_AUDIT_place_lake_alt",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.lake.link",
+    "value": "/book",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.bridge.name",
+    "value": "CMS_AUDIT_place_bridge_name",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.bridge.tag",
+    "value": "CMS_AUDIT_place_bridge_tag",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.bridge.text",
+    "value": "CMS_AUDIT_place_bridge_text",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.bridge.detail",
+    "value": "CMS_AUDIT_place_bridge_detail",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.bridge.image",
+    "value": "/images/CMS_AUDIT_place_bridge_image.webp",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.bridge.alt",
+    "value": "CMS_AUDIT_place_bridge_alt",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "place.bridge.link",
+    "value": "/credits",
+    "adminOwner": "Destination content",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "nav.home",
+    "value": "CMS_AUDIT_nav_home",
+    "adminOwner": "Navigation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "nav.0.label",
+    "value": "CMS_AUDIT_nav_0_label",
+    "adminOwner": "Navigation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "nav.0.link",
+    "value": "/admin",
+    "adminOwner": "Navigation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "nav.1.label",
+    "value": "CMS_AUDIT_nav_1_label",
+    "adminOwner": "Navigation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "nav.1.link",
+    "value": "/tour#faq",
+    "adminOwner": "Navigation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "nav.2.label",
+    "value": "CMS_AUDIT_nav_2_label",
+    "adminOwner": "Navigation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "nav.2.link",
+    "value": "/tour#timetable",
+    "adminOwner": "Navigation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "nav.3.label",
+    "value": "CMS_AUDIT_nav_3_label",
+    "adminOwner": "Navigation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "nav.3.link",
+    "value": "/explore#centre",
+    "adminOwner": "Navigation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "nav.4.label",
+    "value": "CMS_AUDIT_nav_4_label",
+    "adminOwner": "Navigation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "nav.4.link",
+    "value": "/explore#castle",
+    "adminOwner": "Navigation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "nav.book",
+    "value": "CMS_AUDIT_nav_book",
+    "adminOwner": "Navigation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "nav.mobileBook",
+    "value": "CMS_AUDIT_nav_mobileBook",
+    "adminOwner": "Navigation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "nav.mobileMap",
+    "value": "CMS_AUDIT_nav_mobileMap",
+    "adminOwner": "Navigation",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "footer.line1",
+    "value": "CMS_AUDIT_footer_line1",
+    "adminOwner": "Footer",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "footer.line2",
+    "value": "CMS_AUDIT_footer_line2",
+    "adminOwner": "Footer",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "footer.0.label",
+    "value": "CMS_AUDIT_footer_0_label",
+    "adminOwner": "Footer",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "footer.0.link",
+    "value": "/explore#lake",
+    "adminOwner": "Footer",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "footer.1.label",
+    "value": "CMS_AUDIT_footer_1_label",
+    "adminOwner": "Footer",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "footer.1.link",
+    "value": "/explore#bridge",
+    "adminOwner": "Footer",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "footer.2.label",
+    "value": "CMS_AUDIT_footer_2_label",
+    "adminOwner": "Footer",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "footer.2.link",
+    "value": "/explore/centre",
+    "adminOwner": "Footer",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "footer.3.label",
+    "value": "CMS_AUDIT_footer_3_label",
+    "adminOwner": "Footer",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "footer.3.link",
+    "value": "/explore/castle",
+    "adminOwner": "Footer",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "footer.4.label",
+    "value": "CMS_AUDIT_footer_4_label",
+    "adminOwner": "Footer",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "footer.4.link",
+    "value": "/explore/lake",
+    "adminOwner": "Footer",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "footer.5.label",
+    "value": "CMS_AUDIT_footer_5_label",
+    "adminOwner": "Footer",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "footer.5.link",
+    "value": "/explore/bridge",
+    "adminOwner": "Footer",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "footer.location",
+    "value": "CMS_AUDIT_footer_location",
+    "adminOwner": "Footer",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "footer.language",
+    "value": "CMS_AUDIT_footer_language",
+    "adminOwner": "Footer",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "footer.contact",
+    "value": "CMS_AUDIT_footer_contact",
+    "adminOwner": "Footer",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "seo.title",
+    "value": "CMS_AUDIT_seo_title",
+    "adminOwner": "Homepage SEO",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "seo.description",
+    "value": "CMS_AUDIT_seo_description",
+    "adminOwner": "Homepage SEO",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "seo.image",
+    "value": "/images/CMS_AUDIT_seo_image.webp",
+    "adminOwner": "Homepage SEO",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "seo.alt",
+    "value": "CMS_AUDIT_seo_alt",
+    "adminOwner": "Homepage SEO",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "tourPage.eyebrow",
+    "value": "CMS_AUDIT_tourPage_eyebrow",
+    "adminOwner": "Tour introduction and information",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "tourPage.includedTitle",
+    "value": "CMS_AUDIT_tourPage_includedTitle",
+    "adminOwner": "Tour introduction and information",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "tourPage.faqTitle",
+    "value": "CMS_AUDIT_tourPage_faqTitle",
+    "adminOwner": "Tour introduction and information",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "tourPage.faqBook",
+    "value": "CMS_AUDIT_tourPage_faqBook",
+    "adminOwner": "Tour introduction and information",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "tourPage.faqBoard",
+    "value": "CMS_AUDIT_tourPage_faqBoard",
+    "adminOwner": "Tour introduction and information",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "tourPage.faqFees",
+    "value": "CMS_AUDIT_tourPage_faqFees",
+    "adminOwner": "Tour introduction and information",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "tourPage.faqLive",
+    "value": "CMS_AUDIT_tourPage_faqLive",
+    "adminOwner": "Tour introduction and information",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "explorePage.eyebrow",
+    "value": "CMS_AUDIT_explorePage_eyebrow",
+    "adminOwner": "Explore introduction",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "explorePage.title",
+    "value": "CMS_AUDIT_explorePage_title",
+    "adminOwner": "Explore introduction",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "explorePage.text",
+    "value": "CMS_AUDIT_explorePage_text",
+    "adminOwner": "Explore introduction",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "bookPage.eyebrow",
+    "value": "CMS_AUDIT_bookPage_eyebrow",
+    "adminOwner": "Booking introduction",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "bookPage.title",
+    "value": "CMS_AUDIT_bookPage_title",
+    "adminOwner": "Booking introduction",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "dayPage.eyebrow",
+    "value": "CMS_AUDIT_dayPage_eyebrow",
+    "adminOwner": "Travel companion introduction",
+    "save": "PASS",
+    "public": "PASS"
+  },
+  {
+    "field": "dayPage.title",
+    "value": "CMS_AUDIT_dayPage_title",
+    "adminOwner": "Travel companion introduction",
+    "save": "PASS",
+    "public": "PASS"
+  }
+]

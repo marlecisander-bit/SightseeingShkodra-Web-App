@@ -22,3 +22,6 @@ private/
 ~$*
 .DS_Store
 Thumbs.db
+
+# Local admin/booking verification screenshots (may contain account or pass data)
+docs/screenshots/

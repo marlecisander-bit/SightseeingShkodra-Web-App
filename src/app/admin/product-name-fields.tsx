@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 
 import { useId, useState } from "react";
 
@@ -29,7 +30,7 @@ export function ProductNameFields() {
       </label>
       <p id={helpId}>Generated from the title. You can edit it using lowercase letters, numbers and hyphens.</p>
       {customSlug !== null && (
-        <button type="button" onClick={() => setCustomSlug(null)}>Use title for URL slug</button>
+        <Button type="button" onClick={() => setCustomSlug(null)}>Use title for URL slug</Button>
       )}
     </>
   );

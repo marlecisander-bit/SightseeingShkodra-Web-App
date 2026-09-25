@@ -1,3 +1,4 @@
+import { getPublicDestinations } from "@/modules/content/destinations-server";
 import type { MetadataRoute } from "next";
 import { connection } from "next/server";
 import { getHomepage } from "@/modules/content/homepage-server";
@@ -8,7 +9,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const config = seoConfig();
   if (!config.index || !config.origin) return [];
   const [home, website] = await Promise.all([getHomepage(), getWebsitePublication()]);
-  const paths = home.state === "unavailable" || home.state === "unconfigured" ? [] : sitemapPaths(home);
+  const paths = home.state === "unavailable" || home.state === "unconfigured" ? [] : sitemapPaths(home).filter(path=>!path.startsWith("/explore/"));
+  for(const destination of await getPublicDestinations())if(destination.guidePublished)paths.push(`/explore/${destination.slug}`);
   if (website.published && !paths.includes("/")) paths.unshift("/");
   return paths.map((path) => ({ url: `${config.origin}${path}` }));
 }

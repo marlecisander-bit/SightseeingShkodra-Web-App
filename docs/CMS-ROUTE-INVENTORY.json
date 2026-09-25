@@ -1,0 +1,401 @@
+{
+  "generated": "2026-09-24T14:11:34.456Z",
+  "routes": [
+    {
+      "file": "src/app/(public)/book/page.tsx",
+      "route": "/book",
+      "scope": "public"
+    },
+    {
+      "file": "src/app/(public)/credits/page.tsx",
+      "route": "/credits",
+      "scope": "public"
+    },
+    {
+      "file": "src/app/(public)/explore/page.tsx",
+      "route": "/explore",
+      "scope": "public"
+    },
+    {
+      "file": "src/app/(public)/explore/[slug]/page.tsx",
+      "route": "/explore/[slug]",
+      "scope": "public"
+    },
+    {
+      "file": "src/app/(public)/live/page.tsx",
+      "route": "/live",
+      "scope": "public"
+    },
+    {
+      "file": "src/app/(public)/page.tsx",
+      "route": "/",
+      "scope": "public"
+    },
+    {
+      "file": "src/app/(public)/tour/page.tsx",
+      "route": "/tour",
+      "scope": "public"
+    },
+    {
+      "file": "src/app/(public)/your-day/page.tsx",
+      "route": "/your-day",
+      "scope": "public"
+    },
+    {
+      "file": "src/app/admin/page.tsx",
+      "route": "/admin",
+      "scope": "admin"
+    },
+    {
+      "file": "src/app/admin/[operatorId]/website-preview/page.tsx",
+      "route": "/admin/[operatorId]/website-preview",
+      "scope": "admin"
+    },
+    {
+      "file": "src/app/admin/[operatorId]/[section]/page.tsx",
+      "route": "/admin/[operatorId]/[section]",
+      "scope": "admin"
+    },
+    {
+      "file": "src/app/auth/activate/page.tsx",
+      "route": "/auth/activate",
+      "scope": "auth"
+    },
+    {
+      "file": "src/app/auth/set-password/page.tsx",
+      "route": "/auth/set-password",
+      "scope": "auth"
+    },
+    {
+      "file": "src/app/auth/sign-in/page.tsx",
+      "route": "/auth/sign-in",
+      "scope": "auth"
+    },
+    {
+      "file": "src/app/dev/booking-pass-preview/page.tsx",
+      "route": "/dev/booking-pass-preview",
+      "scope": "development-only"
+    },
+    {
+      "file": "src/app/dev/buttons-preview/page.tsx",
+      "route": "/dev/buttons-preview",
+      "scope": "development-only"
+    },
+    {
+      "file": "src/app/dev/cms-reconciliation/page.tsx",
+      "route": "/dev/cms-reconciliation",
+      "scope": "development-only"
+    },
+    {
+      "file": "src/app/dev/hero-preview/page.tsx",
+      "route": "/dev/hero-preview",
+      "scope": "development-only"
+    },
+    {
+      "file": "src/app/dev/reviews-preview/page.tsx",
+      "route": "/dev/reviews-preview",
+      "scope": "development-only"
+    },
+    {
+      "file": "src/app/dev/tracking-preview/page.tsx",
+      "route": "/dev/tracking-preview",
+      "scope": "development-only"
+    }
+  ],
+  "adminSections": [
+    {
+      "slug": "overview",
+      "label": "Overview",
+      "permission": "catalog.read",
+      "description": "Your operator workspace."
+    },
+    {
+      "slug": "catalog",
+      "label": "Products & suppliers",
+      "permission": "catalog.manage",
+      "description": "Manage products and suppliers. Routes, stops and GPS are managed in the live map app."
+    },
+    {
+      "slug": "departures",
+      "label": "Departures",
+      "permission": "departures.manage",
+      "description": "Schedules and capacity management will be available here."
+    },
+    {
+      "slug": "bookings",
+      "label": "Bookings",
+      "permission": "bookings.read",
+      "description": "Booking operations will be available here."
+    },
+    {
+      "slug": "reviews",
+      "label": "Guest Reviews",
+      "permission": "content.manage",
+      "description": "Curate genuine guest reviews and homepage display settings."
+    },
+    {
+      "slug": "content",
+      "label": "Website content",
+      "permission": "content.manage",
+      "description": "Page and editorial management will be available here."
+    }
+  ],
+  "cmsGroups": {
+    "homepage": [
+      {
+        "id": "hero",
+        "title": "Hero",
+        "fields": [
+          "hero.eyebrow",
+          "hero.title",
+          "hero.emphasis",
+          "hero.description",
+          "hero.subtitle",
+          "hero.desktop",
+          "hero.mobile",
+          "hero.desktopPosition",
+          "hero.mobilePosition",
+          "hero.alt",
+          "hero.book",
+          "hero.track",
+          "hero.discover"
+        ]
+      },
+      {
+        "id": "heroAmenities",
+        "title": "Hero amenities",
+        "fields": [
+          "hero.amenities"
+        ]
+      },
+      {
+        "id": "intro",
+        "title": "A day with possibilities",
+        "fields": [
+          "intro.eyebrow",
+          "intro.title",
+          "intro.text",
+          "intro.linkLabel",
+          "intro.link"
+        ]
+      },
+      {
+        "id": "route",
+        "title": "The places between",
+        "fields": [
+          "route.eyebrow",
+          "route.title",
+          "route.text"
+        ]
+      },
+      {
+        "id": "live",
+        "title": "Your day, without the guesswork",
+        "fields": [
+          "live.eyebrow",
+          "live.title",
+          "live.emphasis",
+          "live.text",
+          "live.linkLabel"
+        ]
+      },
+      {
+        "id": "how",
+        "title": "Keep it beautifully simple",
+        "fields": [
+          "how.eyebrow",
+          "how.title",
+          "how.0.title",
+          "how.0.text",
+          "how.1.title",
+          "how.1.text",
+          "how.2.title",
+          "how.2.text",
+          "how.3.title",
+          "how.3.text"
+        ]
+      },
+      {
+        "id": "departures",
+        "title": "Today, at a glance",
+        "fields": [
+          "departures.eyebrow",
+          "departures.title",
+          "departures.linkLabel"
+        ]
+      },
+      {
+        "id": "reviews",
+        "title": "Guest Reviews",
+        "fields": [
+          "reviews.eyebrow",
+          "reviews.title",
+          "reviews.text"
+        ]
+      },
+      {
+        "id": "notebook",
+        "title": "The local notebook",
+        "fields": [
+          "notebook.eyebrow",
+          "notebook.title",
+          "notebook.linkLabel",
+          "notebook.0.tag",
+          "notebook.0.title",
+          "notebook.0.linkLabel",
+          "notebook.1.tag",
+          "notebook.1.title",
+          "notebook.1.linkLabel",
+          "notebook.2.tag",
+          "notebook.2.title",
+          "notebook.2.linkLabel"
+        ]
+      },
+      {
+        "id": "final",
+        "title": "Final booking invitation",
+        "fields": [
+          "final.eyebrow",
+          "final.title",
+          "final.emphasis",
+          "final.book",
+          "final.image",
+          "final.alt"
+        ]
+      }
+    ],
+    "destinations": [
+      {
+        "id": "destinations",
+        "title": "Destination content",
+        "fields": [
+          "place.centre.name",
+          "place.centre.tag",
+          "place.centre.text",
+          "place.centre.detail",
+          "place.centre.image",
+          "place.centre.alt",
+          "place.centre.link",
+          "place.castle.name",
+          "place.castle.tag",
+          "place.castle.text",
+          "place.castle.detail",
+          "place.castle.image",
+          "place.castle.alt",
+          "place.castle.link",
+          "place.lake.name",
+          "place.lake.tag",
+          "place.lake.text",
+          "place.lake.detail",
+          "place.lake.image",
+          "place.lake.alt",
+          "place.lake.link",
+          "place.bridge.name",
+          "place.bridge.tag",
+          "place.bridge.text",
+          "place.bridge.detail",
+          "place.bridge.image",
+          "place.bridge.alt",
+          "place.bridge.link"
+        ]
+      }
+    ],
+    "pages": [
+      {
+        "id": "tourPage",
+        "title": "Tour introduction and information",
+        "fields": [
+          "tourPage.eyebrow",
+          "tourPage.includedTitle",
+          "tourPage.faqTitle",
+          "tourPage.faqBook",
+          "tourPage.faqBoard",
+          "tourPage.faqFees",
+          "tourPage.faqLive"
+        ]
+      },
+      {
+        "id": "explorePage",
+        "title": "Explore introduction",
+        "fields": [
+          "explorePage.eyebrow",
+          "explorePage.title",
+          "explorePage.text"
+        ]
+      },
+      {
+        "id": "bookPage",
+        "title": "Booking introduction",
+        "fields": [
+          "bookPage.eyebrow",
+          "bookPage.title"
+        ]
+      },
+      {
+        "id": "dayPage",
+        "title": "Travel companion introduction",
+        "fields": [
+          "dayPage.eyebrow",
+          "dayPage.title"
+        ]
+      }
+    ],
+    "global": [
+      {
+        "id": "navigation",
+        "title": "Navigation",
+        "fields": [
+          "nav.home",
+          "nav.0.label",
+          "nav.0.link",
+          "nav.1.label",
+          "nav.1.link",
+          "nav.2.label",
+          "nav.2.link",
+          "nav.3.label",
+          "nav.3.link",
+          "nav.4.label",
+          "nav.4.link",
+          "nav.book",
+          "nav.mobileBook",
+          "nav.mobileMap"
+        ]
+      },
+      {
+        "id": "footer",
+        "title": "Footer",
+        "fields": [
+          "footer.line1",
+          "footer.line2",
+          "footer.0.label",
+          "footer.0.link",
+          "footer.1.label",
+          "footer.1.link",
+          "footer.2.label",
+          "footer.2.link",
+          "footer.3.label",
+          "footer.3.link",
+          "footer.4.label",
+          "footer.4.link",
+          "footer.5.label",
+          "footer.5.link",
+          "footer.location",
+          "footer.language",
+          "footer.contact"
+        ]
+      },
+      {
+        "id": "seo",
+        "title": "Homepage SEO",
+        "fields": [
+          "seo.title",
+          "seo.description",
+          "seo.image",
+          "seo.alt"
+        ]
+      }
+    ]
+  },
+  "identicalLocalMedia": [],
+  "policy": "Report only; no records or media deleted."
+}

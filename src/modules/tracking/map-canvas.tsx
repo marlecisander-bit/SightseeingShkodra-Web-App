@@ -38,7 +38,7 @@ export default function MapCanvas(props: MapProps & { now: number | null }) {
     }));
     props.publishedMap?.points.forEach(point => {
       const label = document.createElement("span"); label.textContent = `${point.number ? point.number + ". " : ""}${point.name}`;
-      L.circleMarker(point.coordinate, { radius: point.kind === "stop" ? 7 : 5, color: point.kind === "stop" ? "#235b71" : "#5c703c", fillOpacity: 1 }).bindPopup(label).addTo(markers.current!);
+      L.circleMarker(point.coordinate, { radius: point.kind === "stop" ? 7 : 5, color: point.kind === "stop" ? "var(--ss-turquoise-ink)" : "var(--ss-purple)", fillOpacity: 1 }).bindPopup(label).addTo(markers.current!);
       bounds.push(point.coordinate);
     });
     positions.forEach((position, index) => {
@@ -46,7 +46,7 @@ export default function MapCanvas(props: MapProps & { now: number | null }) {
       const label = document.createElement("span");
       label.textContent = `Vehicle ${index + 1}: ${status}`;
       const marker = L.circleMarker([position.lat, position.lng], {
-        radius: 10, color: ["Recent position", "Van moving", "Van stationary", "Van parked at stop"].includes(status) ? "#792335" : "#665f58", fillOpacity: 0.8,
+        radius: 10, color: ["Recent position", "Van moving", "Van stationary", "Van parked at stop"].includes(status) ? "var(--ss-green)" : "var(--ss-muted)", fillOpacity: 0.8,
       }).bindTooltip(label).addTo(markers.current!);
       if (props.mode === "manage") marker.on("click", () => props.onVehicleSelect(position.vehicleId));
       bounds.push([position.lat, position.lng]);

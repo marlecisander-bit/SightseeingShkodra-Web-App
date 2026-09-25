@@ -1,8 +1,11 @@
 "use client";
+import { passengerCount, type PassengerCategories, type PassengerCounts } from "@/modules/booking/passengers";
+
 import { useEffect, useState } from "react";
 import type { AvailabilityQuote } from "@/modules/booking/contracts";
 
-export function useAvailability(date: string, guests: number) {
+export function useAvailability(date: string, guests: number, passengers?:PassengerCounts) {
+  const [categories,setCategories]=useState<PassengerCategories>();
   const [revision, setRevision] = useState(0);
   const [result, setResult] = useState<{
     key: string;
@@ -10,14 +13,16 @@ export function useAvailability(date: string, guests: number) {
     timezone?: string;
     error?: string;
   }>();
-  const key = `${date}/${guests}/${revision}`;
+  const counts=JSON.stringify(passengers??{adult:guests,child:0,infant:0});
+  let validation="";try{passengerCount(JSON.parse(counts));}catch(e){validation=e instanceof Error?e.message:"Invalid passengers";}
+  const key = `${date}/${counts}/${revision}`;
   useEffect(() => {
-    if (!date) return;
+    if (!date || validation) return;
     const controller = new AbortController();
     const timer = setTimeout(async () => {
       try {
         const response = await fetch(
-          `/api/public/availability?${new URLSearchParams({ date, guests: String(guests) })}`,
+          `/api/public/availability?${new URLSearchParams({ date, guests: String(guests),...Object.fromEntries(Object.entries(JSON.parse(counts)).map(([k,v])=>[k,String(v)])) })}`,
           {
             cache: "no-store",
             signal: AbortSignal.any([
@@ -32,7 +37,7 @@ export function useAvailability(date: string, guests: number) {
           setResult({
             key,
             error:
-              data.error === "NOT_PUBLISHED"
+              data.error === "PRICING_UNAVAILABLE"?"Prices for the selected passenger categories have not been configured yet. Please contact the operator.":data.error === "NOT_PUBLISHED"
                 ? "The tour is not published yet."
                 : data.error === "INVALID_REQUEST"
                   ? "Choose a valid date and guest count."
@@ -44,7 +49,7 @@ export function useAvailability(date: string, guests: number) {
           data.quote?.version === 1 &&
           Array.isArray(data.quote.departures)
         ) {
-          setResult({ key, quote: data.quote, timezone: data.timezone });
+          setCategories(data.quote.categories);setResult({ key, quote: data.quote, timezone: data.timezone });
         } else throw new Error("Invalid response");
       } catch {
         if (!controller.signal.aborted)
@@ -58,7 +63,7 @@ export function useAvailability(date: string, guests: number) {
       clearTimeout(timer);
       controller.abort();
     };
-  }, [date, guests, key]);
+  }, [date, guests, key,counts,validation]);
   useEffect(() => {
     if (!date) return;
     const refresh = () => setRevision((value) => value + 1);
@@ -68,13 +73,14 @@ export function useAvailability(date: string, guests: number) {
       clearInterval(interval);
       window.removeEventListener("focus", refresh);
     };
-  }, [date]);
+  }, [date,validation]);
   const current = result?.key === key ? result : undefined;
   return {
-    quote: date ? current?.quote : undefined,
+    categories,
+    quote: date && !validation ? current?.quote : undefined,
     timezone: current?.timezone,
-    error: current?.error,
-    loading: Boolean(date && !current),
+    error: validation||current?.error,
+    loading: Boolean(date && !validation && !current),
     refresh: () => setRevision((value) => value + 1),
   };
 }

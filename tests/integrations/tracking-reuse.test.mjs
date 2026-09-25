@@ -29,7 +29,7 @@ test("published map preserves route parts, stops, POIs and active filtering with
   assert.deepEqual(result.points[0].coordinate,[42,19.5]);
   assert.equal(result.points[0].name,point.properties.name); // React/textContent render this as text.
   assert.equal(result.points[1].kind,"poi");
-  assert.equal(result.routes[0].lines.length,2); assert.equal(result.routes[0].color,"#792335");
+  assert.equal(result.routes[0].lines.length,2); assert.equal(result.routes[0].color,"var(--ss-route)");
 });
 test("invalid or oversized map data never leaves a partially rendered route", () => {
   for(const bad of [null, {}, collection([point,{...point,geometry:{type:"Point",coordinates:[181,42]}}]), collection(Array(1001).fill(point)),collection([{type:"Feature",geometry:{type:"LineString",coordinates:[[19,42]]}}])]) {

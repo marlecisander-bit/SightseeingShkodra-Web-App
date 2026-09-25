@@ -28,7 +28,7 @@ export function PublishedStops({ stops }: { stops: PublicStop[] }) {
               {item.name}
               <small>View boarding location</small>
             </span>
-            <span aria-hidden="true">↗</span>
+            
           </button>
         ))}
       </div>
@@ -43,7 +43,7 @@ export function PublishedStops({ stops }: { stops: PublicStop[] }) {
             className="p-text-link"
             href={`https://www.openstreetmap.org/?mlat=${stop.lat}&mlon=${stop.lng}#map=17/${stop.lat}/${stop.lng}`}
           >
-            View location on OpenStreetMap ↗
+            View location on OpenStreetMap
           </a>
           <p className="p-preview">
             The shared interactive route map is coming soon. This is a stop

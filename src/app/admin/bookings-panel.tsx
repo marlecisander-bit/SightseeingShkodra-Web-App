@@ -1,3 +1,8 @@
+import { StaffPassengers } from "./staff-passengers";
+import { withOperatorService } from "@/modules/identity/operator-service";
+import type { PassengerCategories,PassengerSnapshot } from "@/modules/booking/passengers";
+import { BookingQr } from "@/components/public/booking-pass";
+import { Button } from "@/components/ui/button";
 import { randomUUID } from "node:crypto";
 import { createSessionClient } from "../../modules/identity/supabase-server";
 import { requirePermission } from "../../modules/identity/require-permission";
@@ -6,22 +11,26 @@ import {
   manualBooking,
   cancelBooking,
   collectPayment,
+  resendConfirmation,
 } from "./booking-actions";
 import { SubmitButton } from "./submit-button";
 import Link from "next/link";
 import { MutationForm } from "./mutation-form";
+import { prepareServiceDate } from '@/modules/booking/schedules-server';
 export async function BookingsPanel({
   operatorId,
   result,
   date,
   email,
   requestId,
+  booking: selectedBooking,
 }: {
   operatorId: string;
   result?: string;
   date?: string;
   email?: string;
   requestId?: string;
+  booking?: string;
 }) {
   const context = await requirePermission(operatorId, "bookings.read");
   const client = await createSessionClient();
@@ -33,6 +42,14 @@ export async function BookingsPanel({
       ? date
       : undefined;
   const searchEmail = email?.trim().toLowerCase().slice(0, 254);
+  if (hasPermission(context.role, 'departures.manage')) {
+    try { await prepareServiceDate(operatorId, day); }
+    catch { return <p role="alert">Booking schedules are temporarily unavailable.</p>; }
+  }
+  let departureChoices = client.from('departures').select('id,product_id,service_date,start_time')
+    .eq('operator_id', operatorId).eq('status', 'scheduled');
+  departureChoices = day ? departureChoices.eq('service_date',day)
+    : departureChoices.gte('service_date',new Date().toISOString().slice(0,10));
   const [customers, departures, products] = await Promise.all([
     searchEmail
       ? client
@@ -42,15 +59,7 @@ export async function BookingsPanel({
           .eq("email", searchEmail)
           .limit(100)
       : Promise.resolve({ data: [], error: null }),
-    client
-      .from("departures")
-      .select("id,product_id,service_date,start_time")
-      .eq("operator_id", operatorId)
-      .eq("status", "scheduled")
-      .gte("service_date", new Date().toISOString().slice(0, 10))
-      .order("service_date")
-      .order("start_time")
-      .limit(100),
+    departureChoices.order('service_date').order('start_time').limit(100),
     client
       .from("products")
       .select("id,title")
@@ -59,6 +68,7 @@ export async function BookingsPanel({
   ]);
   if (customers.error || departures.error || products.error)
     return <p role="alert">Booking data is temporarily unavailable.</p>;
+  const categories=hasPermission(context.role,'bookings.create')?await withOperatorService(operatorId,'bookings.create',async(service)=>Object.fromEntries(await Promise.all(products.data.map(async(p)=>{const r=await service.rpc('passenger_categories_v1',{p_product:p.id});if(r.error)throw Error('Passenger categories unavailable');return [p.id,r.data as PassengerCategories];})))):{};
   let ordersQuery = client
     .from("orders")
     .select("id,customer_id,status,total,currency,created_at,collection_mode")
@@ -70,6 +80,11 @@ export async function BookingsPanel({
       "customer_id",
       customers.data.map((c) => c.id),
     );
+  if (selectedBooking && /^[0-9a-f-]{36}$/i.test(selectedBooking)) {
+    const selected = await client.from("bookings").select("order_id").eq("operator_id", operatorId).eq("id", selectedBooking).maybeSingle();
+    if (selected.error) return <p role="alert">Booking is temporarily unavailable.</p>;
+    ordersQuery = ordersQuery.in("id", selected.data ? [selected.data.order_id] : []);
+  }
   if (day) {
     const scheduled = await client
       .from("departures")
@@ -108,12 +123,12 @@ export async function BookingsPanel({
       ),
     client
       .from("bookings")
-      .select("id,order_id,booking_reference,status")
+      .select("id,order_id,booking_reference,status,qr_token,qr_created_at,checked_in_at")
       .eq("operator_id", operatorId)
       .in("order_id", ids),
     client
       .from("booking_items")
-      .select("order_id,product_id,quantity,status")
+      .select("order_id,product_id,departure_id,quantity,status,passenger_snapshot")
       .eq("operator_id", operatorId)
       .in("order_id", ids),
     hasPermission(context.role, "payments.collect")
@@ -137,14 +152,17 @@ export async function BookingsPanel({
     holds.error
   )
     return <p role="alert">Booking details are temporarily unavailable.</p>;
+  const itemDepartures = await client.from("departures").select("id,service_date,start_time")
+    .eq("operator_id",operatorId).in("id",items.data.map(i=>i.departure_id));
+  if(itemDepartures.error) return <p role="alert">Departure details are temporarily unavailable.</p>;
   const deliveries = await client
     .from("notification_deliveries")
-    .select("booking_id,status,channel,attempt_count,last_error_code")
+    .select("id,booking_id,status,channel,attempt_count,last_error_code,recipient_type,event_type,manual,created_at")
     .eq("operator_id", operatorId)
     .in(
       "booking_id",
       bookings.data.map((b) => b.id),
-    );
+    ).order("created_at", { ascending: false }).limit(1000);
   const confirmationLabels: Record<string, string> = {
     pending: "Queued",
     leased: "Preparing",
@@ -156,6 +174,7 @@ export async function BookingsPanel({
     skipped: "Skipped",
   };
   const messages: Record<string, string> = {
+    email_queued: "Confirmation emails queued for the customer and owner. The email worker will process them; check the status below after refreshing.",
     created: "Reservation confirmed. Payment is due at the meeting point.",
     collected: "Full payment recorded at the meeting point.",
     cancelled: "Order cancelled.",
@@ -176,7 +195,7 @@ export async function BookingsPanel({
           Customer email (exact match)
           <input type="email" name="email" defaultValue={searchEmail} />
         </label>
-        <button>Find bookings</button>{" "}
+        <Button>Find bookings</Button>{" "}
         <Link href={`/admin/${operatorId}/bookings`}>Clear filters</Link>
       </form>
       {searchEmail && (
@@ -210,31 +229,7 @@ export async function BookingsPanel({
                   : randomUUID()
               }
             />
-            <label>
-              Departure
-              <select name="departure_id" required>
-                <option value="">Choose departure</option>
-                {departures.data.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.service_date} {d.start_time} ·{" "}
-                    {products.data.find((p) => p.id === d.product_id)?.title ??
-                      "Product"}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Guests
-              <input
-                name="quantity"
-                type="number"
-                min="1"
-                max="2147483647"
-                step="1"
-                defaultValue={1}
-                required
-              />
-            </label>
+            <StaffPassengers departures={departures.data.map(d=>({id:d.id,label:d.service_date+' '+d.start_time+'  |  '+(products.data.find(p=>p.id===d.product_id)?.title??'Product'),categories:categories[d.product_id]}))}/>
             <label>
               Customer name
               <input name="name" maxLength={200} required />
@@ -265,7 +260,7 @@ export async function BookingsPanel({
         const person = people.data.find((p) => p.id === order.customer_id),
           booking = bookings.data.find((b) => b.order_id === order.id);
         return (
-          <details key={order.id}>
+          <details key={order.id} id={booking ? `booking-${booking.id}` : undefined} open={booking?.id === selectedBooking}>
             <summary>
               {booking?.booking_reference ?? order.id} ·{" "}
               {person?.name ?? "Customer"} · {order.status}
@@ -278,21 +273,25 @@ export async function BookingsPanel({
               Total: {order.currency} {(order.total / 100).toFixed(2)}
             </p>
             <p>Booking: {booking?.status ?? "Not prepared"}</p>
+            <p>QR status: {booking?.qr_token ? (booking.status==='cancelled'?'Retained - booking cancelled':'Issued'):'Not issued'}. Check-in: {booking?.checked_in_at ? new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeStyle:'short',timeZone:'Europe/Tirane'}).format(new Date(booking.checked_in_at)) : 'Not checked in'}.</p>
+            {booking?.qr_token && <BookingQr token={booking.qr_token}/>}
             {deliveries.error ? (
               <p>Confirmation status is temporarily unavailable.</p>
             ) : (
-              <p>
-                Confirmation message:{" "}
-                {(() => {
-                  const delivery = deliveries.data.find(
-                    (d) => d.booking_id === booking?.id,
-                  );
-                  return delivery
-                    ? `${confirmationLabels[delivery.status] ?? delivery.status} - ${delivery.attempt_count} attempt(s)`
-                    : "Not queued. Message delivery is not configured yet.";
-                })()}
-              </p>
+              <div>
+                <h3>Booking emails</h3>
+                {!deliveries.data.some(d => d.booking_id === booking?.id) && <p>No emails queued yet. Delivery requires configured email settings and a running email worker.</p>}
+                <ul>{deliveries.data.filter(d => d.booking_id === booking?.id).slice(0, 10).map(d => <li key={d.id}>
+                  {d.recipient_type ?? "Customer"} · {d.event_type?.replaceAll("_", " ") ?? "Confirmation"}{d.manual ? " (manual resend)" : ""}: {confirmationLabels[d.status] ?? d.status} · {d.attempt_count} attempt(s){d.last_error_code ? ` · ${d.last_error_code}` : ""}
+                </li>)}</ul>
+                <small>Up to ten most recent notifications. Provider acceptance does not verify inbox delivery.</small>
+              </div>
             )}
+            {booking?.status === "confirmed" && hasPermission(context.role, "bookings.create") && <MutationForm action={resendConfirmation.bind(null, operatorId, booking.id)}>
+              <input type="hidden" name="request_id" value={randomUUID()} />
+              <label><input type="checkbox" name="confirm" value="yes" required /> Confirm sending the current booking confirmation to the customer and owner</label>
+              <SubmitButton>Resend confirmation email</SubmitButton>
+            </MutationForm>}
             {holds.data
               .filter((h) => h.order_id === order.id && h.status !== "consumed")
               .map((h, index) => (
@@ -308,7 +307,8 @@ export async function BookingsPanel({
                   <li key={index}>
                     {products.data.find((p) => p.id === i.product_id)?.title ??
                       i.product_id}{" "}
-                    · {i.quantity} guests · {i.status}
+                    · {i.quantity} passengers · {i.status}
+                    {(i.passenger_snapshot as PassengerSnapshot|null)?.lines.map(l=><span key={l.category}> | {l.quantity} {l.category}: EUR {(l.total/100).toFixed(2)}</span>)}
                   </li>
                 ))}
             </ul>

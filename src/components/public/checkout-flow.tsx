@@ -1,4 +1,8 @@
 "use client";
+import { passengerLabels } from "@/modules/booking/passengers";
+
+import { BookingPassCard } from "./booking-pass";
+import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
 import { BookingFields, useBooking } from "./booking";
 import { Field } from "./ui";
@@ -29,6 +33,7 @@ async function send(body: object) {
 const messages: Record<string, string> = {
   RESERVATION_CONFIRMED:
     "These seats are already confirmed. Check your reservation below; staff can help with cancellation.",
+  ADULT_REQUIRED:"At least one adult is required when booking for children or infants.",
   SOLD_OUT:
     "Those seats are no longer available. Please choose another departure.",
   HOLD_INACTIVE:
@@ -71,7 +76,7 @@ export function CheckoutFlow() {
     deadline.current =
       now + Math.max(0, Date.parse(hold.expires_at) - Date.parse(serverNow));
     setRemaining(Math.max(0, Math.ceil((deadline.current - now) / 1000)));
-    save({ ...value, hold });
+    save({ ...value, hold,total:hold.passengerSnapshot?.total??value.total });
   }
   useEffect(() => {
     let live = true;
@@ -164,7 +169,7 @@ export function CheckoutFlow() {
             requestId: crypto.randomUUID(),
             selection: { ...selection },
             time: selected.startTime.slice(0, 5),
-            total: availability.quote.total,
+            total: selected.passengerQuote?.total??availability.quote.total,
           }
         : null);
     if (!value) return;
@@ -174,7 +179,7 @@ export function CheckoutFlow() {
       const result = await send({
         action: "hold",
         date: value.selection.date,
-        guests: value.selection.guests,
+        guests: value.selection.guests,passengers:value.selection.passengers??{adult:value.selection.guests,child:0,infant:0},
         departureId: value.selection.departureId,
         requestId: value.requestId,
       });
@@ -231,7 +236,7 @@ export function CheckoutFlow() {
           </li>
         ))}
       </ol>
-      <h2 ref={heading} tabIndex={-1}>
+      <h2 ref={heading} tabIndex={-1} className={order ? "p-screen-reader-only" : undefined}>
         {order
           ? order.bookingStatus === "confirmed"
             ? "Your seats are confirmed."
@@ -242,7 +247,7 @@ export function CheckoutFlow() {
             ? "Your seats, for a little while."
             : "Choose your day."}
       </h2>
-      <p className="p-preview">
+      {!order && <><p className="p-preview">
         Reserve online and pay at the meeting point.
       </p>
       <div className="p-flow-summary">
@@ -255,21 +260,19 @@ export function CheckoutFlow() {
         </span>
         <strong>
           Total:{" "}
-          {order
-            ? displayMoney(order.total, order.currency)
-            : attempt
+          {attempt
               ? displayMoney(attempt.total, "EUR")
               : availability.quote
                 ? displayMoney(
-                    availability.quote.total,
+                    selected?.passengerQuote?.total??availability.quote.total,
                     availability.quote.currency,
                   )
                 : "not available"}
         </strong>
-      </div>
+      </div></>}
       {error && <p role="alert">{error}</p>}
       {error && attempt?.hold && (
-        <button
+        <Button
           className="p-text-button"
           disabled={busy}
           onClick={() =>
@@ -289,7 +292,7 @@ export function CheckoutFlow() {
           }
         >
           Retry reservation check
-        </button>
+        </Button>
       )}
       {attempt?.hold ? (
         <>
@@ -300,27 +303,9 @@ export function CheckoutFlow() {
                 : "Your reserved time has ended. No seats are secured."}
             </p>
           )}
+          {attempt.hold.passengerSnapshot&&<div aria-label="Your tickets">{attempt.hold.passengerSnapshot.lines.map(l=><p key={l.category}>{l.quantity} {passengerLabels[l.category]}  |  {displayMoney(l.unitPrice,"EUR")} = {displayMoney(l.total,"EUR")}</p>)}<strong>Total: {displayMoney(attempt.hold.passengerSnapshot.total,"EUR")}</strong></div>}
           {order ? (
-            <div className="p-empty">
-              <h3>
-                {order.status === "cancelled"
-                  ? "No seats are reserved."
-                  : order.paymentStatus === "paid"
-                    ? "Payment received at the meeting point."
-                    : "Payment due at the meeting point."}
-              </h3>
-              <p>
-                {order.bookingStatus === "confirmed"
-                  ? "Your reservation is confirmed. Keep your reference and show it to staff when you arrive."
-                  : "Contact staff to check this booking before travelling."}
-              </p>
-              <p>
-                Booking reference: {order.bookingReference ?? order.orderId}
-              </p>
-              <p>
-                For cancellation or changes, contact the meeting-point staff.
-              </p>
-            </div>
+            <BookingPassCard order={order}/>
           ) : active ? (
             <form
               onSubmit={(event) => {
@@ -378,30 +363,30 @@ export function CheckoutFlow() {
                 Confirm your reservation below. The final price is checked by
                 the booking system. You will pay at the meeting point.
               </p>
-              <button className="p-button" disabled={busy || !active}>
+              <Button className="p-button p-button-booking" disabled={busy || !active}>
                 {busy
                   ? "Saving…"
                   : submitted
                     ? "Retry confirming reservation"
                     : "Confirm reservation - pay at meeting point"}
-              </button>
+              </Button>
             </form>
           ) : null}
           {!order && (
-            <button
+            <Button
               className="p-text-button"
               disabled={busy}
               onClick={() => void perform(restart)}
             >
               Release seats and return to selection
-            </button>
+            </Button>
           )}
         </>
       ) : (
         <>
           {!attempt && <BookingFields />}
-          <button
-            className="p-button"
+          <Button
+            className="p-button p-button-booking"
             disabled={busy || (!attempt && !selected)}
             onClick={() => void perform(reserve)}
           >
@@ -410,7 +395,7 @@ export function CheckoutFlow() {
               : attempt
                 ? "Retry reserving these seats"
                 : "Reserve seats and continue"}
-          </button>
+          </Button>
           {attempt && (
             <p>
               We are keeping this request unchanged until its result is

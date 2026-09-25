@@ -1,8 +1,9 @@
+import { ButtonContent } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { BrandLogo } from "./brand-logo";
 import type { ComponentProps, ReactNode } from "react";
-import { initialWebsiteContent, type WebsiteContent } from "@/modules/content/website-schema";
+import { resolveWebsiteLink, initialWebsiteContent, type WebsiteContent } from "@/modules/content/website-schema";
 
 export function ActionLink({
   children,
@@ -11,8 +12,7 @@ export function ActionLink({
 }: ComponentProps<typeof Link>) {
   return (
     <Link className={`p-button ${className}`} {...props}>
-      {children}
-      <span aria-hidden="true">↗</span>
+      <ButtonContent>{children}</ButtonContent>
     </Link>
   );
 }
@@ -41,12 +41,14 @@ export function Media({
   hero = false,
   className = "",
   mobileSrc,
+  sizes,
 }: {
   src: string;
   alt: string;
   hero?: boolean;
   className?: string;
   mobileSrc?: string;
+  sizes?: string;
 }) {
   return (
     <div className={`p-media ${className}`}>
@@ -61,7 +63,7 @@ export function Media({
         src={src}
         alt={alt}
         fill
-        sizes={hero ? "100vw" : "(max-width: 700px) 100vw, 50vw"}
+        sizes={sizes ?? (hero ? "100vw" : "(max-width: 700px) 100vw, 50vw")}
         preload={hero}
         unoptimized={src.startsWith("https://")}
         style={{ objectFit: "cover" }}
@@ -86,12 +88,20 @@ export function Field({
 }
 export function PreviewNote() {
   return (
-    <p className="p-preview">Website preview · Bookings are not open yet.</p>
+    <p className="p-preview">Reserve online. Pay at the meeting point.</p>
   );
 }
 export function Footer({ content: c = initialWebsiteContent }: { content?: WebsiteContent }) {
   return (
-    <footer className="p-footer">
+    <footer className="p-site-footer">
+      <Media src={c["final.image"]} alt={c["final.alt"]} sizes="100vw" />
+      <div className="p-footer-cta">
+        <p className="p-eyebrow">{c["final.eyebrow"]}</p>
+        <h2>{c["final.title"]}<br /><em>{c["final.emphasis"]}</em></h2>
+        <ActionLink href="/book" className="p-button-booking">{c["final.book"]}</ActionLink>
+        <PreviewNote />
+      </div>
+      <div className="p-footer-info">
       <div>
         <Link className="p-wordmark" href="/">
           <BrandLogo />
@@ -102,12 +112,13 @@ export function Footer({ content: c = initialWebsiteContent }: { content?: Websi
         </p>
       </div>
       <nav aria-label="Footer">
-        {[0, 1, 2, 3, 4, 5].map(i => <Link key={i} href={c[`footer.${i}.link`]}>{c[`footer.${i}.label`]}</Link>)}
+        {[0, 1, 2, 3, 4, 5].map(i => <Link key={i} href={resolveWebsiteLink(c[`footer.${i}.link`])}>{c[`footer.${i}.label`]}</Link>)}
       </nav>
       <div className="p-footer-bottom">
         <span>{c["footer.location"]}</span>
         <span>{c["footer.language"]}</span>
         <span>{c["footer.contact"]}</span>
+      </div>
       </div>
     </footer>
   );

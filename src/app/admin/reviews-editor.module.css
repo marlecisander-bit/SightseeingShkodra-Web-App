@@ -1,0 +1,11 @@
+.form { margin:20px 0; }
+.form fieldset { border:0; padding:0; min-width:0; }
+.grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+.grid label { display:flex; flex-direction:column; gap:8px; min-width:0; }
+.grid input,.grid select,.grid textarea { width:100%; min-width:0; box-sizing:border-box; }
+.wide { grid-column:1/-1; }
+.grid .check { flex-direction:row; align-items:center; }
+.grid .check input { width:auto; }
+.actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:20px; }
+.preview { max-width:420px; margin-top:24px; }
+@media(max-width:650px){.grid{grid-template-columns:1fr;}.actions>*{flex:1 1 140px;}}

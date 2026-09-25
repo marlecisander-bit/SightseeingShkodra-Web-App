@@ -1,0 +1,20 @@
+/* Canonical design system. Legacy brand names are aliases only. */
+:root {
+ --ss-primary:#B91546; --ss-primary-hover:#9D103A; --ss-primary-active:#800D30;
+ --ss-primary-soft:#FBEAF0; --ss-primary-border:#E4AEC0;
+ --ss-yellow:#F6C928; --ss-yellow-hover:#E4B718; --ss-yellow-active:#CEA410;
+ --ss-turquoise:#18AFC1; --ss-turquoise-ink:#076978;
+ --ss-green:#78B82A; --ss-green-ink:#365D13; --ss-purple:#7351A3;
+ --ss-cream:#FFF8EE; --ss-sand:#F2EADF; --ss-charcoal:#25232A; --ss-white:#FFFFFF;
+ --ss-muted:#625D65; --ss-border:#DED5CB; --ss-input-border:#8D858E;
+ --ss-success-soft:#EFF6E7; --ss-warning-soft:#FFF5CF; --ss-warning-ink:#705500;
+ --ss-overlay:#11231F66; --ss-overlay-light:#11231F55; --ss-overlay-final:#111E1766; --ss-backdrop:#16201888; --ss-inverse-border:#FFFFFF70; --ss-heading-shadow:0 1px 12px #17251B20;
+ --ss-focus:#076978; --ss-shadow:0 4px 20px #25232A0A; --ss-shadow-dialog:0 16px 48px #25232A26;
+ --ss-radius:16px; --ss-radius-control:10px;
+ --ss-space-1:4px; --ss-space-2:8px; --ss-space-3:12px; --ss-space-4:16px; --ss-space-6:24px; --ss-space-8:32px;
+ --ss-button-height:48px; --ss-touch:44px; --ss-container:1320px; --ss-admin-container:78rem;
+ --ss-gutter:clamp(16px,5vw,80px); --ss-section:clamp(56px,8vw,112px);
+ --ss-font:Arial,Helvetica,sans-serif; --ss-h1:clamp(2.5rem,5.5vw,5.5rem); --ss-h2:clamp(2rem,4vw,3.75rem); --ss-h3:clamp(1.4rem,2.5vw,2rem); --ss-body:1rem; --ss-small:.875rem;
+ --ss-destination-lake:var(--ss-turquoise); --ss-destination-castle:var(--ss-yellow); --ss-destination-centre:var(--ss-primary); --ss-destination-bridge:var(--ss-green); --ss-route:var(--ss-turquoise);
+ --brand-red:var(--ss-primary); --brand-red-hover:var(--ss-primary-hover); --brand-red-active:var(--ss-primary-active); --brand-red-soft:var(--ss-primary-soft); --brand-red-border:var(--ss-primary-border); --brand-on-red:var(--ss-white); --brand-text:var(--ss-primary); --brand-focus:var(--ss-focus);
+}

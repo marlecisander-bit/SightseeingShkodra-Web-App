@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./brand-tokens.css";
+import "./widget-controls.css";
+import "./button-system.css";
 
 export const metadata: Metadata = {
   title: "Sightseeing Shkodra",

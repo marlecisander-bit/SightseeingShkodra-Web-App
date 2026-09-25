@@ -23,6 +23,7 @@ export async function saveCatalog(
           "type",
           "status",
           "supplier_id",
+          "inclusions",
           "meta_title",
           "meta_description",
           "og_image",

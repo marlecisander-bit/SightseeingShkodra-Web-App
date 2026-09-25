@@ -4,7 +4,7 @@ import { SharedMap } from "@/modules/tracking/shared-map";
 import type { Snapshot } from "@/modules/tracking/positions";
 import { projectPublishedMap } from "@/modules/tracking/published-map";
 const publishedMap = projectPublishedMap({type: "FeatureCollection", features: [
-  {type: "Feature", properties: {name: "Fictional preview route", color: "#792335"}, geometry: {type: "LineString", coordinates: [[19.508,42.066],[19.512,42.068],[19.516,42.07]]}},
+  {type: "Feature", properties: {name: "Fictional preview route"}, geometry: {type: "LineString", coordinates: [[19.508,42.066],[19.512,42.068],[19.516,42.07]]}},
   {type: "Feature", properties: {name: "Sample meeting point", pointType: "stop", stopNumber: 1}, geometry: {type: "Point", coordinates: [19.508,42.066]}},
   {type: "Feature", properties: {name: "Sample stop", pointType: "stop", stopNumber: 2}, geometry: {type: "Point", coordinates: [19.516,42.07]}},
   {type: "Feature", properties: {name: "Sample attraction", pointType: "poi"}, geometry: {type: "Point", coordinates: [19.513,42.067]}},

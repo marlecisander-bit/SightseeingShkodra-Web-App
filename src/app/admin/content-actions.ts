@@ -6,6 +6,7 @@ export async function saveContent(operatorId:string,form:FormData) {
   const slug = form.get('slug');
   if (typeof slug === 'string' && (slug.startsWith('homepage-') || slug === 'website-homepage'))
     return {error:'Use the Homepage section cards above to edit homepage content.'};
+  if (typeof slug !== 'string' || !['explore-centre','explore-castle','explore-lake','explore-bridge'].includes(slug)) return {error:'Use a configured Explore guide slot. Other public presentation is managed in Website content.'};
   let result='saved';
   try {
     await withOperatorService(operatorId,'content.manage',async(client,context)=>{
@@ -21,5 +22,6 @@ export async function saveContent(operatorId:string,form:FormData) {
   } catch {result='error';}
   if(result!=='saved')return {error:result==='stale'?'This page changed on the server. Your draft is preserved here; copy it before reloading the latest version.':'Unable to save. Check the unique slug, body and SEO fields, and image alt text. Your entries are preserved.'};
   const path=`/admin/${encodeURIComponent(operatorId)}/content`;
+  revalidatePath("/", "layout");
   revalidatePath(path);redirect(`${path}?result=${result}`);
 }

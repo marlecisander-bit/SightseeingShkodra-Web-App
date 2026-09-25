@@ -17,3 +17,6 @@ The foundation builds without cloud credentials. Copy `.env.example` to `.env.lo
 - [Original document](docs/source/Sightseeing_Shkodra_Platform_Rebuild_Roadmap_v4_Execution_Edition.docx)
 
 Next planned step: Phase 1B, new database schema migrations. No legacy website, tracking code or data will be imported.
+
+
+Booking email setup and verification: [Resend booking emails](docs/BOOKING-EMAILS.md). Delivery is disabled by default. `npm run emails:preview` exports six synthetic HTML/text examples without sending mail.

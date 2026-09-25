@@ -1,17 +1,21 @@
+import { getPublicDestinations } from "@/modules/content/destinations-server";
+import { PageIntro } from "@/components/public/page-intro";
+import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ActionLink, SectionHeading } from "@/components/public/ui";
 import { LiveMapEmbed } from "@/components/public/live-map-embed";
-import { destinations } from "@/modules/public-preview/contracts";
+
+import { getPublishedWebsite } from "@/modules/content/website-server";
 export const metadata: Metadata = {
   title: "Your day preview | Sightseeing Shkodra",
 };
 
-export default function YourDay() {
+export default async function YourDay() {
+  const c=await getPublishedWebsite(),destinations=(await getPublicDestinations()).filter(d=>d.showOnPage);
   return (
     <main id="main-content" className="p-subpage p-container">
-      <p className="p-eyebrow">YOUR TRAVEL COMPANION</p>
-      <h1>Your Shkodra day.</h1>
+      <PageIntro content={c} prefix="dayPage"/>
       <p className="p-preview">
         Sample ticket screen · No booking exists. Not valid for travel.
       </p>
@@ -44,9 +48,9 @@ export default function YourDay() {
               Payment for confirmed bookings is due at the meeting point.
             </p>
           </div>
-          <button className="p-button" disabled>
+          <Button className="p-button" disabled>
             Ticket not issued
-          </button>
+          </Button>
         </section>
         <div>
           <LiveMapEmbed />
@@ -59,8 +63,8 @@ export default function YourDay() {
       </div>
       <section className="p-section">
         <SectionHeading
-          eyebrow="THE DAY AHEAD"
-          title="One place leads to another."
+          eyebrow={c["route.eyebrow"]}
+          title={c["route.title"]}
         />
         <p className="p-preview">
           Illustrative journey · Route and progress are not live.
@@ -68,7 +72,7 @@ export default function YourDay() {
         <ol className="p-journey">
           {destinations.map((place) => (
             <li key={place.id}>
-              <Link href={`/explore#${place.id}`}>{place.name} ↗</Link>
+              <Link href={`/explore#${place.id}`}>{place.name}</Link>
             </li>
           ))}
         </ol>

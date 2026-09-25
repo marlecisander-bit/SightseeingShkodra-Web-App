@@ -1,16 +1,16 @@
-import Link from 'next/link';
+import { ReviewsPanel } from "../../reviews-panel";
 import { notFound, redirect } from 'next/navigation';
 import { requirePermission } from '../../../../modules/identity/require-permission';
 import { AuthorizationError } from '../../../../modules/identity/authorization';
-import { adminSections, navigationFor } from '../../../../modules/identity/admin-navigation';
+import { adminSections } from '../../../../modules/identity/admin-navigation';
 import { createSessionClient } from '../../../../modules/identity/supabase-server';
-import { signOut } from '../../../auth/actions';
-import styles from '../../admin.module.css';
 import { CatalogPanel } from '../../catalog-panel';
-import { DeparturesPanel } from '../../departures-panel';
+import { CalendarPanel } from '../../calendar-panel';
 import { ContentPanel } from '../../content-panel';
 import { BookingsPanel } from '../../bookings-panel';
-export default async function Workspace({ params, searchParams }: { params: Promise<{ operatorId: string; section: string }>; searchParams: Promise<{ result?: string; date?:string; email?:string; requestId?:string }> }) {
+import { AdminShell } from '../../admin-shell';
+import { OverviewPanel } from '../../overview-panel';
+export default async function Workspace({ params, searchParams }: { params: Promise<{ operatorId: string; section: string }>; searchParams: Promise<{ result?: string; date?:string; email?:string; requestId?:string; booking?:string }> }) {
   const { operatorId, section } = await params;
   const selected = adminSections.find(item => item.slug === section);
   if (!selected) notFound();
@@ -22,8 +22,8 @@ export default async function Workspace({ params, searchParams }: { params: Prom
   }
   const client = await createSessionClient();
   const { data: operator } = await client.from('operators').select('name').eq('id', context.operatorId).single();
-  return <main className={styles.shell}><a className={styles.skip} href="#workspace-content">Skip to content</a>
-    <header className={styles.header}><div><strong>{operator?.name ?? 'Operator workspace'}</strong><p className={styles.muted}>{context.role.replace('_',' ')}</p></div><Link href="/admin">Switch workspace</Link><form action={signOut}><button>Sign out</button></form></header>
-    <div className={styles.workspace}><nav className={styles.nav} aria-label="Admin navigation">{navigationFor(context.role).map(item => <Link key={item.slug} href={`/admin/${context.operatorId}/${item.slug}`} aria-current={section === item.slug ? 'page' : undefined}>{item.label}</Link>)}</nav>
-      <div id="workspace-content" className={styles.panel}><h1>{selected.label}</h1>{section==='catalog'?<CatalogPanel operatorId={context.operatorId} result={(await searchParams).result}/>:section==='departures'?<DeparturesPanel operatorId={context.operatorId} {...await searchParams}/>:section==='content'?<ContentPanel operatorId={context.operatorId} result={(await searchParams).result}/>:section==='bookings'?<BookingsPanel operatorId={context.operatorId} {...await searchParams}/>:<><p>{selected.description}</p><p className={styles.muted}>Management tools are being added in the next development phases.</p></>}</div></div></main>;
+  return <AdminShell operatorId={context.operatorId} operatorName={operator?.name ?? 'Operator workspace'} role={context.role} section={section}>
+    {section !== 'content' && <h1>{selected.label}</h1>}
+    {section==='reviews'?<ReviewsPanel operatorId={context.operatorId}/>:section==='catalog'?<CatalogPanel operatorId={context.operatorId} result={(await searchParams).result}/>:section==='departures'?<CalendarPanel operatorId={context.operatorId} {...await searchParams}/>:section==='content'?<ContentPanel operatorId={context.operatorId} result={(await searchParams).result}/>:section==='bookings'?<BookingsPanel operatorId={context.operatorId} {...await searchParams}/>:<OverviewPanel operatorId={context.operatorId} role={context.role}/>}
+  </AdminShell>;
 }

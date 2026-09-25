@@ -1,3 +1,4 @@
+import { passengerCount, type PassengerCounts } from "@/modules/booking/passengers";
 import { cookies } from "next/headers";
 import { getHomepage } from "@/modules/content/homepage-server";
 import { getAvailability } from "@/modules/booking/availability-server";
@@ -90,7 +91,7 @@ export async function POST(request: Request) {
     if (!operatorId || !uuid.test(operatorId)) return fail("UNAVAILABLE", 503);
     if (body.action === "hold") {
       if (
-        Object.keys(body).sort().join() !==
+        Object.keys(body).filter(k=>k!=="passengers").sort().join() !==
           "action,date,departureId,guests,requestId" ||
         typeof body.departureId !== "string" ||
         !uuid.test(body.departureId) ||
@@ -100,6 +101,8 @@ export async function POST(request: Request) {
         typeof body.guests !== "number"
       )
         return fail("INVALID_REQUEST");
+      const passengers=body.passengers as PassengerCounts|undefined;
+      if(passengers){try{if(passengerCount(passengers)!==body.guests)return fail("INVALID_REQUEST");}catch{return fail(passengers.adult<1&&(passengers.child>0||passengers.infant>0)?"ADULT_REQUIRED":"INVALID_REQUEST");}}
       const home = await getHomepage();
       if (!home.product)
         return fail(
@@ -111,7 +114,7 @@ export async function POST(request: Request) {
         operatorId,
         productId: home.product.id,
         date: body.date,
-        guests: body.guests,
+        guests: body.guests,passengers,
       });
       // Domain allocation checks capacity atomically. Do not reject a retry based on seats already held by this session.
       if (!quote.departures.some((d) => d.id === body.departureId))
@@ -119,7 +122,7 @@ export async function POST(request: Request) {
       const hold = await createHold({
         operatorId,
         departureId: body.departureId,
-        quantity: body.guests,
+        quantity: body.guests,passengers,
         requestId: body.requestId,
         sessionKey,
       });

@@ -1,33 +1,33 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { getHomepage } from "@/modules/content/homepage-server";
-import { destinations } from "@/modules/public-preview/contracts";
+import { GuideView } from "@/components/public/editorial-pages";
+import { notFound, permanentRedirect } from "next/navigation";
+import { getPublicDestinations } from "@/modules/content/destinations-server";
+
+
 import {
   pageMetadata,
   guideStructuredData,
   safeJsonLd,
   seoConfig,
 } from "@/modules/content/seo";
-import { Media, ActionLink } from "@/components/public/ui";
+import { ActionLink } from "@/components/public/ui";
 type Props = { params: Promise<{ slug: string }> };
 async function guide(slug: string) {
-  const place = destinations.find((entry) => entry.id === slug);
-  if (!place) notFound();
-  const home = await getHomepage();
-  if (home.state === "unavailable" || home.state === "unconfigured")
-    throw new Error("Guides are temporarily unavailable");
-  const content = home.content[`explore-${slug}`];
-  if (!content) notFound();
+  const destinations=await getPublicDestinations();
+  const place=destinations.find(d=>d.slug===slug || d.aliases.includes(slug));
+  if(!place || !place.guidePublished)notFound();
+  if(place.slug!==slug)permanentRedirect('/explore/'+place.slug);
+  const content={title:place.name,text:place.story||place.detail||place.text,metaTitle:place.seoTitle,metaDescription:place.seoDescription,ogImage:place.socialImage||place.image,ogImageAlt:place.alt};
   return { place, content };
 }
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const { content } = await guide(slug);
-  return pageMetadata(
+  const metadata = pageMetadata(
     `/explore/${slug}`,
     content.metaTitle ?? `${content.title} | Sightseeing Shkodra`,
     content.metaDescription ?? content.text.slice(0, 160),
   );
+  return {...metadata,openGraph:{...metadata.openGraph,...(content.ogImage?{images:[{url:content.ogImage,alt:content.ogImageAlt??""}]}:{})}};
 }
 export default async function Guide({ params }: Props) {
   const { slug } = await params;
@@ -35,21 +35,7 @@ export default async function Guide({ params }: Props) {
   const { origin } = seoConfig();
   return (
     <main id="main-content" className="p-subpage p-container">
-      <nav aria-label="Breadcrumb">
-        <Link className="p-text-link" href="/explore">
-          Explore Shkodra
-        </Link>
-      </nav>
-      <article>
-        <p className="p-eyebrow">THE LOCAL NOTEBOOK</p>
-        <h1>{content.title}</h1>
-        <Media src={place.image} alt={place.alt} hero />
-        <div className="p-section p-narrow p-guide-body">
-          {content.text.split(/\n\s*\n/).map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
-        </div>
-      </article>
+      <GuideView content={content} place={place}/>
       <ActionLink href="/tour">View the day tour</ActionLink>
       {origin && (
         <script

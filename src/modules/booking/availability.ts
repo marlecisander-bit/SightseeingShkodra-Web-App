@@ -1,15 +1,18 @@
+import { passengerCount, type PassengerCategories, type PassengerSnapshot } from "./passengers";
 import type { AvailabilityRequest, AvailabilityQuote } from './contracts';
 export type { AvailabilityRequest, AvailabilityQuote } from './contracts';
 export type AvailabilitySnapshot = {
   operator_id: string; product_id: string; service_date: string; as_of: string;
   pricing_rules: unknown;
-  departures: { id: string; start_time: string; capacity: number; committed: number; held: number }[];
+  categories?: PassengerCategories;
+  departures: { id: string; start_time: string; capacity: number; passenger_quote?: PassengerSnapshot; committed: number; held: number }[];
 };
 export class AvailabilityError extends Error {
   constructor(public readonly code: 'INVALID_REQUEST' | 'NOT_FOUND' | 'INVALID_CONFIGURATION' | 'UNAVAILABLE') { super(code); }
 }
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export function validateAvailabilityRequest(value: AvailabilityRequest) {
+  if(value?.passengers){try{if(passengerCount(value.passengers)!==value.guests)throw Error();}catch{throw new AvailabilityError("INVALID_REQUEST");}}
   if (!value || value.version !== 1 || typeof value.operatorId !== 'string' || !uuid.test(value.operatorId)
     || typeof value.productId !== 'string' || !uuid.test(value.productId)
     || typeof value.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value.date)
@@ -28,10 +31,10 @@ export function quoteAvailability(request: AvailabilityRequest, snapshot: Availa
     || typeof price.unit_price !== 'number' || !Number.isSafeInteger(price.unit_price) || price.unit_price < 0
     || !Number.isSafeInteger(price.unit_price * request.guests)) throw new AvailabilityError('INVALID_CONFIGURATION');
   return { version: 1, productId: request.productId, date: request.date, guests: request.guests,
-    asOf: snapshot.as_of, currency: 'EUR', unitPrice: price.unit_price, total: price.unit_price * request.guests,
+    categories:snapshot.categories, asOf: snapshot.as_of, currency: 'EUR', unitPrice: price.unit_price, total: price.unit_price * request.guests,
     departures: snapshot.departures.map((departure) => {
       if (![departure.capacity, departure.committed, departure.held].every((n) => Number.isSafeInteger(n) && n >= 0)) throw new AvailabilityError('INVALID_CONFIGURATION');
       const remaining = Math.max(0, departure.capacity - departure.committed - departure.held);
-      return { id: departure.id, startTime: departure.start_time, remaining, available: remaining >= request.guests };
+      return { passengerQuote:departure.passenger_quote, id: departure.id, startTime: departure.start_time, remaining, available: remaining >= request.guests };
     }) };
 }

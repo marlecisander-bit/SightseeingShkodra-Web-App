@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { positionStatus, type Snapshot } from "./positions";
@@ -31,7 +32,7 @@ export function SharedMap(props: MapProps) {
         <strong>Vehicle {index + 1}</strong>{" — "}{now === null ? "Checking update time..." : positionStatus(position, now)}
         {position.tracking && now !== null && (() => { const stop = stoppedAt(position.tracking, now); return stop ? <p>{stop.label} {stop.number}{stop.name ? `: ${stop.name}` : ""}</p> : null; })()}
         <br /><span>{position.lat.toFixed(5)}, {position.lng.toFixed(5)} · Updated <time dateTime={position.updatedAt}>{position.updatedAt}</time></span>
-        {props.mode === "manage" && <button type="button" onClick={() => props.onVehicleSelect(position.vehicleId)}>Select vehicle {index + 1}</button>}
+        {props.mode === "manage" && <Button type="button" onClick={() => props.onVehicleSelect(position.vehicleId)}>Select vehicle {index + 1}</Button>}
       </li>)}</ul>
       {props.publishedMap && <>
         <h2>Route and stops</h2>

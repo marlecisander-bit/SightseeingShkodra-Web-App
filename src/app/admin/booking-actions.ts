@@ -1,9 +1,24 @@
 "use server";
+import { passengerCount,adultRequired } from "@/modules/booking/passengers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createStaffBooking } from "../../modules/booking/staff-booking-server";
 import { collectMeetingPointPayment } from "../../modules/booking/collection-server";
 import { cancelOrder } from "../../modules/booking/cancellation-server";
+import { requestBookingEmail } from "../../modules/integrations/booking-email-server";
+export async function resendConfirmation(operatorId: string, bookingId: string, form: FormData) {
+  try {
+    if (form.get("confirm") !== "yes") throw Error("Confirmation required");
+    const request = form.get("request_id");
+    if (typeof request !== "string") throw Error("Request required");
+    await requestBookingEmail(operatorId, bookingId, request);
+  } catch {
+    return { error: "Confirmation could not be queued. Email delivery must be configured and enabled. Check that this booking is confirmed, or wait five minutes after the last manual resend. The retry ID is preserved." };
+  }
+  const path = `/admin/${encodeURIComponent(operatorId)}/bookings`;
+  revalidatePath(path);
+  redirect(`${path}?result=email_queued&booking=${encodeURIComponent(bookingId)}#booking-${encodeURIComponent(bookingId)}`);
+}
 export async function manualBooking(operatorId: string, form: FormData) {
   let result = "created";
   try {
@@ -11,17 +26,19 @@ export async function manualBooking(operatorId: string, form: FormData) {
       const v = form.get(key);
       return typeof v === "string" ? v : "";
     };
-    if (!/^\d+$/.test(get("quantity"))) throw Error("Invalid quantity");
+    const passengers={adult:Number(get("adult")),child:Number(get("child")),infant:Number(get("infant"))};
+    const quantity=passengerCount(passengers);
     await createStaffBooking({
       operatorId,
       departureId: get("departure_id"),
       requestId: get("request_id"),
-      quantity: Number(get("quantity")),
+      quantity,passengers,
       name: get("name"),
       email: get("email"),
       phone: get("phone"),
     });
-  } catch {
+  } catch(e) {
+    if(e instanceof Error&&e.message===adultRequired)return {error:adultRequired};
     result = "error";
   }
   if (result === "error")

@@ -1,9 +1,11 @@
 import { createSessionClient } from "../../modules/identity/supabase-server";
 import { requirePermission } from "../../modules/identity/require-permission";
-import { saveCatalog, saveProductPricing } from "./catalog-actions";
+import { saveCatalog } from "./catalog-actions";
 import { SubmitButton } from "./submit-button";
 import { MutationForm } from "./mutation-form";
 import { ProductNameFields } from "./product-name-fields";
+import { CatalogCreate } from "./catalog-create";
+import styles from "./catalog.module.css";
 
 type Row = Record<string, string | number | null>;
 const fields: Record<
@@ -30,7 +32,8 @@ const fields: Record<
       options: ["draft", "published", "archived"],
     },
     { key: "meta_title", label: "SEO title (required to publish)" },
-    { key: "meta_description", label: "SEO description (required to publish)" },
+    { key: "meta_description", label: "Tour summary / SEO description (required to publish)" },
+    { key: "inclusions", label: "Ticket inclusions and admission information" },
     { key: "og_image", label: "Social image HTTPS URL", type: "url" },
     {
       key: "og_image_alt",
@@ -89,7 +92,7 @@ function Editor({
               maxLength={
                 field.type === "number"
                   ? undefined
-                  : field.key === "meta_description"
+                  : field.key === "inclusions" ? 700 : field.key === "meta_description"
                     ? 500
                     : field.key === "og_image"
                       ? 2000
@@ -148,7 +151,7 @@ export async function CatalogPanel({
     client
       .from("products")
       .select(
-        "id,title,slug,type,status,supplier_id,meta_title,meta_description,og_image,og_image_alt,pricing_rules,updated_at",
+        "id,title,slug,type,status,inclusions,supplier_id,meta_title,meta_description,og_image,og_image_alt,pricing_rules,updated_at",
       )
       .eq("operator_id", operatorId)
       .order("title")
@@ -183,34 +186,32 @@ export async function CatalogPanel({
         </p>
       )}
       <p>
-        Publish only when SEO fields are ready. For van tours, set a per-guest
-        EUR price below, then configure seat capacity under Departures. New
-        checkouts use the current price; already saved reservations keep their
-        agreed total.
+        Publish only when SEO fields are ready. Manage schedules, seats and passenger prices under Calendar & Pricing. Existing bookings keep their agreed total.
       </p>
       <p>Manage route stops, routes and GPS in the live map app.</p>
       {(["product", "supplier"] as const).map((entity) => (
-        <div key={entity}>
+        <div key={entity} className={styles.group}>
           <h2>
             {entity === "product"
               ? "Products"
               : "Suppliers"}
           </h2>
-          <details>
-            <summary>Create {entity}</summary>
+          <CatalogCreate entity={entity}>
             <Editor
               entity={entity}
               row={{}}
               operatorId={operatorId}
               suppliers={suppliers}
             />
-          </details>
+          </CatalogCreate>
+          <p className={styles.listLabel}>Existing {entity === "product" ? "products" : "suppliers"}</p>
           {(entity === "product"
             ? products
             : suppliers
           ).map((row) => (
-            <details key={row.id}>
+            <details key={row.id} className={styles.record}>
               <summary>{"title" in row ? row.title : row.name}</summary>
+              <div className={styles.recordBody}>
               <Editor
                 entity={entity}
                 row={row}
@@ -220,41 +221,9 @@ export async function CatalogPanel({
               {entity === "product" &&
                 "type" in row &&
                 row.type === "van_tour" && (
-                  <MutationForm
-                    action={saveProductPricing.bind(
-                      null,
-                      operatorId,
-                      String(row.id),
-                    )}
-                  >
-                    <h3>Van tour price</h3>
-                    <input
-                      type="hidden"
-                      name="updated_at"
-                      value={String("updated_at" in row ? row.updated_at : "")}
-                    />
-                    <label>
-                      Price per guest (EUR)
-                      <input
-                        name="price_eur"
-                        type="text"
-                        inputMode="decimal"
-                        pattern="[0-9]+([.][0-9]{1,2})?"
-                        maxLength={17}
-                        required
-                        defaultValue={String(
-                          "price_eur" in row ? row.price_eur : "",
-                        )}
-                      />
-                    </label>
-                    <p>
-                      Use a decimal point, for example 12.50. One rate applies
-                      to every guest. Payment is due at the meeting point. Seat
-                      limits are set per departure.
-                    </p>
-                    <SubmitButton>Save price</SubmitButton>
-                  </MutationForm>
+                  <p>Manage passenger prices under Calendar &amp; Pricing.</p>
                 )}
+              </div>
             </details>
           ))}
         </div>

@@ -15,14 +15,21 @@ export type HomeContent = {
   text: string;
   metaTitle: string | null;
   metaDescription: string | null;
+  ogImage?: string | null;
+  ogImageAlt?: string | null;
 };
 export type Homepage = {
+  adultFares?: {time:string;amount:number}[];
   state: "ready" | "empty" | "unconfigured" | "unavailable";
   product: {
     id: string;
     slug: string;
     title: string;
     description: string | null;
+    metaTitle?: string | null;
+    ogImage?: string | null;
+    ogImageAlt?: string | null;
+    inclusions?: string | null;
     stops: PublicStop[];
   } | null;
   content: Record<string, HomeContent>;
@@ -123,6 +130,8 @@ export async function loadHomepage(
         text: text(page.text),
         metaTitle: optionalText(page.meta_title, 200),
         metaDescription: optionalText(page.meta_description, 500),
+        ogImage: optionalText(page.og_image??null,2000),
+        ogImageAlt: optionalText(page.og_image_alt??null,500),
       };
     }
     if (snapshot.product !== null) {
@@ -134,6 +143,10 @@ export async function loadHomepage(
         title: text(product.title, 200),
         slug: config.productSlug,
         description: optionalText(product.description, 500),
+        metaTitle: optionalText(product.meta_title??null,200),
+        ogImage: optionalText(product.og_image??null,2000),
+        ogImageAlt: optionalText(product.og_image_alt??null,500),
+        inclusions: optionalText(product.inclusions??null,700),
         stops: product.stops
           .map((item) => {
             const stop = record(item);
@@ -183,6 +196,7 @@ export async function loadHomepage(
         });
         model.price = `${new Intl.NumberFormat("en-IE", { style: "currency", currency: quote.currency }).format(quote.unitPrice / 100)} per guest`;
         model.departures = departures;
+        model.adultFares = quote.departures.filter(d=>d.available && d.passengerQuote).map(d=>({time:d.startTime.slice(0,5),amount:d.passengerQuote!.total}));
         model.schedule = "ready";
         model.frequency = departures.length
           ? `${departures.length} upcoming ${departures.length === 1 ? "departure" : "departures"} today`

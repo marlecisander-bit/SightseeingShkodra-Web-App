@@ -11,6 +11,39 @@ import { platformSql, applyMigrations, loadDevelopmentFixtures } from '../helper
 let cluster, directory, observer, first, second;
 const clients = [];
 
+test('schedule materialization and capacity edits serialize with authoritative holds',async()=>{
+  const op='10000000-0000-4000-8000-000000000001';
+  const user=(await observer.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;
+  const actor=(await observer.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'owner') returning id",[op,user])).rows[0].id;
+  for(const holdFirst of [true,false]) {
+    const product=(await observer.query(`insert into products(operator_id,type,title,slug,status,pricing_rules,capacity_rules) values($1,'van_tour','Schedule concurrency',gen_random_uuid()::text,'published','{"version":1,"model":"per_guest","currency":"EUR","unit_price":1500}','{"version":1,"model":"departure_seats"}') returning id`,[op])).rows[0].id;
+    const save=`select save_service_schedule_v1($1,$2,$3,'2030-09-24','2030-10-31',array[1,2,3,4,5,6,7],'[{"time":"09:00"}]',$4,null,'active',$5)`;
+    await observer.query(save,[op,actor,product,2,null]);
+    const read='select read_availability_v1($1,$2,\'2030-09-24\') as data';
+    await first.query('begin');
+    let pending;
+    try {
+      await first.query(read,[op,product]);
+      pending=second.query(read,[op,product]).then(result=>({result}),error=>({error}));
+      await waitForLock(); await first.query('commit'); assert.ifError((await pending).error);
+    } finally {await first.query('rollback'); if(pending) await pending;}
+    const departures=(await observer.query('select id from departures where product_id=$1',[product])).rows;
+    assert.equal(departures.length,1);
+    const dep=departures[0].id;
+    const stamp=(await observer.query('select updated_at::text as stamp from service_schedules where product_id=$1',[product])).rows[0].stamp;
+    const hold='select create_hold_v1($1,$2,$3,gen_random_uuid(),2)',hargs=[op,dep,'synthetic-schedule-concurrent-session'];
+    const editArgs=[op,actor,product,1,stamp];
+    await first.query('begin'); pending=undefined;
+    try {
+      if(holdFirst) await first.query(hold,hargs); else await first.query(save,editArgs);
+      pending=(holdFirst?second.query(save,editArgs):second.query(hold,hargs)).then(result=>({result}),error=>({error}));
+      await waitForLock(); await first.query('commit'); assert.equal((await pending).error?.code,'P0001');
+      const row=(await observer.query('select capacity,(select coalesce(sum(quantity),0)::int from inventory_holds where departure_id=$1 and status=\'active\') as used from departures where id=$1',[dep])).rows[0];
+      assert.ok(row.used<=row.capacity);
+    } finally {await first.query('rollback');if(pending)await pending;}
+  }
+});
+
 test('staff manual booking reuses domain locks, rolls back invalid customer and is idempotent',async()=>{
   const op='10000000-0000-4000-8000-000000000001',product='10000000-0000-4000-8000-000000000020';
   const user=(await observer.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;
@@ -453,4 +486,43 @@ test('notification consumers skip locked deliveries and rollback leaves the job 
  await observer.query("insert into notification_deliveries(operator_id,event_id,booking_id) select e.operator_id,e.id,b.id from bookings b join domain_events e on e.operator_id=b.operator_id and e.aggregate_id=b.id and e.event_type='booking.confirmed' where b.order_id=$1",[order.orderId]);
  await first.query('begin');try{const job=(await first.query('select * from claim_booking_notification_v1($1)',[op])).rows[0];assert.ok(job.id);assert.equal((await second.query('select * from claim_booking_notification_v1($1)',[op])).rows.length,0);await first.query('rollback');const retried=(await first.query('select * from claim_booking_notification_v1($1)',[op])).rows[0];assert.equal(retried.id,job.id);assert.equal(retried.attempt_count,1);}finally{await first.query('rollback');}
  assert.equal((await observer.query('select status from orders where id=$1',[order.orderId])).rows[0].status,'confirmed');
+});
+
+test('two staff devices cannot check in the same QR twice',async()=>{
+ const op='10000000-0000-4000-8000-000000000001',product='10000000-0000-4000-8000-000000000020';
+ const user=(await observer.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;
+ const actor=(await observer.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'operations') returning id",[op,user])).rows[0].id;
+ const dep=(await observer.query("insert into departures(operator_id,product_id,service_date,start_time,capacity,status) values($1,$2,'2031-10-01','12:00',1,'scheduled') returning id",[op,product])).rows[0].id;
+ const session='qr-concurrent-session-1234567890123456';
+ const hold=(await observer.query('select * from create_hold_v1($1,$2,$3,gen_random_uuid(),1)',[op,dep,session])).rows[0];
+ const order=(await observer.query("select create_meeting_point_booking_v1($1,$2,$3,'QR Test','qr@example.invalid') as result",[op,hold.id,session])).rows[0].result;
+ const booking=(await observer.query('select id,qr_token from bookings where order_id=$1',[order.orderId])).rows[0];
+ const sql='select resolve_booking_pass_v1($1,$2,$3,true) as result',args=[op,actor,booking.qr_token];
+ await first.query('begin');let pending;
+ try{
+  const success=(await first.query(sql,args)).rows[0].result;
+  pending=second.query(sql,args).then(result=>({result}),error=>({error}));await waitForLock();await first.query('commit');
+  const duplicate=await pending;assert.ifError(duplicate.error);assert.equal(success.status,'CHECKED_IN');assert.equal(duplicate.result.rows[0].result.status,'ALREADY_CHECKED_IN');assert.equal(success.checkedInAt,duplicate.result.rows[0].result.checkedInAt);
+ }finally{await first.query('rollback');if(pending)await pending;}
+ assert.equal((await observer.query("select count(*)::int n from domain_events where aggregate_id=$1 and event_type='booking.checked_in'",[booking.id])).rows[0].n,1);
+});
+
+test('event email enqueue and claims are safe with concurrent workers',async()=>{
+ const op='10000000-0000-4000-8000-000000000001';
+ const sql="select enqueue_booking_emails_v2($1,'2020-01-01') as n";
+ await first.query('begin');let pending;
+ try {
+  const count=(await first.query(sql,[op])).rows[0].n;assert.ok(count>=2);
+  pending=second.query(sql,[op]).then(result=>({result}),error=>({error}));
+  await waitForLock();await first.query('commit');const duplicate=await pending;assert.ifError(duplicate.error);assert.equal(duplicate.result.rows[0].n,0);
+ }finally{await first.query('rollback');if(pending)await pending;}
+ await first.query('begin');await second.query('begin');
+ try {
+  const a=(await first.query('select * from claim_booking_email_v2($1)',[op])).rows[0];
+  const b=(await second.query('select * from claim_booking_email_v2($1)',[op])).rows[0];
+  assert.ok(a.id&&b.id);assert.notEqual(a.id,b.id);assert.equal(a.attempt_count,1);assert.equal(b.attempt_count,1);
+  await first.query('rollback');await second.query('rollback');
+  const ready=(await observer.query("select count(*)::int n from notification_deliveries where id in ($1,$2) and status='pending' and attempt_count=0",[a.id,b.id])).rows[0].n;
+  assert.equal(ready,2);
+ }finally{await first.query('rollback');await second.query('rollback');}
 });

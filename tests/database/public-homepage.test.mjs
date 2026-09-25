@@ -21,7 +21,7 @@ before(async () => {
     "update products set status='published',meta_description='Published description';",
   );
   for (const [operator, slug, status, format] of [
-    [id(1), "homepage-hero", "published", "plain_text"],
+    [id(1), "explore-lake", "published", "plain_text"],
     [id(2), "homepage-hero", "published", "plain_text"],
     [id(1), "homepage-intro", "draft", "plain_text"],
     [id(1), "homepage-final", "published", "html"],
@@ -46,21 +46,25 @@ before(async () => {
 after(async () => {
   await db.close();
 });
-test("public projection selects the configured tenant/product, ordered stops and only public fields", async () => {
+test("public projection selects the configured tenant/product, external-map stop ownership and only public fields", async () => {
   const data = await read();
   assert.equal(data.operator.id, id(1));
   assert.equal(data.product.id, id(20));
   assert.deepEqual(
     data.product.stops.map((s) => s.sort_order),
-    [0, 1, 2],
+    [],
   );
   assert.deepEqual(Object.keys(data.product).sort(), [
     "description",
+    "inclusions",
+    "meta_title",
+    "og_image",
+    "og_image_alt",
     "id",
     "slug",
     "stops",
     "title",
-  ]);
+  ].sort());
   assert.ok(!JSON.stringify(data).includes("pricing_rules"));
   assert.ok(!JSON.stringify(data).includes("supplier_id"));
   assert.equal(
@@ -92,13 +96,13 @@ test("draft/archive withdrawal and unknown operator/slug do not fall back to ano
 test("only published allowlisted plain-text content appears; other tenants and formats stay private", async () => {
   const pages = (await read()).content;
   assert.equal(pages.length, 1);
-  assert.equal(pages[0].slug, "homepage-hero");
+  assert.equal(pages[0].slug, "explore-lake");
   assert.equal(pages[0].title, "Our title");
   assert.equal(pages[0].text, "<script>plain text only</script>");
   await db.exec("begin");
   try {
     await db.query(
-      "update content_pages set status='archived' where operator_id=$1 and slug='homepage-hero'",
+      "update content_pages set status='archived' where operator_id=$1 and slug='explore-lake'",
       [id(1)],
     );
     assert.deepEqual((await read()).content, []);

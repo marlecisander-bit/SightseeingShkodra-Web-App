@@ -37,7 +37,7 @@ export function projectPublishedMap(value: unknown): PublishedMap {
           if (coordinateCount > 20000) throw Error("Map too large");
           return line.map(coordinate);
         });
-        result.routes.push({ id, name: label(p.name, "Tour route"), color: typeof p.color === "string" && /^#[0-9a-f]{6}$/i.test(p.color) ? p.color : "#792335", lines: projected });
+        result.routes.push({ id, name: label(p.name, "Tour route"), color: typeof p.color === "string" && /^#[0-9a-f]{6}$/i.test(p.color) ? p.color : "var(--ss-route)", lines: projected });
       }
       if (coordinateCount > 20000) throw Error("Map too large");
     }

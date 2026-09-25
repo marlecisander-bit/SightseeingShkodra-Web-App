@@ -1,5 +1,20 @@
 # Approved roadmap amendments
 
+## 2026-09-24 - Unified van-inspired visual system
+
+The new user design brief supersedes the earlier bright-red palette: raspberry #B91546 is primary; yellow #F6C928 identifies booking CTAs, with turquoise/green/purple accents and white/cream/sand surfaces. Central tokens also govern typography, controls, cards, spacing and widths. Preserve CMS content, route ordering, booking/authentication/Supabase/GPS/ETA logic and logo artwork. Independent map iframe styling remains owned by its separate app; no remote deployment authorized. Original roadmap unchanged.
+
+
+## 2026-09-24 - Bright red brand palette
+
+The user explicitly replaces the roadmap's deep-red accent direction with primary #E71922, hover #CF151D, active #B91219, soft #FDE8E9 and border #F3B9BC. Centralize these in src/app/brand-tokens.css. Preserve layout, neutral surfaces, semantic colors, logo artwork and functionality. Small accent text uses the darker hover color for contrast on off-white surfaces. The independent embedded tracking app remains responsible for its own internal styles; this project's tracking controls and local map defaults use the shared tokens. Original roadmap unchanged.
+
+## 2026-09-23 - Recurring operational service schedules
+
+The user supplied the service-schedule task, replacing manual daily departure creation with a product operating period, weekdays, multiple daily times, default capacity/vehicle and date exceptions. Preserve the roadmap's explicit dated inventory for transactional locking: materialize only a requested day (at most 24 times), never the entire season. Existing holds, confirmed booking items and departure IDs remain authoritative. Exact future manual departures can be adopted; conflicting records block adoption rather than being deleted or silently duplicated. This is a requested extension to departures and the shared availability entry point, not a second booking engine or production launch.
+
+Current ticket semantics were inspected before implementation: booking items and holds reserve a particular departure ID; there is no entitlement or repeated-boarding model. The marketing label "Daily Ticket" does not establish all-day capacity rules in the code. Preserve current per-departure seat reservations and state this in the admin; all-day reboarding requires a separate explicit business decision. Original roadmap unchanged.
+
 ## 2026-09-23 - Connect the existing homepage to structured admin content
 
 The user supplied the detailed Homepage CMS task and explicitly authorized connecting the existing `/` page, importing its current local content, structured section editors, draft/preview/publish, responsive hero images, Supabase media uploads and end-to-end verification. Preserve the existing public layout and components; do not create a replacement homepage or generic builder. Extend `content_pages` publishing rather than duplicate operational sources. Preview may extract existing markup into a shared component. This is a specifically requested CMS extension after Phase 7C, not launch authorization. See HOMEPAGE-CMS-MAP.md and HOMEPAGE-CMS-CONNECTION-AUDIT.md. The original roadmap is unchanged.
@@ -54,3 +69,27 @@ This amendment overrides conflicting legacy-reuse and import requirements in the
 ## 2026-09-22 - Local notification testing first
 
 The user requested building and testing locally before setting up WhatsApp or email providers. Phase 5E is limited to a local queue, provider ports, message preview and simulated tests. No messages, hosted migration or scheduler activation in this phase. Live delivery remains pending; original roadmap unchanged.
+
+## 2026-09-24 - Persistent booking QR amendment
+User requested one opaque cryptographic QR credential per confirmed booking, persisted atomically with confirmation, dynamic rendering, safe existing-booking backfill, admin visibility and atomic staff check-in foundations. Existing references and capacity rules remain authoritative; camera scanner UI is deferred. Implemented and development migration applied; see BOOKING-QR-PASSES.md.
+
+## 2026-09-24 - Homepage simplification
+User requested removing only the homepage booking selector, dashed route/map information box and Four reasons to linger showcase. Preserve shared features/content/data. Dedicated booking CTAs and tracking access remain; shared destination fields move to a separate editor area, with historical schema intact. See HOMEPAGE-SIMPLIFICATION.md.
+
+## 2026-09-24 - Manual guest reviews
+User requested curated genuine reviews entered manually, no Google API, no invented reviews or aggregate Google score. Extend existing reviews table, retain source attribution, provide dedicated Reviews admin with homepage settings, hide the public section until published content exists, and preserve a future provider-adapter path. See MANUAL-GUEST-REVIEWS.md.
+
+## 2026-09-24 - Public/admin CMS reconciliation amendment
+Architecture mapped before changes. Extend the existing structured content record for page introductions; reuse shared destinations, reviews, operational price/schedules and the independent map. Add product inclusions without parallel tables. Group global editing once and limit guide editing to actual routes. Preserve historical data/media. Permanent rule: one content entity, one authoritative source, zero or one logical editor, many consumers. See CMS-RECONCILIATION.md for matrix, evidence and remaining publication/companion decisions.
+
+## 2026-09-24 - Homepage Hero V2
+User requests full-screen homepage hero, transparent-to-solid sticky header, route-aware active navigation and freely managed marketing amenities. Extend the existing structured CMS, retain separate desktop/mobile images with focal controls, and use validated serialized amenity items in the same draft/publication lifecycle. Amenities do not become operational truth. No unverified example claims are published. Existing primary/yellow tokens and approved logos remain. See HOMEPAGE-HERO-V2.md.
+
+
+## 2026-09-25 - Resend booking email amendment
+User explicitly requested Resend customer and owner notifications for confirmed creation, supported modifications and cancellation, with safe testing and manual confirmation resend. Use existing transactional domain events and delivery queue, plus narrow outbox-only modification capture; no online payments or parallel booking architecture. This supersedes the earlier provider-unconfigured confirmation stage for email only; WhatsApp delivery remains inactive. Production delivery is not enabled. See BOOKING-EMAILS.md.
+
+## 2026-09-25 - Dynamic destinations and Calendar & Pricing
+The two user briefs supersede the fixed destination form and Products-owned per-guest pricing. Editorial destinations are individually managed content_pages records with separate draft/publication snapshots and preserved URL aliases. Operational stops remain in the independent map; destinations may reference their stable objectId via a read-only published-stop selector. No GPS/ETA code or map data is migrated.
+
+Calendar & Pricing owns schedules, inventory policy, passenger categories and pricing. Reuse service_schedules, schedule_exceptions and dated departures; extend them with range/day/departure rules. All physical passengers use seats. Default age bands are authoritative SQL configuration, with owner-editable contiguous ranges. Existing per-guest prices remain Adult prices; Child/Infant require manual setup, including explicit zero. Holds and booking items snapshot the effective category prices. No in-place passenger modification endpoint previously existed; immutable allocations require cancellation and rebooking. Payments remain at the meeting point. Development only. See DESTINATIONS-CALENDAR.md.

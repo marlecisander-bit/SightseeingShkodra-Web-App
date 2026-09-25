@@ -1,0 +1,12 @@
+.form { padding:16px 0; }
+.form h3 { font-size:18px; margin:20px 0 12px; }
+.form p { font-size:13px; line-height:1.6; }
+.pair { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+.form .weekdays { display:flex; flex-wrap:wrap; gap:12px; border:1px solid var(--ss-border); padding:16px; margin:20px 0; }
+.form .weekdays label { display:flex; align-items:center; gap:6px; margin:0; font-size:13px; }
+.form .weekdays input { width:auto; margin:0; }
+.timeRow { display:grid; grid-template-columns:60px 1fr 1.4fr auto; gap:12px; align-items:center; border-bottom:1px solid var(--ss-border); padding:12px 0; }
+.timeRow label { font-size:13px; }
+.timeRow button { background:var(--brand-red-soft); color:var(--brand-text); }
+.addTime { display:flex; gap:12px; align-items:end; margin:16px 0; }
+@media(max-width:650px) { .pair { grid-template-columns:1fr; } .timeRow { grid-template-columns:60px 1fr; } }

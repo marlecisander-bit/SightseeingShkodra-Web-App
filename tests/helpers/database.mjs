@@ -17,11 +17,19 @@ export async function applyMigrations(exec) {
   }
 }
 
-export async function createTestDatabase() {
+export async function createTestDatabase({ now } = {}) {
   const db = new PGlite();
   try {
     await db.exec(platformSql);
-    await applyMigrations((sql) => db.exec(sql));
+    if (now) {
+      // Private in-memory clock seam only; production migrations are never edited.
+      await db.exec(`create schema test_clock;
+        create function test_clock.now() returns timestamptz language sql stable as
+        $$ select current_setting('test_clock.instant')::timestamptz
+          + (statement_timestamp() - current_setting('test_clock.anchor')::timestamptz) $$;`);
+      await setTestClock(db, now);
+    }
+    await applyMigrations((sql) => db.exec(now ? sql.replace(/\b(?:clock_timestamp|statement_timestamp|transaction_timestamp|now)\(\)/g, 'test_clock.now()') : sql));
     return db;
   } catch (error) { await db.close(); throw error; }
 }
@@ -33,4 +41,9 @@ export async function loadDevelopmentFixtures(db) {
   } finally {
     await db.exec('rollback; reset app.fixture_mode');
   }
+}
+
+/** Advance a local PGlite clock without depending on the machine date/timezone. */
+export async function setTestClock(db, now) {
+  await db.query("select set_config('test_clock.instant',$1,false), set_config('test_clock.anchor',clock_timestamp()::text,false)",[now]);
 }

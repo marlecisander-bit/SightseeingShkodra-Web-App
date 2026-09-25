@@ -1,11 +1,12 @@
-:root { --background: #faf8f4; --ink: #242321; --accent: #8b2433; }
+:root { --background: var(--ss-cream); --ink: var(--ss-charcoal); --accent: var(--brand-text); }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--background); color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
+input[type="checkbox"], input[type="radio"], progress { accent-color: var(--brand-red); }
+body { margin: 0; background: var(--background); color: var(--ink); font-family: var(--ss-font); }
 main { min-height: 100svh; max-width: 90rem; margin: auto; padding: clamp(1.5rem, 5vw, 5rem); display: flex; flex-direction: column; }
 .brand { margin: 0; font-weight: 700; font-size: 1.125rem; }
 section { margin-block: auto; padding-block: 5rem; max-width: 54rem; }
 .eyebrow { font-size: .875rem; text-transform: uppercase; letter-spacing: .15em; color: var(--accent); }
-h1 { font-family: Georgia, serif; font-size: clamp(2.75rem, 7vw, 6.5rem); font-weight: 400; line-height: 1.05; letter-spacing: -.04em; margin: 1.5rem 0; }
+h1 { font-family: var(--ss-font); font-size: clamp(2.75rem, 7vw, 6.5rem); font-weight: 700; line-height: 1.05; letter-spacing: -.04em; margin: 1.5rem 0; }
 .intro { font-size: 1.125rem; line-height: 1.7; max-width: 32rem; }
 .status { color: var(--accent); font-size: 1rem; margin-top: 2rem; }
-footer { font-size: .875rem; color: #64605b; }
+footer { font-size: .875rem; color: var(--ss-muted); }

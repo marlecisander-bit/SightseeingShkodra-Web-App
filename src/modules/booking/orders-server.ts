@@ -52,14 +52,14 @@ export async function readPendingOrder(
     .single();
   const items = await client
     .from("booking_items")
-    .select("id,product_id,departure_id,quantity,unit_price,total_price,status")
+    .select("id,product_id,departure_id,quantity,unit_price,total_price,status,passenger_snapshot")
     .eq("operator_id", operatorId)
     .eq("order_id", hold.data.order_id)
     .order("id");
   if (order.error || items.error) throw new CheckoutError("UNAVAILABLE");
   const booking = await client
     .from("bookings")
-    .select("booking_reference,status")
+    .select("booking_reference,status,qr_token,qr_created_at,checked_in_at")
     .eq("operator_id", operatorId)
     .eq("order_id", hold.data.order_id)
     .maybeSingle();
@@ -70,7 +70,17 @@ export async function readPendingOrder(
     .eq("order_id", hold.data.order_id)
     .eq("provider", "meeting_point");
   if (booking.error || payments.error) throw new CheckoutError("UNAVAILABLE");
+  const departures = await client.from("departures").select("id,service_date,start_time")
+    .eq("operator_id",operatorId).in("id",items.data.map(i=>i.departure_id));
+  if(departures.error) throw new CheckoutError("UNAVAILABLE");
   return {
+    pass: booking.data?.qr_token ? {
+      token: booking.data.qr_token, createdAt: booking.data.qr_created_at, checkedInAt: booking.data.checked_in_at,
+      departures: items.data.flatMap(i=>{
+        const departure=departures.data.find(d=>d.id===i.departure_id);
+        return departure ? [{date:departure.service_date,time:departure.start_time,guests:i.quantity}] : [];
+      }),
+    } : undefined,
     collectionMode: order.data.collection_mode,
     bookingReference: booking.data?.booking_reference,
     bookingStatus: booking.data?.status,
@@ -89,6 +99,7 @@ export async function readPendingOrder(
       productId: i.product_id,
       departureId: i.departure_id,
       quantity: i.quantity,
+      passengerSnapshot:i.passenger_snapshot,
       unitPrice: i.unit_price,
       total: i.total_price,
       status: i.status,
@@ -143,6 +154,11 @@ export async function createPendingOrder(
     }
     if (!data?.orderId || !Array.isArray(data.items))
       throw new CheckoutError("UNAVAILABLE");
+    // Confirmation already committed; a display read failure must not undo or misreport it.
+    if (meetingPoint) {
+      try { return await readPendingOrder(input.operatorId,input.holdId,input.sessionKey) ?? data as PendingOrder; }
+      catch { return data as PendingOrder; }
+    }
     return data as PendingOrder;
   } catch (error) {
     if (error instanceof CheckoutError) throw error;

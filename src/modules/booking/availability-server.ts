@@ -11,10 +11,8 @@ export async function getAvailability(request: AvailabilityRequest, signal?: Abo
   try {
     const client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false },
       global: { fetch: (input, init) => fetch(input, { ...init, cache: 'no-store', ...(signal ? { signal } : {}) }) } });
-    const { data, error } = await client.rpc('read_availability_v1', {
-      p_operator_id: request.operatorId, p_product_id: request.productId, p_date: request.date,
-    });
-    if (error) throw new AvailabilityError('UNAVAILABLE');
+    const { data, error } = await client.rpc('read_passenger_availability_v1', {p_operator:request.operatorId,p_product:request.productId,p_date:request.date,p_counts:request.passengers??{adult:request.guests,child:0,infant:0}});
+    if (error) throw new AvailabilityError(error.code==='22023'?'INVALID_CONFIGURATION':'UNAVAILABLE');
     return quoteAvailability(request, data as AvailabilitySnapshot | null);
   } catch (error) {
     if (error instanceof AvailabilityError) throw error;

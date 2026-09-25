@@ -1,3 +1,4 @@
+import { passengerCount, type PassengerCounts } from "./passengers";
 import { AvailabilityError, validateAvailabilityRequest } from "./availability";
 import type { AvailabilityQuote, AvailabilityRequest } from "./contracts";
 
@@ -20,9 +21,11 @@ export async function publicAvailability(request: Request, sources: Sources) {
   const params = new URL(request.url).searchParams;
   const date = params.get("date") ?? "",
     guests = Number(params.get("guests"));
+  let passengers:PassengerCounts|undefined;
   try {
+    if(params.has("adult")||params.has("child")||params.has("infant")){passengers={adult:Number(params.get("adult")),child:Number(params.get("child")),infant:Number(params.get("infant"))};if(["adult","child","infant"].some(k=>params.getAll(k).length!==1)||passengerCount(passengers)!==guests)throw Error();}
     if (
-      [...params.keys()].some((key) => key !== "date" && key !== "guests") ||
+      [...params.keys()].some((key) => !["date","guests","adult","child","infant"].includes(key)) ||
       params.getAll("date").length !== 1 ||
       params.getAll("guests").length !== 1 ||
       !/^[1-9]\d{0,9}$/.test(params.get("guests") ?? "")
@@ -33,7 +36,7 @@ export async function publicAvailability(request: Request, sources: Sources) {
       operatorId: placeholderId,
       productId: placeholderId,
       date,
-      guests,
+      guests,passengers,
     });
   } catch {
     return errorResponse("INVALID_REQUEST", 400);
@@ -46,12 +49,13 @@ export async function publicAvailability(request: Request, sources: Sources) {
       operatorId: binding.operatorId,
       productId: binding.productId,
       date,
-      guests,
+      guests,passengers,
     });
     return Response.json({ quote, timezone: binding.timezone }, { headers });
   } catch (error) {
     if (error instanceof AvailabilityError && error.code === "NOT_FOUND")
       return errorResponse("NOT_PUBLISHED", 404);
+    if(error instanceof AvailabilityError&&error.code==="INVALID_CONFIGURATION")return errorResponse("PRICING_UNAVAILABLE",409);
     return errorResponse("UNAVAILABLE", 503);
   }
 }

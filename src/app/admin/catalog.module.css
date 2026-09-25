@@ -1,0 +1,14 @@
+.group { margin-block:var(--ss-space-6); min-width:0; }
+.create { margin-bottom:var(--ss-space-6); }
+.createForm { padding-top:16px; }
+.listLabel { color:var(--ss-muted); font-size:12px; font-weight:600; margin:0 0 12px; }
+.group .record { border:1px solid var(--ss-border); border-radius:var(--ss-radius-control); background:var(--ss-white); padding:0; margin:12px 0; overflow-wrap:anywhere; }
+.group .record > summary { padding:14px 16px; min-height:44px; cursor:pointer; font-weight:600; border-radius:inherit; }
+.group .record > summary:hover { background:var(--ss-cream); }
+.group .record > summary:focus-visible { outline:3px solid var(--ss-focus); outline-offset:3px; }
+.recordBody { padding:0 16px 16px; }
+.create .settings { background:var(--ss-white); color:var(--ss-muted); border:1px solid var(--ss-border); }
+.create .settings:hover { background:var(--ss-cream); }
+.metadata { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; margin:8px 0 0 18px; color:var(--ss-muted); font-size:13px; font-weight:400; }
+.order { display:block; margin:6px 0 0 18px; color:var(--ss-muted); font-size:12px; font-weight:400; }
+@media(max-width:600px) { .create > button { width:100%; } }

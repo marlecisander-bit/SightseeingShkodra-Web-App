@@ -1,3 +1,4 @@
+import type { PassengerCounts, PassengerCategories, PassengerSnapshot } from "./passengers";
 /** V1 booking domain DTOs. Safe for type-only imports in browser/partner clients. */
 export type OrderStatus =
   | "pending"
@@ -11,6 +12,7 @@ export type OrderStatus =
 export type BookingStatus = "pending" | "confirmed" | "cancelled" | "expired";
 export type HoldStatus = "active" | "released" | "expired" | "consumed";
 export type AvailabilityRequest = {
+  passengers?: PassengerCounts;
   version: 1;
   operatorId: string;
   productId: string;
@@ -18,6 +20,7 @@ export type AvailabilityRequest = {
   guests: number;
 };
 export type AvailabilityQuote = {
+  categories?: PassengerCategories;
   version: 1;
   productId: string;
   date: string;
@@ -29,11 +32,13 @@ export type AvailabilityQuote = {
   departures: {
     id: string;
     startTime: string;
+    passengerQuote?: PassengerSnapshot;
     remaining: number;
     available: boolean;
   }[];
 };
 export type CreateHoldRequest = {
+  passengers?: PassengerCounts;
   operatorId: string;
   departureId: string;
   sessionKey: string;
@@ -41,6 +46,7 @@ export type CreateHoldRequest = {
   quantity: number;
 };
 export type Hold = {
+  passengerSnapshot?: PassengerSnapshot;
   id: string;
   departure_id: string;
   quantity: number;
@@ -53,7 +59,14 @@ export type CreatePendingOrderRequest = {
   sessionKey: string;
   customer: { name: string; email: string; phone?: string };
 };
+export type BookingPass = {
+  token: string;
+  createdAt: string;
+  checkedInAt: string | null;
+  departures: { date: string; time: string; guests: number }[];
+};
 export type PendingOrder = {
+  pass?: BookingPass;
   version: 1;
   orderId: string;
   status: OrderStatus;
@@ -70,6 +83,7 @@ export type PendingOrder = {
     productId: string;
     departureId: string;
     quantity: number;
+    passengerSnapshot?: PassengerSnapshot;
     unitPrice: number;
     total: number;
     status: BookingStatus;

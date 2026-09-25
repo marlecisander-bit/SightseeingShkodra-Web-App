@@ -1,3 +1,4 @@
+import type { PassengerCounts } from "../booking/passengers";
 import type {
   AvailabilityQuote,
   AvailabilityRequest,
@@ -5,6 +6,7 @@ import type {
 
 /** Presentation only. Production adapters must obtain quotes from the shared domain. */
 export type BookingSelection = {
+  passengers?: PassengerCounts;
   date: string;
   guests: number;
   departureId: string;

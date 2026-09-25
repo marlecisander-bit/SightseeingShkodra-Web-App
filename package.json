@@ -18,13 +18,15 @@
     "test:integrations": "tsx --conditions=react-server --test tests/integrations/*.test.mjs",
     "fixtures:preview": "node scripts/preview-fixtures.mjs",
     "notifications:preview": "node --import tsx scripts/preview-booking-confirmation.mjs",
-    "test:postgres": "node --test tests/postgres/*.test.mjs"
+    "test:postgres": "node --test tests/postgres/*.test.mjs",
+    "emails:preview": "node --import tsx scripts/preview-booking-emails.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "2.116.0",
     "leaflet": "1.9.4",
     "next": "16.3.5",
+    "qrcode": "^1.5.4",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "server-only": "0.0.1"
@@ -33,12 +35,16 @@
     "@electric-sql/pglite": "0.5.8",
     "@types/leaflet": "1.9.21",
     "@types/node": "24.13.5",
+    "@types/pngjs": "^6.0.5",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "embedded-postgres": "17.10.0-beta.17",
     "eslint": "9.39.5",
     "eslint-config-next": "16.3.5",
+    "jsqr": "^1.4.0",
     "pg": "8.23.0",
+    "pngjs": "^7.0.0",
     "tsx": "4.23.14",
     "typescript": "5.9.3"
   }

@@ -10,8 +10,8 @@ const db = new PGlite();
 const id = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 const tables = ['operators', 'staff_profiles', 'suppliers', 'products', 'stops',
   'departures', 'customers', 'orders', 'booking_items', 'bookings', 'payments',
-  'payment_events', 'refunds', 'vehicles', 'vehicle_positions', 'reviews',
-  'content_pages', 'redirects', 'api_keys', 'domain_events', 'audit_logs', 'inventory_holds', 'notification_deliveries'];
+  'payment_events', 'refunds', 'vehicles', 'vehicle_positions', 'reviews', 'review_settings',
+  'content_pages', 'redirects', 'api_keys', 'domain_events', 'audit_logs', 'inventory_holds', 'notification_deliveries', 'service_schedules', 'schedule_exceptions'];
 
 before(async () => {
   // Only the Supabase platform prerequisites are stubbed. Application SQL is unmodified.
@@ -166,7 +166,7 @@ test('all tables enable RLS, deny client writes and grant only intended authenti
       const privileges = await db.query(`select has_table_privilege($1, $2, 'INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') as allowed`, [role, `public.${table}`]);
       assert.equal(privileges.rows[0].allowed, false, `${role}: ${table}`);
       const reads = await db.query(`select has_table_privilege($1, $2, 'SELECT') as allowed`, [role, `public.${table}`]);
-      assert.equal(reads.rows[0].allowed, role === 'authenticated' && !['api_keys','domain_events','payment_events'].includes(table));
+      assert.equal(reads.rows[0].allowed, role === 'authenticated' && !['api_keys','domain_events','payment_events','review_settings'].includes(table));
     }
     await db.exec(`set role ${role}`);
     try {
@@ -425,7 +425,7 @@ for (const staff of staffFixtures) {
     }
     for (const table of ['api_keys','domain_events','payment_events']) await invalid(`select * from ${table}`, '42501');
     for (const table of tables) {
-      await invalid(`update ${table} set id=id`, '42501');
+      await invalid(`update ${table} set created_at=created_at`, '42501');
       await invalid(`insert into ${table} default values`, '42501');
       await invalid(`delete from ${table}`, '42501');
     }
