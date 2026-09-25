@@ -4,8 +4,9 @@ import { cookies } from "next/headers";
 import { getSupabaseConfig } from "./supabase-config";
 
 export async function createSessionClient() {
-  const { url, key } = getSupabaseConfig();
+  // Resolve request cookies before configuration: authenticated pages are request-time only.
   const cookieStore = await cookies();
+  const { url, key } = getSupabaseConfig();
   return createServerClient(url, key, {
     cookies: {
       getAll: () => cookieStore.getAll(),

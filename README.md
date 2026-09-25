@@ -20,3 +20,7 @@ Next planned step: Phase 1B, new database schema migrations. No legacy website, 
 
 
 Booking email setup and verification: [Resend booking emails](docs/BOOKING-EMAILS.md). Delivery is disabled by default. `npm run emails:preview` exports six synthetic HTML/text examples without sending mail.
+
+### Netlify environment configuration
+
+The Web App is hosted separately from the standalone map. Configure production environment variables in Netlify for both Builds and Functions; `.env.local` is intentionally not committed. Required: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `PUBLIC_OPERATOR_ID`, `PUBLIC_HOMEPAGE_PRODUCT_SLUG`, `CHECKOUT_SESSION_SECRET`, `APP_ENV=production` and `NEXT_PUBLIC_SITE_URL` set to the website HTTPS origin. The optional published-stop connection uses `LIVE_MAP_SUPABASE_URL`, `LIVE_MAP_PUBLISHABLE_KEY` and `LIVE_MAP_PROJECT_SLUG`. Keep `EMAIL_ENABLED=false` and `SITE_INDEXING_ENABLED=false` until their launch checks are approved. Never use NEXT_PUBLIC_ for a privileged key. Rebuild after changing public build variables.
