@@ -27,7 +27,8 @@ export async function getWebsiteEditor(operatorId: string): Promise<WebsiteRecor
   return withOperatorService(operatorId, "content.manage", async (client) => {
     const { data, error } = await client.from("content_pages").select("id,updated_at,published_at,body,published_body").eq("operator_id", operatorId).eq("slug", "website-homepage").maybeSingle();
     if (error || !data) throw Error("Homepage content has not been initialized");
-    validateWebsiteContent(data.body.content);
+    data.body.content = validateWebsiteContent(data.body.content);
+    if (data.published_body) data.published_body.content = validateWebsiteContent(data.published_body.content);
     return data as WebsiteRecord;
   });
 }

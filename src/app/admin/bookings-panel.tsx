@@ -174,7 +174,7 @@ export async function BookingsPanel({
     skipped: "Skipped",
   };
   const messages: Record<string, string> = {
-    email_queued: "Confirmation emails queued for the customer and owner. The email worker will process them; check the status below after refreshing.",
+    email_queued: "Confirmation emails queued for the customer and owner. Check message status below after refreshing.",
     created: "Reservation confirmed. Payment is due at the meeting point.",
     collected: "Full payment recorded at the meeting point.",
     cancelled: "Order cancelled.",
@@ -262,13 +262,13 @@ export async function BookingsPanel({
         return (
           <details key={order.id} id={booking ? `booking-${booking.id}` : undefined} open={booking?.id === selectedBooking}>
             <summary>
-              {booking?.booking_reference ?? order.id} ·{" "}
+              {booking?.booking_reference ?? "Pending reservation"} ·{" "}
               {person?.name ?? "Customer"} · {order.status}
             </summary>
             <p>
               {person?.email} {person?.phone}
             </p>
-            <p>Order: {order.id}</p>
+            <details><summary>Reference details</summary><p>Order: {order.id}</p></details>
             <p>
               Total: {order.currency} {(order.total / 100).toFixed(2)}
             </p>

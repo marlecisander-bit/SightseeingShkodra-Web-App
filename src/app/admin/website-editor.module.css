@@ -79,3 +79,16 @@
 .sectionNavigation > button { max-width:100%; white-space:normal; overflow-wrap:anywhere; }
 .toolbarActions { min-width:0; max-width:100%; }
 .toolbarStatus { flex-wrap:wrap; min-width:0; }
+
+.visibilityRow { display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; margin-top:16px; cursor:default; }
+.visibilityRow label { display:inline-flex; flex-wrap:wrap; align-items:center; gap:8px; min-height:44px; cursor:pointer; font-size:13px; }
+.cms .visibilityRow input { width:20px; height:20px; margin:0; accent-color:var(--brand-red); }
+.hiddenBadge { display:inline-flex; padding:3px 9px; border-radius:30px; font-size:11px; font-weight:600; color:var(--ss-muted); background:var(--ss-cream); }
+.visibilityActions { display:flex; flex-wrap:wrap; gap:8px; }
+
+.cms .fieldGroup { padding:0 0 24px; margin:0 0 24px; border-bottom:1px solid var(--ss-border); }
+.fieldGroup legend { font-size:15px; font-weight:700; margin-bottom:16px; padding:0; color:var(--ss-charcoal); }
+.cms .fieldGroup:last-of-type { margin-bottom:0; border-bottom:0; }
+.cardCopy { font-size:14px; line-height:1.5; color:var(--ss-muted); }
+.cardTop strong { color:var(--ss-charcoal); }
+.cms .sectionNavigation > button:not([aria-pressed=true]) { background:var(--ss-white); color:var(--brand-text); border:1px solid var(--ss-border); }

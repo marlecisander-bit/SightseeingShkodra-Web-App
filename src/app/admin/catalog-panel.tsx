@@ -34,7 +34,7 @@ const fields: Record<
     { key: "meta_title", label: "SEO title (required to publish)" },
     { key: "meta_description", label: "Tour summary / SEO description (required to publish)" },
     { key: "inclusions", label: "Ticket inclusions and admission information" },
-    { key: "og_image", label: "Social image HTTPS URL", type: "url" },
+    { key: "og_image", label: "Social sharing image address", type: "url" },
     {
       key: "og_image_alt",
       label: "Image description (required with an image)",
@@ -45,7 +45,7 @@ const fields: Record<
     { key: "type", label: "Supplier type", options: ["owned", "partner"] },
   ],
 };
-function Editor({
+export function CatalogRecordEditor({
   entity,
   row,
   operatorId,
@@ -73,7 +73,7 @@ function Editor({
               defaultValue={String(row[field.key] ?? field.options[0])}
             >
               {field.options.map((value) => (
-                <option key={value}>{value}</option>
+                <option key={value} value={value}>{({van_tour:"Van tour",boat_trip:"Boat trip",attraction_ticket:"Attraction ticket",owned:"Our business",partner:"Partner",draft:"Draft",published:"Published",archived:"Archived"} as Record<string,string>)[value] ?? value}</option>
               ))}
             </select>
           ) : (
@@ -182,13 +182,13 @@ export async function CatalogPanel({
         <p role="status">
           {result === "saved"
             ? "Changes saved."
-            : "Unable to save. Check the required fields, unique slug and linked records."}
+            : "Unable to save. Check the required fields, website address and selected supplier."}
         </p>
       )}
       <p>
-        Publish only when SEO fields are ready. Manage schedules, seats and passenger prices under Calendar & Pricing. Existing bookings keep their agreed total.
+        Add your search title and description before publishing. Manage schedules, seats and passenger prices under Calendar & Pricing. Existing bookings keep their agreed total.
       </p>
-      <p>Manage route stops, routes and GPS in the live map app.</p>
+      <p>Stops and live vehicle information are managed from Live Map.</p>
       {(["product", "supplier"] as const).map((entity) => (
         <div key={entity} className={styles.group}>
           <h2>
@@ -197,7 +197,7 @@ export async function CatalogPanel({
               : "Suppliers"}
           </h2>
           <CatalogCreate entity={entity}>
-            <Editor
+            <CatalogRecordEditor
               entity={entity}
               row={{}}
               operatorId={operatorId}
@@ -212,7 +212,7 @@ export async function CatalogPanel({
             <details key={row.id} className={styles.record}>
               <summary>{"title" in row ? row.title : row.name}</summary>
               <div className={styles.recordBody}>
-              <Editor
+              <CatalogRecordEditor
                 entity={entity}
                 row={row}
                 operatorId={operatorId}

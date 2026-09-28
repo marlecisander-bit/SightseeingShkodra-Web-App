@@ -3,20 +3,24 @@ import { AmenitiesInput } from "./hero-amenities-input";
 import { focalPositions } from "@/modules/content/hero-amenities";
 
 import { Button } from "@/components/ui/button";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState, useTransition, type Dispatch, type SetStateAction } from "react";
 import { useRouter } from "next/navigation";
 import { editableWebsiteSections, type WebsiteContent } from "@/modules/content/website-schema";
 import { saveWebsiteSection, uploadWebsiteImage } from "./website-actions";
 import styles from "./website-editor.module.css";
 import { prepareWebsiteImage } from "@/modules/content/image-upload";
 
-export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, onStateChange }: { operatorId: string; sectionId: string; content: WebsiteContent; stamp: string; onStateChange?: (id: string, dirty: boolean, pending: boolean) => void }) {
+export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, values, setValues, onStateChange }: { operatorId: string; sectionId: string; content: WebsiteContent; stamp: string; values: WebsiteContent; setValues: Dispatch<SetStateAction<WebsiteContent>>; onStateChange?: (id: string, dirty: boolean, pending: boolean) => void }) {
   const section = editableWebsiteSections.find(section => section.id === sectionId)!;
-  const [values, setValues] = useState(content);
   const [message, setMessage] = useState("");
   const [sizes, setSizes] = useState<Record<string,string>>({});
   const [pending, start] = useTransition();
   const router = useRouter();
+  const groups = [
+    {title:"Content",fields:section.fields.filter(f=>f.kind!=="visibility" && !["image","position","link"].includes(f.kind) && !f.key.endsWith(".alt") && !/button|link label|scroll link/i.test(f.label))},
+    {title:"Images",fields:section.fields.filter(f=>["image","position"].includes(f.kind)||f.key.endsWith(".alt"))},
+    {title:"Buttons & links",fields:section.fields.filter(f=>f.kind==="link"||/button|link label|scroll link/i.test(f.label))},
+  ];
   const dirty = section.fields.some(f => values[f.key] !== content[f.key]);
   useEffect(() => { onStateChange?.(sectionId, dirty, pending); }, [sectionId, dirty, pending, onStateChange]);
   useEffect(() => {
@@ -35,11 +39,13 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, on
     });
   }}>
     {sectionId === "reviews" && <p><a href={`/admin/${operatorId}/reviews`}>Manage guest reviews, ordering and Google links</a>. This section is hidden until a review is published.</p>}
-    <p>Section: {section.title}. Saved drafts appear in Preview; Publish updates the public website without a rebuild.</p>
-    {["intro","departures","tourPage"].includes(sectionId) && <p>Operational data: <a href={`/admin/${operatorId}/catalog`}>Manage product and price</a> | <a href={`/admin/${operatorId}/departures`}>Manage service schedule and capacity</a>. Boarding points, route order and GPS are managed in the independent map app.</p>}
+    <p>Save your changes as a draft or publish them when you’re ready.</p>
+    {["intro","departures","tourPage"].includes(sectionId) && <p><a href={`/admin/${operatorId}/catalog`}>Products & suppliers</a> | <a href={`/admin/${operatorId}/departures`}>Calendar & Pricing</a>. Stops and live vehicle information are managed from Live Map.</p>}
     <input type="hidden" name="updated_at" value={stamp} />
     <fieldset disabled={pending}>
-      <div className={styles.fieldGrid}>{section.fields.map(field => {
+      {section.fields.filter(f=>f.kind==="visibility").map(f=><input key={f.key} type="hidden" name={f.key} value={values[f.key]}/>)}
+      {groups.filter(group=>group.fields.length).map(group=><fieldset className={styles.fieldGroup} key={group.title}><legend>{group.title}</legend><div className={styles.fieldGrid}>{group.fields.map(field => {
+        if (field.kind === "visibility") return <input key={field.key} type="hidden" name={field.key} value={values[field.key]} />;
         const long = field.kind === "amenities" || /text|detail|description|alt/.test(field.key) || /description/i.test(field.label) || field.initial.includes("\n");
         return <div key={field.key} className={`${styles.field} ${long ? styles.fullField : ""} ${field.kind === "image" ? styles.imageField : ""}`}>
           {field.kind === "amenities" ? <AmenitiesInput value={values[field.key]} onChange={value=>setValues(v=>({...v,[field.key]:value}))}/> : field.kind === "position" ? <label>{field.label}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}>{focalPositions.map(position=><option key={position}>{position}</option>)}</select></label> : field.kind === "image" ? <>
@@ -56,7 +62,7 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, on
                 const prepared = await prepareWebsiteImage(image, sectionId === "hero");
                 const data = new FormData(); data.set("image", prepared);
                 const result = await uploadWebsiteImage(operatorId, data);
-                if ("url" in result) { setValues(v => ({ ...v, [field.key]: result.url })); setMessage("Image uploaded. Save Draft or Publish to use it."); }
+                if ("url" in result) { setValues(v => ({ ...v, [field.key]: result.url })); setMessage("Image uploaded. Save your draft or publish to use it."); }
                 else setMessage(result.error ?? "Upload failed.");
                 } catch (error) {
                   setMessage(error instanceof Error && !/server|fetch|network|body|413/i.test(error.message) ? error.message : "The image could not be uploaded. Check your connection and try again. Your edits are still here.");
@@ -64,17 +70,17 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, on
               });
             }} /></label>
             <small className={styles.helper}>{sectionId === "hero" ? "No original file-size limit. Large hero images are automatically optimized for the web." : "JPEG, PNG, WebP or AVIF · Maximum 8 MB per image."}</small>
-            <details className={styles.imagePath}><summary>Image source / existing image</summary><label>{field.label} path<input name={field.key} required maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} /></label></details>
+            <details className={styles.imagePath}><summary>Advanced: image address</summary><label>{field.label} path<input name={field.key} required maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} /></label></details>
             <small className={styles.helper}>Required image · Replace to change it. Alt text is editable below.</small>
-          </> : <label>{field.label}
+          </> : <label>{field.label.replace("Eyebrow", "Small heading")}
             {long ? <textarea rows={field.key.includes("alt") ? 2 : 3} name={field.key} required maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} />
               : <input name={field.key} required maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} />}
           </label>}
         </div>;
-      })}</div>
+      })}</div></fieldset>)}
       <div className={styles.editorActions}>
         <span className={styles.helper}>{dirty ? "Unsaved changes" : "Saved content"}</span>
-        <Button className={styles.textButton} type="button" disabled={!dirty} onClick={() => {setValues(content); setMessage("Unsaved changes discarded.");}}>Discard</Button>
+        <Button className={styles.textButton} type="button" disabled={!dirty} onClick={() => {setValues(current => ({...current, ...Object.fromEntries(section.fields.map(f => [f.key, content[f.key]]))})); setMessage("Unsaved changes discarded.");}}>Discard</Button>
         <Button className={styles.secondary} name="operation" value="draft">{pending ? "Saving…" : "Save Draft"}</Button>
         <Button className={styles.primary} name="operation" value="publish">Publish</Button>
       </div>

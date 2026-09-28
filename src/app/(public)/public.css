@@ -222,9 +222,6 @@
 .public-site .p-menu-toggle {
   display: none;
 }
-.public-site .p-mobile-actions {
-  display: none;
-}
 .public-site .p-hero {
   height: 94svh;
   min-height: 660px;
@@ -1007,7 +1004,6 @@ body:has(.p-booking-dialog[open]) {
   .public-site {
     --p-gutter: 22px;
     --p-section: 64px;
-    padding-bottom: 90px;
   }
   .public-site h1 {
     font-size: 48px;
@@ -1190,35 +1186,6 @@ body:has(.p-booking-dialog[open]) {
   
   
   
-  .public-site .p-mobile-actions.is-visible {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 35;
-    background: var(--p-paper);
-    padding: 12px 22px calc(12px + env(safe-area-inset-bottom));
-    border-top: 1px solid var(--p-line);
-  }
-  .public-site .p-mobile-actions > a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-    min-height: 48px;
-    font-size: 13px;
-    flex: 1;
-  }
-  .public-site .p-mobile-actions > .p-button {
-    flex: 1.4;
-    padding: 14px 17px;
-    min-height: 48px;
-    font-size: 13px;
-    gap: 12px;
-  }
   .public-site .p-subpage {
     padding-top: 115px;
     padding-bottom: 45px;
@@ -1318,7 +1285,6 @@ body:has(.p-booking-dialog[open]) {
  .public-site .p-hero-content { padding:125px var(--p-gutter) 150px; }
  .public-site .p-hero { height:auto; max-height:none; }
  .public-site .p-hero h1 { font-size:clamp(2.65rem,10vw,4rem); }
- .public-site .p-mobile-actions { background:var(--ss-cream); }
  
 }
 
@@ -1415,3 +1381,6 @@ body:has(.p-booking-dialog[open]) {
 @media(min-width:768px) { .public-site .p-live-page { padding-top:104px; } }
 
 @media(min-width:430px) { .public-site .p-live-service .p-day-planner-compact { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+/* A hidden hero still leaves room for the fixed global navigation. */
+.public-site .p-home-no-hero { padding-top:var(--p-header-height); }

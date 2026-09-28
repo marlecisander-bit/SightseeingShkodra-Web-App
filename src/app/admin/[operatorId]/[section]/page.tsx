@@ -1,3 +1,4 @@
+import { EmailPanel } from "../../email-panel";
 import { ReviewsPanel } from "../../reviews-panel";
 import { notFound, redirect } from 'next/navigation';
 import { requirePermission } from '../../../../modules/identity/require-permission';
@@ -10,7 +11,7 @@ import { ContentPanel } from '../../content-panel';
 import { BookingsPanel } from '../../bookings-panel';
 import { AdminShell } from '../../admin-shell';
 import { OverviewPanel } from '../../overview-panel';
-export default async function Workspace({ params, searchParams }: { params: Promise<{ operatorId: string; section: string }>; searchParams: Promise<{ result?: string; date?:string; email?:string; requestId?:string; booking?:string }> }) {
+export default async function Workspace({ params, searchParams }: { params: Promise<{ operatorId: string; section: string }>; searchParams: Promise<{ result?: string; date?:string; email?:string; requestId?:string; booking?:string; delivery?:string; recipient?:string }> }) {
   const { operatorId, section } = await params;
   const selected = adminSections.find(item => item.slug === section);
   if (!selected) notFound();
@@ -24,6 +25,6 @@ export default async function Workspace({ params, searchParams }: { params: Prom
   const { data: operator } = await client.from('operators').select('name').eq('id', context.operatorId).single();
   return <AdminShell operatorId={context.operatorId} operatorName={operator?.name ?? 'Operator workspace'} role={context.role} section={section}>
     {section !== 'content' && <h1>{selected.label}</h1>}
-    {section==='reviews'?<ReviewsPanel operatorId={context.operatorId}/>:section==='catalog'?<CatalogPanel operatorId={context.operatorId} result={(await searchParams).result}/>:section==='departures'?<CalendarPanel operatorId={context.operatorId} {...await searchParams}/>:section==='content'?<ContentPanel operatorId={context.operatorId} result={(await searchParams).result}/>:section==='bookings'?<BookingsPanel operatorId={context.operatorId} {...await searchParams}/>:<OverviewPanel operatorId={context.operatorId} role={context.role}/>}
+    {section==='email'?<EmailPanel operatorId={context.operatorId} {...await searchParams}/>:section==='reviews'?<ReviewsPanel operatorId={context.operatorId}/>:section==='catalog'?<CatalogPanel operatorId={context.operatorId} result={(await searchParams).result}/>:section==='departures'?<CalendarPanel operatorId={context.operatorId} {...await searchParams}/>:section==='content'?<ContentPanel operatorId={context.operatorId} result={(await searchParams).result}/>:section==='bookings'?<BookingsPanel operatorId={context.operatorId} {...await searchParams}/>:<OverviewPanel operatorId={context.operatorId} role={context.role}/>}
   </AdminShell>;
 }

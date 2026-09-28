@@ -1,3 +1,4 @@
+import { HomepageInvitation } from "./homepage-invitation";
 import { ButtonContent } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
@@ -91,16 +92,16 @@ export function PreviewNote() {
     <p className="p-preview">Reserve online. Pay at the meeting point.</p>
   );
 }
-export function Footer({ content: c = initialWebsiteContent }: { content?: WebsiteContent }) {
+export function Footer({ content: c = initialWebsiteContent, homepagePreview }: { content?: WebsiteContent; homepagePreview?: boolean }) {
   return (
     <footer className="p-site-footer">
       <Media src={c["final.image"]} alt={c["final.alt"]} sizes="100vw" />
-      <div className="p-footer-cta">
+      <HomepageInvitation content={c} homepagePreview={homepagePreview}>
         <p className="p-eyebrow">{c["final.eyebrow"]}</p>
         <h2>{c["final.title"]}<br /><em>{c["final.emphasis"]}</em></h2>
         <ActionLink href="/book" className="p-button-booking">{c["final.book"]}</ActionLink>
         <PreviewNote />
-      </div>
+      </HomepageInvitation>
       <div className="p-footer-info">
       <div>
         <Link className="p-wordmark" href="/">

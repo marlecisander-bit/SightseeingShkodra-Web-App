@@ -238,3 +238,15 @@ Hero-only amenities removed (CMS/data retained), logo returns home/top with menu
 
 ### Website publication authorization - 28 September 2026
 User requested publication of the responsive website candidate. Publishing website presentation changes only; separate Map App and unrelated email/admin work excluded. Audit limitations above remain; publication does not certify those outstanding checks.
+
+### Homepage section visibility - 28 September 2026
+Eight homepage-only visibility flags added to existing structured draft/publication content, with collapsed-card switches and conditional rendering. Global structure and inactive amenities preserved. Optional SQL validator extension tested only in disposable local databases; hosted migration required before saving these fields there. Six visibility/hero and ten existing CMS/content tests passed; five browser widths passed; lint and isolated typecheck/build passed. Root typecheck retains pre-existing private-copy errors. No deployment. See HOMEPAGE-VISIBILITY.md.
+
+### Mobile bottom action bar removal - 28 September 2026
+Removed the mobile-only Live van / Book your day container, its CSS rules and the public wrapper's 90px compensating padding. Top header, content links, desktop CTAs and booking/map behavior retained. Dialog-specific safe-area padding preserved. Local browser checks passed at 320/360/375/390/393/412/414/430/768/1440px: no bar DOM, zero wrapper bottom padding, footer reaches document bottom, scrolling, no horizontal overflow, header logo/CTA, modal open/close and map links. Targeted ESLint passed. iPhone Safari hardware/safe-area rendering not exercised; WebKit runtime unavailable. No deployment.
+
+### Admin UI refinement - 28 September 2026
+Audited existing modules and ownership; refined shared shell, mobile menu, navigation grouping, CMS card descriptions/field groups, catalog labels/separation, booking reference disclosure and email Advanced sections. Existing routes/actions/permissions and business logic retained; no new settings, tables or metrics. 66 fixture browser cases across 11 widths and 54 regression tests passed. Logged-out access checks passed; actual authenticated mutation/login acceptance remains. Local only, no deployment. See ADMIN-UX-REFRESH.md.
+
+### Publication authorized - 28 September 2026
+Publishing homepage visibility, mobile bottom-bar removal and admin presentation improvements, including the existing email admin screen and its safe dependencies. Homepage visibility validator applied to linked Supabase; all six content records verified unchanged. Email automation/scheduler activation and migration 20260925000500 are excluded. Separate Live Map repository unchanged. Release verification pending.

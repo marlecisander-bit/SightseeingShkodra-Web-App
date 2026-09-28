@@ -106,3 +106,26 @@
 .panel .mutationFields > p { margin:0; }
 
 @media(max-width:600px) { .headerIdentity { width:100%; gap:16px; flex-wrap:wrap; } .workspaceIdentity { padding-left:16px; flex:1; } .headerActions { width:100%; } .headerActions .workspaceSwitch { flex:1; } }
+
+/* Owner-facing refinements reuse the shared brand and control tokens. */
+.shell { background:var(--ss-cream); color:var(--ss-charcoal); min-height:100svh; }
+.header { margin-bottom:24px; }
+.navigation { position:sticky; top:24px; min-width:0; }
+.navigation .nav { position:static; background:var(--ss-white); border:1px solid var(--ss-border); border-radius:var(--ss-radius); padding:16px 10px; }
+.shell .navigationToggle { display:none; }
+.headerActions .websiteLink { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:10px 16px; background:var(--ss-yellow); color:var(--ss-charcoal); border-radius:var(--ss-radius-control); text-decoration:none; }
+.panel :is(input,select,textarea) { max-width:100%; }
+.panel details > summary { cursor:pointer; }
+.panel table { width:100%; }
+.panel th,.panel td { overflow-wrap:anywhere; }
+.toolCard { background:var(--ss-white); border-top:3px solid var(--brand-red-border); }
+.shell .panel .ss-button--outline { background:var(--ss-white); color:var(--brand-text); border:1px solid var(--ss-border); }
+@media(max-width:1023px) {
+ .navigation { position:static; }
+ .shell .navigationToggle { display:flex; justify-content:center; width:100%; min-height:44px; background:var(--ss-white); color:var(--brand-text); border:1px solid var(--brand-red-border); }
+ .navigationContent { display:none; }
+ .navigation[data-open=true] .navigationContent { display:block; margin-top:12px; }
+ .navigation .nav { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+ .navigation .navGroup { display:grid; align-content:start; }
+}
+@media(max-width:430px) { .navigation .nav { grid-template-columns:1fr; } .headerActions { gap:8px; } .headerActions a,.headerActions button { padding:10px; } }

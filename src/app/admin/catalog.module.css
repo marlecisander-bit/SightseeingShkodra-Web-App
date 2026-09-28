@@ -12,3 +12,5 @@
 .metadata { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; margin:8px 0 0 18px; color:var(--ss-muted); font-size:13px; font-weight:400; }
 .order { display:block; margin:6px 0 0 18px; color:var(--ss-muted); font-size:12px; font-weight:400; }
 @media(max-width:600px) { .create > button { width:100%; } }
+
+.group + .group { border-top:2px solid var(--ss-border); padding-top:var(--ss-space-6); }

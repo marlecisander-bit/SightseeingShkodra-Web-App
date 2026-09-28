@@ -13,7 +13,7 @@ import {
 } from "@/components/public/ui";
 import { RoutePreview } from "@/components/public/route-preview";
 import { LiveMapEmbed } from "@/components/public/live-map-embed";
-import { resolveWebsiteLink, websitePlaces, type WebsiteContent } from "@/modules/content/website-schema";
+import { homepageVisible, resolveWebsiteLink, websitePlaces, type WebsiteContent } from "@/modules/content/website-schema";
 import type { Homepage } from "@/modules/content/homepage";
 
 
@@ -22,9 +22,9 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
 
 
   return (
-    <main id="main-content" className="p-home">
-      <HomepageHero content={c}/>
-<section id="home-intro" className="p-section p-container p-intro">
+    <main id="main-content" className={`p-home${homepageVisible(c, "hero") ? "" : " p-home-no-hero"}`}>
+      {homepageVisible(c, "hero") && <HomepageHero content={c}/>}
+{homepageVisible(c, "intro") && <section id="home-intro" className="p-section p-container p-intro">
         <PreviewNote />
         {home.state === "unavailable" && (
           <p role="alert" className="p-empty">
@@ -45,8 +45,8 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
           <Link className="p-text-link" href={resolveWebsiteLink(c["intro.link"])}>{c["intro.linkLabel"]}</Link>
         </SectionHeading>
         <DayPlannerStrip initial={planner} />
-      </section>
-      <section id="route" className="p-section p-container">
+      </section>}
+      {homepageVisible(c, "route") && <section id="route" className="p-section p-container">
         <SectionHeading
           eyebrow={c["route.eyebrow"]}
           title={c["route.title"]}
@@ -56,8 +56,8 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
           </p>
         </SectionHeading>
         <RoutePreview places={destinations} showNote={false} />
-      </section>
-      <section className="p-live-section">
+      </section>}
+      {homepageVisible(c, "live") && <section className="p-live-section">
         <div className="p-container p-live-grid">
           <div>
             <p className="p-eyebrow">{c["live.eyebrow"]}</p>
@@ -73,8 +73,8 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
           </div>
           <LiveMapEmbed />
         </div>
-      </section>
-      <section className="p-container p-departures">
+      </section>}
+      {homepageVisible(c, "departures") && <section className="p-container p-departures">
         <SectionHeading
           eyebrow={c["departures.eyebrow"]}
           title={c["departures.title"]}
@@ -118,9 +118,9 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
             </>
           )}
         </div>
-      </section>
-      <GuestReviews selection={reviews} eyebrow={c["reviews.eyebrow"]} title={c["reviews.title"]} subtitle={c["reviews.text"]} />
-      <section className="p-section p-container">
+      </section>}
+      {homepageVisible(c, "reviews") && <GuestReviews selection={reviews} eyebrow={c["reviews.eyebrow"]} title={c["reviews.title"]} subtitle={c["reviews.text"]} />}
+      {homepageVisible(c, "notebook") && <section className="p-section p-container">
         <SectionHeading
           eyebrow={c["notebook.eyebrow"]}
           title={c["notebook.title"]}
@@ -146,7 +146,7 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
             ),
           )}
         </div>
-      </section>
+      </section>}
     </main>
   );
 }

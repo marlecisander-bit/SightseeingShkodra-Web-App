@@ -13,10 +13,11 @@ export async function saveWebsiteSection(operatorId: string, sectionId: string, 
     await withOperatorService(operatorId, "content.manage", async (client, context) => {
       const { data: current, error } = await client.from("content_pages").select("body,updated_at").eq("operator_id", context.operatorId).eq("slug", "website-homepage").single();
       if (error || !current) throw Error("Homepage unavailable");
-      const content = { ...current.body.content };
+      const content = validateWebsiteContent(current.body.content);
       for (const field of section.fields) {
         const value = form.get(field.key);
-        content[field.key] = typeof value === "string" ? value.replaceAll("\r\n", "\n") : value;
+        if (typeof value !== "string") throw Error(`Check ${field.label}`);
+        content[field.key] = value.replaceAll("\r\n", "\n");
       }
       validateWebsiteContent(content);
       const result = await client.rpc("save_website_content_v1", { p_operator_id: context.operatorId, p_actor_id: context.staffProfileId, p_content: content, p_expected_updated_at: form.get("updated_at"), p_operation: operation });

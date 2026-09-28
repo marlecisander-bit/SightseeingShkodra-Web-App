@@ -18,8 +18,6 @@
 @media(max-width:430px) {
   .public-site .p-actions > :is(.p-button,.p-hero-track) { width:100%; }
   .public-site .p-actions { gap:12px; }
-  .public-site .p-mobile-actions { flex-wrap:wrap; }
-  .public-site .p-mobile-actions > .p-button { flex:1 1 160px; }
 }
 
 .ss-button.ss-button--outline{background:transparent;color:var(--brand-red-active);border:1px solid var(--brand-red-border)}

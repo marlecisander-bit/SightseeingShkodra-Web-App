@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 
 import Link from "next/link";
 import { activeNavigation } from "@/modules/content/navigation";
-import { resolveWebsiteLink, initialWebsiteContent, type WebsiteContent } from "@/modules/content/website-schema";
+import { homepageVisible, resolveWebsiteLink, initialWebsiteContent, type WebsiteContent } from "@/modules/content/website-schema";
 import { BrandLogo } from "./brand-logo";
 import {
   createContext,
@@ -357,7 +357,7 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
   return (
     <>
       <header ref={headerRef}
-        className={`p-header ${pathname === "/" ? "p-header-home" : ""} ${pathname !== "/" || scrolled || menu ? "p-header-solid" : ""}`}
+        className={`p-header ${pathname === "/" ? "p-header-home" : ""} ${pathname !== "/" || !homepageVisible(c, "hero") || scrolled || menu ? "p-header-solid" : ""}`}
         onKeyDown={(event) => {
           if (event.key === "Escape" && menu) {
             setMenu(false);
@@ -398,14 +398,7 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
         </nav>
         <BookButton className="p-header-book">{c["nav.book"]}</BookButton>
       </header>
-      <div
-        className={`p-mobile-actions ${scrolled && pathname !== "/book" && !pathname.startsWith("/booking/manage") && pathname !== "/live" ? "is-visible" : ""}`}
-      >
-        <Link href="/live">
-          {c["nav.mobileMap"]}
-        </Link>
-        <BookButton>{c["nav.mobileBook"]}</BookButton>
-      </div>
+
     </>
   );
 }
