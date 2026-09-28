@@ -3,7 +3,8 @@ import {before,after,test} from 'node:test';
 import {readFile,readdir} from 'node:fs/promises';
 import {PGlite} from '@electric-sql/pglite';
 import {platformSql,loadDevelopmentFixtures} from '../helpers/database.mjs';
-import {initialWebsiteContent} from '../../src/modules/content/website-schema.ts';
+// Frozen input for the pre-destination migration contract; never use today's CMS defaults.
+const initialWebsiteContent = JSON.parse(await readFile(new URL('../helpers/homepage-before-destinations.json', import.meta.url), 'utf8'));
 let db,actor;const op='10000000-0000-4000-8000-000000000001';
 const dir=new URL('../../supabase/migrations/',import.meta.url),migration='20260925000200_dynamic_destinations.sql';
 before(async()=>{
@@ -12,6 +13,7 @@ before(async()=>{
  await loadDevelopmentFixtures(db);
  const u=(await db.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;
  actor=(await db.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'owner') returning id",[op,u])).rows[0].id;
+ assert.equal((await db.query('select validate_website_content_v1($1) valid',[JSON.stringify(initialWebsiteContent)])).rows[0].valid,true,'historical homepage fixture must satisfy its starting schema');
  await db.query("select save_website_content_v1($1,$2,$3,null,'initialize')",[op,actor,JSON.stringify(initialWebsiteContent)]);
  await db.query("update content_pages set body=jsonb_set(body,'{content,place.centre.name}','\"Private draft title\"') where slug='website-homepage'");
  await db.query("insert into content_pages(operator_id,slug,title,body,status) values($1,'explore-centre','Guide',$2,'published')",[op,JSON.stringify({version:1,format:'plain_text',text:'Existing full guide'})]);

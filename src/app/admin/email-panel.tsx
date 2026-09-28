@@ -62,7 +62,7 @@ export function EmailPanelView({operatorId,data,delivery,recipient}:{operatorId:
           <input type="hidden" name="request_id" value={randomUUID()}/><label><span><input style={{width:'auto',minHeight:24}} type="checkbox" name="confirm" value="yes" required/> I checked the provider result and want a new confirmation.</span></label>
           <p>This reuses the booking resend: it queues customer and owner confirmations, not a replay of this individual event. Five-minute cooldown applies.</p><SubmitButton>Resend confirmation</SubmitButton>
         </MutationForm>}
-      </li>)}</ul>}<p>Up to 100 newest matching records. Skipped entries appear under All.</p></section>
+      </li>)}</ul>}<p>Showing up to 100 recent matching messages. Skipped messages appear under All.</p></section>
     <div className={styles.grid}>
       <details className={styles.card}><summary>Advanced: send a test email</summary><EmailTestForm operatorId={operatorId} recipient={c.testRecipient} ready={c.ready&&Boolean(c.testRecipient)}/><p>Synthetic test sends are not booking-delivery records. Check the result here and the provider dashboard.</p></details>
       <details className={styles.card}><summary>Advanced: automatic sending status</summary><dl><dt>Email worker</dt><dd>{workerHealth(data.heartbeat,enabled)}</dd><dt>Last run started</dt><dd>{date(data.heartbeat?.started_at??null)}</dd><dt>Last run completed</dt><dd>{date(data.heartbeat?.finished_at??null)}</dd><dt>Last successful run</dt><dd>{date(data.heartbeat?.last_success_at??null)}</dd><dt>Pending queue</dt><dd>{data.pending}</dd><dt>Failed / uncertain</dt><dd>{data.events.reduce((sum,e)=>sum+e.failed,0)}</dd></dl>

@@ -250,3 +250,30 @@ Audited existing modules and ownership; refined shared shell, mobile menu, navig
 
 ### Publication authorized - 28 September 2026
 Publishing homepage visibility, mobile bottom-bar removal and admin presentation improvements, including the existing email admin screen and its safe dependencies. Homepage visibility validator applied to linked Supabase; all six content records verified unchanged. Email automation/scheduler activation and migration 20260925000500 are excluded. Separate Live Map repository unchanged. Release verification pending.
+
+### Admin visual refinement — 28 September 2026
+Existing public palette and light logo applied to red header, white grouped sidebar, compact CMS cards, accessible green/grey visibility switches and contextual tips/preview. Shared presentation only; existing services/actions unchanged. Isolated build, targeted lint and 20 identity/CMS tests passed; 22 responsive fixture cases had no overflow. Menu, toggle/discard and editor expansion checked. No production mutation/deployment. See ADMIN-VISUAL-REFINEMENT.md.
+
+Admin refinement continuation: calendar-first presentation, real service-period label, mobile visibility order and standalone admin screen spacing corrected. Expanded local 72-case/12-width layout matrix passed. Existing ownership, login, booking cards and advanced email architecture retained. No deployment.
+
+Admin refinement final continuation: page-level publication status corrected across scopes; repeated per-card Published badges removed; hidden/edit states and normal context scrolling added. CMS ownership traced to existing timetable and destination sources. Twelve additional responsive cases and hidden/edit/discard passed. Local only.
+
+Admin refinement audit continuation (146–208): route/component/data/asset mapping and duplication report completed in ADMIN-VISUAL-REFINEMENT.md. Draft preview labels clarified; expanded CMS cards no longer repeat collapsed Save/Discard controls. Catalog/email list wording simplified. No new data flow, public styling, dependency or deployment.
+
+Admin refactor acceptance continuation (208–260): ownership/duplication table and load review recorded in ADMIN-DUPLICATION-AND-REGRESSION.md. 79 local regression tests passed, covering booking capacity/cutoffs/rebooking/QR, CMS visibility, pricing, review ownership and email/identity authorization. No additional query/write path introduced by the visual diff. Full real authenticated browser acceptance and physical-device checks remain unverified. No production changes/deployment.
+
+Admin recovery continuation: collapsed visibility-save feedback now visible; persisted visibility explicitly shown during unsaved edits. Local denied-save test and exact 12-viewport matrix passed. Asset inventory and remaining performance/device/real-data acceptance limits documented. No deployment.
+
+Final admin refinement report: docs/ADMIN-REFINEMENT-FINAL-REPORT.md consolidates implementation, assets, duplication, data safety, architecture, responsive checks and acceptance gaps. NOT READY FOR PRODUCTION: full safe real-data browser acceptance, physical Safari/PWA and performance profiling remain incomplete. No deployment.
+
+Definition-of-done follow-up: normal production build now passes after excluding ignored private verification copies from TypeScript initial discovery. Strict application checking retained. No source/data deletion or deployment. Real-data/device/performance acceptance remains open.
+
+Authenticated acceptance retry: real Owner CMS and six read-only admin surfaces load. Fixed demonstrated visibility switch CSS specificity collision; actual CMS passes 12 viewport widths without document overflow, switches 40x24px. Shared database remains read-only; no staging exists and emails disabled, so write-based end-to-end acceptance remains NOT TESTABLE. See final report. No deployment or commit.
+
+Final acceptance continuation: Owner logout, protected-route redirect and user-assisted login again passed. Existing /live iframe loaded independent Netlify map and arrival/stop UI. Real calendar presentation verified; limited initial network capture recorded. No application changes or deployment. Isolated-data write tests and safe email delivery remain unverified. See ADMIN-REFINEMENT-FINAL-REPORT.md.
+
+Pre-production closure: corrected infant seat wording only after 14 targeted engine tests passed; eager first CMS thumbnail/context preview verified with no captured warning. Lint, TypeScript and normal build pass. Full suite: identity17/integration87/database128 passed, 5 destination migration setup failures; PostgreSQL23 passed separately. Full regression gate not green. Isolated acceptance plan and classifications recorded in ADMIN-REFINEMENT-FINAL-REPORT.md. No deployment, email enablement or production mutation.
+
+Destination fixture gate repaired: fixed historical homepage fixture replaces moving current defaults; eight newer visibility flags caused historical strict-key validation failure. No app or migration changes. Five isolated tests and 29 related tests pass; complete npm test TOTAL260/PASS260/FAIL0/SKIP0. TypeScript, lint and normal production build pass. CODE GATE PASS; READY FOR ISOLATED ACCEPTANCE TESTING. Mutation/email/physical-device acceptance remains pending. No deployment.
+
+Admin refinement publication authorized by user. Scope: admin presentation, visibility feedback, infant wording, preview loading, historical destination fixture and verification reports. Excludes unrelated email activation/scheduler work, SQL account edits and infrastructure setup. Acceptance limitations retained. Deployment verification pending.

@@ -10,7 +10,7 @@ import { saveWebsiteSection, uploadWebsiteImage } from "./website-actions";
 import styles from "./website-editor.module.css";
 import { prepareWebsiteImage } from "@/modules/content/image-upload";
 
-export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, values, setValues, onStateChange }: { operatorId: string; sectionId: string; content: WebsiteContent; stamp: string; values: WebsiteContent; setValues: Dispatch<SetStateAction<WebsiteContent>>; onStateChange?: (id: string, dirty: boolean, pending: boolean) => void }) {
+export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, values, setValues, onStateChange, onFeedback }: { operatorId: string; sectionId: string; content: WebsiteContent; stamp: string; values: WebsiteContent; setValues: Dispatch<SetStateAction<WebsiteContent>>; onStateChange?: (id: string, dirty: boolean, pending: boolean) => void; onFeedback?: (id: string, message: string) => void }) {
   const section = editableWebsiteSections.find(section => section.id === sectionId)!;
   const [message, setMessage] = useState("");
   const [sizes, setSizes] = useState<Record<string,string>>({});
@@ -35,6 +35,7 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
     start(async () => {
       const result = await saveWebsiteSection(operatorId, sectionId, data);
       setMessage(result.error ?? result.saved ?? "");
+      onFeedback?.(sectionId, result.error ?? result.saved ?? "");
       if (!result.error) router.refresh();
     });
   }}>

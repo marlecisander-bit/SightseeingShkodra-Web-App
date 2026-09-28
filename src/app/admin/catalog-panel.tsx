@@ -229,7 +229,7 @@ export async function CatalogPanel({
         </div>
       ))}
       <p>
-        Showing up to 100 records per group. Referenced suppliers cannot be
+        Showing up to 100 products and 100 suppliers. Suppliers linked to products cannot be
         deleted.
       </p>
     </div>

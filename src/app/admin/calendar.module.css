@@ -3,3 +3,4 @@
 @media(max-width:520px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.grid>span{display:none}.day{min-height:110px;font-size:14px!important;padding:12px!important}.day small{font-size:12px}}
 
 .service,.workspace{max-width:none;padding:0;margin:20px 0}.toolbar h2{min-width:180px;margin:0}@media(max-width:600px){.toolbar h2{flex:1 0 100%;order:-1}.toolbar>button{flex:1 1 110px}}
+.servicePeriod { color:var(--ss-muted); font-size:14px; }
