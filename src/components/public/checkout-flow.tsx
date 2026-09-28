@@ -186,7 +186,6 @@ export function CheckoutFlow() {
         requestId: value.requestId,
       });
       // Called only after the reserve button's awaited request, never during render.
-      // eslint-disable-next-line react-hooks/purity
       updateHold(value, result.hold, result.serverNow, performance.now());
     } catch (e) {
       if (
@@ -225,6 +224,7 @@ export function CheckoutFlow() {
   if (restoring) return <p role="status">Restoring your selection…</p>;
   return (
     <div className="p-flow">
+      <p className="p-step-caption" aria-live="polite">Step {order ? 3 : attempt?.hold ? 2 : 1} of 3 · {order ? "Confirmation" : attempt?.hold ? "Your details" : "When"}</p>
       <ol className="p-progress" aria-label="Booking progress">
         {["Selection", "Details", "Confirmation"].map((label, i) => (
           <li
@@ -249,29 +249,9 @@ export function CheckoutFlow() {
             ? "Your seats, for a little while."
             : "Choose your day."}
       </h2>
-      {!order && <><p className="p-preview">
+      {!order && <p className="p-preview">
         Reserve online and pay at the meeting point.
-      </p>
-      <div className="p-flow-summary">
-        <span>{chosen.date || "Choose a date"}</span>
-        <span>{chosen.guests} guests</span>
-        <span>
-          {attempt?.time ??
-            selected?.startTime.slice(0, 5) ??
-            "Choose a departure"}
-        </span>
-        <strong>
-          Total:{" "}
-          {attempt
-              ? displayMoney(attempt.total, "EUR")
-              : availability.quote
-                ? displayMoney(
-                    selected?.passengerQuote?.total??availability.quote.total,
-                    availability.quote.currency,
-                  )
-                : "not available"}
-        </strong>
-      </div></>}
+      </p>}
       {error && <p role="alert">{error}</p>}
       {error && attempt?.hold && (
         <Button
@@ -406,6 +386,26 @@ export function CheckoutFlow() {
           )}
         </>
       )}
+      {!order && (<div className="p-flow-summary">
+        <span>{chosen.date || "Choose a date"}</span>
+        <span>{chosen.guests} guests</span>
+        <span>
+          {attempt?.time ??
+            selected?.startTime.slice(0, 5) ??
+            "Choose a departure"}
+        </span>
+        <strong>
+          Total:{" "}
+          {attempt
+              ? displayMoney(attempt.total, "EUR")
+              : availability.quote
+                ? displayMoney(
+                    selected?.passengerQuote?.total??availability.quote.total,
+                    availability.quote.currency,
+                  )
+                : "not available"}
+        </strong>
+      </div>)}
     </div>
   );
 }

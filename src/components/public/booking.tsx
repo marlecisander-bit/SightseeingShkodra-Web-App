@@ -336,6 +336,13 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
   const active = activeNavigation(pathname,hash,links);
   const [menu, setMenu] = useState(false);
   const menuToggle = useRef<HTMLButtonElement>(null);
+  const returnHome = useRef(false);
+  useEffect(() => {
+    if (pathname === "/" && returnHome.current) {
+      returnHome.current = false;
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, [pathname]);
   useEffect(() => {
     const updateHash = () => setHash(window.location.hash);
     updateHash();window.addEventListener('hashchange',updateHash);window.addEventListener('popstate',updateHash);
@@ -358,7 +365,16 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
           }
         }}
       >
-        <Link className="p-wordmark" href="/" onClick={() => setMenu(false)}>
+        <Link className="p-wordmark" href="/" scroll aria-label="Go to Sightseeing Shkodra homepage" onClick={(event) => {
+          if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+          setMenu(false);
+          if (pathname === "/") {
+            event.preventDefault();
+            window.history.replaceState(window.history.state, "", "/");
+            setHash("");
+            window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+          } else returnHome.current = true;
+        }}>
           <BrandLogo light />
         </Link>
         <button

@@ -227,3 +227,14 @@ Existing Supabase Auth, SSR cookies, staff_profiles membership and permission/RL
 
 ### Staff login UI — 25 September 2026
 Split-screen brand/photo login with form-first mobile layout implemented on existing route. Only presentation components changed; authentication/authorization/recovery unchanged. Seven viewport checks, submit interaction checks and 17 identity tests passed; isolated lint/typecheck/build passed. Review at localhost:3007/auth/sign-in. No deployment. See STAFF-LOGIN-DESIGN.md.
+
+
+### Live map responsive presentation ? 26 September 2026
+Audited iframe consumers and standalone source. Explicit preview/full intent, container sizing and scroll-safe interaction; independent map owns compact/mini presentation and single overlay-aware observer. Tracking/backend logic unchanged. Thirty homepage/live viewport cases plus standalone and resize/interaction checks passed using local fixtures; lint and isolated typecheck/build passed. Root typecheck fails in pre-existing private nested copy. Physical-device gestures remain unverified. No deployment. See LIVE-MAP-EMBED-RESPONSIVE-AUDIT.md.
+
+
+### Website responsive release candidate ? 28 September 2026
+Hero-only amenities removed (CMS/data retained), logo returns home/top with menu/hash cleanup, checkout flow presentation simplified, landscape menu bounded. 15-size local matrix and 390/1440 navigation passed; seven-width management and six rebooking browser flows passed using synthetic responses. 31 focused local DB/integration and 23 PostgreSQL concurrency tests passed; lint and isolated typecheck/build passed. Hosted map status/loading overlap remains in separate Map App; physical-device and authenticated admin UI acceptance incomplete. NOT READY FOR PRODUCTION. Nothing deployed. See RESPONSIVE-RELEASE-CANDIDATE.md.
+
+### Website publication authorization - 28 September 2026
+User requested publication of the responsive website candidate. Publishing website presentation changes only; separate Map App and unrelated email/admin work excluded. Audit limitations above remain; publication does not certify those outstanding checks.

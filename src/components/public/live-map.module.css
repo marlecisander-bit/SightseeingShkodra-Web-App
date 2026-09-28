@@ -1,11 +1,22 @@
 .embed { min-width: 0; width: 100%; }
+.viewport { position: relative; overflow: hidden; border-radius: var(--ss-radius); }
+.scrollSurface { position: absolute; inset: 0; touch-action: pan-y pinch-zoom; }
+.interaction { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px 12px; margin-top:12px; text-align:center; }
+.interaction span { color:var(--ss-muted); font-size:13px; }
+.interaction button { border:1px solid var(--brand-red); border-radius:var(--ss-radius-control); background:var(--ss-white, #fff); color:var(--brand-text); cursor:pointer; font:600 14px/1.4 var(--ss-font); }
+.interaction button:hover { background:var(--brand-red-soft); }
+.interaction button:focus-visible { outline:3px solid var(--brand-red); outline-offset:3px; }
 .map {
   display: block;
   width: 100%;
-  height: clamp(520px, 75svh, 820px);
+  height: clamp(320px, 62svh, 680px);
   border: 1px solid var(--ss-border);
   border-radius: var(--ss-radius);
   background: var(--ss-sand);
+}
+.embed[data-presentation="compact"] .map { height:clamp(320px, 90cqi, 500px); }
+@media (orientation:landscape) and (max-height:520px) {
+  .embed[data-presentation="compact"] .map { height:clamp(280px, 75svh, 400px); }
 }
 .recovery {
   margin-top: 16px;
