@@ -1319,8 +1319,34 @@ body:has(.p-booking-dialog[open]) {
 .public-site .p-hero-v2 .p-hero-track:hover{background:#0006}
 .public-site .p-hero-scroll{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:44px;font-size:12px;align-self:center;margin-top:6px;color:white;text-align:center}
 .public-site .p-hero-scroll span{width:1px;height:18px;background:currentColor}
+.public-site .p-hero-commercial{display:contents}
+.public-site .p-hero-commercial>.p-booking-price{font-size:clamp(1rem,1.3vw,1.2rem);line-height:1.6;max-width:680px}
 @media(max-width:700px){.public-site .p-hero.p-hero-v2{padding:calc(88px + env(safe-area-inset-top)) var(--p-gutter) 12px;gap:24px}.public-site .p-hero-v2>.p-media img{object-position:var(--hero-mobile-position)}.public-site .p-hero-v2 .p-hero-content{padding:24px 0;margin:0 0 auto}.public-site .p-hero-v2 h1{font-size:clamp(2.35rem,9vw,3.8rem)}.public-site .p-hero-v2 .p-actions{gap:10px}.public-site .p-hero-v2 .p-actions>a{flex:1 1 150px;padding:12px 16px}.public-site .p-header-home .p-header-book{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.public-site .p-header{transition:none}}
+
+/* Mobile hierarchy: retain the photograph, leave the van clear, then book. */
+@media(max-width:700px){
+ .public-site .p-header-home .p-header-book{display:none}
+ .public-site .p-header-home .p-menu-toggle{margin-left:auto;min-width:44px;min-height:44px}
+ .public-site .p-hero.p-hero-v2{
+  min-height:100svh;gap:8px;background:var(--ss-charcoal);
+  padding:calc(88px + env(safe-area-inset-top)) max(var(--p-gutter),env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(var(--p-gutter),env(safe-area-inset-left));
+ }
+ .public-site .p-hero-v2>.p-media{bottom:auto;height:auto;aspect-ratio:9/16}
+ .public-site .p-hero-v2>.p-media img{object-fit:cover;object-position:var(--hero-mobile-position)}
+ .public-site .p-hero-v2 .p-hero-content{display:flex;flex-direction:column;padding:0;margin:0;min-height:calc(137vw + 180px - 88px)}
+ .public-site .p-hero-v2 .p-eyebrow,
+ .public-site .p-hero-v2 .p-hero-description{display:none}
+ .public-site .p-hero-v2 h1{margin-bottom:12px}
+ .public-site .p-hero-v2 .p-hero-content>p:not(.p-eyebrow){margin:0;max-width:260px;line-height:1.5}
+ .public-site .p-hero-commercial{display:block;margin-top:auto;padding-top:20px;min-height:180px}
+ .public-site .p-hero-commercial .p-booking-price{margin:0;min-height:56px}
+ .public-site .p-hero-commercial .p-price-date{display:none}
+ .public-site .p-hero-v2 .p-actions{flex-direction:column;align-items:stretch;gap:8px;margin-top:12px}
+ .public-site .p-hero-v2 .p-actions>a{flex:none;width:100%;min-height:52px}
+ .public-site .p-hero-v2 .p-actions>.p-hero-track{align-self:center;width:auto;min-height:44px;padding:8px 16px;background:transparent;border-color:transparent}
+ .public-site .p-hero-scroll{margin-top:0}
+}
 
 .p-passengers{display:grid;gap:12px;width:100%}.p-passengers>div{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}.p-passengers small{display:block;font-size:12px}.p-passengers .p-stepper{width:140px;min-height:44px}.p-passengers .p-stepper button{min-width:44px;min-height:44px}
 
