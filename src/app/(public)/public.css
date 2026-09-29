@@ -1336,32 +1336,32 @@ body:has(.p-booking-dialog[open]) {
 .public-site .p-hero-commercial>.p-booking-price{font-size:clamp(1rem,1.3vw,1.2rem);line-height:1.6;max-width:680px}
 @media(prefers-reduced-motion:reduce){.public-site .p-header{transition:none}}
 
-/* One mobile/tablet photo region contains copy and normal-flow commercial
-   controls. Discover occupies the following row, outside the photograph. */
+/* One mobile/tablet photo fills the stable visible viewport, including Discover.
+   Content can extend it on short screens without clipping controls. */
 @media(max-width:900px){
  .public-site .p-header-home{padding-inline:max(var(--p-gutter),env(safe-area-inset-left)) max(var(--p-gutter),env(safe-area-inset-right))}
  .public-site .p-header-home .p-menu-toggle{margin-left:auto;min-width:44px;min-height:44px}
  .public-site .p-hero.p-hero-v2{
-  display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto auto;
-  height:auto;min-height:0;max-height:none;gap:0;background:var(--ss-charcoal);
-  padding:0;background:var(--ss-white);
+  display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto 1fr auto;
+  height:auto;min-height:100vh;min-height:100svh;max-height:none;gap:0;background:var(--ss-charcoal);
+  padding:0;
  }
  /* The photo covers the content rows without contributing intrinsic height.
     A bounded subject region separates copy from the commercial controls. */
- .public-site .p-hero-v2>.p-media{position:absolute;inset:0;grid-area:1/1/4/2;min-height:0;height:auto;aspect-ratio:auto;overflow:hidden}
+ .public-site .p-hero-v2>.p-media{position:absolute;inset:0;grid-area:1/1/5/2;min-height:0;height:auto;aspect-ratio:auto;overflow:hidden}
  .public-site .p-hero-v2>.p-media img{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;object-fit:cover;object-position:var(--hero-mobile-position)}
  .public-site .p-hero-v2 .p-hero-content{display:contents}
  .public-site .p-hero-v2 .p-eyebrow,
  .public-site .p-hero-v2 .p-hero-description{display:none}
- .public-site .p-hero-v2 h1{grid-area:1/1;align-self:start;margin:0 0 12px;padding:calc(var(--p-header-height) + env(safe-area-inset-top) + 20px) max(var(--p-gutter),env(safe-area-inset-right)) 0 max(var(--p-gutter),env(safe-area-inset-left));font-size:clamp(2.35rem,9vw,3.8rem)}
+ .public-site .p-hero-v2 h1{grid-area:1/1;align-self:start;margin:0 0 12px;padding:calc(var(--p-header-height) + env(safe-area-inset-top) + 40px) max(var(--p-gutter),env(safe-area-inset-right)) 0 max(var(--p-gutter),env(safe-area-inset-left));font-size:clamp(2.35rem,9vw,3.8rem)}
  .public-site .p-hero-v2 .p-hero-content>p:not(.p-eyebrow){grid-area:2/1;align-self:start;margin:0;max-width:292px;line-height:1.5;padding-inline:max(var(--p-gutter),env(safe-area-inset-left)) max(var(--p-gutter),env(safe-area-inset-right))}
- .public-site .p-hero-commercial{grid-area:3/1;display:block;margin:clamp(160px,45vw,220px) 0 0;padding:24px max(var(--p-gutter),env(safe-area-inset-right)) 20px max(var(--p-gutter),env(safe-area-inset-left));min-height:0;background:linear-gradient(transparent,#0009)}
+ .public-site .p-hero-commercial{grid-area:3/1;align-self:end;display:block;margin:clamp(130px,35vw,180px) 0 0;padding:24px max(var(--p-gutter),env(safe-area-inset-right)) 12px max(var(--p-gutter),env(safe-area-inset-left));min-height:0;background:linear-gradient(transparent,#0009)}
  .public-site .p-hero-commercial .p-booking-price{margin:0;min-height:56px}
  .public-site .p-hero-commercial .p-price-date{display:block}
  .public-site .p-hero-v2 .p-actions{flex-direction:column;align-items:stretch;gap:8px;margin-top:12px}
  .public-site .p-hero-v2 .p-actions>a{flex:none;width:100%;min-height:52px;padding:12px 16px}
- .public-site .p-hero-v2 .p-actions>.p-hero-track{align-self:center;width:auto;min-height:44px;padding:8px 16px;background:transparent;border-color:transparent}
- .public-site .p-hero-scroll{grid-area:4/1;justify-self:center;margin:8px 0;color:var(--ss-charcoal);text-shadow:none}
+ .public-site .p-hero-v2 .p-actions>.p-hero-track{display:none}
+ .public-site .p-hero-scroll{grid-area:4/1;justify-self:stretch;margin:0;padding:8px 0 calc(12px + env(safe-area-inset-bottom));color:white;background:#0009;text-shadow:none}
  .public-site .p-header .p-brand-logo{width:190px}
  .public-site .p-menu-toggle{font-size:28px;line-height:1;cursor:pointer}
  .public-site .p-menu-backdrop{display:block;position:fixed;inset:0;z-index:29;width:100%;height:100%;border:0;padding:0;background:rgba(0,0,0,.12);cursor:pointer}

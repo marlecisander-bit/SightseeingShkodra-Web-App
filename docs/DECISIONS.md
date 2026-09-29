@@ -1,5 +1,9 @@
 # Approved roadmap amendments
 
+## 2026-09-29 - Full-screen mobile hero from phone reference
+
+The user supplied the real-phone screenshot and requested that the mobile photograph, including Discover your day, cover the screen; remove the mobile hero Track live option and lower the headline/support slightly. This supersedes the earlier requirement that Discover sit outside the photo and that hero geometry remain independent of viewport height. Use stable small-viewport minimum height (100svh), allow readable content to extend on short screens, retain proportional cropping, and keep desktop/header/booking/pricing/map behavior. No deployment is included in this implementation request. See MOBILE-HERO-FULLSCREEN.md.
+
 ## 2026-09-24 - Unified van-inspired visual system
 
 The new user design brief supersedes the earlier bright-red palette: raspberry #B91546 is primary; yellow #F6C928 identifies booking CTAs, with turquoise/green/purple accents and white/cream/sand surfaces. Central tokens also govern typography, controls, cards, spacing and widths. Preserve CMS content, route ordering, booking/authentication/Supabase/GPS/ETA logic and logo artwork. Independent map iframe styling remains owned by its separate app; no remote deployment authorized. Original roadmap unchanged.
