@@ -85,6 +85,17 @@
 .public-site .p-section {
   padding-block: var(--p-section);
 }
+/* Adjacent white sections share one interval. Coloured bands retain their
+   own full inset on both sides of the background transition. */
+.public-site .p-home > .p-section + .p-section,
+.public-site .p-subpage > .p-section + .p-section,
+.public-site .p-subpage > .p-section + .p-section-wrapper > .p-section,
+.public-site .p-subpage > .p-section-wrapper + .p-section {
+  padding-top: 0;
+}
+.public-site .p-subpage .p-section > .p-container {
+  padding-inline: 0;
+}
 .public-site .p-eyebrow {
   font: 600 11px/1.5 var(--p-ui);
   letter-spacing: 0.16em;
@@ -305,6 +316,12 @@
   gap: var(--ss-space-8);
   margin-top: 32px;
 }
+.public-site .p-button-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ss-space-4);
+}
 .public-site .p-hero-track {
   display: inline-flex;
   align-items: center;
@@ -436,9 +453,6 @@
   font: 400 22px/1.3 var(--p-display);
   margin-bottom: 8px;
 }
-.public-site .p-intro {
-  padding-bottom: 30px;
-}
 .public-site .p-route-layout {
   display: grid;
   grid-template-columns: 1fr 1.2fr;
@@ -513,14 +527,13 @@
 }
 .public-site .p-live-section {
   background: var(--ss-cream);
-  padding: var(--p-section) var(--p-gutter);
+  padding-block: var(--p-section);
 }
 .public-site .p-live-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 65px;
   align-items: center;
-  padding: 0;
 }
 .public-site .p-live-grid > div > p:not(.p-eyebrow) {
   max-width: 400px;
@@ -1151,9 +1164,6 @@ body:has(.p-booking-dialog[open]) {
   .public-site .p-live-grid {
     grid-template-columns: 1fr;
     gap: 35px;
-  }
-  .public-site .p-live-section {
-    padding-block: 60px;
   }
   .public-site .p-tracking-shell {
     padding: 28px 20px;

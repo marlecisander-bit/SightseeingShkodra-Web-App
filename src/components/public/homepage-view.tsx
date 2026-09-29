@@ -74,7 +74,7 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
           <LiveMapEmbed />
         </div>
       </section>}
-      {homepageVisible(c, "departures") && <section className="p-container p-departures">
+      {homepageVisible(c, "departures") && <section className="p-section p-container p-departures">
         <SectionHeading
           eyebrow={c["departures.eyebrow"]}
           title={c["departures.title"]}
