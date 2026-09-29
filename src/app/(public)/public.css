@@ -1342,18 +1342,20 @@ body:has(.p-booking-dialog[open]) {
  .public-site .p-header-home{padding-inline:max(var(--p-gutter),env(safe-area-inset-left)) max(var(--p-gutter),env(safe-area-inset-right))}
  .public-site .p-header-home .p-menu-toggle{margin-left:auto;min-width:44px;min-height:44px}
  .public-site .p-hero.p-hero-v2{
-  display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr auto auto;
+  display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto auto;
   height:auto;min-height:0;max-height:none;gap:0;background:var(--ss-charcoal);
   padding:0;background:var(--ss-white);
  }
- .public-site .p-hero-v2>.p-media{position:relative;inset:auto;grid-area:1/1/4/2;min-height:clamp(760px,200vw,1100px);height:auto;aspect-ratio:auto;overflow:hidden}
+ /* The photo covers the content rows without contributing intrinsic height.
+    A bounded subject region separates copy from the commercial controls. */
+ .public-site .p-hero-v2>.p-media{position:absolute;inset:0;grid-area:1/1/4/2;min-height:0;height:auto;aspect-ratio:auto;overflow:hidden}
  .public-site .p-hero-v2>.p-media img{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;object-fit:cover;object-position:var(--hero-mobile-position)}
  .public-site .p-hero-v2 .p-hero-content{display:contents}
  .public-site .p-hero-v2 .p-eyebrow,
  .public-site .p-hero-v2 .p-hero-description{display:none}
  .public-site .p-hero-v2 h1{grid-area:1/1;align-self:start;margin:0 0 12px;padding:calc(var(--p-header-height) + env(safe-area-inset-top) + 20px) max(var(--p-gutter),env(safe-area-inset-right)) 0 max(var(--p-gutter),env(safe-area-inset-left));font-size:clamp(2.35rem,9vw,3.8rem)}
  .public-site .p-hero-v2 .p-hero-content>p:not(.p-eyebrow){grid-area:2/1;align-self:start;margin:0;max-width:292px;line-height:1.5;padding-inline:max(var(--p-gutter),env(safe-area-inset-left)) max(var(--p-gutter),env(safe-area-inset-right))}
- .public-site .p-hero-commercial{grid-area:3/1;display:block;margin:0;padding:24px max(var(--p-gutter),env(safe-area-inset-right)) 20px max(var(--p-gutter),env(safe-area-inset-left));min-height:0;background:linear-gradient(transparent,#0009)}
+ .public-site .p-hero-commercial{grid-area:3/1;display:block;margin:clamp(160px,45vw,220px) 0 0;padding:24px max(var(--p-gutter),env(safe-area-inset-right)) 20px max(var(--p-gutter),env(safe-area-inset-left));min-height:0;background:linear-gradient(transparent,#0009)}
  .public-site .p-hero-commercial .p-booking-price{margin:0;min-height:56px}
  .public-site .p-hero-commercial .p-price-date{display:block}
  .public-site .p-hero-v2 .p-actions{flex-direction:column;align-items:stretch;gap:8px;margin-top:12px}
@@ -1369,9 +1371,13 @@ body:has(.p-booking-dialog[open]) {
  .public-site:has(>.p-home) .p-navigation.is-open{top:100%}
 }
 @media(max-width:700px){.public-site .p-header-home .p-header-book{display:none}.public-site .p-header .p-brand-logo{width:145px}}
+/* Crop expendable sky from the portrait photo while keeping its proportions.
+   The bottom anchor brings the vehicle above the price without a taller hero. */
+@media(max-width:700px) and (orientation:portrait){
+ .public-site .p-hero-v2>.p-media img{transform:scale(1.2);transform-origin:center bottom}
+}
 /* Landscape retains the landscape photograph in the same bounded region. */
 @media(max-width:900px) and (orientation:landscape){
- .public-site .p-hero-v2>.p-media{min-height:max(660px,75vw)}
  .public-site .p-hero-v2>.p-media img{object-position:var(--hero-desktop-position)}
 }
 
