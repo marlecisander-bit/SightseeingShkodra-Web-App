@@ -14,4 +14,4 @@ export function validateDestination(value: Destination, publish = false) {
   if (publish && [value.text,value.image,value.alt,value.seoTitle,value.seoDescription].some(v=>!v.trim())) throw Error("Publishing requires a description, image, alt text and SEO title/description.");
   return value;
 }
-export function destinationPlace(row: DestinationRecord, preview = false): DestinationPlace { const d = preview ? row.body : row.published_body!; return {...d,id:d.slug,recordId:row.id,link:d.guidePublished ? `/explore/${d.slug}` : `/explore#${d.slug}`,aliases:row.destination_aliases}; }
+export function destinationPlace(row: DestinationRecord, preview = false): DestinationPlace { const d = preview ? row.body : row.published_body!; return {...d,id:d.slug,recordId:row.id,link:d.guidePublished ? `/explore/${d.slug}` : d.showOnPage ? `/explore#${d.slug}` : "/explore",aliases:row.destination_aliases}; }

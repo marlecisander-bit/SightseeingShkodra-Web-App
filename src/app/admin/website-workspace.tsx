@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import { AmenityIcon } from "@/components/ui/amenity-icon";
 import type { WebsiteRecord } from "@/modules/content/website-server";
-import { websiteEditorGroups, homepageVisible } from "@/modules/content/website-schema";
+import { visibilityScope, websiteEditorGroups, homepageVisible } from "@/modules/content/website-schema";
 import { WebsiteSectionEditor } from "./website-editor";
 import styles from "./website-editor.module.css";
 
@@ -71,7 +71,7 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager }: { o
               </span>
               {section.fields.some(f => f.kind === "visibility") && <span className={styles.visibilityRow} onClick={event => event.stopPropagation()} onKeyDown={event => event.stopPropagation()}>
 
-                <label><input type="checkbox" role="switch" aria-label={`Show ${section.title} on homepage`} checked={homepageVisible(values, section.id)} disabled={pending || (!!dirtySection && dirtySection.id !== section.id)} onChange={event => { setActive(null); setValues(current => ({...current, [`${section.id}.showOnHomepage`]: String(event.target.checked)})); }} /><span className={styles.visibilityCopy}><strong>{homepageVisible(values, section.id) ? "Visible" : "Hidden"}</strong><span>{homepageVisible(values, section.id) ? "on homepage" : "from homepage"}</span></span></label>
+                <label><input type="checkbox" role="switch" aria-label={`Show ${section.title} ${visibilityScope(section.id)}`} checked={homepageVisible(values, section.id)} disabled={pending || (!!dirtySection && dirtySection.id !== section.id)} onChange={event => { setActive(null); setValues(current => ({...current, [`${section.id}.showOnHomepage`]: String(event.target.checked)})); }} /><span className={styles.visibilityCopy}><strong>{homepageVisible(values, section.id) ? "Visible" : "Hidden"}</strong><span>{visibilityScope(section.id)}</span></span></label>
                 {dirtySection?.id === section.id && active !== section.id && <span className={styles.visibilityActions}><Button form={`cms-form-${section.id}`} name="operation" value="draft" disabled={pending}>Save Draft</Button><Button type="button" disabled={pending} onClick={() => setValues(current => ({...current, ...Object.fromEntries(section.fields.map(f => [f.key, content[f.key]]))}))}>Discard</Button></span>}
               </span>}
               {dirtySection?.id === section.id && section.fields.some(f => f.kind === "visibility") && <small className={styles.helper}>Unsaved visibility. Last saved: {homepageVisible(content, section.id) ? "Visible" : "Hidden"}. Save Draft keeps changes private until you publish.</small>}

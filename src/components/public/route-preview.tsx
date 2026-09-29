@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Media } from "./ui";
+import { ExpandableText } from "./expandable-text";
 
 export function RoutePreview({ places, showNote = true }: { showNote?: boolean; places: readonly { id: string; name: string; tag: string; image: string; alt: string; detail: string; link: string }[] }) {
   const [selected, setSelected] = useState(0);
@@ -34,7 +35,7 @@ export function RoutePreview({ places, showNote = true }: { showNote?: boolean; 
         <div>
           <p className="p-eyebrow">Selected destination · 0{active + 1}</p>
           <h3>{place.name}</h3>
-          <p>{place.detail}</p>
+          <ExpandableText key={place.id} text={place.detail} />
           <a className="p-text-link" href={place.link}>Explore destination</a>
         </div>
       </div>

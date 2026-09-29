@@ -7,7 +7,20 @@ export type WebsiteField = { key: string; label: string; initial: string; kind: 
 const field = (key: string, label: string, initial: string, kind: WebsiteField["kind"] = "text"): WebsiteField => ({ key, label, initial, kind, max: kind === "text" ? 700 : 2000 });
 const f = field;
 export const homepageVisibilitySections = ["hero", "intro", "route", "live", "departures", "reviews", "notebook", "final"] as const;
-export function homepageVisible(content: WebsiteContent, section: string) { return content[`${section}.showOnHomepage`] !== "false"; }
+// Retain persisted keys; shared sections use this state across all consumers.
+export function sectionVisible(content: WebsiteContent, section: string) { return content[`${section}.showOnHomepage`] !== "false"; }
+export const homepageVisible = sectionVisible;
+export function visibilityScope(section: string) { return ["route", "live", "departures", "reviews", "final"].includes(section) ? "across public pages" : "on homepage"; }
+export function visibleWebsiteLink(link: string, content: WebsiteContent) {
+  const resolved = resolveWebsiteLink(link);
+  return !(resolved === "/#route" && !sectionVisible(content, "route") || resolved === "/tour#timetable" && !sectionVisible(content, "departures"));
+}
+export function invitationVisible(content: WebsiteContent, pathname: string) {
+  return sectionVisible(content, "final") && pathname !== "/book" && !pathname.startsWith("/booking/");
+}
+export function unavailableWebsiteContent(): WebsiteContent {
+  return { ...initialWebsiteContent, ...Object.fromEntries(homepageVisibilitySections.map(id => [`${id}.showOnHomepage`, "false"])) };
+}
 export const websiteSections = [
   ...pageSections,
   { id: "hero", title: "Hero", fields: [
@@ -64,7 +77,7 @@ export const websiteSections = [
   { id: "seo", title: "Homepage SEO", fields: [f("seo.title", "Search title", "Sightseeing Shkodra"), f("seo.description", "Search description", "Discover Shkodra. Tour details and booking information coming soon."), f("seo.image", "Social image", "/images/lake.webp", "image"), f("seo.alt", "Social image description", "Lake Shkodra and the Buna River seen from Rozafa Castle")] },
 ];
 for (const section of websiteSections) {
-  if (homepageVisibilitySections.some(id => id === section.id)) section.fields.push(f(`${section.id}.showOnHomepage`, "Show on homepage", "true", "visibility"));
+  if (homepageVisibilitySections.some(id => id === section.id)) section.fields.push(f(`${section.id}.showOnHomepage`, `Show ${visibilityScope(section.id)}`, "true", "visibility"));
 }
 // Retain the stored schema and historical showcase headings without offering obsolete controls.
 export const homepageEditorSections = websiteSections.filter(s => !["how","destinations","navigation","footer","seo",...pageSections.map(p=>p.id)].includes(s.id)).map(s => s.id === "reviews" ? {...s,title:"Guest Reviews",fields:s.fields.filter(f => f.key !== "reviews.second")} : s.id === "notebook" ? {...s,fields:s.fields.filter(f=>!/^notebook\.[0-9]+\./.test(f.key)||f.key==="notebook.0.linkLabel").map(f=>f.key==="notebook.0.linkLabel"?{...f,label:"Destination card link label"}:f)} : s);

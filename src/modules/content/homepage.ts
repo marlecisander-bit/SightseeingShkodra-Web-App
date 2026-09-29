@@ -2,6 +2,7 @@ import type {
   AvailabilityQuote,
   AvailabilityRequest,
 } from "../booking/contracts";
+import { adultHeroFare, nextHeroFare, type HeroFare } from "./hero-fare";
 
 export type PublicStop = {
   id: string;
@@ -19,6 +20,7 @@ export type HomeContent = {
   ogImageAlt?: string | null;
 };
 export type Homepage = {
+  heroFare?: HeroFare;
   adultFares?: {time:string;amount:number}[];
   state: "ready" | "empty" | "unconfigured" | "unavailable";
   product: {
@@ -44,6 +46,7 @@ export type HomepageConfig = { operatorId?: string; productSlug?: string };
 export type HomepageSources = {
   read: (operatorId: string, productSlug: string) => Promise<unknown>;
   quote: (request: AvailabilityRequest) => Promise<AvailabilityQuote>;
+  nextDate?: (operatorId: string, productId: string, after: string) => Promise<string | null>;
 };
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const slots = new Set([
@@ -197,10 +200,19 @@ export async function loadHomepage(
         model.price = `${new Intl.NumberFormat("en-IE", { style: "currency", currency: quote.currency }).format(quote.unitPrice / 100)} per guest`;
         model.departures = departures;
         model.adultFares = quote.departures.filter(d=>d.available && d.passengerQuote).map(d=>({time:d.startTime.slice(0,5),amount:d.passengerQuote!.total}));
+        model.heroFare = adultHeroFare(quote);
         model.schedule = "ready";
         model.frequency = departures.length
           ? `${departures.length} upcoming ${departures.length === 1 ? "departure" : "departures"} today`
           : "No more departures today";
+        if (!model.heroFare && sources.nextDate) {
+          try {
+            model.heroFare = await nextHeroFare(quote, {version:1, operatorId:config.operatorId, productId:model.product.id, date:model.date, guests:1}, {
+              quote: sources.quote,
+              nextDate: after => sources.nextDate!(config.operatorId!, model.product!.id, after),
+            });
+          } catch { /* A teaser outage must not remove today's timetable or booking entry. */ }
+        }
       } catch {
         /* Keep published editorial data; never substitute a made-up price or timetable. */
       }

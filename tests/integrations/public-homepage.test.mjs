@@ -186,3 +186,13 @@ test("discovery follows each supplied date quote and falls back when none is boo
   assert.equal(lowestQuotedFare(data.adultFares.map(f=>f.amount)),context.available?context.amount:undefined);
  }
 });
+
+test("hero lookup failure preserves published content and today's timetable", async () => {
+  const home=await loadHomepage(config,{
+    read:async()=>snapshot(),
+    quote:async request=>({...await quote(request),departures:[]}),
+    nextDate:async()=>{throw Error('Unavailable');},
+  });
+  assert.equal(home.state,'ready');assert.equal(home.schedule,'ready');
+  assert.equal(home.heroFare,undefined);assert.equal(home.product.id,productId);
+});

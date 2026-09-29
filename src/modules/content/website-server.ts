@@ -2,24 +2,22 @@ import "server-only";
 import { cache } from "react";
 import { connection } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { initialWebsiteContent, validateWebsiteContent, type WebsiteContent } from "./website-schema";
+import { unavailableWebsiteContent, validateWebsiteContent, type WebsiteContent } from "./website-schema";
 import { withOperatorService } from "../identity/operator-service";
 
 export type WebsiteRecord = { id: string; updated_at: string; published_at: string | null; body: { content: WebsiteContent }; published_body: { content: WebsiteContent } | null };
-// Only published editorial data enters this cache. Drafts never use this reader.
-const lastPublished = new Map<string, WebsiteContent>();
+// Request-scoped deduplication only; never resurrect stale optional sections on failure.
 export const getWebsitePublication = cache(async (): Promise<{ content: WebsiteContent; published: boolean }> => {
   await connection();
   const operator = process.env.PUBLIC_OPERATOR_ID;
-  if (!operator || !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SECRET_KEY) return { content: initialWebsiteContent, published: false };
+  if (!operator || !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SECRET_KEY) return { content: unavailableWebsiteContent(), published: false };
   try {
     const client = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SECRET_KEY, { auth: { persistSession: false }, global: { fetch: (input, init) => fetch(input, { ...init, cache: "no-store", signal: AbortSignal.timeout(4000) }) } });
     const { data, error } = await client.from("content_pages").select("published_body").eq("operator_id", operator).eq("slug", "website-homepage").eq("status", "published").maybeSingle();
     if (error || !data?.published_body) throw Error("Published content unavailable");
     const content = validateWebsiteContent(data.published_body.content);
-    lastPublished.set(operator, content);
     return { content, published: true };
-  } catch { return { content: lastPublished.get(operator) ?? initialWebsiteContent, published: lastPublished.has(operator) }; }
+  } catch { return { content: unavailableWebsiteContent(), published: false }; }
 });
 export async function getPublishedWebsite() { return (await getWebsitePublication()).content; }
 

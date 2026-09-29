@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 
 import Link from "next/link";
 import { activeNavigation } from "@/modules/content/navigation";
-import { homepageVisible, resolveWebsiteLink, initialWebsiteContent, type WebsiteContent } from "@/modules/content/website-schema";
+import { visibleWebsiteLink, homepageVisible, resolveWebsiteLink, initialWebsiteContent, type WebsiteContent } from "@/modules/content/website-schema";
 import { BrandLogo } from "./brand-logo";
 import {
   createContext,
@@ -256,6 +256,20 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
   const active = activeNavigation(pathname,hash,links);
   const [menu, setMenu] = useState(false);
   const menuToggle = useRef<HTMLButtonElement>(null);
+  const navigation = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!menu) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    navigation.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+    const desktop = window.matchMedia("(min-width:901px)");
+    const closeOnDesktop = () => { if (desktop.matches) setMenu(false); };
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      desktop.removeEventListener("change", closeOnDesktop);
+    };
+  }, [menu]);
   const returnHome = useRef(false);
   useEffect(() => {
     if (pathname === "/" && returnHome.current) {
@@ -290,6 +304,12 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
       <header ref={headerRef}
         className={`p-header ${pathname === "/" ? "p-header-home" : ""} ${pathname !== "/" || !homepageVisible(c, "hero") || scrolled || menu ? "p-header-solid" : ""}`}
         onKeyDown={(event) => {
+          if (event.key === "Tab" && menu) {
+            const controls = Array.from(headerRef.current?.querySelectorAll<HTMLElement>('a, button') ?? []).filter(node => node.getClientRects().length);
+            const first = controls[0], last = controls[controls.length - 1];
+            if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+            else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+          }
           if (event.key === "Escape" && menu) {
             setMenu(false);
             menuToggle.current?.focus();
@@ -313,23 +333,26 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
           className="p-menu-toggle"
           aria-expanded={menu}
           aria-controls="public-navigation"
+          aria-label={menu ? "Close menu" : "Open menu"}
           onClick={() => setMenu(!menu)}
         >
-          {menu ? "Close" : "Menu"}
+          <span aria-hidden="true">{menu ? "×" : "☰"}</span>
         </button>
         <nav
+          ref={navigation}
           id="public-navigation"
           className={menu ? "p-navigation is-open" : "p-navigation"}
           aria-label="Main navigation"
         >
-          {links.map((href,i)=><PublicBookingLink key={i} href={href} aria-current={active===i ? (href.includes("#") ? "location" : "page") : undefined} onClick={()=>{setMenu(false);setHash(href.includes("#")?"#"+href.split("#")[1]:"");}}>{i===0?c["nav.home"]:c[`nav.${i-1}.label`]}</PublicBookingLink>)}
+          {links.map((href,i)=>visibleWebsiteLink(href,c) ? <PublicBookingLink key={i} href={href} aria-current={active===i ? (href.includes("#") ? "location" : "page") : undefined} onClick={()=>{if(menu)menuToggle.current?.focus();setMenu(false);setHash(href.includes("#")?"#"+href.split("#")[1]:"");}}><span className="p-nav-label">{i===0?c["nav.home"]:c[`nav.${i-1}.label`]}</span></PublicBookingLink> : null)}
           <span className="p-language" title="More languages coming soon">
             EN
           </span>
+          {!inBooking && <BookButton className="p-menu-book" onClick={() => { menuToggle.current?.focus(); setMenu(false); }}>{c["nav.book"]}</BookButton>}
         </nav>
         {inBooking ? <Link className="p-header-back" href="/">Back to website</Link> : <BookButton className="p-header-book" onClick={() => setMenu(false)}>{c["nav.book"]}</BookButton>}
       </header>
-
+      {menu && <button type="button" className="p-menu-backdrop" tabIndex={-1} aria-label="Close navigation backdrop" onClick={() => { setMenu(false); menuToggle.current?.focus(); }} />}
     </>
   );
 }

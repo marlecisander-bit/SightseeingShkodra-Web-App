@@ -1,3 +1,4 @@
+import { ExpandableText } from "./expandable-text";
 import { bookingDate } from "./booking-presentation";
 import type {DayPlannerData} from '@/modules/content/day-planner';
 import { DayPlannerStrip } from './day-planner-strip';
@@ -14,7 +15,7 @@ import {
 } from "@/components/public/ui";
 import { RoutePreview } from "@/components/public/route-preview";
 import { LiveMapEmbed } from "@/components/public/live-map-embed";
-import { homepageVisible, resolveWebsiteLink, websitePlaces, type WebsiteContent } from "@/modules/content/website-schema";
+import { visibleWebsiteLink, homepageVisible, resolveWebsiteLink, websitePlaces, type WebsiteContent } from "@/modules/content/website-schema";
 import type { Homepage } from "@/modules/content/homepage";
 
 
@@ -24,7 +25,7 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
 
   return (
     <main id="main-content" className={`p-home${homepageVisible(c, "hero") ? "" : " p-home-no-hero"}`}>
-      {homepageVisible(c, "hero") && <HomepageHero content={c} adultFares={home.adultFares} date={home.date}/>}
+      {homepageVisible(c, "hero") && <HomepageHero content={c} fare={home.heroFare}/>}
 {homepageVisible(c, "intro") && <section id="home-intro" className="p-section p-container p-intro">
         <PreviewNote />
         {home.state === "unavailable" && (
@@ -42,8 +43,8 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
           eyebrow={c["intro.eyebrow"]}
           title={c["intro.title"]}
         >
-          <p>{c["intro.text"]}</p>
-          <Link className="p-text-link" href={resolveWebsiteLink(c["intro.link"])}>{c["intro.linkLabel"]}</Link>
+          <ExpandableText text={c["intro.text"]} />
+          {visibleWebsiteLink(c["intro.link"], c) && <Link className="p-text-link" href={resolveWebsiteLink(c["intro.link"])}>{c["intro.linkLabel"]}</Link>}
         </SectionHeading>
         <DayPlannerStrip initial={planner} />
       </section>}
@@ -52,9 +53,7 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
           eyebrow={c["route.eyebrow"]}
           title={c["route.title"]}
         >
-          <p>
-            {c["route.text"]}
-          </p>
+            <ExpandableText text={c["route.text"]} />
         </SectionHeading>
         <RoutePreview places={destinations} showNote={false} />
       </section>}

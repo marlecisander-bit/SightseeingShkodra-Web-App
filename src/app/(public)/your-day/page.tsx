@@ -1,3 +1,4 @@
+import { sectionVisible } from "@/modules/content/website-schema";
 import { getPublicDestinations } from "@/modules/content/destinations-server";
 import { PageIntro } from "@/components/public/page-intro";
 import { Button } from "@/components/ui/button";
@@ -56,12 +57,12 @@ export default async function YourDay() {
           <LiveMapEmbed />
           <ActionLink href="/live">Track van</ActionLink>
           <nav className="p-section-nav" aria-label="Travel support">
-            <Link href="/tour#timetable">Timetable & boarding</Link>
+            {sectionVisible(c,"departures")&&<Link href="/tour#timetable">Timetable & boarding</Link>}
             <Link href="/tour#faq">Help & questions</Link>
           </nav>
         </div>
       </div>
-      <section className="p-section">
+      {sectionVisible(c,"route")&&<section className="p-section">
         <SectionHeading
           eyebrow={c["route.eyebrow"]}
           title={c["route.title"]}
@@ -76,7 +77,7 @@ export default async function YourDay() {
             </li>
           ))}
         </ol>
-      </section>
+      </section>}
     </main>
   );
 }

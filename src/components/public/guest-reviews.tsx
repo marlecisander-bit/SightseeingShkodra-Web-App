@@ -2,14 +2,12 @@
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 import type { GuestReview, ReviewSelection } from '@/modules/content/reviews';
-import { Button } from '@/components/ui/button';
+import { ExpandableText } from './expandable-text';
 import styles from './guest-reviews.module.css';
 export function ReviewCard({review:r}:{review:GuestReview}) {
- const [expanded,setExpanded]=useState(false);
  return <article className={styles.card} lang={r.language??undefined}>
   <p className={styles.stars} aria-label={`${r.rating} out of 5 stars`}><span aria-hidden="true">{'\u2605'.repeat(r.rating)}{'\u2606'.repeat(5-r.rating)}</span></p>
-  <blockquote className={expanded?styles.expanded:styles.quote}>{r.body}</blockquote>
-  {(r.body.length>140||r.body.split("\n").length>4)&&<Button type="button" className={styles.readMore} aria-expanded={expanded} onClick={()=>setExpanded(!expanded)}>{expanded?'Read less':'Read more'}</Button>}
+  <ExpandableText text={r.body} as="blockquote" className={styles.quote}/>
   <div className={styles.author}>{r.avatar_url&&<Image unoptimized src={r.avatar_url} alt="" width={40} height={40} loading="lazy"/>}<strong>{r.author}</strong></div>
   <p className={styles.source}>{r.source}{r.review_date&&<> | <time dateTime={r.review_date}>{new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeZone:'UTC'}).format(new Date(r.review_date+'T12:00:00Z'))}</time></>}</p>
   {r.original_url&&<a href={r.original_url} target="_blank" rel="noopener noreferrer" className={styles.original}>View original<span className={styles.srOnly}> (opens in a new tab)</span></a>}

@@ -1,10 +1,10 @@
-import { HomepageInvitation } from "./homepage-invitation";
+import { FinalInvitation } from "./final-invitation";
 import { ButtonContent } from "@/components/ui/button";
 import Image from "next/image";
 import { PublicBookingLink as Link } from "./booking";
 import { BrandLogo } from "./brand-logo";
 import type { ComponentProps, ReactNode } from "react";
-import { resolveWebsiteLink, initialWebsiteContent, type WebsiteContent } from "@/modules/content/website-schema";
+import { visibleWebsiteLink, resolveWebsiteLink, initialWebsiteContent, type WebsiteContent } from "@/modules/content/website-schema";
 
 export function ActionLink({
   children,
@@ -92,16 +92,18 @@ export function PreviewNote() {
     <p className="p-preview">Reserve online. Pay at the meeting point.</p>
   );
 }
-export function Footer({ content: c = initialWebsiteContent, homepagePreview }: { content?: WebsiteContent; homepagePreview?: boolean }) {
+export function Footer({ content: c = initialWebsiteContent, previewPathname }: { content?: WebsiteContent; previewPathname?: string }) {
   return (
     <footer className="p-site-footer">
+      <FinalInvitation content={c} previewPathname={previewPathname}>
       <Media src={c["final.image"]} alt={c["final.alt"]} sizes="100vw" />
-      <HomepageInvitation content={c} homepagePreview={homepagePreview}>
+      <div className="p-footer-cta">
         <p className="p-eyebrow">{c["final.eyebrow"]}</p>
         <h2>{c["final.title"]}<br /><em>{c["final.emphasis"]}</em></h2>
         <ActionLink href="/book" className="p-button-booking">{c["final.book"]}</ActionLink>
         <PreviewNote />
-      </HomepageInvitation>
+      </div>
+      </FinalInvitation>
       <div className="p-footer-info">
       <div>
         <Link className="p-wordmark" href="/">
@@ -113,7 +115,7 @@ export function Footer({ content: c = initialWebsiteContent, homepagePreview }: 
         </p>
       </div>
       <nav aria-label="Footer">
-        {[0, 1, 2, 3, 4, 5].map(i => <Link key={i} href={resolveWebsiteLink(c[`footer.${i}.link`])}>{c[`footer.${i}.label`]}</Link>)}
+        {[0, 1, 2, 3, 4, 5].filter(i => visibleWebsiteLink(c[`footer.${i}.link`], c)).map(i => <Link key={i} href={resolveWebsiteLink(c[`footer.${i}.link`])}>{c[`footer.${i}.label`]}</Link>)}
       </nav>
       <div className="p-footer-bottom">
         <span>{c["footer.location"]}</span>

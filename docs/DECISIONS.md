@@ -96,3 +96,10 @@ Calendar & Pricing owns schedules, inventory policy, passenger categories and pr
 
 ## 2026-09-25 - Customer booking management and inventory amendment
 User explicitly changes seat consumption: adults and children occupy one seat, infants zero; total passengers remains separate. Booking completion, customer modification and customer cancellation close at departure minus 15 minutes in Europe/Tirane, equality closed. Existing explicit admin departure capacity remains authoritative under the brief's exception; normal van capacity is eight. Customer self-service may atomically change unpaid meeting-point bookings before cutoff; paid/check-in cases require staff. This supersedes prior all-passengers-use-seats and cancel/rebook-only decisions. Local implementation and tests only; no production migration or deployment.
+
+## 2026-09-29 - Hero fare date context
+The user explicitly selected the next bookable service date, with its date shown, when today's departures are unavailable. Reuse canonical one-Adult availability and the existing next-operational-date helper; no independent homepage price or new pricing engine. See HERO-CTA-PRICE-NAVIGATION.md.
+
+## 2026-09-29 - Shared CMS section visibility
+
+The user explicitly requires every public occurrence of the same CMS section to respect its Admin disabled state. Existing persisted *.showOnHomepage keys remain for compatibility; Route, Live promotion, Departures, Reviews and Final invitation now use those same flags across their shared consumers. Admin labels disclose the expanded scope. Independent operational maps/booking and destination listing/guide flags remain distinct. No new schema or visibility fields. See CMS-VISIBILITY-AUDIT.md.

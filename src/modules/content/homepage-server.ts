@@ -11,6 +11,14 @@ export const getHomepage = cache(async () => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL,
     key = process.env.SUPABASE_SECRET_KEY;
   if (!url || !key) return emptyHomepage("unconfigured");
+  let quoteCalls = 0;
+  let lookupDeadline: number | undefined;
+  const remainingLookup = () => {
+    lookupDeadline ??= Date.now() + 5000;
+    const remaining = lookupDeadline - Date.now();
+    if (remaining <= 0) throw new Error("Hero fare lookup timed out");
+    return remaining;
+  };
   const client = createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
     global: {
@@ -18,7 +26,7 @@ export const getHomepage = cache(async () => {
         fetch(input, {
           ...init,
           cache: "no-store",
-          signal: AbortSignal.timeout(5000),
+          signal: init?.signal ? AbortSignal.any([init.signal, AbortSignal.timeout(5000)]) : AbortSignal.timeout(5000),
         }),
     },
   });
@@ -36,7 +44,12 @@ export const getHomepage = cache(async () => {
         if (error) throw new Error("Homepage unavailable");
         return data;
       },
-      quote: (request) => getAvailability(request, AbortSignal.timeout(5000)),
+      quote: (request) => getAvailability(request, AbortSignal.timeout(++quoteCalls > 1 ? remainingLookup() : 5000)),
+      nextDate: async (operatorId, productId, after) => {
+        const {data,error} = await client.rpc("next_operational_date_v1", {p_operator:operatorId,p_product:productId,p_after:after}).abortSignal(AbortSignal.timeout(remainingLookup()));
+        if(error) throw new Error("Next service date unavailable");
+        return typeof data === "string" ? data : null;
+      },
     },
   );
 });
