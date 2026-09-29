@@ -1,6 +1,6 @@
 'use client';
 import {useMapStatus} from './use-map-status';
-import Link from 'next/link';
+import { PublicBookingLink as Link } from "./booking";
 import { useEffect, useState, useRef, useId, type ReactNode } from 'react';
 import { plannerClock, plannerSummary, type DayPlannerData } from '@/modules/content/day-planner';
 

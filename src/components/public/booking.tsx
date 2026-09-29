@@ -19,6 +19,7 @@ import {
   useRef,
   useState,
   type ReactNode,
+  type ComponentProps,
   type Dispatch,
   type SetStateAction,
 } from "react";
@@ -76,7 +77,11 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         generation,
         setSelection,
         availability,
-        open: () => { dialog.current?.showModal(); setOpened(true); },
+        open: () => {
+          if (!dialog.current || dialog.current.open) return;
+          dialog.current.showModal();
+          setOpened(true);
+        },
         close: () => dialog.current?.close(),
       }}
     >
@@ -110,19 +115,37 @@ export function BookingProvider({ children }: { children: ReactNode }) {
 
 function BookingDialogContent() {
   const {close}=useBooking();
-  return <><header className={styles.header}><div><BrandLogo light/><h2 id="booking-dialog-title">Book your day</h2></div><button type="button" className={styles.close} aria-label="Close booking" onClick={close}>&times;</button></header><div className={styles.content}><CheckoutFlow /></div></>;
+  const closeButton = useRef<HTMLButtonElement>(null);
+  useEffect(() => { closeButton.current?.focus(); }, []);
+  return <><header className={styles.header}><div><BrandLogo light/><h2 id="booking-dialog-title">Book your day</h2></div><button ref={closeButton} type="button" className={styles.close} aria-label="Close booking" onClick={close}>&times;</button></header><div className={styles.content}><CheckoutFlow /></div></>;
+}
+
+/** Keep link styling and direct/new-tab access; ordinary booking activation opens the shared dialog. */
+export function PublicBookingLink({ href, onClick, ...props }: ComponentProps<typeof Link>) {
+  const { open } = useBooking();
+  const booking = href === "/book";
+  return <Link {...props} href={href} aria-haspopup={booking ? "dialog" : props["aria-haspopup"]} onClick={event => {
+    onClick?.(event);
+    if (!booking || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || (props.target && props.target !== "_self") || props.download) return;
+    event.preventDefault();
+    // Transfer from the timetable dialog instead of stacking two modal surfaces.
+    event.currentTarget.closest<HTMLDialogElement>("dialog[open]")?.close();
+    open();
+  }} />;
 }
 
 export function BookButton({
   children = "Book your day",
   className = "",
+  onClick,
 }: {
   children?: ReactNode;
   className?: string;
+  onClick?: () => void;
 }) {
   const { open } = useBooking();
   return (
-    <Button type="button" size="lg" className={`p-button p-button-booking ${className}`} onClick={open}>
+    <Button type="button" size="lg" aria-haspopup="dialog" className={`p-button p-button-booking ${className}`} onClick={() => { onClick?.(); open(); }}>
       {children}
     </Button>
   );
@@ -288,12 +311,12 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
           className={menu ? "p-navigation is-open" : "p-navigation"}
           aria-label="Main navigation"
         >
-          {links.map((href,i)=><Link key={i} href={href} aria-current={active===i ? (href.includes("#") ? "location" : "page") : undefined} onClick={()=>{setMenu(false);setHash(href.includes("#")?"#"+href.split("#")[1]:"");}}>{i===0?c["nav.home"]:c[`nav.${i-1}.label`]}</Link>)}
+          {links.map((href,i)=><PublicBookingLink key={i} href={href} aria-current={active===i ? (href.includes("#") ? "location" : "page") : undefined} onClick={()=>{setMenu(false);setHash(href.includes("#")?"#"+href.split("#")[1]:"");}}>{i===0?c["nav.home"]:c[`nav.${i-1}.label`]}</PublicBookingLink>)}
           <span className="p-language" title="More languages coming soon">
             EN
           </span>
         </nav>
-        {inBooking ? <Link className="p-header-back" href="/">Back to website</Link> : <BookButton className="p-header-book">{c["nav.book"]}</BookButton>}
+        {inBooking ? <Link className="p-header-back" href="/">Back to website</Link> : <BookButton className="p-header-book" onClick={() => setMenu(false)}>{c["nav.book"]}</BookButton>}
       </header>
 
     </>

@@ -4,7 +4,7 @@ import { DayPlannerStrip } from './day-planner-strip';
 import { HomepageHero } from "./homepage-hero";
 import { GuestReviews } from "./guest-reviews";
 import { defaultReviewSettings, type ReviewSelection } from "@/modules/content/reviews";
-import Link from "next/link";
+import { PublicBookingLink as Link } from "./booking";
 
 import {
   ActionLink,

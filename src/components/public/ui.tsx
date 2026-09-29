@@ -1,7 +1,7 @@
 import { HomepageInvitation } from "./homepage-invitation";
 import { ButtonContent } from "@/components/ui/button";
 import Image from "next/image";
-import Link from "next/link";
+import { PublicBookingLink as Link } from "./booking";
 import { BrandLogo } from "./brand-logo";
 import type { ComponentProps, ReactNode } from "react";
 import { resolveWebsiteLink, initialWebsiteContent, type WebsiteContent } from "@/modules/content/website-schema";
