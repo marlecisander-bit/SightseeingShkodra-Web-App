@@ -1,5 +1,5 @@
 import { meetingPoint } from "@/modules/booking/meeting-point";
-import { passengerLabels } from "@/modules/booking/passengers";
+import { passengerCaption, bookingMoney } from "./booking-presentation";
 import type { PendingOrder } from '@/modules/booking/contracts';
 import { bookingQrMatrix } from '@/modules/booking/qr-matrix';
 import styles from './booking-pass.module.css';
@@ -13,16 +13,15 @@ export function BookingPassCard({order}:{order:PendingOrder}) {
   const confirmed=order.bookingStatus==='confirmed';
   return <section className={styles.pass} aria-label="Booking pass">
     <div className={styles.confirmation} aria-hidden="true">{confirmed?'✓':'!'}</div>
-    <h3>{confirmed?'Your seats are confirmed':'Booking '+(order.bookingStatus??order.status)}</h3>
-    <div>{order.items.flatMap(i=>i.passengerSnapshot?.lines??[]).map((l,i)=><p key={i}>{l.quantity} {passengerLabels[l.category]}  |  {new Intl.NumberFormat("en-GB",{style:"currency",currency:order.currency}).format(l.total/100)}</p>)}</div><div className={styles.facts}>{order.pass?.departures.map((d,i)=><div key={i}><strong>{new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(d.date+'T12:00:00Z'))}</strong><span>{d.time.slice(0,5)} | {d.guests} {d.guests===1?'guest':'guests'}</span></div>)}<strong>{new Intl.NumberFormat('en-GB',{style:'currency',currency:order.currency}).format(order.total/100)}</strong></div>
+    <h3>{confirmed?"You're booked!":'Booking '+(order.bookingStatus??order.status)}</h3>
     {order.pass ? <BookingQr token={order.pass.token}/> : <p role="status">Your booking is saved. Reload this page to retrieve your QR pass.</p>}
+    <p className={styles.reference}>Booking reference<br/><strong>{order.bookingReference??order.orderId}</strong></p>
+    <div>{order.items.flatMap(i=>i.passengerSnapshot?.lines??[]).map((l,i)=><p key={i}>{passengerCaption(l.category,l.quantity)} {l.category==="infant"&&l.total===0?"Free":bookingMoney(l.total,order.currency)}</p>)}</div><div className={styles.facts}>{order.pass?.departures.map((d,i)=><div key={i}><strong>{new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(d.date+'T12:00:00Z'))}</strong><span>{d.time.slice(0,5)} | {d.guests} {d.guests===1?'guest':'guests'}</span></div>)}<strong>{bookingMoney(order.total,order.currency)}</strong></div>
     <h4>Your booking pass</h4>
     <p>{confirmed?'Show this QR code to our staff when you arrive.':'This booking is not valid for boarding. Contact staff for assistance.'}</p>
-    <p className={styles.reference}>Booking reference<br/><strong>{order.bookingReference??order.orderId}</strong></p>
     {order.pass?.checkedInAt&&<p>Checked in: {new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeStyle:'short',timeZone:'Europe/Tirane'}).format(new Date(order.pass.checkedInAt))}</p>}
     <p className={styles.payment}>{order.status==='cancelled'?'Reservation cancelled.':order.paymentStatus==='paid'?'Payment received.':'Payment due at the meeting point.'}</p>
-    <p>Occupied seats: {order.items.reduce((n,i)=>n+(i.passengerSnapshot?i.passengerSnapshot.counts.adult+i.passengerSnapshot.counts.child:i.quantity),0)}</p>
-    <p><a href={meetingPoint.url} target="_blank" rel="noreferrer">{meetingPoint.label}</a></p>
+    <p><strong>Meeting point</strong><br/><a href={meetingPoint.url} target="_blank" rel="noreferrer">Open in Maps</a></p>
     {order.managementToken&&<a className="p-button p-button-booking" href={"/booking/manage#token="+order.managementToken}>Manage booking</a>}
     <p className={styles.instructions}>Keep your booking pass and private management link. Online changes close 15 minutes before departure.</p>
   </section>;

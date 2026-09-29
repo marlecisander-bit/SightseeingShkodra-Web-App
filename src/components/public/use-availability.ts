@@ -85,8 +85,4 @@ export function useAvailability(date: string, guests: number, passengers?:Passen
   };
 }
 
-export function displayMoney(value: number, currency: string) {
-  return new Intl.NumberFormat("en-IE", { style: "currency", currency }).format(
-    value / 100,
-  );
-}
+export { bookingMoney as displayMoney } from "./booking-presentation";

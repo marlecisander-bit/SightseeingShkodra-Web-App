@@ -1,3 +1,4 @@
+import { bookingDate } from "./booking-presentation";
 import type {DayPlannerData} from '@/modules/content/day-planner';
 import { DayPlannerStrip } from './day-planner-strip';
 import { HomepageHero } from "./homepage-hero";
@@ -23,7 +24,7 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
 
   return (
     <main id="main-content" className={`p-home${homepageVisible(c, "hero") ? "" : " p-home-no-hero"}`}>
-      {homepageVisible(c, "hero") && <HomepageHero content={c}/>}
+      {homepageVisible(c, "hero") && <HomepageHero content={c} adultFares={home.adultFares} date={home.date}/>}
 {homepageVisible(c, "intro") && <section id="home-intro" className="p-section p-container p-intro">
         <PreviewNote />
         {home.state === "unavailable" && (
@@ -88,7 +89,7 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
             <>
               <strong>{home.frequency}</strong>
               <p>
-                {home.date} · {home.timezone}. Scheduled departures; check availability for your selected date.
+                {home.date?bookingDate(home.date):"Choose a date"} · Local Shkodra time. Scheduled departures; check availability for your selected date.
               </p>
               {home.departures.length > 0 && (
                 <ul

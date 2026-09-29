@@ -1,3 +1,4 @@
+import { lowestQuotedFare } from "../../src/components/public/booking-presentation.ts";
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { loadHomepage } from "../../src/modules/content/homepage.ts";
@@ -156,4 +157,32 @@ test("an empty valid schedule differs from an unavailable quote; mismatched quot
     productId: operatorId,
   });
   assert.equal((await loadHomepage(config, sources)).schedule, "unavailable");
+});
+
+test("adult discovery ignores cheaper child/infant categories and unbookable fares",async()=>{
+ for(const infantPrice of [0,300]){
+  const data=await loadHomepage(config,{read:async()=>snapshot(),quote:async request=>{
+   assert.equal(request.guests,1);
+   const q=await quote(request);
+   return {...q,categories:{adult:{min:13,max:null,price:1000},child:{min:3,max:12,price:500},infant:{min:0,max:2,price:infantPrice}},departures:[
+    {id:'open',startTime:'09:00:00',remaining:8,available:true,passengerQuote:{counts:{adult:1,child:0,infant:0},total:1000}},
+    {id:'closed-cheaper',startTime:'11:00:00',remaining:0,available:false,passengerQuote:{total:400}}
+   ]};
+  }});
+  assert.deepEqual(data.adultFares,[{time:'09:00',amount:1000}]);
+  assert.equal(lowestQuotedFare(data.adultFares.map(f=>f.amount)),1000);
+ }
+});
+test("discovery follows each supplied date quote and falls back when none is bookable",async()=>{
+ const configured=snapshot();
+ const nextDate=new Date(configured.service_date+'T12:00:00Z');nextDate.setUTCDate(nextDate.getUTCDate()+1);
+ const contexts=[{date:configured.service_date,amount:800,available:true},{date:nextDate.toISOString().slice(0,10),amount:1200,available:true},{date:configured.service_date,amount:500,available:false}];
+ for(const context of contexts){
+  const data=await loadHomepage(config,{read:async()=>({...configured,service_date:context.date}),quote:async request=>{
+   assert.equal(request.date,context.date);
+   return {...await quote(request),departures:[{id:'context',startTime:'09:00:00',remaining:context.available?8:0,available:context.available,passengerQuote:{total:context.amount}}]};
+  }});
+  assert.equal(data.date,context.date);
+  assert.equal(lowestQuotedFare(data.adultFares.map(f=>f.amount)),context.available?context.amount:undefined);
+ }
 });

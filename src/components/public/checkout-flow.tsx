@@ -1,13 +1,12 @@
 "use client";
 import { checkoutStorageKey } from "@/modules/booking/checkout-browser-state";
-import { passengerLabels } from "@/modules/booking/passengers";
 
+import { BookingProgress, BookingAction, BookingSummary, BookingPriceBreakdown } from "./booking-controls";
 import { BookingPassCard } from "./booking-pass";
 import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
 import { BookingFields, useBooking } from "./booking";
 import { Field } from "./ui";
-import { displayMoney } from "./use-availability";
 import type { Hold, PendingOrder } from "@/modules/booking/contracts";
 import type { BookingSelection } from "@/modules/public-preview/contracts";
 
@@ -51,6 +50,7 @@ export function CheckoutFlow() {
   const [attempt, setAttempt] = useState<Attempt | null>(null);
   const [order, setOrder] = useState<PendingOrder | null>(null);
   const [customer, setCustomer] = useState({ name: "", email: "", phone: "" });
+  const [review, setReview] = useState(false);
   const [submitted, setSubmitted] = useState<typeof customer | null>(null);
   const [busy, setBusy] = useState(false);
   const busyRef = useRef(false);
@@ -59,6 +59,8 @@ export function CheckoutFlow() {
   const [restoring, setRestoring] = useState(true);
   const deadline = useRef(0);
   const heading = useRef<HTMLHeadingElement>(null);
+  const step=order||review?3:attempt?.hold?2:1;
+  useEffect(()=>{if(!restoring){heading.current?.focus({preventScroll:true});heading.current?.scrollIntoView({block:"start",behavior:"instant"});}},[step,restoring]);
   function save(value: Attempt | null) {
     setAttempt(value);
     try {
@@ -141,7 +143,7 @@ export function CheckoutFlow() {
     try {
       await action();
       requestAnimationFrame(() =>
-        heading.current?.focus({ preventScroll: true }),
+        heading.current?.focus(),
       );
     } catch (e) {
       if (e instanceof Error && e.message === "HOLD_INACTIVE") {
@@ -217,27 +219,15 @@ export function CheckoutFlow() {
     save(null);
     setOrder(null);
     setSubmitted(null);
+    setReview(false);
     setRemaining(0);
     availability.refresh();
   }
   const chosen = attempt?.selection ?? selection;
   if (restoring) return <p role="status">Restoring your selection…</p>;
   return (
-    <div className="p-flow">
-      <p className="p-step-caption" aria-live="polite">Step {order ? 3 : attempt?.hold ? 2 : 1} of 3 · {order ? "Confirmation" : attempt?.hold ? "Your details" : "When"}</p>
-      <ol className="p-progress" aria-label="Booking progress">
-        {["Selection", "Details", "Confirmation"].map((label, i) => (
-          <li
-            key={label}
-            aria-current={
-              (order ? 2 : attempt?.hold ? 1 : 0) === i ? "step" : undefined
-            }
-          >
-            <span>{i + 1}</span>
-            {label}
-          </li>
-        ))}
-      </ol>
+    <div className={`p-flow${order ? " p-flow-complete" : !attempt?.hold ? " p-flow-when" : ""}`}>
+      <BookingProgress step={step} complete={Boolean(order)}/>
       <h2 ref={heading} tabIndex={-1} className={order ? "p-screen-reader-only" : undefined}>
         {order
           ? order.bookingStatus === "confirmed"
@@ -246,12 +236,13 @@ export function CheckoutFlow() {
               ? "Your booking was cancelled."
               : "Your order needs attention."
           : attempt?.hold
-            ? "Your seats, for a little while."
-            : "Choose your day."}
+            ? review ? "Review and confirm" : "Your details"
+            : "Book your day"}
       </h2>
       {!order && <p className="p-preview">
-        Reserve online and pay at the meeting point.
+        {attempt?.hold ? "Reserve online and pay at the meeting point." : "Choose your date, guests and departure."}
       </p>}
+      <div className="p-flow-layout"><div className="p-flow-main">
       {error && <p role="alert">{error}</p>}
       {error && attempt?.hold && (
         <Button
@@ -285,13 +276,14 @@ export function CheckoutFlow() {
                 : "Your reserved time has ended. No seats are secured."}
             </p>
           )}
-          {attempt.hold.passengerSnapshot&&<div aria-label="Your tickets">{attempt.hold.passengerSnapshot.lines.map(l=><p key={l.category}>{l.quantity} {passengerLabels[l.category]}  |  {displayMoney(l.unitPrice,"EUR")} = {displayMoney(l.total,"EUR")}</p>)}<strong>Total: {displayMoney(attempt.hold.passengerSnapshot.total,"EUR")}</strong></div>}
+          {!order && attempt.hold.passengerSnapshot&&<BookingPriceBreakdown snapshot={attempt.hold.passengerSnapshot}/>}
           {order ? (
-            <><BookingPassCard order={order}/>{order.status === "cancelled" && <Button className="p-button p-button-booking" onClick={reset}>Book Again</Button>}</>
+            <><BookingPassCard order={order}/><Button className="p-button p-button-booking" onClick={reset}>{order.status === "cancelled" ? "Book another day" : "Book another day"}</Button></>
           ) : active ? (
             <form
               onSubmit={(event) => {
                 event.preventDefault();
+                if (!review) { setReview(true); requestAnimationFrame(()=>heading.current?.focus()); return; }
                 void perform(async () => {
                   const details = submitted ?? { ...customer };
                   setSubmitted(details);
@@ -304,7 +296,7 @@ export function CheckoutFlow() {
                 });
               }}
             >
-              <Field label="Full name">
+              {!review && <div className="p-contact-fields"><h3>Contact details</h3><p>* Required fields</p><Field label="Full name *">
                 <input
                   required
                   maxLength={200}
@@ -316,7 +308,7 @@ export function CheckoutFlow() {
                   }
                 />
               </Field>
-              <Field label="Email">
+              <Field label="Email address *">
                 <input
                   type="email"
                   required
@@ -334,6 +326,8 @@ export function CheckoutFlow() {
                   type="tel"
                   maxLength={50}
                   autoComplete="tel"
+                  inputMode="tel"
+                  placeholder="+355 69 123 4567"
                   value={customer.phone}
                   disabled={busy || Boolean(submitted)}
                   onChange={(e) =>
@@ -341,17 +335,15 @@ export function CheckoutFlow() {
                   }
                 />
               </Field>
-              <p>
-                Confirm your reservation below. The final price is checked by
-                the booking system. You will pay at the meeting point.
-              </p>
-              <Button className="p-button p-button-booking" disabled={busy || !active}>
+              </div>}
+              {review && <div className="p-review-contact"><h3>Contact details</h3><p>{customer.name}<br/>{customer.email}{customer.phone && <><br/>{customer.phone}</>}</p><Button type="button" className="p-text-button" disabled={busy || Boolean(submitted)} onClick={()=>setReview(false)}>Edit contact details</Button><p>Pay at the meeting point. Online changes and cancellation close 15 minutes before departure.</p></div>}
+              <BookingAction total={attempt.total} currency={attempt.hold.passengerSnapshot?.currency??availability.quote?.currency??"EUR"}><Button className={`p-button ${review ? "p-booking-confirm" : "p-button-booking"} p-transaction-action`} disabled={busy || !active}>
                 {busy
-                  ? "Saving…"
+                  ? review ? "Confirming booking…" : "Saving…"
                   : submitted
                     ? "Retry confirming reservation"
-                    : "Confirm reservation - pay at meeting point"}
-              </Button>
+                    : review ? "Confirm booking" : "Review booking"}
+              </Button></BookingAction>
             </form>
           ) : null}
           {!order && (
@@ -360,15 +352,15 @@ export function CheckoutFlow() {
               disabled={busy}
               onClick={() => void perform(restart)}
             >
-              Release seats and return to selection
+              Edit date, passengers or departure
             </Button>
           )}
         </>
       ) : (
         <>
           {!attempt && <BookingFields />}
-          <Button
-            className="p-button p-button-booking"
+          <BookingAction total={attempt?.total??selected?.passengerQuote?.total} currency={availability.quote?.currency??"EUR"}><Button
+            className="p-button p-button-booking p-transaction-action"
             disabled={busy || (!attempt && !selected)}
             onClick={() => void perform(reserve)}
           >
@@ -376,8 +368,8 @@ export function CheckoutFlow() {
               ? "Reserving seats…"
               : attempt
                 ? "Retry reserving these seats"
-                : "Reserve seats and continue"}
-          </Button>
+                : "Continue to details"}
+          </Button></BookingAction>
           {attempt && (
             <p>
               We are keeping this request unchanged until its result is
@@ -386,26 +378,10 @@ export function CheckoutFlow() {
           )}
         </>
       )}
-      {!order && (<div className="p-flow-summary">
-        <span>{chosen.date || "Choose a date"}</span>
-        <span>{chosen.guests} guests</span>
-        <span>
-          {attempt?.time ??
-            selected?.startTime.slice(0, 5) ??
-            "Choose a departure"}
-        </span>
-        <strong>
-          Total:{" "}
-          {attempt
-              ? displayMoney(attempt.total, "EUR")
-              : availability.quote
-                ? displayMoney(
-                    selected?.passengerQuote?.total??availability.quote.total,
-                    availability.quote.currency,
-                  )
-                : "not available"}
-        </strong>
-      </div>)}
+      </div>
+      {!order && <BookingSummary date={chosen.date} time={attempt?.time??selected?.startTime} counts={chosen.passengers??{adult:chosen.guests,child:0,infant:0}} total={attempt?.total??selected?.passengerQuote?.total} currency={availability.quote?.currency}/>}
+      </div>
+
     </div>
   );
 }

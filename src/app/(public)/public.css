@@ -1384,3 +1384,49 @@ body:has(.p-booking-dialog[open]) {
 
 /* A hidden hero still leaves room for the fixed global navigation. */
 .public-site .p-home-no-hero { padding-top:var(--p-header-height); }
+
+/* Shared transaction presentation; no global bottom action bar. */
+.public-site .p-book-page{max-width:1180px;}
+.public-site .p-flow{max-width:none;width:100%;}
+.public-site .p-flow-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,320px);gap:24px;align-items:start;}
+.public-site .p-flow-main{min-width:0;display:grid;gap:20px;}
+.public-site .p-flow-layout>aside{position:sticky;top:100px;}
+.public-site .p-flow .p-booking-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;}
+.public-site .p-booking-party{display:grid;gap:24px;min-width:0;}
+.public-site .p-flow .p-availability-status{grid-column:1/-1;}
+.public-site .p-contact-fields{display:grid;gap:16px;}
+.public-site .p-booking-confirm{background:var(--brand-red);color:white;}
+.public-site .p-header-back{color:white;white-space:nowrap;font-size:14px;}
+.public-site .p-transaction-action{min-height:48px;width:100%;}
+.public-site .p-flow [role=alert]{padding:12px;border-left:3px solid var(--brand-red);background:var(--brand-red-soft);}
+.public-site .p-flow-layout:has(.p-flow-main>section:only-child){grid-template-columns:1fr;}
+@media(max-width:1000px){.public-site .p-flow .p-booking-fields{grid-template-columns:1fr;}}
+@media(max-width:767px){
+.public-site .p-flow-layout{grid-template-columns:1fr;gap:16px;}
+.public-site .p-flow-layout>aside{position:static;}
+.public-site .p-flow .p-progress{display:flex;gap:12px;font-size:13px;}
+.public-site .p-progress span{width:24px;height:24px;}
+.public-site .p-transaction-action{position:sticky;bottom:max(12px,env(safe-area-inset-bottom));z-index:2;box-shadow:0 0 0 8px var(--p-paper);}
+.public-site .p-flow-main{gap:16px;}
+.public-site .p-header-back{white-space:normal;max-width:84px;text-align:center;}
+}
+
+.public-site .p-booking-price strong{display:block;font-size:clamp(22px,3vw,32px);}.public-site .p-booking-price small{display:block;font-size:13px;margin-top:4px;}
+
+.public-site .p-flow-complete .p-flow-layout{grid-template-columns:minmax(0,680px);justify-content:center;}
+
+.public-site .p-flow .p-step-caption{display:none;}.public-site .p-booking-dialog .p-flow{margin-top:0;}.public-site .p-booking-dialog .p-flow-when>h2{display:none;}
+
+/* Completed steps retain their semantic labels and the shared progress layout. */
+.p-progress li[data-complete=true] span{background:var(--brand-red);color:white}
+@media(max-width:767px){.p-contact-fields:focus-within~.p-transaction-action{position:static;box-shadow:none}}
+
+@media(max-width:767px){.p-flow:not(.p-flow-when) .p-flow-layout>aside{order:-1}}
+
+@media(max-width:767px){.p-book-page>h1,.p-book-page>.p-eyebrow{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.p-book-page .p-flow{margin-top:16px}.p-book-page .p-flow>h2{margin-top:20px}.p-booking-party{gap:16px}}
+
+.public-site .p-booking-action{display:flex;align-items:center;gap:16px;padding-block:12px;background:var(--p-paper)}
+.public-site .p-action-total{flex:0 0 auto;display:grid;gap:4px}.p-action-total>span{font-size:13px}.p-action-total>strong{font-size:20px}
+.public-site .p-booking-action .p-transaction-action{position:static;box-shadow:none;flex:1;width:auto}
+.public-site .p-flow>h2{scroll-margin-top:90px}
+@media(max-width:767px){.public-site .p-booking-action{position:sticky;bottom:0;padding-bottom:max(12px,env(safe-area-inset-bottom));z-index:2}.public-site .p-contact-fields:focus-within~.p-booking-action{position:static}.public-site .p-flow-when .p-flow-layout>aside{display:none}}
