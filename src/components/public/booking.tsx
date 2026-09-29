@@ -268,11 +268,22 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
     updateHash();window.addEventListener('hashchange',updateHash);window.addEventListener('popstate',updateHash);
     const hero = document.getElementById('home-hero');
     let observer: IntersectionObserver | undefined;
+    let headerResize: ResizeObserver | undefined;
     if(pathname === '/' && hero){
-      const headerHeight=headerRef.current?.getBoundingClientRect().height??76;
-      observer=new IntersectionObserver(([entry])=>setHeroVisible(entry.isIntersecting && entry.intersectionRatio > 0.2),{rootMargin:'-'+headerHeight+'px 0px 0px 0px',threshold:[0,0.2]});observer.observe(hero);
+      let measuredHeight = -1;
+      const observeHero = () => {
+        const headerHeight=headerRef.current?.getBoundingClientRect().height??76;
+        if (headerHeight === measuredHeight) return;
+        measuredHeight = headerHeight;
+        observer?.disconnect();
+        observer=new IntersectionObserver(([entry])=>setHeroVisible(entry.isIntersecting && entry.intersectionRatio > 0.2),{rootMargin:'-'+headerHeight+'px 0px 0px 0px',threshold:[0,0.2]});observer.observe(hero);
+      };
+      observeHero();
+      // Breakpoints and safe areas can change the fixed header's actual height.
+      headerResize = new ResizeObserver(observeHero);
+      if (headerRef.current) headerResize.observe(headerRef.current);
     }
-    return ()=>{observer?.disconnect();window.removeEventListener('hashchange',updateHash);window.removeEventListener('popstate',updateHash);};
+    return ()=>{observer?.disconnect();headerResize?.disconnect();window.removeEventListener('hashchange',updateHash);window.removeEventListener('popstate',updateHash);};
   }, [pathname]);
   return (
     <>
