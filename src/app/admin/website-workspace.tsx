@@ -3,13 +3,12 @@ import { Button, ButtonContent } from "@/components/ui/button";
 import { useCallback, useState } from "react";
 import type { ReactNode } from "react";
 import Image from "next/image";
-import { AmenityIcon } from "@/components/ui/amenity-icon";
+import { SectionCardHeader } from "./website-section-card";
 import type { WebsiteRecord } from "@/modules/content/website-server";
 import { visibilityScope, websiteEditorGroups, homepageVisible } from "@/modules/content/website-schema";
 import { WebsiteSectionEditor } from "./website-editor";
 import styles from "./website-editor.module.css";
 
-const sectionDescriptions: Record<string,string> = {hero:"Your first impression: headline, photograph and booking invitation",heroAmenities:"Saved service highlights",intro:"Introduce the experience and help guests plan their day",route:"Introduce the destinations along the way",live:"Help guests find the van during their visit",departures:"Introduce today’s timetable",reviews:"Guest stories and your review section heading",notebook:"Stories, tips and inspiration",final:"A final invitation to book their day",navigation:"Links visitors use to explore your website",footer:"Social profiles, business details and the shared Google Reviews link",seo:"How your homepage appears in search and social sharing"};
 
 export function WebsiteWorkspace({ operatorId, record, destinationManager, footerGoogleEditor }: { operatorId: string; record: WebsiteRecord; destinationManager: ReactNode; footerGoogleEditor?:ReactNode }) {
   const [values, setValues] = useState(record.body.content);
@@ -55,25 +54,14 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
         <div className={styles.listHeading}><h2>{scope === "homepage" ? "Homepage sections" : "Website sections"}</h2><span>{websiteSections.length} sections · {scope === "homepage" ? "Homepage order" : "Website content"}</span></div>
         {websiteSections.map((section, index) => {
           const draft = section.fields.some(f => content[f.key] !== record.published_body?.content[f.key]);
-          const thumbnail = section.fields.find(f => f.kind === "image");
-          const title = section.fields.find(f => f.key.endsWith(".title"));
           return <details className={styles.card} key={section.id} id={`cms-${section.id}`} data-section={section.id} data-hidden={section.fields.some(f => f.kind === "visibility") && !homepageVisible(values, section.id)} open={active === section.id}>
             <summary onClick={event => { event.preventDefault(); select(section.id); }}>
-              <span className={styles.sectionHeading}>
-                <span className={styles.number}>{String(index + 1).padStart(2, "0")}</span>
-                {thumbnail && content[thumbnail.key] ? <Image unoptimized loading={index === 0 ? "eager" : "lazy"} width={160} height={90} className={styles.cardThumbnail} src={content[thumbnail.key]} alt="" /> : <span className={styles.thumbnailPlaceholder}><AmenityIcon name={section.id === "live" ? "map" : section.id === "departures" ? "clock" : "info"}/></span>}
-                <span className={styles.cardCopy}>
-                  <strong>{section.title}</strong>
-                  <span>{sectionDescriptions[section.id] ?? (title ? content[title.key] : section.title)}</span>
-                  {(draft || states[section.id]?.dirty) && <span className={styles.draftBadge}>{states[section.id]?.dirty ? "Unsaved" : "Draft changes"}</span>}
-                </span>
-                <span className={styles.editLabel}>{active === section.id ? "Close" : "Edit"}</span>
-              </span>
-              {section.fields.some(f => f.kind === "visibility") && <span className={styles.visibilityRow} onClick={event => event.stopPropagation()} onKeyDown={event => event.stopPropagation()}>
+              <SectionCardHeader id={section.id} title={section.title} index={index} open={active === section.id} onEdit={() => select(section.id)} draft={states[section.id]?.dirty ? "Unsaved" : draft ? "Draft changes" : undefined} visibility={
+              section.fields.some(f => f.kind === "visibility") && <span className={styles.visibilityRow} onClick={event => event.stopPropagation()} onKeyDown={event => event.stopPropagation()}>
 
                 <label><input type="checkbox" role="switch" aria-label={`Show ${section.title} ${visibilityScope(section.id)}`} checked={homepageVisible(values, section.id)} disabled={pending || (!!dirtySection && dirtySection.id !== section.id)} onChange={event => { setActive(null); setValues(current => ({...current, [`${section.id}.showOnHomepage`]: String(event.target.checked)})); }} /><span className={styles.visibilityCopy}><strong>{homepageVisible(values, section.id) ? "Visible" : "Hidden"}</strong><span>{visibilityScope(section.id)}</span></span></label>
                 {dirtySection?.id === section.id && active !== section.id && <span className={styles.visibilityActions}><Button form={`cms-form-${section.id}`} name="operation" value="draft" disabled={pending}>Save Draft</Button><Button type="button" disabled={pending} onClick={() => setValues(current => ({...current, ...Object.fromEntries(section.fields.map(f => [f.key, content[f.key]]))}))}>Discard</Button></span>}
-              </span>}
+              </span>} />
               {dirtySection?.id === section.id && section.fields.some(f => f.kind === "visibility") && <small className={styles.helper}>Unsaved visibility. Last saved: {homepageVisible(content, section.id) ? "Visible" : "Hidden"}. Save Draft keeps changes private until you publish.</small>}
               {section.id === "heroAmenities" && <small className={styles.helper}>Retained content; amenities are not rendered on the homepage.</small>}
               {active !== section.id && feedback[section.id] && <span className={styles.notice} role="status">{feedback[section.id]}</span>}

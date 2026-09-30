@@ -50,11 +50,16 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
       {groups.filter(group=>group.fields.length).map(group=><fieldset className={styles.fieldGroup} key={group.title}><legend>{group.title}</legend><div className={styles.fieldGrid}>{group.fields.map(field => {
         if (field.kind === "visibility") return <input key={field.key} type="hidden" name={field.key} value={values[field.key]} />;
         const long = field.kind === "legal" || field.kind === "amenities" || /text|detail|description|alt/.test(field.key) || /description/i.test(field.label) || field.initial.includes("\n");
+        const heroImage = sectionId === "hero" && field.kind === "image";
+        const mobileHero = heroImage && /mobile/i.test(field.key);
         return <div key={field.key} className={`${styles.field} ${long ? styles.fullField : ""} ${field.kind === "image" ? styles.imageField : ""}`}>
           {field.kind === "publication" ? <label>{field.label}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}><option value="unpublished">Unpublished</option><option value="published">Published</option></select></label> : field.kind === "amenities" ? <AmenitiesInput value={values[field.key]} onChange={value=>setValues(v=>({...v,[field.key]:value}))}/> : field.kind === "position" ? <label>{field.label}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}>{focalPositions.map(position=><option key={position}>{position}</option>)}</select></label> : field.kind === "image" ? <>
             <strong>{field.label}</strong>
+            <div className={heroImage ? `${styles.heroPreview} ${mobileHero ? styles.heroPreviewMobile : styles.heroPreviewDesktop}` : undefined} style={heroImage ? {objectPosition: values[mobileHero ? "hero.mobilePosition" : "hero.desktopPosition"]} : undefined}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className={styles.imagePreview} ref={image => { if (image?.complete && image.naturalWidth) { const size = `${image.naturalWidth} × ${image.naturalHeight} px`; setSizes(s => s[field.key] === size ? s : {...s, [field.key]: size}); } }} src={values[field.key]} alt={`Current ${field.label}`} onLoad={event => { const size = `${event.currentTarget.naturalWidth} × ${event.currentTarget.naturalHeight} px`; setSizes(s => s[field.key] === size ? s : {...s, [field.key]: size}); }} />
+            </div>
+            {heroImage && <small className={styles.helper}>{mobileHero ? "Mobile crop · 390 × 844 portrait, including the homepage zoom." : "Desktop crop · 1440 × 900 landscape."} Focal position updates this preview. Actual cropping varies with screen size; use Draft Preview to check the full page.</small>}
             <p className={styles.imageMeta}>{values[field.key].split("/").pop()}<span>{sizes[field.key] ?? "Loading dimensions…"}</span></p>
             <label className={`${styles.replaceButton} ss-button`}>Replace image<input aria-label={`Upload / replace ${field.label}`} type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={event => {
               const image = event.target.files?.[0]; if (!image) return;
