@@ -55,7 +55,7 @@ export default async function YourDay() {
         </section>
         <div>
           <LiveMapEmbed />
-          <ActionLink href="/live">Track van</ActionLink>
+          <ActionLink href="/route">Track van</ActionLink>
           <nav className="p-section-nav" aria-label="Travel support">
             {sectionVisible(c,"departures")&&<Link href="/tour#timetable">Timetable & boarding</Link>}
             <Link href="/tour#faq">Help & questions</Link>

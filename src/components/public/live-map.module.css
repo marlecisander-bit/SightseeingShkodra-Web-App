@@ -48,3 +48,7 @@
   .recovery { width: 100%; flex-direction: column; }
   .recovery > :is(button, a) { width: 100%; }
 }
+.embed[data-journey="true"] .map { height:clamp(300px,52svh,520px); }
+.help{margin-top:8px;font-size:14px;}
+.help summary{cursor:pointer;min-height:44px;display:flex;align-items:center;text-decoration:underline;}
+.help summary:focus-visible{outline:3px solid var(--brand-red);outline-offset:2px;}

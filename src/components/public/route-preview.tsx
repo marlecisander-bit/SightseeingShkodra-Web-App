@@ -42,7 +42,7 @@ export function RoutePreview({ places, showNote = true }: { showNote?: boolean; 
       {showNote && <div className="p-route-note">
         <span aria-hidden="true">◎</span>
         <p>
-          <a href="/live">Open the connected live map</a> for the published route,
+          <a href="/route">Open the connected live map</a> for the published route,
           stops and van location. Select a destination above to explore these
           illustrative visitor guides.
         </p>

@@ -69,7 +69,7 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
             <p>
               {c["live.text"]}
             </p>
-            <ActionLink href="/live">{c["live.linkLabel"]}</ActionLink>
+            <ActionLink href="/route">{c["live.linkLabel"]}</ActionLink>
           </div>
           <LiveMapEmbed />
         </div>

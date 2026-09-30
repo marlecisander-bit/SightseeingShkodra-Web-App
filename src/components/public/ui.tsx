@@ -115,7 +115,7 @@ export function Footer({ content: c = initialWebsiteContent, previewPathname }: 
         </p>
       </div>
       <nav aria-label="Footer">
-        {[0, 1, 2, 3, 4, 5].filter(i => visibleWebsiteLink(c[`footer.${i}.link`], c)).map(i => <Link key={i} href={resolveWebsiteLink(c[`footer.${i}.link`])}>{c[`footer.${i}.label`]}</Link>)}
+        {[0, 1, 2, 3, 4, 5].filter(i => visibleWebsiteLink(c[`footer.${i}.link`], c)).map(i => <Link key={i} href={resolveWebsiteLink(c[`footer.${i}.link`])}>{resolveWebsiteLink(c[`footer.${i}.link`])==="/route"?"Route & Live Map":c[`footer.${i}.label`]}</Link>)}
       </nav>
       <div className="p-footer-bottom">
         <span>{c["footer.location"]}</span>

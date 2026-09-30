@@ -252,7 +252,8 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
   const [hash, setHash] = useState("");
   const headerRef = useRef<HTMLElement>(null);
   const scrolled = pathname !== "/" || !heroVisible;
-  const links = ["/", ...[0,1,2,3,4].map(i=>resolveWebsiteLink(c[`nav.${i}.link`]))];
+  const items = [{href:"/",label:c["nav.home"]}, ...[0,1,2,3,4].map(i=>{const original=c[`nav.${i}.link`];const unified=["/live","/route","/#route"].includes(original);return {href:unified?"/route":resolveWebsiteLink(original),label:unified?"Route & Live Map":c[`nav.${i}.label`]};})].filter((item,index,all)=>all.findIndex(other=>other.href===item.href)===index);
+  const links = items.map(item=>item.href);
   const active = activeNavigation(pathname,hash,links);
   const [menu, setMenu] = useState(false);
   const menuToggle = useRef<HTMLButtonElement>(null);
@@ -344,7 +345,7 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
           className={menu ? "p-navigation is-open" : "p-navigation"}
           aria-label="Main navigation"
         >
-          {links.map((href,i)=>visibleWebsiteLink(href,c) ? <PublicBookingLink key={i} href={href} aria-current={active===i ? (href.includes("#") ? "location" : "page") : undefined} onClick={()=>{if(menu)menuToggle.current?.focus();setMenu(false);setHash(href.includes("#")?"#"+href.split("#")[1]:"");}}><span className="p-nav-label">{i===0?c["nav.home"]:c[`nav.${i-1}.label`]}</span></PublicBookingLink> : null)}
+          {links.map((href,i)=>visibleWebsiteLink(href,c) ? <PublicBookingLink key={i} href={href} aria-current={active===i ? (href.includes("#") ? "location" : "page") : undefined} onClick={()=>{if(menu)menuToggle.current?.focus();setMenu(false);setHash(href.includes("#")?"#"+href.split("#")[1]:"");}}><span className="p-nav-label">{items[i].label}</span></PublicBookingLink> : null)}
           <span className="p-language" title="More languages coming soon">
             EN
           </span>

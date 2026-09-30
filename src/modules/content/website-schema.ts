@@ -114,5 +114,5 @@ export function websitePlaces(content: WebsiteContent) {
 
 // Resolve retired homepage anchors without changing saved editorial records.
 export function resolveWebsiteLink(link: string) {
-  return link === "/#booking" ? "/book" : link === "/#destinations" ? "/explore" : link;
+  return link === "/live" ? "/route" : link === "/#booking" ? "/book" : link === "/#destinations" ? "/explore" : link;
 }

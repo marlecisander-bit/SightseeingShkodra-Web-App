@@ -107,3 +107,6 @@ The user explicitly selected the next bookable service date, with its date shown
 ## 2026-09-29 - Shared CMS section visibility
 
 The user explicitly requires every public occurrence of the same CMS section to respect its Admin disabled state. Existing persisted *.showOnHomepage keys remain for compatibility; Route, Live promotion, Departures, Reviews and Final invitation now use those same flags across their shared consumers. Admin labels disclose the expanded scope. Independent operational maps/booking and destination listing/guide flags remain distinct. No new schema or visibility fields. See CMS-VISIBILITY-AUDIT.md.
+
+## 30 September 2026 - Unified route presentation (user amendment)
+The user's Route + Live Map brief authorizes /route as the canonical combined public consumer and a permanent /live redirect. Reuse the independent iframe; expose resolved operational state through a small additive presentation message bridge, never a second GPS/ETA engine. Booking/service and CMS retain their existing ownership. This supersedes the earlier separate public route/live presentation, not the independent tracking architecture. Implementation and acceptance limits are recorded in LIVE_MAP_EMBED.md. No deployment authorized or performed in this task.

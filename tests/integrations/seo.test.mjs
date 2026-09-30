@@ -30,19 +30,20 @@ test("indexing requires explicit production gate and a public HTTPS origin", () 
 });
 test("sitemap only includes supported published content and removes withdrawn routes", () => {
   const home = emptyHomepage("empty");
-  assert.deepEqual(sitemapPaths(home), []);
+  assert.deepEqual(sitemapPaths(home), ["/route"]);
   home.content["explore-castle"] = { title: "Castle" };
   home.content["unknown-secret"] = { title: "Hidden" };
-  assert.deepEqual(sitemapPaths(home), ["/explore", "/explore/castle"]);
+  assert.deepEqual(sitemapPaths(home), ["/route", "/explore", "/explore/castle"]);
   home.product = { id: "product" };
   assert.deepEqual(sitemapPaths(home), [
+    "/route",
     "/",
     "/tour",
     "/explore",
     "/explore/castle",
   ]);
   delete home.content["explore-castle"];
-  assert.deepEqual(sitemapPaths(home), ["/", "/tour"]);
+  assert.deepEqual(sitemapPaths(home), ["/route", "/", "/tour"]);
 });
 test("structured data matches page and breadcrumbs and escapes script delimiters", () => {
   const title = "Castle </script><script>alert(1)</script>";

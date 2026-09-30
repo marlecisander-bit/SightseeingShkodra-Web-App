@@ -59,6 +59,7 @@ export function publishedGuideSlugs(home: Homepage) {
 export function sitemapPaths(home: Homepage) {
   const guides = publishedGuideSlugs(home);
   return [
+    "/route",
     ...(home.product || home.content["homepage-hero"] ? ["/"] : []),
     ...(home.product ? ["/tour"] : []),
     ...(guides.length
