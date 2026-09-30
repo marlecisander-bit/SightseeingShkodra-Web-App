@@ -9,9 +9,9 @@ import { visibilityScope, websiteEditorGroups, homepageVisible } from "@/modules
 import { WebsiteSectionEditor } from "./website-editor";
 import styles from "./website-editor.module.css";
 
-const sectionDescriptions: Record<string,string> = {hero:"Your first impression: headline, photograph and booking invitation",heroAmenities:"Saved service highlights",intro:"Introduce the experience and help guests plan their day",route:"Introduce the destinations along the way",live:"Help guests find the van during their visit",departures:"Introduce today’s timetable",reviews:"Guest stories and your review section heading",notebook:"Stories, tips and inspiration",final:"A final invitation to book their day",navigation:"Links visitors use to explore your website",footer:"Contact information and useful links",seo:"How your homepage appears in search and social sharing"};
+const sectionDescriptions: Record<string,string> = {hero:"Your first impression: headline, photograph and booking invitation",heroAmenities:"Saved service highlights",intro:"Introduce the experience and help guests plan their day",route:"Introduce the destinations along the way",live:"Help guests find the van during their visit",departures:"Introduce today’s timetable",reviews:"Guest stories and your review section heading",notebook:"Stories, tips and inspiration",final:"A final invitation to book their day",navigation:"Links visitors use to explore your website",footer:"Social profiles, business details and the shared Google Reviews link",seo:"How your homepage appears in search and social sharing"};
 
-export function WebsiteWorkspace({ operatorId, record, destinationManager }: { operatorId: string; record: WebsiteRecord; destinationManager: ReactNode }) {
+export function WebsiteWorkspace({ operatorId, record, destinationManager, footerGoogleEditor }: { operatorId: string; record: WebsiteRecord; destinationManager: ReactNode; footerGoogleEditor?:ReactNode }) {
   const [values, setValues] = useState(record.body.content);
   const [savedStamp, setSavedStamp] = useState(record.updated_at);
   const [scope, setScope] = useState<keyof typeof websiteEditorGroups>("homepage");
@@ -30,7 +30,7 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager }: { o
   const pending = Object.values(states).some(s => s.pending);
   const selected = websiteSections.find(s => s.id === active) ?? websiteSections[0];
   const image = selected.fields.find(f => f.kind === "image");
-  const preview = `/admin/${operatorId}/website-preview?page=${({how:"tour",tourPage:"tour",explorePage:"explore",bookPage:"book",dayPage:"your-day"} as Record<string,string>)[selected.id]??"home"}`;
+  const preview = `/admin/${operatorId}/website-preview?page=${({legalprivacy:"privacy-policy",legalterms:"terms-and-conditions",how:"tour",tourPage:"tour",explorePage:"explore",bookPage:"book",dayPage:"your-day"} as Record<string,string>)[selected.id]??"home"}`;
   function select(id: string, jump = false) {
     if (pending || (dirtySection && dirtySection.id !== id)) { setNotice("Save or discard your current edits before opening another section."); return; }
     setNotice(""); setActive(active === id && !jump ? null : id);
@@ -79,6 +79,7 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager }: { o
               {active !== section.id && feedback[section.id] && <span className={styles.notice} role="status">{feedback[section.id]}</span>}
             </summary>
             <WebsiteSectionEditor onFeedback={onFeedback} values={values} setValues={setValues} key={record.updated_at} operatorId={operatorId} sectionId={section.id} content={content} stamp={record.updated_at} onStateChange={onStateChange} />
+            {section.id==="footer"&&footerGoogleEditor}
           </details>;
         })}
       </div>

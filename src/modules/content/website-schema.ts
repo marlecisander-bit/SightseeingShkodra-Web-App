@@ -3,7 +3,7 @@ import { pageSections } from "./page-sections";
 import { destinations } from "../public-preview/contracts";
 
 export type WebsiteContent = Record<string, string>;
-export type WebsiteField = { key: string; label: string; initial: string; kind: "text" | "image" | "link" | "position" | "amenities" | "visibility"; max: number };
+export type WebsiteField = { key: string; label: string; initial: string; kind: "text" | "image" | "link" | "position" | "amenities" | "visibility" | "external" | "legal" | "publication"; max: number; optional?: boolean };
 const field = (key: string, label: string, initial: string, kind: WebsiteField["kind"] = "text"): WebsiteField => ({ key, label, initial, kind, max: kind === "text" ? 700 : 2000 });
 const f = field;
 export const homepageVisibilitySections = ["hero", "intro", "route", "live", "departures", "reviews", "notebook", "final"] as const;
@@ -21,7 +21,17 @@ export function invitationVisible(content: WebsiteContent, pathname: string) {
 export function unavailableWebsiteContent(): WebsiteContent {
   return { ...initialWebsiteContent, ...Object.fromEntries(homepageVisibilitySections.map(id => [`${id}.showOnHomepage`, "false"])) };
 }
-export const websiteSections = [
+
+export const footerFields: WebsiteField[] = [
+ ...[['instagram','Instagram'],['facebook','Facebook'],['getYourGuide','GetYourGuide'],['tripadvisor','Tripadvisor']].map(([id,label])=>({key:'footer.social.'+id,label:label+' URL',initial:'',kind:'external' as const,max:2000,optional:true})),
+ f('footer.business','Business name','Sightseeing Shkodra'),f('footer.vat','VAT number','M66526001A'),f('footer.year','Copyright year','2026'),
+];
+export const legalSections: {id:string;title:string;fields:WebsiteField[]}[] = [['privacy','Privacy Policy'],['terms','Terms & Conditions']].map(([id,title])=>({id:'legal'+id,title,fields:[{key:'legal.'+id+'.text',label:title+' text',initial:'',kind:'legal' as const,max:60000,optional:true},{key:'legal.'+id+'.status',label:'Publication status',initial:'unpublished',kind:'publication' as const,max:11}]}));
+export const footerDefaults=Object.fromEntries([...footerFields,...legalSections.flatMap(s=>s.fields)].map(f=>[f.key,f.initial]));
+export function safeSocialUrl(value:string){if(!value)return true;try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&!/[\\\s<>]/.test(value);}catch{return false;}}
+
+export const websiteSections: {id:string;title:string;fields:WebsiteField[]}[] = [
+ ...legalSections,
   ...pageSections,
   { id: "hero", title: "Hero", fields: [
     f("hero.eyebrow", "Eyebrow", "SHKODËR, ALBANIA · GO A LITTLE FURTHER"),
@@ -72,6 +82,7 @@ export const websiteSections = [
   ] },
   { id: "footer", title: "Footer", fields: [f("footer.line1", "Tagline first line", "A little closer to the place."), f("footer.line2", "Tagline second line", "A little more of your own pace."),
     ...[["The day tour", "/tour"], ["Live map", "/live"], ["Explore Shkodra", "/explore"], ["Questions & answers", "/tour#faq"], ["Photography credits", "/credits"], ["Staff sign-in", "/admin"]].flatMap(([label, link], i) => [f(`footer.${i}.label`, `Link ${i + 1} label`, label), f(`footer.${i}.link`, `Link ${i + 1} destination`, link, "link")]),
+    ...footerFields,
     f("footer.location", "Location", "Shkodër, Albania"), f("footer.language", "Language note", "English · More languages coming soon"), f("footer.contact", "Contact and legal note", "Contact and legal information before launch"),
   ] },
   { id: "seo", title: "Homepage SEO", fields: [f("seo.title", "Search title", "Sightseeing Shkodra"), f("seo.description", "Search description", "Discover Shkodra. Tour details and booking information coming soon."), f("seo.image", "Social image", "/images/lake.webp", "image"), f("seo.alt", "Social image description", "Lake Shkodra and the Buna River seen from Rozafa Castle")] },
@@ -80,11 +91,11 @@ for (const section of websiteSections) {
   if (homepageVisibilitySections.some(id => id === section.id)) section.fields.push(f(`${section.id}.showOnHomepage`, `Show ${visibilityScope(section.id)}`, "true", "visibility"));
 }
 // Retain the stored schema and historical showcase headings without offering obsolete controls.
-export const homepageEditorSections = websiteSections.filter(s => !["how","destinations","navigation","footer","seo",...pageSections.map(p=>p.id)].includes(s.id)).map(s => s.id === "reviews" ? {...s,title:"Guest Reviews",fields:s.fields.filter(f => f.key !== "reviews.second")} : s.id === "notebook" ? {...s,fields:s.fields.filter(f=>!/^notebook\.[0-9]+\./.test(f.key)||f.key==="notebook.0.linkLabel").map(f=>f.key==="notebook.0.linkLabel"?{...f,label:"Destination card link label"}:f)} : s);
+export const homepageEditorSections = websiteSections.filter(s => !["how","destinations","navigation","footer","seo",...legalSections.map(s=>s.id),...pageSections.map(p=>p.id)].includes(s.id)).map(s => s.id === "reviews" ? {...s,title:"Guest Reviews",fields:s.fields.filter(f => f.key !== "reviews.second")} : s.id === "notebook" ? {...s,fields:s.fields.filter(f=>!/^notebook\.[0-9]+\./.test(f.key)||f.key==="notebook.0.linkLabel").map(f=>f.key==="notebook.0.linkLabel"?{...f,label:"Destination card link label"}:f)} : s);
 export const destinationEditorSections = websiteSections.filter(s => s.id === "destinations").map(s => ({ ...s, title: "Destination content", fields: s.fields.filter(f => f.key.startsWith("place.")) }));
-export const globalEditorSections = websiteSections.filter(s=>["navigation","footer","seo"].includes(s.id));
+export const globalEditorSections = websiteSections.filter(s=>["navigation","footer","seo",...legalSections.map(s=>s.id)].includes(s.id)).map(s=>s.id==="footer"?{...s,fields:footerFields}:s);
 export const publicPageEditorSections = [...pageSections, ...websiteSections.filter(s=>s.id === "how").map(s=>({...s,title:"Tour ? How it works"}))];
-export const editableWebsiteSections = [...homepageEditorSections, ...globalEditorSections, ...publicPageEditorSections];
+export const editableWebsiteSections: {id:string;title:string;fields:WebsiteField[]}[] = [...homepageEditorSections, ...globalEditorSections, ...publicPageEditorSections];
 export const websiteEditorGroups = {homepage:homepageEditorSections,destinations:destinationEditorSections,pages:publicPageEditorSections,global:globalEditorSections};
 export const websiteFields = websiteSections.flatMap(section => section.fields);
 export const initialWebsiteContent: WebsiteContent = Object.fromEntries(websiteFields.map(field => [field.key, field.initial]));
@@ -97,15 +108,19 @@ export function safeWebsiteImage(value: string) {
 }
 export function validateWebsiteContent(value: unknown): WebsiteContent {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw Error("Invalid homepage content");
-  const record = { ...Object.fromEntries(homepageVisibilitySections.map(id => [`${id}.showOnHomepage`, "true"])), ...value } as WebsiteContent;
+  const record = { ...footerDefaults, ...Object.fromEntries(homepageVisibilitySections.map(id => [`${id}.showOnHomepage`, "true"])), ...value } as WebsiteContent;
   if (Object.keys(record).length !== websiteFields.length) throw Error("Invalid homepage fields");
   for (const field of websiteFields) {
     const v = record[field.key];
     if (field.kind === "visibility" && v !== "true" && v !== "false") throw Error("Invalid homepage visibility");
+    if(field.kind==='external'&&!safeSocialUrl(v))throw Error('Use a valid HTTPS URL for '+field.label);
+    if(field.kind==='publication'&&!['published','unpublished'].includes(v))throw Error('Invalid legal status');
     if (field.kind === "position" && !focalPositions.includes(v as typeof focalPositions[number])) throw Error("Invalid focal position");
     if (field.kind === "amenities") parseAmenities(v);
-    if (typeof v !== "string" || !v.trim() || v.length > field.max || (field.kind === "link" && !safeWebsiteLink(v)) || (field.kind === "image" && !safeWebsiteImage(v))) throw Error(`Check ${field.label}`);
+    if (typeof v !== "string" || (!field.optional && !v.trim()) || v.length > field.max || (field.kind === "link" && !safeWebsiteLink(v)) || (field.kind === "image" && !safeWebsiteImage(v))) throw Error(`Check ${field.label}`);
   }
+  for(const id of ['privacy','terms'])if(record['legal.'+id+'.status']==='published'&&!record['legal.'+id+'.text'].trim())throw Error('Add legal text before publishing');
+  if(!/^\d{4}$/.test(record['footer.year']))throw Error('Use a four-digit copyright year');
   return { ...record };
 }
 export function websitePlaces(content: WebsiteContent) {

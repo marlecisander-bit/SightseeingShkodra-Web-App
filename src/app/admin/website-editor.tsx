@@ -39,7 +39,9 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
       if (!result.error) router.refresh();
     });
   }}>
-    {sectionId === "reviews" && <p><a href={`/admin/${operatorId}/reviews`}>Manage guest reviews, ordering and Google links</a>. This section is hidden until a review is published.</p>}
+    {sectionId === "reviews" && <p><a href={`/admin/${operatorId}/reviews`}>Manage guest reviews and ordering</a>. This section is hidden until a review is published.</p>}
+    {sectionId==='footer'&&<p>Empty social URLs are hidden. Use HTTPS links. Google Reviews uses the shared setting below.</p>}
+    {sectionId.startsWith('legal')&&<p>Plain text only. Add your approved legal wording, set Published, then publish. Unpublished pages show a neutral availability notice.</p>}
     <p>Save your changes as a draft or publish them when you’re ready.</p>
     {["intro","departures","tourPage"].includes(sectionId) && <p><a href={`/admin/${operatorId}/catalog`}>Products & suppliers</a> | <a href={`/admin/${operatorId}/departures`}>Calendar & Pricing</a>. Stops and live vehicle information are managed from Live Map.</p>}
     <input type="hidden" name="updated_at" value={stamp} />
@@ -47,9 +49,9 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
       {section.fields.filter(f=>f.kind==="visibility").map(f=><input key={f.key} type="hidden" name={f.key} value={values[f.key]}/>)}
       {groups.filter(group=>group.fields.length).map(group=><fieldset className={styles.fieldGroup} key={group.title}><legend>{group.title}</legend><div className={styles.fieldGrid}>{group.fields.map(field => {
         if (field.kind === "visibility") return <input key={field.key} type="hidden" name={field.key} value={values[field.key]} />;
-        const long = field.kind === "amenities" || /text|detail|description|alt/.test(field.key) || /description/i.test(field.label) || field.initial.includes("\n");
+        const long = field.kind === "legal" || field.kind === "amenities" || /text|detail|description|alt/.test(field.key) || /description/i.test(field.label) || field.initial.includes("\n");
         return <div key={field.key} className={`${styles.field} ${long ? styles.fullField : ""} ${field.kind === "image" ? styles.imageField : ""}`}>
-          {field.kind === "amenities" ? <AmenitiesInput value={values[field.key]} onChange={value=>setValues(v=>({...v,[field.key]:value}))}/> : field.kind === "position" ? <label>{field.label}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}>{focalPositions.map(position=><option key={position}>{position}</option>)}</select></label> : field.kind === "image" ? <>
+          {field.kind === "publication" ? <label>{field.label}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}><option value="unpublished">Unpublished</option><option value="published">Published</option></select></label> : field.kind === "amenities" ? <AmenitiesInput value={values[field.key]} onChange={value=>setValues(v=>({...v,[field.key]:value}))}/> : field.kind === "position" ? <label>{field.label}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}>{focalPositions.map(position=><option key={position}>{position}</option>)}</select></label> : field.kind === "image" ? <>
             <strong>{field.label}</strong>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className={styles.imagePreview} ref={image => { if (image?.complete && image.naturalWidth) { const size = `${image.naturalWidth} × ${image.naturalHeight} px`; setSizes(s => s[field.key] === size ? s : {...s, [field.key]: size}); } }} src={values[field.key]} alt={`Current ${field.label}`} onLoad={event => { const size = `${event.currentTarget.naturalWidth} × ${event.currentTarget.naturalHeight} px`; setSizes(s => s[field.key] === size ? s : {...s, [field.key]: size}); }} />
@@ -71,11 +73,11 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
               });
             }} /></label>
             <small className={styles.helper}>{sectionId === "hero" ? "No original file-size limit. Large hero images are automatically optimized for the web." : "JPEG, PNG, WebP or AVIF · Maximum 8 MB per image."}</small>
-            <details className={styles.imagePath}><summary>Advanced: image address</summary><label>{field.label} path<input name={field.key} required maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} /></label></details>
+            <details className={styles.imagePath}><summary>Advanced: image address</summary><label>{field.label} path<input name={field.key} required={!field.optional} maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} /></label></details>
             <small className={styles.helper}>Required image · Replace to change it. Alt text is editable below.</small>
           </> : <label>{field.label.replace("Eyebrow", "Small heading")}
-            {long ? <textarea rows={field.key.includes("alt") ? 2 : 3} name={field.key} required maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} />
-              : <input name={field.key} required maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} />}
+            {long ? <textarea rows={field.key.includes("alt") ? 2 : 3} name={field.key} required={!field.optional} maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} />
+              : <input type={field.kind === "external" ? "url" : "text"} name={field.key} required={!field.optional} maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} />}
           </label>}
         </div>;
       })}</div></fieldset>)}

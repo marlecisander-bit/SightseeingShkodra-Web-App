@@ -3,12 +3,14 @@ import { Footer } from "@/components/public/ui";
 import "./public.css";
 import { getPublishedWebsite } from "@/modules/content/website-server";
 
+import {getPublicReviews} from "@/modules/content/reviews-server";
+
 export default async function PublicLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const content = await getPublishedWebsite();
+  const [content,reviews] = await Promise.all([getPublishedWebsite(),getPublicReviews()]);
   return (
     <div className="public-site">
       <BookingProvider>
@@ -17,7 +19,7 @@ export default async function PublicLayout({
         </a>
         <Header content={content} />
         {children}
-        <Footer content={content} />
+        <Footer content={content} googleReviewsUrl={reviews.settings.google_reviews_url} />
       </BookingProvider>
     </div>
   );

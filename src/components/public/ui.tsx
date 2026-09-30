@@ -4,7 +4,7 @@ import Image from "next/image";
 import { PublicBookingLink as Link } from "./booking";
 import { BrandLogo } from "./brand-logo";
 import type { ComponentProps, ReactNode } from "react";
-import { visibleWebsiteLink, resolveWebsiteLink, initialWebsiteContent, type WebsiteContent } from "@/modules/content/website-schema";
+import { safeSocialUrl, footerDefaults, initialWebsiteContent, type WebsiteContent } from "@/modules/content/website-schema";
 
 export function ActionLink({
   children,
@@ -92,10 +92,12 @@ export function PreviewNote() {
     <p className="p-preview">Reserve online. Pay at the meeting point.</p>
   );
 }
-export function Footer({ content: c = initialWebsiteContent, previewPathname }: { content?: WebsiteContent; previewPathname?: string }) {
+export function Footer({ content = initialWebsiteContent, previewPathname, googleReviewsUrl = '' }: { content?: WebsiteContent; previewPathname?: string; googleReviewsUrl?:string|null }) {
+ const c={...footerDefaults,...content};
+ const socials=[['instagram','Instagram',c['footer.social.instagram']],['facebook','Facebook',c['footer.social.facebook']],['getyourguide','GetYourGuide',c['footer.social.getYourGuide']],['tripadvisor','Tripadvisor',c['footer.social.tripadvisor']],['google','Google Reviews',googleReviewsUrl??'']].filter(([, ,url])=>url&&safeSocialUrl(url));
   return (
-    <footer className="p-site-footer">
-      <FinalInvitation content={c} previewPathname={previewPathname}>
+    <>
+      <FinalInvitation content={c} previewPathname={previewPathname}><section className="p-site-footer" aria-label="Final booking invitation">
       <Media src={c["final.image"]} alt={c["final.alt"]} sizes="100vw" />
       <div className="p-footer-cta">
         <p className="p-eyebrow">{c["final.eyebrow"]}</p>
@@ -103,26 +105,20 @@ export function Footer({ content: c = initialWebsiteContent, previewPathname }: 
         <ActionLink href="/book" className="p-button-booking">{c["final.book"]}</ActionLink>
         <PreviewNote />
       </div>
-      </FinalInvitation>
-      <div className="p-footer-info">
-      <div>
-        <Link className="p-wordmark" href="/">
-          <BrandLogo />
-        </Link>
-        <p>
-          {c["footer.line1"]}
-          <br />{c["footer.line2"]}
-        </p>
-      </div>
-      <nav aria-label="Footer">
-        {[0, 1, 2, 3, 4, 5].filter(i => visibleWebsiteLink(c[`footer.${i}.link`], c)).map(i => <Link key={i} href={resolveWebsiteLink(c[`footer.${i}.link`])}>{resolveWebsiteLink(c[`footer.${i}.link`])==="/route"?"Route & Live Map":c[`footer.${i}.label`]}</Link>)}
-      </nav>
-      <div className="p-footer-bottom">
-        <span>{c["footer.location"]}</span>
-        <span>{c["footer.language"]}</span>
-        <span>{c["footer.contact"]}</span>
-      </div>
-      </div>
-    </footer>
+      </section></FinalInvitation>
+      <footer className="p-global-footer">
+       <div className="p-footer-inner">
+        <div className="p-footer-main">
+         <Link className="p-footer-logo" href="/" aria-label="Sightseeing Shkodra homepage"><BrandLogo /></Link>
+         {socials.length>0&&<div className="p-footer-social" aria-label="Social and review platforms">{socials.map(([id,label,url])=><a key={id} href={url} aria-label={label} title={label} target="_blank" rel="noopener noreferrer"><Image src={'/brand/social/'+id+'.svg'} alt="" width={32} height={32} unoptimized className={id==='getyourguide'?'p-social-wide':undefined}/></a>)}</div>}
+         <Link className="ss-button p-footer-staff" href="/admin"><ButtonContent>Staff Login</ButtonContent></Link>
+        </div>
+        <div className="p-footer-info">
+         <p><span>© {c['footer.year']} {c['footer.business']}</span><span>VAT: {c['footer.vat']}</span></p>
+         <nav aria-label="Legal"><Link href="/privacy-policy">Privacy Policy</Link><Link href="/terms-and-conditions">Terms &amp; Conditions</Link></nav>
+        </div>
+       </div>
+      </footer>
+    </>
   );
 }

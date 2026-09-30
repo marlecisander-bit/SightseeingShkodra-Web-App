@@ -112,3 +112,7 @@ Three historical structured fields retained, plus dormant PublishedStops/PublicS
 ## Permanent rule
 
 One piece of content -> one authoritative source -> zero or one logical admin owner -> one or many public consumers. Placement and presentation may vary; never copy an entity merely to display it on another page.
+
+## Global footer amendment - 30 September 2026
+
+One existing Footer continues to serve all public routes. Website Global > Footer owns four new social URLs and business/VAT/year fields in the existing website document. Google Reviews retains review_settings.google_reviews_url as its sole source, with its editing control relocated to Footer; Guest Reviews consumes that value. Privacy Policy and Terms & Conditions text/status use the existing Website document, editor, preview and publication RPC. Old footer fields remain stored but have no active editor/consumer. No second CMS or settings table introduced. See GLOBAL-FOOTER-REPORT.md for the field ownership and route addendum to the historical CMS-ROUTE-INVENTORY.json snapshot. Migration remains local and unapplied hosted.
