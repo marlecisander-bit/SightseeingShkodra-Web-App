@@ -21,7 +21,10 @@ export function BookingPriceIndicator({amount,date,total=false,currency="EUR"}:{
 
 export function BookingDateSelector({value,onChange}:{value:string;onChange:(value:string)=>void}) {
   const update=(next:string)=>{if(next!==value)onChange(next);};
-  return <label className={styles.date}><span>Select date</span><input aria-label="Your date" type="date" value={value} onChange={event=>update(event.target.value)} onInput={event=>update(event.currentTarget.value)} onBlur={event=>update(event.currentTarget.value)} /></label>;
+  return <label className={styles.date}><span>Select date</span><input aria-label="Your date" type="date" value={value} onClick={event=>{
+    // Keep native keyboard editing and the calendar icon as the fallback.
+    try { event.currentTarget.showPicker?.(); } catch { /* Unsupported or restricted browser context. */ }
+  }} onChange={event=>update(event.target.value)} onInput={event=>update(event.currentTarget.value)} onBlur={event=>update(event.currentTarget.value)} /></label>;
 }
 
 /** Controlled presentation only; callers retain their existing selection and limits. */
