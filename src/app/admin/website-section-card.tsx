@@ -13,6 +13,7 @@ const extraIcons = {
 type Icon = AmenityIconName | keyof typeof extraIcons;
 export const sectionCardMetadata: Record<string, {icon:Icon; description:string; scope?:string}> = {
   hero:{icon:"camera",description:"Headline, desktop/mobile photographs and booking links"},
+  heroAmenities:{icon:"headphones",description:"Saved service highlights retained for reference",scope:"Not displayed on homepage"},
   intro:{icon:"ticket",description:"Tour introduction and day-planning labels"},
   route:{icon:"pin",description:"Heading and introduction above shared destinations"},
   live:{icon:"van",description:"Live Map introduction and van-finding link"},
