@@ -10,6 +10,6 @@ export async function generateMetadata() {
   return websiteMetadata(c,published);
 }
 export default async function Home() {
-  const [home, content, reviews, planner] = await Promise.all([getHomepage(), getPublishedWebsite(), getPublicReviews(), getDayPlanner()]);
-  return <HomepageView planner={planner} home={home} content={content} reviews={reviews} places={(await getPublicDestinations()).filter(d=>d.showOnHomepage)} />;
+  const [home, content, reviews, planner, places] = await Promise.all([getHomepage(), getPublishedWebsite(), getPublicReviews(), getDayPlanner(), getPublicDestinations()]);
+  return <HomepageView planner={planner} home={home} content={content} reviews={reviews} places={places.filter(d=>d.showOnHomepage)} />;
 }

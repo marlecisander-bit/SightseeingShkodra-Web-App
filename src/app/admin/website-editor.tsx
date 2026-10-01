@@ -43,6 +43,7 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
     {sectionId==='footer'&&<p>Empty social URLs are hidden. Use HTTPS links. Google Reviews uses the shared setting below.</p>}
     {sectionId.startsWith('legal')&&<p>Plain text only. Add your approved legal wording, set Published, then publish. Unpublished pages show a neutral availability notice.</p>}
     <p>Save your changes as a draft or publish them when you’re ready.</p>
+    {sectionId === "tourPage" && <p>FAQ questions below appear on the dedicated FAQ page. <a href={`/admin/${operatorId}/website-preview?page=faq`}>Preview saved FAQ draft</a></p>}
     {["intro","departures","tourPage"].includes(sectionId) && <p><a href={`/admin/${operatorId}/catalog`}>Products & suppliers</a> | <a href={`/admin/${operatorId}/departures`}>Calendar & Pricing</a>. Stops and live vehicle information are managed from Live Map.</p>}
     <input type="hidden" name="updated_at" value={stamp} />
     <fieldset disabled={pending}>

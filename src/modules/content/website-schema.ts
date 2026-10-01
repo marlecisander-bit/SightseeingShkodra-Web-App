@@ -16,7 +16,7 @@ export function visibleWebsiteLink(link: string, content: WebsiteContent) {
   return !(resolved === "/#route" && !sectionVisible(content, "route") || resolved === "/tour#timetable" && !sectionVisible(content, "departures"));
 }
 export function invitationVisible(content: WebsiteContent, pathname: string) {
-  return sectionVisible(content, "final") && pathname !== "/book" && !pathname.startsWith("/booking/");
+  return sectionVisible(content, "final") && pathname !== "/faq" && pathname !== "/book" && !pathname.startsWith("/booking/");
 }
 export function unavailableWebsiteContent(): WebsiteContent {
   return { ...initialWebsiteContent, ...Object.fromEntries(homepageVisibilitySections.map(id => [`${id}.showOnHomepage`, "false"])) };
@@ -77,11 +77,11 @@ export const websiteSections: {id:string;title:string;fields:WebsiteField[]}[] =
   ] },
   { id: "final", title: "Final booking invitation", fields: [f("final.eyebrow", "Eyebrow", "LESS RUSH. MORE SHKODRA."), f("final.title", "Heading", "A day you’ll"), f("final.emphasis", "Emphasized heading", "make your own."), f("final.book", "Booking button label", "Book your day"), f("final.image", "Banner image", "/images/castle.webp", "image"), f("final.alt", "Image description", "Rozafa Castle and the green landscape around Shkodra")] },
   { id: "navigation", title: "Navigation", fields: [f("nav.home", "Home link label", "Home"),
-    ...[["Tour", "/tour"], ["Route", "/#route"], ["Explore Shkodra", "/explore"], ["Live map", "/live"], ["FAQ", "/tour#faq"]].flatMap(([label, link], i) => [f(`nav.${i}.label`, `Link ${i + 1} label`, label), f(`nav.${i}.link`, `Link ${i + 1} destination`, link, "link")]),
+    ...[["Tour", "/tour"], ["Route", "/#route"], ["Explore Shkodra", "/explore"], ["Live map", "/live"], ["FAQ", "/faq"]].flatMap(([label, link], i) => [f(`nav.${i}.label`, `Link ${i + 1} label`, label), f(`nav.${i}.link`, `Link ${i + 1} destination`, link, "link")]),
     f("nav.book", "Header booking button", "Book your day"), f("nav.mobileBook", "Mobile booking button", "Book your day"), f("nav.mobileMap", "Mobile map link label", "Live van"),
   ] },
   { id: "footer", title: "Footer", fields: [f("footer.line1", "Tagline first line", "A little closer to the place."), f("footer.line2", "Tagline second line", "A little more of your own pace."),
-    ...[["The day tour", "/tour"], ["Live map", "/live"], ["Explore Shkodra", "/explore"], ["Questions & answers", "/tour#faq"], ["Photography credits", "/credits"], ["Staff sign-in", "/admin"]].flatMap(([label, link], i) => [f(`footer.${i}.label`, `Link ${i + 1} label`, label), f(`footer.${i}.link`, `Link ${i + 1} destination`, link, "link")]),
+    ...[["The day tour", "/tour"], ["Live map", "/live"], ["Explore Shkodra", "/explore"], ["Questions & answers", "/faq"], ["Photography credits", "/credits"], ["Staff sign-in", "/admin"]].flatMap(([label, link], i) => [f(`footer.${i}.label`, `Link ${i + 1} label`, label), f(`footer.${i}.link`, `Link ${i + 1} destination`, link, "link")]),
     ...footerFields,
     f("footer.location", "Location", "Shkodër, Albania"), f("footer.language", "Language note", "English · More languages coming soon"), f("footer.contact", "Contact and legal note", "Contact and legal information before launch"),
   ] },
@@ -100,7 +100,7 @@ export const websiteEditorGroups = {homepage:homepageEditorSections,destinations
 export const websiteFields = websiteSections.flatMap(section => section.fields);
 export const initialWebsiteContent: WebsiteContent = Object.fromEntries(websiteFields.map(field => [field.key, field.initial]));
 export function safeWebsiteLink(value: string) {
-  return /^\/(?:$|#(?:route|booking|destinations)$|(?:tour|live|explore|book|credits|admin)(?:#(?:faq|timetable|centre|castle|lake|bridge))?$|explore\/(?:centre|castle|lake|bridge)$)/.test(value);
+  return /^\/(?:$|#(?:route|booking|destinations)$|(?:tour|live|explore|book|credits|admin|faq)(?:#(?:faq|timetable|centre|castle|lake|bridge))?$|explore\/(?:centre|castle|lake|bridge)$)/.test(value);
 }
 export function safeWebsiteImage(value: string) {
   if (/^\/images\/[a-zA-Z0-9/_-]+\.(?:webp|png|jpg|jpeg|avif)$/.test(value)) return true;
@@ -129,5 +129,5 @@ export function websitePlaces(content: WebsiteContent) {
 
 // Resolve retired homepage anchors without changing saved editorial records.
 export function resolveWebsiteLink(link: string) {
-  return link === "/live" ? "/route" : link === "/#booking" ? "/book" : link === "/#destinations" ? "/explore" : link;
+  return link === "/tour#faq" ? "/faq" : link === "/live" ? "/route" : link === "/#booking" ? "/book" : link === "/#destinations" ? "/explore" : link;
 }

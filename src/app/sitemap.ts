@@ -12,6 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const paths = home.state === "unavailable" || home.state === "unconfigured" ? [] : sitemapPaths(home).filter(path=>!path.startsWith("/explore/"));
   for(const destination of await getPublicDestinations())if(destination.guidePublished)paths.push(`/explore/${destination.slug}`);
   if (website.published && !paths.includes("/")) paths.unshift("/");
+  if (website.published) paths.push('/faq');
   for(const [kind,path] of [['privacy','/privacy-policy'],['terms','/terms-and-conditions']])if(website.published&&website.content['legal.'+kind+'.status']==='published'&&website.content['legal.'+kind+'.text']?.trim())paths.push(path);
   return paths.map((path) => ({ url: `${config.origin}${path}` }));
 }

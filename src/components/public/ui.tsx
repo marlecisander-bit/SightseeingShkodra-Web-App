@@ -66,7 +66,7 @@ export function Media({
         fill
         sizes={sizes ?? (hero ? "100vw" : "(max-width: 700px) 100vw, 50vw")}
         preload={hero}
-        unoptimized={src.startsWith("https://")}
+        unoptimized={src.startsWith("https://") && !/^https:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\/website-media\/[^?]+$/.test(src)}
         style={{ objectFit: "cover" }}
       />
       )}

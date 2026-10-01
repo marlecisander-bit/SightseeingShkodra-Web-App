@@ -58,7 +58,7 @@ export default async function YourDay() {
           <ActionLink href="/route">Track van</ActionLink>
           <nav className="p-section-nav" aria-label="Travel support">
             {sectionVisible(c,"departures")&&<Link href="/tour#timetable">Timetable & boarding</Link>}
-            <Link href="/tour#faq">Help & questions</Link>
+            <Link href="/faq">Help & questions</Link>
           </nav>
         </div>
       </div>

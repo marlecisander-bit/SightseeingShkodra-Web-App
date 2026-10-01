@@ -17,6 +17,19 @@ const routes=['/','/tour','/explore','/explore/lake','/live','/your-day','/credi
 const home={state:'empty',product:null,content:{},date:null,timezone:null,price:'',frequency:'Unavailable',departures:[],schedule:'empty',adultFares:[]};
 const reviews={reviews:[{id:'review-1',author:'Fixture guest',rating:5,body:'A published fixture review.',source:'Direct',review_date:null,original_url:null,avatar_url:null,language:null,featured:false,published:true,display_order:0,updated_at:''}],settings:{display_limit:3,google_reviews_url:null,leave_review_url:null}};
 
+test('all homepage visibility flags remove their edited content and restore it from the same source',()=>{
+ const keys={hero:'hero.title',intro:'intro.title',route:'route.title',live:'live.title',departures:'departures.title',reviews:'reviews.title',notebook:'notebook.title',final:'final.title'};
+ const c={...initialWebsiteContent,...Object.fromEntries(Object.entries(keys).map(([section,key])=>[key,'Audit '+section+' marker']))};
+ const page=content=>render(h(React.Fragment,null,h(HomepageView,{home,content,reviews,places:[]}),h(Footer,{content,previewPathname:'/'})));
+ for(const [section] of Object.entries(keys)){
+  for(const visible of [true,false,true]){
+   const html=page({...c,[section+'.showOnHomepage']:String(visible)});
+   assert.equal(html.includes('Audit '+section+' marker'),visible,section);
+   for(const other of Object.keys(keys).filter(value=>value!==section))assert.ok(html.includes('Audit '+other+' marker'),other);
+  }
+ }
+});
+
 test('published CMS enable-disable-enable and edited fields reach every shared footer without a hidden wrapper or image',async()=>{
  const db=await createTestDatabase();try{
  await loadDevelopmentFixtures(db);const op='10000000-0000-4000-8000-000000000001';
@@ -34,15 +47,15 @@ test('published CMS enable-disable-enable and edited fields reach every shared f
  for(const pathname of routes){const html=render(h(Footer,{content:published,previewPathname:pathname}));assert.equal(html.includes('p-footer-cta'),visible,pathname);assert.equal(html.includes('Shared invitation marker'),visible,pathname);assert.equal(html.includes('Edited invitation image'),visible,pathname);assert.ok(html.includes('p-footer-info'));
  if(visible){for(const value of ['Edited title','Edited emphasis','Choose this day','bridge-view.webp'])assert.ok(html.includes(value),value);assert.match(html,/href="\/book"/);assert.match(html,/aria-haspopup="dialog"/);}}
  }
- for(const pathname of ['/book','/booking/example']){const html=render(h(Footer,{content:c,previewPathname:pathname}));assert.ok(!html.includes('p-footer-cta'));assert.ok(!html.includes('Edited invitation image'));}
+ for(const pathname of ['/faq','/book','/booking/example']){const html=render(h(Footer,{content:c,previewPathname:pathname}));assert.ok(!html.includes('p-footer-cta'));assert.ok(!html.includes('Edited invitation image'));}
  }finally{await db.close();}
 });
 test('shared section flags remove secondary Tour and Live consumers but preserve independent map and booking',()=>{
- const enabled=render(h(TourView,{tour:home,c:initialWebsiteContent,reviews,places:[]}));for(const id of ['tour-route','tour-live','timetable','reviews'])assert.ok(enabled.includes('id="'+id+'"'));
+ const enabled=render(h(TourView,{tour:home,c:initialWebsiteContent,reviews,places:[]}));for(const id of ['tour-route','tour-live','timetable'])assert.ok(enabled.includes('id="'+id+'"'));
  const c={...initialWebsiteContent,...Object.fromEntries(['route','live','departures','reviews'].map(id=>[id+'.showOnHomepage','false']))};
  const tour=render(h(TourView,{tour:home,c,reviews,places:[]}));
  for(const id of ['tour-route','tour-live','timetable','reviews'])assert.ok(!tour.includes('id="'+id+'"'));
- assert.ok(tour.includes('id="faq"'));assert.ok(tour.includes('Book your day'));
+ assert.ok(!tour.includes('id="faq"'));assert.ok(tour.includes('Book your day'));
  const live=render(h(LiveView,{c,places:[]}));assert.ok(live.includes('<h1>Live map</h1>'));assert.ok(live.includes('<iframe'));assert.ok(!live.includes(c['route.title']));assert.ok(!live.includes(c['live.title']));
  const homepage=render(h(HomepageView,{home,content:c,reviews,places:[]}));assert.ok(!homepage.includes('id="route"'));
 });
@@ -65,3 +78,14 @@ test('unified journey shares visibility flags while preserving one map and booki
  assert.ok(html.includes('Book your day'));
  }
 });
+
+ test('Tour excludes FAQ and reviews; dedicated FAQ reuses edited CMS questions and product inclusions',async()=>{
+ const {FaqPage}=await import('../../src/components/public/faq-page.tsx');
+ const c={...initialWebsiteContent,'tourPage.faqTitle':'Edited FAQ title','tourPage.faqBook':'Edited booking question'};
+ const tour=render(h(TourView,{tour:home,c,places:[]}));
+ for(const marker of ['Edited FAQ title','Edited booking question','id="reviews"','href="#faq"','href="#reviews"'])assert.ok(!tour.includes(marker));
+ const faq=render(h(FaqPage,{content:c,inclusions:'Published inclusion answer'}));
+ for(const marker of ['Edited FAQ title','Edited booking question','Published inclusion answer'])assert.ok(faq.includes(marker));
+ assert.equal((faq.match(/<details/g)||[]).length,4);
+ assert.ok(!faq.includes('tour-route'));assert.ok(!faq.includes('Guest reviews'));
+ });
