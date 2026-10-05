@@ -1,9 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { prepareWebsiteImage, IMAGE_UPLOAD_BYTES } from '../../src/modules/content/image-upload.ts';
+import { prepareWebsiteImage, IMAGE_UPLOAD_BYTES, IMAGE_ORIGINAL_BYTES } from '../../src/modules/content/image-upload.ts';
 
 test('oversized section images fail locally with size and remedy', async () => {
-  const file = new File([new Uint8Array(IMAGE_UPLOAD_BYTES + 1024 * 1024)], 'large.png');
+  const file = new File([new Uint8Array(IMAGE_ORIGINAL_BYTES + 1024 * 1024)], 'large.png');
   await assert.rejects(prepareWebsiteImage(file, false), /9.0 MB.*maximum.*8 MB.*compress/);
 });
 
@@ -27,6 +27,10 @@ test('large hero is optimized instead of rejected by original size', async () =>
     assert.equal(canvas.height, 1920);
     assert.ok(result.size < IMAGE_UPLOAD_BYTES);
     assert.equal(closed, true);
+    // A valid 5 MB non-hero original must also be reduced before a server action.
+    const section = await prepareWebsiteImage(new File([new Uint8Array(5 * 1024 * 1024)], 'section.png'), false);
+    assert.equal(section.type, 'image/webp');
+    assert.ok(section.size <= 4 * 1024 * 1024);
   } finally {
     globalThis.createImageBitmap = priorBitmap;
     globalThis.document = priorDocument;

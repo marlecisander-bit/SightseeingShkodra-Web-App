@@ -1,3 +1,5 @@
+import { NotificationProvider, NotificationBell } from './notifications';
+import { hasPermission } from '@/modules/identity/roles';
 import { AdminNavigation } from './admin-navigation';
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
@@ -8,17 +10,17 @@ import { navigationFor } from '@/modules/identity/admin-navigation';
 import type { StaffRole } from '@/modules/identity/roles';
 import { signOut } from '../auth/actions';
 import styles from './admin.module.css';
-const groups = [{label:'Home',slugs:['overview']},{label:'Website',slugs:['content','reviews']},{label:'Tour operations',slugs:['departures']},{label:'Sales',slugs:['catalog','bookings']},{label:'Communication',slugs:['email']}];
-export function AdminShell({operatorId,operatorName,role,section,children}:{operatorId:string;operatorName:string;role:StaffRole;section:string;children:ReactNode}) {
+const groups = [{label:'Home',slugs:['overview']},{label:'Website',slugs:['content','reviews']},{label:'Tour operations',slugs:['departures']},{label:'Sales',slugs:['catalog','bookings']},{label:'Communication',slugs:['notifications','email']}];
+export function AdminShell({operatorId,operatorName,role,section,children,userId}:{operatorId:string;operatorName:string;role:StaffRole;section:string;children:ReactNode;userId:string}) {
  const navigation=navigationFor(role);
- return <main className={styles.shell}>
+ const body = <main className={styles.shell}>
   <a className={styles.skip} href="#workspace-content">Skip to content</a>
   <header className={styles.header}>
    <div className={styles.headerIdentity}>
    <Link className={styles.adminBrand} href={'/admin/'+operatorId+'/overview'}><Image src="/brand/logo-light.svg" alt="Sightseeing Shkodra" width={170} height={51} unoptimized priority/></Link>
    <div className={styles.workspaceIdentity}><strong>{operatorName}</strong><span>{role.replace('_',' ')}</span></div>
    </div>
-   <div className={styles.headerActions}><Link className={styles.websiteLink} href="/" target="_blank" rel="noopener noreferrer">View website</Link><Link className={styles.workspaceSwitch} href="/admin">Switch workspace</Link><form action={signOut}><Button className={styles.secondary}>Sign out</Button></form></div>
+   <div className={styles.headerActions}>{hasPermission(role,'bookings.read')&&<NotificationBell/>}<Link className={styles.websiteLink} href="/" target="_blank" rel="noopener noreferrer">View website</Link><Link className={styles.workspaceSwitch} href="/admin">Switch workspace</Link><form action={signOut}><Button className={styles.secondary}>Sign out</Button></form></div>
   </header>
   <div className={styles.workspace}>
    <AdminNavigation><nav className={styles.nav} aria-label="Admin navigation">{groups.map(group=>{
@@ -28,4 +30,5 @@ export function AdminShell({operatorId,operatorName,role,section,children}:{oper
    <div id="workspace-content" tabIndex={-1} className={styles.panel+' '+(section==='content'?styles.cmsPanel:'')}>{children}</div>
   </div>
  </main>;
+ return hasPermission(role,'bookings.read')?<NotificationProvider operator={operatorId} userId={userId}>{body}</NotificationProvider>:body;
 }

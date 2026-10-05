@@ -110,3 +110,20 @@ The user explicitly requires every public occurrence of the same CMS section to 
 
 ## 30 September 2026 - Unified route presentation (user amendment)
 The user's Route + Live Map brief authorizes /route as the canonical combined public consumer and a permanent /live redirect. Reuse the independent iframe; expose resolved operational state through a small additive presentation message bridge, never a second GPS/ETA engine. Booking/service and CMS retain their existing ownership. This supersedes the earlier separate public route/live presentation, not the independent tracking architecture. Implementation and acceptance limits are recorded in LIVE_MAP_EMBED.md. No deployment authorized or performed in this task.
+
+## 5 October 2026 - Admin operational notifications (user amendment)
+
+The user's Admin Notification Center + Mobile Push brief authorizes an integrated
+personal inbox and multi-device Web Push for existing operational events. Reuse
+`domain_events`; do not create another booking event source or replace Resend.
+Notification projection and delivery run asynchronously, outside booking
+transactions. Active owner/admin/operations receive personal receipts; device
+credentials remain server-only. Use one admin-scoped service worker without
+offline booking caching and explicit permission enablement. No hosted deployment
+or push enablement was requested by this implementation brief. Architecture,
+configuration and acceptance limits are recorded in ADMIN-NOTIFICATIONS-REPORT.md.
+
+
+## 5 October 2026 ? Permanent Vercel hosting amendment
+
+User explicitly designated Vercel as the permanent main Next.js host, main as production branch and sightseeingshkodra.app as production domain. Supabase and Resend retain their existing responsibilities. Netlify is legacy and may not receive new main-app functionality. Retain the separate sightseeingshkodralivetrackingapp.netlify.app map and legacy fallback until hosted parity. This amends hosting assumptions without rewriting Roadmap V4 or business rules. User selected Hobby with background delivery disabled; no upgrade or active cron is authorized. See [DEPLOYMENT.md](../DEPLOYMENT.md).

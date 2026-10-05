@@ -47,7 +47,7 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
       </div>
       <div className={styles.toolbarStatus} role="status"><span className={changed || unsaved ? styles.draftBadge : styles.badge}>{unsaved ? "Unsaved changes" : changed ? "Draft changes" : "Published"}</span><span>Last published {record.published_at ? new Date(record.published_at).toISOString().replace("T", " · ").slice(0, 18) + " UTC" : "—"}</span></div>
     </header>
-    <div className={styles.sectionNavigation} aria-label="Content area">{(Object.keys(websiteEditorGroups) as Array<keyof typeof websiteEditorGroups>).map(area => <Button key={area} aria-pressed={scope === area} onClick={() => { if (unsaved || pending) { setNotice("Save or discard your edits before switching content areas."); return; } setScope(area); setActive(null); setNotice(""); }}>{({homepage:"Homepage",destinations:"Destinations",pages:"Public pages",global:"Navigation, footer & search"})[area]}</Button>)}</div>
+    <div className={styles.sectionNavigation} aria-label="Content area">{(Object.keys(websiteEditorGroups) as Array<keyof typeof websiteEditorGroups>).map(area => <Button key={area} aria-pressed={scope === area} onClick={() => { if (unsaved || pending) { setNotice("Save or discard your edits before switching content areas."); return; } setScope(area); setActive(null); setNotice(""); }}>{({homepage:"Homepage",destinations:"Destinations",pages:"Public pages",global:"Global: contact, navigation & footer"})[area]}</Button>)}</div>
     {notice && <p className={styles.notice} role="alert">{notice}</p>}
     <div className={styles.columns}>
       <div className={styles.cards}>

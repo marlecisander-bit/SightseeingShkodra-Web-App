@@ -31,3 +31,21 @@ Generated from all local migrations. All public tables have RLS; browser INSERT/
 | suppliers | staff_read (SELECT): private.has_staff_role(operator_id, ARRAY['owner'::text, 'admin'::text, 'operations'::text, 'content_editor'::text]) |
 | vehicle_positions | staff_read (SELECT): private.has_staff_role(operator_id, ARRAY['owner'::text, 'admin'::text, 'operations'::text]) |
 | vehicles | staff_read (SELECT): private.has_staff_role(operator_id, ARRAY['owner'::text, 'admin'::text, 'operations'::text]) |
+| admin_notifications | SELECT only for active owner/admin/operations with their own receipt; no browser mutations |
+| admin_notification_receipts | SELECT only for auth.uid() and active owner/admin/operations in that operator; no browser mutations |
+| admin_notification_preferences | SELECT only for auth.uid() and active owner/admin/operations in that operator; no browser mutations |
+| admin_notification_sources | No browser grants or policies; server projection ledger only |
+| admin_push_subscriptions | No browser grants or policies; credential-bearing rows stay server-only |
+| admin_push_deliveries | No browser grants or policies; server-only dispatch leases and outcomes |
+
+The six admin-notification tables above are implemented in local migration
+`20261005000100_admin_notifications.sql`; hosted application is pending. Local tests
+verify anonymous denial, per-user/per-operator isolation, content-editor exclusion,
+and absence of authenticated INSERT/UPDATE/DELETE/TRUNCATE grants. Receipt and
+preference writes use the verified session and `bookings.read` server boundary.
+Device responses omit endpoint/encryption credentials. Only receipts are added to
+`supabase_realtime`; authorized notification content is fetched through the server API.
+
+## WhatsApp global settings — 5 October 2026
+
+No new table, policy or write grant. Six website content fields reuse the existing operator-scoped `content.manage` guard and website save/publish RPC. Migration 20261005000200 extends validation and restricts its historical helper to the private schema/service role. Local tests reject anonymous/browser execution and unauthorized operations writes. Hosted acceptance pending; see [WhatsApp report](WHATSAPP-CONTACT-AND-SITE-ICONS.md).

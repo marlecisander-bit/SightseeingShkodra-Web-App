@@ -215,14 +215,14 @@ User authorized publication. Migrations 20260925000600, 20260925000700 and 20260
 
 Publication verified: GitHub main commit 9269b19390b1afe2ef654795ee8e3a29096aab97, Netlify deployment 6ab683509124bc000772b363 ready and published at https://sightseeingapp.netlify.app. Exact isolated release passed lint/typecheck/build and 236 tests (15 identity, 71 integration, 128 database, 22 PostgreSQL concurrency). Homepage, /book and /booking/manage returned HTTP 200. Production management endpoint read an existing booking with matching reference and no-store; malformed token rejected with 404. No production booking mutation or email send tested. Separate email-admin/scheduler work remains unpublished.
 
-### Cancellation to new booking fix � 25 September 2026
+### Cancellation to new booking fix � 25 September 2026
 Local UI fix resets cancelled checkout restoration and shared booking state, adds Book Again and refreshes authoritative availability. Existing transactional cancellation, seat accounting, cutoff and notification events retained. No migration/deployment/email send. Build/lint/typecheck passed; 254 tests passed across runs, six mocked browser flows at 390/1440px passed. See CANCELLATION-REBOOKING.md.
 
 User authorized publishing the cancellation/rebooking fix on 25 September 2026. Release verification pending; unrelated email admin/scheduler remains excluded.
 
 Publication verified: commit 7e21f0169ce83bb4d036c1d75ac6234fb8884ec7, Netlify deploy 6ab68878787ac500083c826a ready at https://sightseeingapp.netlify.app. Homepage/book/manage HTTP 200; existing booking read and invalid token rejection passed. Published 390px UI passed Book Again and stale cancelled-session recovery with mocked booking APIs. No real booking mutation or email send.
 
-### Production admin authentication audit � 25 September 2026
+### Production admin authentication audit � 25 September 2026
 Existing Supabase Auth, SSR cookies, staff_profiles membership and permission/RLS model retained. Added generic recovery-request UI/action using existing verification/password setup, clearer login errors, logout router-cache invalidation and bfcache revalidation. No migration, role assignment, message or deployment. 257 tests and lint/typecheck/build passed; logged-out route/storage-spoof and public-route checks passed. Manual real-account session/email acceptance remains. See ADMIN-AUTH-AUDIT.md, ADMIN-RLS-INVENTORY.md and FIRST-ADMIN-ASSIGNMENT.sql.
 
 ### Staff login UI — 25 September 2026
@@ -277,3 +277,216 @@ Pre-production closure: corrected infant seat wording only after 14 targeted eng
 Destination fixture gate repaired: fixed historical homepage fixture replaces moving current defaults; eight newer visibility flags caused historical strict-key validation failure. No app or migration changes. Five isolated tests and 29 related tests pass; complete npm test TOTAL260/PASS260/FAIL0/SKIP0. TypeScript, lint and normal production build pass. CODE GATE PASS; READY FOR ISOLATED ACCEPTANCE TESTING. Mutation/email/physical-device acceptance remains pending. No deployment.
 
 Admin refinement publication authorized by user. Scope: admin presentation, visibility feedback, infant wording, preview loading, historical destination fixture and verification reports. Excludes unrelated email activation/scheduler work, SQL account edits and infrastructure setup. Acceptance limitations retained. Deployment verification pending.
+
+
+### Authorized online test acceptance - 28 September 2026
+Published commit df7e898e415319d00c7b27ec4cb7ab7cf8df1b32 verified in Netlify deployment 6aba6e95863ab500088a1fc5. User authorized controlled mutations in the shared pre-launch TEST backend, superseding earlier no-staging write blockers. Online CMS/visibility/image-address workflow, calendar/pricing/catalog/reviews, booking/capacity/cutoff/QR and login cycle passed. Seven synthetic bookings cancelled, review soft-deleted, original content/configuration restored, exceptions removed. No app/schema/map changes or email activation. File upload remains blocked by browser file-access permission; email and physical-device acceptance pending. Full acceptance remains incomplete. See ONLINE-ACCEPTANCE-REPORT.md for matrix, evidence and limits.
+
+
+### Standardized booking UI - 29 September 2026
+Local frontend changes unify modal and /book in CheckoutFlow with When/Details/Confirm, shared date/passenger/departure controls, authoritative snapshot totals, date-labeled adult discovery prices, responsive summary, existing QR and native cancellation confirmation. User approved private-link management. No backend/schema/map changes or deployment. Existing 260 regression tests passed; final lint/typecheck/build passed; synthetic browser flows and responsive checks passed. Exact cutoff timestamp/season-wide minimum are not exposed; generic policy and date-scoped fares retained. See BOOKING-UI-STANDARDIZATION.md for scope and limitations.
+
+Booking UI continuation 52-121: shared price/caption formatting and snapshot breakdown, management shared summary and actual cutoff, compact QR/reference priority, one progress indicator, required labels and mobile focus behavior. Lint/typecheck/build pass; synthetic flow and twelve requested viewport settings checked. Hardcode audit and limits in BOOKING-UI-STANDARDIZATION.md. No deployment or hosted mutation.
+
+Booking UI continuation 122-192: readable dates, zero-price infant Free labels, cancellation reference/consequences, status and loading copy, unavailable-date recovery and compact mobile entry. Existing pricing/capacity/submission/default/SEO architecture preserved. Typecheck/lint/build pass; synthetic cancellation and infant quote checks pass. No deployment. See BOOKING-UI-STANDARDIZATION.md.
+
+Booking UI continuation 193-276: centralized scarcity and discovery formatting, shared exact-total transaction action, mobile summary density and step focus/scroll. Full regression suite 265/265 passed; lint/typecheck/build passed; delayed local response checks and twelve requested viewport settings passed. No hosted mutations or deployment. Physical device/performance limits remain.
+
+Booking UI 277-349: pricing-source/hardcode/component/protected-backend reports complete; added adult discovery/date-context projection tests and suppressed booking-route marketing invitation. Full267/267 tests and check pass. Full future-season minimum unsupported by existing DTO; date-scoped From retained. Full hosted/device/performance acceptance pending; no deployment.
+
+Booking UI final closure (350-425): removed verified unused modal/management CSS, corrected remaining tour Booking opens soon/per-guest fallback and CTA, completed BOOKING-UI-FINAL-REPORT.md. Final full suite267/267, zero fail/skip, lint/typecheck/build PASS. Exact twelve-size modal matrix passes; final raw network capture unavailable. Online candidate/device/performance acceptance pending. No deployment.
+
+Booking UI continuation 426-514: extracted accessible shared BookingProgress, shared modification review summary and updated-result feedback, safe unexpected management error fallback, readable homepage timetable. Reset and English-only architecture audited. Strict read-only availability conflicts with existing date materialization; full management QR confirmation lacks required response data; future-season minimum remains unsupported. Backend changes deferred per user escalation rule. Final report records these gaps; no deployment or hosted mutations.
+
+Booking UI 426-514 verification: all269 tests passed (17 identity,96 integrations,133 database,23 PostgreSQL), zero failed/skipped; lint, TypeScript and production build passed. Browser reconnection unavailable. Full acceptance remains incomplete; backend escalation details in BOOKING-UI-FINAL-REPORT.md.
+
+Booking UI final specification 514-518 received: explicit surface YES/NO matrix, strict PASS/FAIL acceptance gates and non-negotiable checklist added to BOOKING-UI-FINAL-REPORT.md. Overall final acceptance FAIL (incomplete requirements/evidence, not regression failures). Existing269-test suite and production build PASS. No application edits at this checkpoint, no backend changes or deployment.
+
+Booking UI gap closure: no application edits. Revised brief accepts authoritative updated summary and confirmation-specific QR. Chrome reconnected; eight surfaces x12 viewports (96 layout checks) passed; representative screenshots and targeted keyboard/validation/dialog/contrast checks recorded. Full269 tests and lint/typecheck/build PASS. General From remains BACKEND-DATA LIMITATION; seasonal full acceptance, comprehensive accessibility and physical devices pending. WordPress N/A. No backend changes or deployment. Current statuses supersede historical blanket FAIL labels; see BOOKING-UI-FINAL-REPORT.md.
+
+Booking UI online acceptance - 29 September 2026: published current candidate f9243e96d6ef9854cbd534dde05456bfdf1623ee in ready Netlify deployment 6abb689c8a43870008bd4681. No additional application edits. Online three-step creation, QR, manage, modification, cancellation/restart, capacity recovery and existing seasonal configuration passed. Nine surfaces x12 Chrome sizes passed overflow checks. All three synthetic bookings cancelled; products/schedules/exceptions match baseline. General From remains BACKEND-DATA LIMITATION. Exact real-clock cutoff boundary not replayed; physical devices, comprehensive accessibility/performance and email remain pending. See BOOKING-UI-ONLINE-ACCEPTANCE.md for current scope; historical unpublished checkpoints are superseded.
+
+Mobile homepage hero simplification - 29 September 2026: local CSS/composition changes reuse HomepageHero, CMS photograph/copy, header, BookingPriceIndicator, /book and /live. Mobile header duplicate CTA/secondary copy/date hidden; clear van zone and lower stacked booking/tracking actions. Desktop 1440px geometry matches deployed baseline. Required portrait settings and extra landscape/desktop checks had no document overflow; 393px requested rounded to394 in Chrome. Full269 tests, lint, TypeScript and production build PASS. Physical Safari/Android, actual browser bars/safe areas and comprehensive accessibility/performance remain unverified. Existing CMS image-alt mismatch noted. No deployment or backend changes. See MOBILE-HERO-SIMPLIFICATION.md.
+
+Mobile hero publication - 29 September 2026: user authorized publishing the tested changes. Commit c8e654e8b329268c1ad7885998a39ef3f3d3664d published successfully in Netlify deployment 6abb7648b959450008d62b7b (ready). Live homepage HTTP200, new commercial markup/mobile header and image CSS, /book and /live links verified. Only three hero presentation application files and the hero report were committed; unrelated work excluded. Existing physical-device/accessibility/performance acceptance limits remain.
+
+Mobile hero browser-chrome correction - 29 September 2026: CSS-only local fix puts visible mobile homepage header in flow, derives visual area from width and removes viewport-height surplus/auto-margin positioning. Narrow landscape flow corrected too; desktop unchanged. Five exact widths x5 height states had zero document-position shift; scroll and orientation transitions passed in desktop Chrome. Full269-test rerun and lint/TypeScript/build PASS after a transient PostgreSQL EBUSY cleanup failure on the first run. Physical Safari/Android browser bars remain unverified. No deployment. See MOBILE-HERO-STABILITY.md.
+
+Public booking CTA standardization - 29 September 2026: audited 12 CTA definitions; six route-only entries now use the existing BookingProvider dialog through PublicBookingLink. Header, hero, footer, tour, planner, Explore and cancelled-management entries share CheckoutFlow; /book retained. CMS navigation to /book also shares the opener. No hero styling, backend, database, map or email changes; no deployment. All269 tests and lint/typecheck/build PASS. Browser entry/focus/reopen checks and eight-size dialog plus /book matrices PASS. Synthetic cancelled-management response used only in the test tab and cleared. General From remains BACKEND-DATA LIMITATION; physical devices and comprehensive accessibility/performance remain unverified. See BOOKING-CTA-STANDARDIZATION.md.
+
+Public booking CTA and mobile hero publication - 29 September 2026: user authorized publication. Commit 3e460c40d9e310f95a0f8581dcdef62d136ccace is published in ready Netlify deployment 6abbac37f64be800096ff499 at https://sightseeingapp.netlify.app. Exact release commit production build passed in an isolated checkout with its own installed dependencies. Online desktop header/hero and mobile hero open the same three-step dialog without navigation; Escape restores focus, /book loads directly, and 390px homepage has in-flow header and no horizontal overflow. Only six frontend files and two scoped reports were committed; unrelated email/database work excluded. No data mutation or email activation. Physical-device and comprehensive acceptance limits remain. This publication supersedes the local-only status in the two release reports.
+
+Mobile homepage structural correction - 29 September 2026: restored the existing fixed transparent/red header; size-aware refresh of its existing intersection observer; bounded photo region followed by normal-flow price/Book/Track and 44px Discover. Unified mobile/tablet grid through 900px removes the 700/701 gap. Existing assets/focal points, desktop composition, booking dialog and map integration retained. All269 tests, lint, TypeScript and production build PASS. Eleven required phone/edge/tablet geometry cases, scrolling/menu, height/orientation simulations and public CTA regressions checked in Chrome, including local production build. Physical Safari/Android and comprehensive accessibility/performance remain pending. No deployment or backend/data changes. See MOBILE-HOMEPAGE-STRUCTURAL-FIXES.md.
+
+Mobile homepage structural fixes published - 29 September 2026: user-authorized commit cb483f03ccd223e8ba9866a5a1c173d78838e469 is ready in Netlify deployment 6abbb55432fdf90008d45cfa. Exact isolated release build passed. Online fixed/solid header, menu, photo boundary, compact Discover, five-width layout and canonical booking entry checks passed. No unrelated application or data changes. See MOBILE-HOMEPAGE-STRUCTURAL-FIXES.md.
+
+Public expandable text - 29 September 2026: audited 14 logical text categories; six now use one shared rendered-overflow-based ExpandableText component with 4/5/6 responsive lines, semantic keyboard controls, full SSR content and destination/text reset. Removed review-specific character-count and bounded-scroll behavior. Home eight-size matrix, all four destinations, synthetic short/medium/very-long text, Tour/Explore and booking/map sanity checked. Existing 269-test chain plus 3 new component tests passed; lint/TypeScript/production build passed. No CMS/data writes, protected engine/header/hero changes or deployment. Physical devices and full assistive-technology coverage remain unverified. See PUBLIC-EXPANDABLE-TEXT.md.
+
+Hero CTA, price and navigation - 29 September 2026: mobile commercial controls now sit in the single bounded photo region; compact Discover follows on white. Existing image/focal points, fixed transparent/red observer header and canonical booking retained. Larger logos, accessible hamburger/X, scrollable translucent brand menu, focus/scroll handling and text-width yellow underline implemented. User chose next bookable service date with date shown; hero uses canonical one-Adult quotes and existing date helper, including seasonal/offers, without a schema or pricing-engine change. All276 full-chain tests plus one additional homepage failure test passed; final lint/TypeScript/build passed. Fifteen responsive sizes and real local EUR10 hero/booking comparison checked; EUR10-to-EUR12 and seasonal price changes verified in disposable database. Physical devices remain unverified. No deployment. See HERO-CTA-PRICE-NAVIGATION.md.
+
+## Hero/navigation extended acceptance — 29 September 2026
+
+Full npm test passed277/277, zero failed/skipped (private/hero-nav-complete-tests.log). Added901px boundary, six desktop active indicators, logo return, four menu close scroll-restoration positions and short-screen internal menu scrolling. No additional application changes or deployment. See HERO-CTA-PRICE-NAVIGATION.md for scoped evidence. iPhone Safari / Android Chrome: PENDING REAL-DEVICE VALIDATION. Existing EN is informational; no switch/submenus invented.
+
+Hero/navigation final supplement (79–112) - 29 September2026: fixed menu background pointer interaction with subtle dismissible backdrop; browser tap/focus/dialog/Discover/Live regressions checked and eight review screenshots captured. Final lint/type/build PASS after edit. READY FOR REVIEW, not deployed. Admin-to-rendered-hero-to-dialog price-change propagation is NOT VERIFIED end-to-end; earlier PASS described disposable database projection/quote testing only. Physical-device validation remains pending. See HERO-CTA-PRICE-NAVIGATION.md final supplement.
+
+CMS visibility audit/fix - 29 September2026: identified final.showOnHomepage bypass on secondary routes and unguarded banner image. Shared FinalInvitation now removes complete markup/media on all configured routes; related shared CMS section consumers and anchors use the same flags. Admin scope labels, preview pathname parity, review layout invalidation and fail-closed publication fallback corrected. Controlled canonical save/publish enabled-disabled-enabled cycle and edited fields passed for seven route contexts; 11-width enabled/disabled fixture matrix passed with no invitation gap. Actual local Tour/Explore/Live disabled-state checks and booking/map regressions passed. Full280 tests and lint/type/build PASS. READY FOR REVIEW; no deployment or hosted data writes. Details and limitations: CMS-VISIBILITY-AUDIT.md.
+
+### Public website publication — 29 September 2026
+Published bb8cb98df3a28a342aff5c8e7a1437413247536c; Netlify 6abbc3a5a9b9e90008aac707 ready at https://sightseeingapp.netlify.app. Exact isolated release: 273 tests passed, lint/type/build passed. Live mobile hero, expandable text, booking dialog and shared invitation hiding checked. See CMS-VISIBILITY-AUDIT.md publication appendix. Unrelated email/SQL changes excluded; no hosted content writes or email enablement. Physical-device validation remains pending.
+
+### Mobile hero composition correction — 29 September 2026
+Local CSS-only hero correction removes the 200vw media minimum and flexible surplus row; content-sized rows, absolute spanning photo, bounded vehicle gap and uniform portrait crop bring the van and commercial block upward. At390x844 photo height977->618px, price top760->401px. Eleven viewport geometry cases and four height simulations passed; desktop1440 geometry unchanged. Header/menu, canonical booking dialog, price display and /live browser regressions passed. All280 working-tree tests, lint, TypeScript and production build PASS. Physical iPhone Safari/Android Chrome: PENDING REAL-DEVICE RETEST. READY FOR REAL-DEVICE RETEST; not deployed. See MOBILE-HERO-COMPOSITION.md. No data, image-asset, header architecture, booking/pricing/map or unrelated work changed.
+
+Mobile hero composition published — 29 September 2026: authorized commit84dc5376bb371a97397c983dfcd47626b30d59f2 verified in ready Netlify deployment6abbc74fe565ae00088616a5. Exact isolated lint/type/build PASS; live390px composition matches local measurements and canonical booking opens. Physical-device retests pending. See MOBILE-HERO-COMPOSITION.md publication appendix. Unrelated email/SQL changes excluded.
+
+### Full-screen mobile hero — 29 September 2026
+User phone screenshot supersedes outside-photo Discover requirement. Mobile hero now fills100svh with photo through Discover, hides hero Track live and lowers headline/subtitle20px. Short screens allow readable overflow. Desktop geometry unchanged; 11 viewport and four height checks, menu/booking/Discover checks PASS. Lint/type/build and15 focused tests PASS. Physical Safari/Android retest pending. Local only, no deployment. See MOBILE-HERO-FULLSCREEN.md.
+
+Full-screen mobile hero published — 29 September 2026: commit0d3760115946a42f52f122cd08b9ea92858dbc09 ready on Netlify. Exact isolated lint/type/build PASS; live390x844 full-screen photo/Discover and hidden mobile Track verified. No unrelated email/SQL publication. Physical-device retest pending. See MOBILE-HERO-FULLSCREEN.md.
+
+## Public section spacing correction - 29 September 2026
+
+Reviewed the live Home, Tour, Explore and Live page presentation. The homepage departures section lacked p-section, leaving Today, at a glance directly against the preceding cream band. Added the shared responsive section inset (112px at desktop, 64px on phones). Live Map now uses the same content gutters and responsive vertical spacing as the surrounding sections. Adjacent white sections share one section interval instead of doubled padding; Tour reviews no longer apply a second set of horizontal gutters. Explore story rows already have consistent equal padding and remain unchanged. Hero composition and functional controls are unchanged.
+
+Verified local homepage geometry at 320, 390, 768 and 1440px: aligned section content edges, correct band insets and no horizontal document overflow. Tour reviewed at 390 and 1440px with aligned reviews and consistent section intervals. Desktop color transition visually inspected. Six component tests and nine public-homepage integration tests passed; lint, typecheck and production build passed. Physical-device validation is not claimed. No deployment or data writes performed for this spacing correction. Local geometry evidence: private/section-spacing-geometry.json; verification logs: private/section-spacing-*.log.
+
+## Destination button spacing - 29 September 2026
+
+Added a shared wrapping p-button-group with the existing 16px spacing token around Explore destination actions. All four Read the guide / Book your day pairs now have a measured 16px horizontal gap, or 16px vertical gap when wrapping on narrow screens. Checked at 320, 390, 768 and 1440px with no horizontal document overflow; desktop screenshot inspected. Source review of other public action groups (hero, reviews, live-map controls, booking management/cancellation) and admin action toolbars found existing gap-based layouts; no blanket button margins added. Lint, typecheck and production build passed. Existing section-spacing changes retained. No deployment or data mutation performed.
+
+Public spacing fixes published - 29 September 2026: commit cc58684fe66320e6ae5b311ab4fe1659063e9243 is ready in Netlify deployment 6abbce3e6567730007cf6c9e. Live Explore verified four 16px button gaps; live homepage departures verified 112px desktop top inset. Isolated release lint/typecheck/build passed. Unrelated email/SQL work excluded.
+
+## 30 September 2026 - Route & Live Map local implementation
+Canonical /route, /live redirect, merged navigation, compact map-first page, interactive operational stop timeline, CMS stop-linked previews, dynamic departures and existing booking entry implemented. Independent-map presentation bridge extension prepared in sibling Map App; no GPS/ETA algorithm, schema or production data changes. Source ownership and release dependency: docs/LIVE_MAP_EMBED.md.
+Verification: full test chain 282 passed; subsequent final component suite 7 passed with added unified visibility test; final lint/typecheck/build passed. Chrome eight-width layout and navigation/redirect/stop-preview/booking-entry checks passed. Hosted map does not yet include the bridge, so live timeline end-to-end and real-vehicle/device acceptance remain pending. Local code only, not deployed; no claim of completed full acceptance.
+
+Route deployment authorized and published - 30 September 2026: isolated website release d26edcd1d030171e97d9c413134acacdff8aee2f, Netlify 6abcd3fa2482eb0008ae2d46; independent map bridge 6abcd3e720e6d27aa477e744. Map manifest preserves all 106 baseline files with only the presentation bridge script changed. Closed-loop stop-ID deduplication and production parent origin corrected during release verification and covered by bridge tests. Unrelated email work excluded; no DB writes or migrations. See LIVE_MAP_EMBED.md.
+
+Route divider spacing correction - 30 September 2026: shared public section reset overrode the new route section padding. Scoped the section selector beneath the route page so the intended 28px desktop/tablet and 24px mobile padding wins. Chrome checked 320, 390, 768 and 1440px: divider clearance is 24/28px to the following label and 24/28px plus the 1px border below the cards, with no horizontal overflow. Desktop screenshot inspected; diff whitespace check passed. CSS only; local, not deployed.
+
+Route divider spacing published - 30 September 2026: commit 396ae6d7a478f0dd16c4be5108a56b4459eb48d8, Netlify ready deployment 6abcd96695100d0008add7f1. Isolated production build passed. Live /route measured 24px mobile and 28px desktop clearance on both sides of the divider (plus its 1px border below cards), with no overflow at 390/1440px. Only the two scoped CSS selectors were deployed; unrelated changes preserved.
+
+## Global footer redesign - 30 September 2026
+
+Local implementation PASS: one shared public Footer, original logo/dark background, configurable social icons, Staff Login, business/VAT/year, and Admin-managed legal pages. Existing Google Reviews source reused with one Footer editor. New additive validation migration prepared, not applied hosted. All 288 tests pass; lint/TypeScript/production build pass. Nine requested footer viewport widths fit without overflow; desktop/mobile visual and keyboard checks passed. Authenticated local editor inspected read-only. No deployment or hosted writes. Details and release prerequisite: GLOBAL-FOOTER-REPORT.md.
+
+Global footer published - 30 September 2026: commit84228d35a19b26eb9efa89f141c63496457df3f9 is ready in Netlify deployment6abcee4e5bfd9b000848dced. Isolated release lint/type/build PASS. Footer validator migration applied to hosted project; existing draft/published validation and new-field validation PASS without content writes. Seven public routes HTTP200 with one shared footer; live mobile390px inspection PASS. See GLOBAL-FOOTER-REPORT.md publication appendix. Unrelated email/SQL work excluded.
+
+## Public platform architecture audit - 30 September 2026
+
+Completed source discovery across 32 page/API route patterns plus robots/sitemap, all 160 Website fields, public sections and cross-system readers. Report: PUBLIC-PLATFORM-AUDIT.md; machine inventory and CMS matrix linked there. Read-only hosted SEO scan checked 15 URLs (14 HTTP 200, one /live 308). Principal CMS/booking/independent-map ownership boundaries remain intact; partial navigation controls, incomplete metadata, map binding drift risk, destination outage handling and performance issues remain recorded, not certified resolved.
+
+Safe local improvements: hid inactive hero amenities/mobile navigation controls while preserving schema/data; changed sitemap eligibility to current published destinations instead of historical guides. Full existing test chain 288 passed; separately added editor compatibility test passed. Final lint/typecheck/production build passed. No deployment, production write, migration, email enablement or booking/map-engine changes. Unrelated working-tree changes preserved. Live scan predates local fixes; no new browser/device acceptance claimed.
+
+## Public platform Phase 1 continuation - 30 September 2026
+
+Implemented bounded ownership corrections after recording the plan: shared independent-map binding with mismatched project rejection; CMS custom route navigation labels respected with duplicate-link guidance; neutral public route error/retry boundary; all-eight-section visibility regression coverage. Browser audit found and fixed footer logo same-page top navigation. No business/booking/GPS rule or schema change.
+
+Report: PUBLIC-PLATFORM-PHASE-1.md (20 audit sections, homepage matrix, ownership diagram, risk/rollback and next-phase plan). Full regression chain 292 passed; final footer component rerun 10 passed; lint/typecheck passed; isolated production build passed with matching application files. Normal build encountered Windows EBUSY in active .next output. Browser checks: 11 public pages at all nine requested widths, no overflow; authenticated local CMS at all nine widths with eight visibility switches, navigation guidance verified read-only; footer top-navigation and mobile Escape/focus passed. No production writes, deployment, migration or email enablement. Physical devices, complete mutation/assistive-technology acceptance and later architectural improvements remain explicitly open.
+
+## Final audit registers and review-reader consolidation - 30 September 2026
+
+Completed the remaining brief's ownership, CMS connection, hardcoded-content, duplication and orphan registers in PUBLIC-PLATFORM-REGISTERS.md. PUBLIC-CONTENT-COVERAGE.json calculates 30/36 defined current editable public-content groups fully connected (83.33%); this is not an all-fields/whole-platform percentage. Exact classification vocabulary and exclusions are documented in PUBLIC-CMS-CONNECTION-MATRIX.md. Final audit status PARTIAL: source trace/contract evidence does not establish all hosted propagation, security, physical-device or accessibility acceptance.
+
+Safe low-risk change: Footer and WebsitePanel read existing review_settings directly; request-scoped shared settings context reused by actual review sections. No duplicated URL/source, persistent cache or schema introduced. 104 integration tests passed; lint/typecheck and isolated production build passed; Home/Tour/Credits local HTTP footer/review sanity passed. Prior 292 full-chain result predates this reader change; no fabricated combined total. No deployment, hosted mutation, migration or email enablement. Unrelated changes preserved.
+
+## Public booking date interaction - 30 September 2026
+
+Local change only: BookingDateSelector now requests the existing native showPicker() on input click, retaining native icon/keyboard behavior when unavailable or restricted. Existing change/input/blur handlers and all booking rules remain unchanged. Shared consumers are the modal, /book and customer modification; unrelated Admin controls unchanged.
+
+Root causes: browser-native date segments did not open the picker from the full field without an explicit click handler. The red rectangle was .date:focus-within on the enclosing label; the teal rectangle was the public-site input:focus-visible outline (brand-focus). Neither was a validation error. Removed date-wrapper focus outline; scoped the input focus-visible outline to 2px, zero offset, following the existing 10px radius. Added pointer cursor; existing 48px minimum height retained. No global outline reset or new validation/state.
+
+Verification: desktop left/center/right/icon clicks all invoked native showPicker successfully; Chrome 390px touch emulation center/icon both invoked it successfully. Native popup visuals were not captured by browser automation, so full picker visual/device acceptance remains pending. Modal screenshot shows one rounded focus treatment; measured input 358 x 50.39px, wrapper outline none. Tab reaches native date input, ArrowUp edits the day segment, accessible name/type preserved. Selected 1 October 2026 loaded four departures and EUR10 adult price; selected departure updated summary; Continue to Details succeeded. Temporary one-seat hold was released through Edit date/passengers/departure, returning to No seats are held. Clearing the date disabled Continue. No booking confirmed or contact details submitted. Physical iOS/Android and screen-reader acceptance remain unverified.
+
+TypeScript, lint, 10 existing component tests, isolated production build and scoped diff whitespace check passed. Build log: private/booking-date-build.log. Files for this task: src/components/public/booking-controls.tsx, src/components/public/booking-controls.module.css, docs/PHASE_STATUS.md. No deployment.
+
+Booking date fix published - 30 September 2026: commit 04396a8adcb16d716332566b94b45fa7cb1a0825, ready Netlify deployment 6abd0f1d6d6a780008ca8534. Release contains only booking-controls.tsx and booking-controls.module.css. Exact isolated production build passed after installing dependencies locally (the initial shared node_modules junction was rejected by Turbopack). Live /book loaded successfully; browser verified pointer cursor, one 2px teal focus outline at zero offset with 10px radius, and no label-wrapper outline. Earlier unrelated audit/email/SQL work remains local. No schema or content changes in this deployment. Physical-device/native-popup visual acceptance remains pending.
+
+Hero image samples corrected - 30 September 2026: Admin hero image fields now use representative desktop 1440:900 and mobile 390:844 crop frames instead of identical 150px strips. Mobile sample reproduces the public portrait 1.2 bottom-anchored zoom; both samples use current unsaved focal positions. Helper text distinguishes representative crop from exact device layout and directs full-page checks to Draft Preview. Existing images/uploads/content/public rendering unchanged. TypeScript and lint passed; authenticated browser measured correct ratios at desktop and 390px Admin widths, verified focal position updates and restored the original selection without saving. Desktop visual inspected. Files: website-editor.tsx, website-editor.module.css, this status. Local only; no deployment or content writes.
+
+## Compact Website Content section cards - 30 September 2026
+
+Audit: WebsiteWorkspace rendered all section details/summary cards from websiteEditorGroups (website-schema.ts). Homepage order remains hero, intro, route, live, departures, reviews, notebook, final. Existing homepageVisible/visibilityScope, unsaved guards, selection, form IDs, save/discard and feedback remain workspace-owned and unchanged. Existing Homepage/Public pages/Global/Destinations grouping retained; dedicated destination editor unchanged.
+
+Shared presentation: SectionCardHeader in website-section-card.tsx uses ID-keyed metadata for icons, functional descriptions and secondary scope. Reuses AmenityIcon camera/ticket/pin/van/clock/map; five lightweight matching inline SVG paths provide star/book/footer/document/search without a package or amenity-schema change. Homepage icon mapping: hero camera; intro ticket; route pin; live van; departures clock; reviews star; notebook book; final ticket. Public pages: tour/book ticket, explore pin, day clock, how map. Global: navigation map, footer bottom panel, SEO search, legal document. Descriptions explicitly describe editable headings/labels/introduction rather than implying ownership of operational timetable, reviews or destination records.
+
+Visibility is inline on wide cards, with green/neutral switch, Visible/Hidden text and retained scope. Narrow cards wrap the same header; no visibility separator/footer. Semantic Edit/Close buttons have section-specific accessible names, aria-expanded, 44px targets and focus outlines. Decorative SVGs are aria-hidden; title/description do not depend on icons. Existing draft/status messages remain visible.
+
+Browser evidence: 1440px homepage collapsed heights changed from 161px to 90px (all eight). At 768/1024/1920px also 90px; constrained 1280px two-column layout 120px; 375-430px 119-156px depending on wrapping. All eight requested widths (375,390,430,768,1024,1280,1440,1920) checked across Homepage, Public pages and Global: no document overflow; homepage title/Edit rectangles do not collide, Edit targets 64x44. Desktop/mobile screenshots inspected. Enter opens Hero editor with visible focus; Close, temporary visibility toggle and Discard passed, original state restored without Save or Publish. Full assistive-technology/physical-device acceptance not claimed.
+
+TypeScript, final lint, isolated production build and scoped whitespace check passed (private/section-cards-build.log). Files for this task: src/app/admin/website-section-card.tsx (new), website-workspace.tsx, website-editor.module.css, docs/PHASE_STATUS.md. Prior local hero-preview changes preserved. FINAL STATUS: PASS for requested local UI scope. No deployment, content write, schema or booking/map-engine change.
+
+CMS cards and hero previews published - 30 September 2026: release 3455380f67084d4078e2f2f0f9ded284aa0d45da (includes 4052ccb), ready Netlify deployment 6abd143134da33000800a310. Exact isolated production build PASS (private/cms-cards-release-build.log). Authenticated live Admin verified eight active homepage cards at 90px, retained amenities card at 111px with explicit inactive scope, section-specific Edit buttons and hero sample ratios 1440:900 / 390:844. Four Admin implementation files released; earlier audit/email/SQL changes excluded. No content saves, schema changes or email enablement.
+
+
+## 1 October 2026 - Performance and Tour/FAQ continuation
+
+Implemented locally: /tour Reviews and FAQ sections/anchors and unused review read removed; dedicated /faq reuses existing content and product inclusions with standard header/footer, navigation, metadata, sitemap and saved draft preview. New FAQ link-validator migration is prepared and tested only in disposable databases; not applied hosted. See TOUR-FAQ-CLEANUP.md.
+
+Measured hosted and local production baselines, optimized supported Supabase Media derivatives, parallelized independent public reads, and removed Explore's unused homepage/availability quote. Final direct Explore trace contains only CMS/destinations and shared review settings reads. PERFORMANCE-AUDIT.md and PERFORMANCE-MEASUREMENTS.csv contain paired lab results, scope and limitations. Booking restoration layout shift, field INP, deployed tracing and full iframe profiling remain open.
+
+Full regression chain passed 295/295 before the final Explore loader simplification. Final follow-up passed 11 component tests, typecheck, lint and production build. Tour/FAQ passed seven-width browser layout checks and accordion/navigation checks. No hosted CMS write, commit or deployment performed. Unrelated email/audit/SQL work preserved.
+
+
+Published and verified - 1 October 2026: commit 977a60ab51f2d852bbb56b77a805de7128b98cef, Netlify deployment 6abe0ad50102880008a1858b READY at https://sightseeingapp.netlify.app. Exact release build/lint and 11 component tests passed. Live /faq has four questions, working accordion, canonical /faq and no promotional invitation. Live /tour has neither Reviews nor FAQ and retains its footer. Four loaded Explore images use /_next/image derivatives; no captured console errors. FAQ validator update verified on the hosted project through guarded allowlist replacement (faq_route_allowed=true, footer_preserved=true), with no content-row writes. Earlier unrelated audit/email/SQL edits remain local. This live smoke check does not certify field performance or physical-device acceptance.
+
+## 5 October 2026 - Admin notification center and Web Push
+
+User-requested audit and local implementation completed. Existing committed booking
+events feed a separate bounded notification projector, personal inbox receipts and
+per-device push queue. Added permission-filtered Admin center/bell, read actions,
+filters/pagination, preferences/device controls, receipt Realtime subscription,
+admin-scoped push-only service worker, manifest, VAPID sender and Netlify scheduler.
+Existing Resend and booking mutations remain unchanged by this feature. Migration
+`20261005000100_admin_notifications.sql` is local only; no hosted enablement.
+
+Final npm test chain **311/311 PASS** (components 11, identity 17, integrations 111,
+database 148, real PostgreSQL 24). Typecheck, full lint and isolated normal
+production build PASS. Combined local booking-to-two-device dispatch test uses a
+mock push provider; real claim/projection/completion SQL and concurrency pass.
+Actual UI fixture interactions and eight widths 320–1920px pass; API unauthorized
+and cross-origin requests are denied. Live Supabase Realtime, provider delivery
+and physical mobile acceptance remain PENDING. No production readiness claim.
+
+Dependency audit reports existing Next.js critical and ESLint-tree high findings;
+framework patch/security review remains a release prerequisite. See
+[Admin notification report](ADMIN-NOTIFICATIONS-REPORT.md) for scope, exact status,
+owner configuration and outstanding acceptance. No hosted database write,
+permission request, real push/email, commit or deployment performed. Unrelated
+pre-existing changes were preserved.
+
+## 5 October 2026 � WhatsApp contact and shared site icons
+
+Implemented WhatsApp in Website Content ? Global: contact, navigation & footer, reusing the existing operator-scoped website draft/publish source and authorization. Added phone validation, configurable message/label/device visibility, public-only floating contact link with map/booking/dialog clearance, and validator migration 20261005000200. Defaults disabled with no business number. Supplied SVG now generates shared public/admin favicon, Apple touch, manifest and notification icons.
+
+Verification: 317/317 full-chain tests, typecheck, lint and isolated production build pass. Eight browser viewport widths, configuration visibility, encoding, actual booking dialog and map clearance checked locally. Physical device and hosted save/publish acceptance remain pending. No production writes, commit or deployment. Details and exact PASS matrix: [WhatsApp and site icons report](WHATSAPP-CONTACT-AND-SITE-ICONS.md).
+
+
+## 5 October 2026 - Vercel deployment audit
+
+Authenticated host inspection confirms Vercel has no Project environment variables and no linked Shared variables. Current production commit 977a60a returns an empty homepage main because missing CMS bindings invoke the unavailable-content visibility fallback. Same symptom reproduced in a clean local production build; configured CMS renders the saved content. No hosted data was changed.
+
+Local fixes: sanitized publication diagnostics, explicit unavailable homepage state, Production build configuration preflight, and image preparation capped at 4 MiB upload copies for the Vercel function limit while retaining original-file rules. Review-photo uploads reuse the preparation helper. Added publication/configuration tests and extended image tests. No migration or dependency version change.
+
+Final gates: npm ci, production build/start, typecheck, lint and 322/322 full-chain tests PASS. Configured local desktop and 390px mobile CMS rendering pass. Hosted homepage/CMS/booking/Admin remain FAIL due missing configuration; independent Live Map integration PASS. Background scheduler choice, newer local features, real delivery, physical-device acceptance and existing dependency patch review remain outstanding. No commit/deployment, live booking/CMS mutation or sender activation. Details and owner steps: [Vercel deployment audit](VERCEL-DEPLOYMENT-AUDIT.md), [environment inventory](VERCEL-ENVIRONMENT-INVENTORY.md).
+
+
+## 5 October 2026 ? Permanent Vercel migration, Hobby decision
+
+Vercel recorded as permanent main-app host in AGENTS/README/DEPLOYMENT and DECISIONS. Owner chose Hobby with background delivery disabled. Existing Next workers now stop before database/provider access on Vercel; Preview diagnostics are blocked and build preflight rejects production-like database binding or enabled communications/indexing. Legacy adapters retained pending parity; independent Netlify Live Map unchanged. No new cron, migration or booking-rule changes.
+
+Clean install, lint, typecheck, production build/start passed. Full chain 324/324 passed; added network-denial guard test also passed in the three-test targeted file (325 distinct tests across runs). Local route/CMS/PWA smoke passed; unauthorized workers returned 401. Hosted Vercel environment remained unconfigured at last audit; actual hosted parity is outstanding. MIGRATION PARTIAL; NETLIFY SAFE TO DISABLE NO. See VERCEL-MIGRATION-REPORT.md and root DEPLOYMENT.md for inventory, environment assignments and owner dashboard steps. Nothing committed, deployed, sent or shut down.
+
+
+## 5 October 2026 - Vercel cutover checkpoint
+
+Owner confirmed existing local Supabase project as Production target. Vercel Project and Shared variables still absent at authenticated inspection. Private Production-only import prepared without displaying values, but filechooser failed before successful upload/save. Isolated Preview database remains owner-configuration blocker. Fresh lint/type/build and full 325/325 tests pass; read-only confirmed backend CMS/settings/product/Auth probes pass. No production mutation, commit, push, deployment, scheduler change or shutdown. VERCEL CUTOVER BLOCKED; see VERCEL-CUTOVER-REPORT.md.
+
+
+## Production migration checkpoint - 5 October 2026
+Applied and recorded only 20261005000100 and 20261005000200 transactionally. Notification schema/security and existing-data integrity pass. Cutover remains blocked: service-role CMS validation returns 42501 permission denied for schema private when calling the preserved WhatsApp validator helper. No unreviewed permissions fix, deployment, commit, push or delivery activation. See docs/VERCEL-CUTOVER-REPORT.md latest checkpoint.
+
+
+## WhatsApp permission correction - 5 October 2026
+20261005000300 applied and recorded: only private-schema USAGE for service_role. Exact application SDK validation now passes; 42501 resolved. Browser helper denial and existing RLS preserved, data/function/policy fingerprints unchanged. 16 targeted tests pass. DATABASE READY - RETURN TO VERCEL CUTOVER. No commit, push, deployment or delivery activation. See latest VERCEL-CUTOVER-REPORT checkpoint.

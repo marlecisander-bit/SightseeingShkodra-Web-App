@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { Homepage } from "./homepage";
+import type { Destination } from "./destinations";
 export function seoConfig(env = process.env) {
   let origin: string | null = null;
   try {
@@ -52,19 +53,15 @@ export function pageMetadata(
     },
   };
 }
-export const guideSlugs = ["centre", "castle", "lake", "bridge"] as const;
-export function publishedGuideSlugs(home: Homepage) {
-  return guideSlugs.filter((slug) => home.content[`explore-${slug}`]);
-}
-export function sitemapPaths(home: Homepage) {
-  const guides = publishedGuideSlugs(home);
+// Only current published destination entities determine Explore eligibility.
+export function sitemapPaths(home: Homepage, destinations: Pick<Destination, "slug" | "showOnPage" | "guidePublished">[]) {
+  const homeAvailable = home.state !== "unavailable" && home.state !== "unconfigured";
   return [
-    "/route",
-    ...(home.product || home.content["homepage-hero"] ? ["/"] : []),
-    ...(home.product ? ["/tour"] : []),
-    ...(guides.length
-      ? ["/explore", ...guides.map((slug) => `/explore/${slug}`)]
-      : []),
+    ...(homeAvailable ? ["/route"] : []),
+    ...(homeAvailable && (home.product || home.content["homepage-hero"]) ? ["/"] : []),
+    ...(homeAvailable && home.product ? ["/tour"] : []),
+    ...(destinations.some(destination => destination.showOnPage) ? ["/explore"] : []),
+    ...destinations.filter(destination => destination.guidePublished).map(destination => '/explore/' + destination.slug),
   ];
 }
 export function guideStructuredData(

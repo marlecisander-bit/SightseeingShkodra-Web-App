@@ -1,3 +1,5 @@
+// Legacy provider abstraction: do not activate alongside booking-email-worker.ts.
+// Email & Notifications admin uses only the current Resend event/recipient queue.
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type {

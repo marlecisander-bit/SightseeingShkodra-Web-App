@@ -6,6 +6,7 @@ import { ReviewCard } from '@/components/public/guest-reviews';
 import { reviewSources, type GuestReview, type ReviewSettings } from '@/modules/content/reviews';
 import { saveReview, saveReviewSettings } from './review-actions';
 import { uploadWebsiteImage } from './website-actions';
+import { prepareWebsiteImage } from '@/modules/content/image-upload';
 import styles from './reviews-editor.module.css';
 const blank:GuestReview={id:'',author:'',rating:5,body:'',source:'Google Maps',review_date:null,original_url:null,avatar_url:null,language:null,featured:false,published:false,display_order:0,updated_at:''};
 export function ReviewEditor({operatorId,review}:{operatorId:string;review?:GuestReview}) {
@@ -22,7 +23,7 @@ export function ReviewEditor({operatorId,review}:{operatorId:string;review?:Gues
  <label>Language<input name="language" placeholder="en" value={value.language??''} onChange={e=>setValue({...value,language:e.target.value})}/></label>
  <label>Display order<input name="display_order" type="number" min="0" max="100000" required value={value.display_order} onChange={e=>setValue({...value,display_order:Number(e.target.value)})}/></label>
  <label>Reviewer photo / Media Library path<input name="avatar_url" value={value.avatar_url??''} onChange={e=>setValue({...value,avatar_url:e.target.value})}/></label>
- <label>Upload reviewer photo<input type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={e=>{const file=e.target.files?.[0];if(!file)return;e.target.value='';start(async()=>{try{if(file.size>8*1024*1024)throw Error('Image must be 8 MB or smaller.');const data=new FormData();data.set('image',file);const result=await uploadWebsiteImage(operatorId,data);if('url' in result)setValue(v=>({...v,avatar_url:result.url}));else setMessage(result.error??'Upload failed.');}catch(e){setMessage(e instanceof Error?e.message:'Upload failed.');}});}}/></label>
+ <label>Upload reviewer photo<input type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={e=>{const file=e.target.files?.[0];if(!file)return;e.target.value='';start(async()=>{try{const prepared=await prepareWebsiteImage(file,false);const data=new FormData();data.set('image',prepared);const result=await uploadWebsiteImage(operatorId,data);if('url' in result)setValue(v=>({...v,avatar_url:result.url}));else setMessage(result.error??'Upload failed.');}catch(e){setMessage(e instanceof Error?e.message:'Upload failed.');}});}}/></label>
  <label className={styles.check}><input type="checkbox" name="featured" checked={value.featured} onChange={e=>setValue({...value,featured:e.target.checked})}/>Featured</label>
  <label className={styles.check}><input type="checkbox" name="published" checked={value.published} onChange={e=>setValue({...value,published:e.target.checked})}/>Published</label>
  </div><div className={styles.actions}><Button type="button" onClick={()=>{setValue(review??blank);setMessage('Changes discarded.');}}>Cancel</Button><Button name="operation" value="save">Save review</Button>{review&&<Button name="operation" value="delete" formNoValidate>Delete review</Button>}</div></fieldset>

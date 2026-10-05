@@ -1,3 +1,5 @@
+> Current hosting decision (5 October 2026): Vercel is the permanent main-app host. The owner chose Hobby with background delivery disabled. Netlify scheduling instructions below are historical/legacy only and must not be used for new activation. Follow [DEPLOYMENT.md](../DEPLOYMENT.md). Notification projection and push dispatch are paused on Vercel.
+
 # Resend booking emails
 
 Implemented 2026-09-25. Delivery is **disabled** in the current development environment. No real emails were sent. Production enablement, DNS and the scheduler are still to be configured by the owner.
@@ -122,3 +124,90 @@ Ignored `private/` contains generated previews, test/build logs and temporary ve
 - [ ] Enable with `EMAIL_TEST_RECIPIENT` first and a fresh `EMAIL_START_AT`. Exercise create/modify/cancel/manual resend on controlled test bookings and inspect both variants in target mail clients.
 - [ ] Finish/inspect test jobs before switching mode. Set production environment flags, clear `EMAIL_TEST_RECIPIENT`, and set the intended live activation timestamp without replaying old events.
 - [ ] Monitor initial provider acceptance/delivery. Disable with `EMAIL_ENABLED=false` if needed; bookings remain valid.
+
+## Production activation preparation — 25 September 2026
+
+**Prepared locally only. No deployment, real email, environment change or hosted migration was performed. EMAIL_ENABLED remains off.**
+
+### Detected host and scheduler
+
+The main website is Netlify project **sightseeingapp**, `https://sightseeingapp.netlify.app`, linked to `marlecisander-bit/SightseeingShkodra-Web-App` (`main`). README and saved local Netlify site metadata identify this host; the independent map is a different project and is not involved.
+
+`netlify/functions/booking-email-schedule.mjs` is a thin native Netlify Scheduled Function. It runs at `* * * * *` (once per minute, UTC) and calls the existing `GET /api/internal/booking-emails` with the existing CRON_SECRET bearer header. It does not import the email engine, access Supabase, create jobs, render emails or send to Resend itself. No new HTTP worker endpoint or external cron platform is introduced. `netlify.toml` preserves `npm run build` and `.next`, and identifies the custom functions directory. Next.js remains handled by Netlify's framework runtime.
+
+The adapter refuses preview/unpublished contexts, non-production APP_ENV and disabled sending. It obtains the site's canonical URL from trusted Netlify context and requires NEXT_PUBLIC_SITE_URL to have the same HTTPS origin. Redirects are rejected so credentials cannot follow a redirect. No request bodies, headers or raw provider exceptions are logged.
+
+Netlify Scheduled Functions have a 30-second execution limit. The adapter waits at most 25 seconds for the existing worker and makes no immediate retry. A timeout is **unconfirmed**, not successful; an already-started worker may still finish. The queue's leases and immutable Resend idempotency keys handle subsequent invocations. The worker retains its four-job batch and a 60-second route allowance; its start-next-job budget is 20 seconds, leaving room for the last delivery and heartbeat. Normal fast requests can process four messages (two customer/owner pairs) per minute. This is not a guaranteed delivery SLA; monitor backlog and failed jobs before changing throughput.
+
+The cron is prepared, not active until a later approved deployment. Netlify's Functions screen should then show the Scheduled badge and next run. Approximately 1,440 invocations/day when scheduled; disabled calls exit before reaching the worker. No secrets belong in netlify.toml.
+
+Official references: [Scheduled Functions](https://docs.netlify.com/build/functions/scheduled-functions/), [function runtime environment variables](https://docs.netlify.com/build/functions/environment-variables/), [trusted deploy/site context](https://docs.netlify.com/build/functions/api/). These documents were checked during preparation. Function environment changes require a new deploy to take effect.
+
+### Exact configuration contract
+
+Examples below are formats/placeholders, not real credentials. Set values on the **main website project**, not the standalone map. In Netlify use **Production** context and **Functions** scope; existing NEXT_PUBLIC values also need **Builds** scope. Keep previews/development on APP_ENV=development, EMAIL_ENABLED=false, with no live sending credentials. Do not rely on build-only CONTEXT being present in a function. Existing VERCEL_ENV checks remain compatibility safeguards, not a new hosting dependency.
+
+| Variable | Required? | Secret? | Purpose | Example format |
+|---|---|---|---|---|
+| EMAIL_ENABLED | For automatic processing; defaults off | No | Exact `true` enables the worker; leave `false` during preparation | `false` |
+| RESEND_API_KEY | For real provider calls | **Yes** | Resend sending API key, server only | Copy privately from Resend; never paste into source/chat |
+| RESEND_FROM_EMAIL | For tests/live delivery | No | Combined sender name and verified-domain address | `Sightseeing Shkodra <booking@sightseeingshkodra.com>` |
+| BOOKING_REPLY_TO_EMAIL | For tests/live delivery | No, but private contact setting | Mailbox receiving guest replies | `your-monitored-inbox@gmail.com` or custom-domain mailbox |
+| BOOKING_OWNER_EMAIL | For tests/live delivery | No, but private contact setting | Owner booking notifications | `your-owner-inbox@gmail.com` |
+| EMAIL_TEST_RECIPIENT | Required outside production and for admin test send; keep set during production testing | No, but private contact setting | Redirects both customer/owner messages to one controlled inbox | `your-test-inbox@gmail.com` |
+| EMAIL_START_AT | For enabled processing and validated test configuration | No | Inclusive UTC event activation boundary | ISO 8601 UTC: `YYYY-MM-DDTHH:mm:ss.sssZ` (choose actual cutover time, never this placeholder) |
+| CRON_SECRET | For scheduler/worker authentication | **Yes** | Random bearer secret, minimum 32 characters | Generate 32 random bytes as 64 hex characters in a password manager |
+| APP_ENV | For live mode / scheduled adapter | No | Existing deployment environment guard | `production` on production only |
+| NODE_ENV | Required runtime condition; Next sets it | No | Live mode also requires production runtime | `production` (do not override Next locally) |
+| NEXT_PUBLIC_SITE_URL | Existing setting required by config and scheduler | No; public | Canonical public origin and protected admin links | `https://sightseeingapp.netlify.app` (update together with Netlify canonical domain if changed) |
+| PUBLIC_OPERATOR_ID | Existing setting required | No | The actual operator/workspace UUID | Existing production UUID, not a synthetic test operator |
+| NEXT_PUBLIC_SUPABASE_URL | Existing setting required | No; public | Main booking database URL | `https://<project-ref>.supabase.co` |
+| SUPABASE_SECRET_KEY | Existing setting required by worker | **Yes** | Privileged database access from server only | Existing Supabase server secret |
+| NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY | Existing setting required for admin sign-in | No; publishable | Existing session/auth client | Existing publishable key |
+| VERCEL_ENV | Not required on Netlify | No | Existing compatibility guard when present | Leave unset on Netlify |
+
+There is no separate sender-name variable. Configure the name exactly **Sightseeing Shkodra** inside RESEND_FROM_EMAIL. Either booking@ or info@ on a verified domain works; choose one address once in this setting. The API key is read only by server-only modules; the browser invokes authenticated server actions, never Resend. Gmail is only a recipient/reply mailbox, not the sending service. No Gmail SMTP, app password or Google credentials are needed or added.
+
+### Activation boundary and test/live transition
+
+EMAIL_START_AT filters **event creation time**, not booking date or travel date. `created_at >= EMAIL_START_AT` is eligible, including an event exactly on the boundary. A new, legitimate modification/cancellation of an older booking can still notify if that event occurs after activation. A deliberate manual resend creates a new event and remains allowed by the existing permission/cooldown policy.
+
+The new local migration also applies the boundary when claiming jobs: old pending/retry jobs become skipped with `before_activation_boundary`. This fixes the previous gap where a later activation timestamp stopped enqueueing old events but did not exclude jobs already queued. Accepted/failed/uncertain history is retained; no sent record or idempotency tombstone is deleted. Never move the timestamp backwards to clear a warning.
+
+**In-flight sends cannot be recalled.** Before changing test recipient, live mode or activation boundary, disable automatic sending, publish that disabled configuration when authorized, and allow at least three minutes for previous invocations/leases to settle; verify logs/queue. Only then set the new boundary and mode. Do not manually clear leases. Jobs with a frozen envelope from a different test/live mode fail safely instead of changing recipients on retry.
+
+While EMAIL_TEST_RECIPIENT is set, all deliverable guest and owner messages go to that one address. Test subjects are marked TEST. Missing/invalid customer addresses may still be skipped, as in the existing engine. Admin's synthetic test can run while EMAIL_ENABLED=false, but it requires complete configuration and accepts only the configured test address. It uses no booking queue rows, so its result is shown in the admin form/Resend dashboard, **not** as a booking delivery-history row.
+
+### Worker heartbeat and migration
+
+Apply `supabase/migrations/20260925000500_email_worker_readiness.sql` only during a separately approved release, after the existing notification migrations. It is **not applied remotely by this task**.
+
+Existing queue timestamps cannot prove an empty worker run, and writing fake booking events or an audit row every minute would be misleading/unbounded. The migration adds the smallest separate operational record: **email_worker_status, one row per operator**. No new queue. Columns hold start/completion/last-success time, run token, mode/outcome and processed count; no credentials, message body or customer information. Owner-scoped read RLS; start/finish RPCs are service-role only. A superseded overlapping invocation cannot overwrite the newest invocation's result.
+
+The worker starts this heartbeat before processing and completes it only after processing returns, including an empty queue. Unhandled failure records failed when storage is reachable; a crash/database outage remains running and then overdue. Disabled worker calls remain side-effect-free and do not create a heartbeat.
+
+Admin shows Operational only for a completed live/test run within three minutes; test mode is labelled. It shows Running, Run overdue, Last run failed, No recent successful run, Disabled or Unverified otherwise. This is evidence of worker execution, not proof of inbox delivery or a promise about future cron execution. An authorized manual invocation produces equivalent execution evidence. Configuration errors before worker start may leave old evidence until it becomes stale; the separate readiness card reports configuration failure immediately. Pending and failed/uncertain totals still come from notification_deliveries.
+
+### Aleksander — setup steps (perform later, after review)
+
+1. **Find/create your Resend API key.** Open Resend > API Keys. Prefer sending-only access restricted to your sending domain. Save it privately; do not send it in chat.
+2. **Add the sending domain.** In Resend > Domains, add the domain used after @ in your chosen sender. Wait for verified status before sending from it.
+3. **Copy DNS records.** At your domain's DNS provider, enter exactly the DKIM/SPF/return-path records Resend supplies, including their names/types/values/priorities. Do not invent DNS values or replace your existing Gmail/business-mail MX records. Review DMARC separately. Resend verification does not create a mailbox.
+4. **Choose your sender.** Set RESEND_FROM_EMAIL to `Sightseeing Shkodra <your-chosen-address@your-verified-domain>`.
+5. **Choose Reply-To.** Put a real monitored inbox in BOOKING_REPLY_TO_EMAIL. A Gmail inbox is allowed.
+6. **Choose your owner inbox.** Put the address for booking notifications in BOOKING_OWNER_EMAIL. It can be the same monitored Gmail inbox.
+7. **Choose one test inbox.** Put it in EMAIL_TEST_RECIPIENT. Keep this populated until controlled booking tests are complete.
+8. **Create the cron secret.** Use your password manager's random generator for at least 32 random characters (64 hex characters is suitable). Save it privately as CRON_SECRET. Do not put it in a URL.
+9. **Configure Netlify.** Open the **sightseeingapp** project > Project configuration > Environment variables. Enter the table's values in Production/Functions; public variables also need Builds. Keep EMAIL_ENABLED=false. Keep the existing Supabase values/operator ID. Set EMAIL_START_AT to the actual current UTC setup time. Leave preview/branch environments disabled and without live credentials.
+10. **Arrange the approved release.** Ask for the pending migration and code to be applied/deployed after review. This includes the admin page and prepared scheduler; it has not happened yet. Once released, Netlify > Functions should show booking-email-schedule with a Scheduled badge. No separate cron URL or another service is needed. Disabled sending will simply skip each tick. Verify the existing worker has no extra site-password/SSO interception; do not disable site protection indiscriminately.
+11. **Send a synthetic test.** Sign in as owner > Settings > Email & Notifications. Check readiness, enter the configured test inbox and press Send test email. Automatic sending stays off. If it fails, check sender verification/server configuration; do not paste keys into screenshots.
+12. **Check the inbox.** Confirm arrival, including spam, and inspect the message in Resend. Provider acceptance alone is not proof it arrived. Confirm Reply-To reaches your intended inbox.
+13. **Verify booking history safely.** When you are ready for controlled tests, keep EMAIL_TEST_RECIPIENT set, choose a fresh EMAIL_START_AT, then enable EMAIL_ENABLED=true and redeploy that configuration. Create a clearly identified test booking using the normal app (it reserves seats); verify customer and owner jobs in admin, both arriving only at the test inbox. Test cancellation and manual resend; cancel the test booking to release seats. The worker heartbeat should report Operational (test mode). Synthetic tests from step 11 do not appear in booking history.
+14. **Enable live automatic emails only after tests.** Set EMAIL_ENABLED=false and publish the disabled configuration. Wait at least three minutes and inspect pending/in-flight/test jobs. Set EMAIL_START_AT to your chosen live UTC activation time, clear EMAIL_TEST_RECIPIENT in Production only, verify APP_ENV=production and correct HTTPS URL, then explicitly enable EMAIL_ENABLED=true and redeploy. This is a manual future action, not performed now. Keep previews disabled. Do not rewind the boundary or delete delivery history.
+15. **Create one real controlled booking.** Use your own contact address, confirm both guest and owner notifications and payment-at-meeting-point wording, then cancel if it was only a test. Check cancellation email, provider results, pending queue and recent heartbeat. Monitor failed/uncertain jobs; investigate provider results before using intentional resend.
+
+Official Resend guidance: [domain verification](https://resend.com/docs/dashboard/domains/introduction), [API keys](https://resend.com/docs/dashboard/api-keys/introduction), [idempotency](https://resend.com/docs/dashboard/emails/idempotency-keys). Resend's 24-hour provider idempotency window remains respected by the existing 23-hour/five-attempt retry policy.
+
+### Preparation verification
+
+All provider calls in tests were mocked. In-memory PostgreSQL-compatible and local embedded PostgreSQL databases only; no hosted database changes. Tests cover actual route 401 rejection/authorized disabled response, test redirection, event-recipient pairs, retry, manual resend, enqueue/claim concurrency, activation boundary equality/new/old events, prequeued historical jobs, heartbeat permissions/overlap/empty completion and stale status. No deployment or real email is claimed. See EMAIL-ACTIVATION-PREPARATION.md for the final test/file inventory.

@@ -1,0 +1,86 @@
+'use client';
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import { createBrowserClient } from '@supabase/ssr';
+import Link from 'next/link';
+import { AmenityIcon } from '@/components/ui/amenity-icon';
+import { bookingTarget, notificationLabels, type Device, type Inbox, type InboxItem, type Preference } from '@/modules/notifications/contracts';
+import styles from './notifications.module.css';
+type Context={operator:string;inbox:Inbox;error:string;connection:string;version:number;refresh:()=>Promise<void>;mutate:(action:unknown)=>Promise<unknown>;request:(query?:string,action?:unknown)=>Promise<unknown>};
+export const NotificationContext=createContext<Context|null>(null);
+const empty:Inbox={items:[],unread:0,next:null};
+export async function notificationRequest(operator:string,query='',action?:unknown){
+ const r=await fetch(`/api/admin/notifications?operator=${encodeURIComponent(operator)}${query}`,action?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({operator,action}),cache:'no-store'}:{cache:'no-store'});
+ if(!r.ok)throw Error('Notifications unavailable. Check your connection and workspace access.');return r.json();
+}
+export function NotificationProvider({operator,userId,children}:{operator:string;userId:string;children:ReactNode}){
+ const [inbox,setInbox]=useState<Inbox>(empty),[error,setError]=useState(''),[connection,setConnection]=useState('Connecting'),[version,setVersion]=useState(0);
+ const generation=useRef(0);
+ const invalidate=useCallback(()=>{generation.current++;},[]);
+ const request=useCallback((query='',action?:unknown)=>notificationRequest(operator,query,action),[operator]);
+ const refresh=useCallback(async()=>{const g=++generation.current;try{const data=await notificationRequest(operator);if(g===generation.current){setInbox(data);setError('');setVersion(v=>v+1);}}catch{if(g===generation.current)setError('Notifications unavailable. Retry when connected.');}},[operator]);
+ useEffect(()=>{
+  let timer:ReturnType<typeof setTimeout>|undefined;const queue=()=>{clearTimeout(timer);timer=setTimeout(()=>void refresh(),250);};
+  const client=createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!);
+  const channel=client.channel(`admin-inbox:${operator}:${userId}`).on('postgres_changes',{event:'*',schema:'public',table:'admin_notification_receipts',filter:`user_id=eq.${userId}`},payload=>{if((payload.new as {operator_id?:string}).operator_id===operator)queue();}).subscribe(status=>{setConnection(status==='SUBSCRIBED'?'Live':status==='CHANNEL_ERROR'||status==='TIMED_OUT'?'Reconnecting':'Connecting');if(status==='SUBSCRIBED')queue();});
+  const auth=client.auth.onAuthStateChange(event=>{if(event==='SIGNED_OUT'){generation.current++;setInbox(empty);setConnection('Signed out');void client.removeChannel(channel);}});
+  const visible=()=>{if(document.visibilityState==='visible')queue();};document.addEventListener('visibilitychange',visible);window.addEventListener('online',queue);queue();
+  return()=>{invalidate();clearTimeout(timer);auth.data.subscription.unsubscribe();void client.removeChannel(channel);document.removeEventListener('visibilitychange',visible);window.removeEventListener('online',queue);};
+ },[operator,userId,refresh,invalidate]);
+ const mutate=async(action:unknown)=>{const result=await notificationRequest(operator,'',action);await refresh();return result;};
+ return <NotificationContext.Provider value={{operator,inbox,error,connection,version,refresh,mutate,request}}>{children}</NotificationContext.Provider>;
+}
+function useNotifications(){const c=useContext(NotificationContext);if(!c)throw Error('Notification workspace unavailable');return c;}
+function relative(time:string){const minutes=Math.max(0,Math.floor((Date.now()-Date.parse(time))/60000));return minutes<1?'Just now':minutes<60?`${minutes} min ago`:minutes<1440?`${Math.floor(minutes/60)} hr ago`:`${Math.floor(minutes/1440)} days ago`;}
+function Item({item,onNavigate}:{item:InboxItem;onNavigate?:()=>void}){
+ const {operator,mutate}=useNotifications();const [error,setError]=useState(''),[busy,setBusy]=useState(false);const n=item.notification;
+ return <li className={`${styles.item} ${!item.read_at?styles.unread:''}`}>
+  <AmenityIcon name={n.type==='email_delivery_failed'?'info':n.type==='booking_modified'?'clock':'ticket'}/>
+  <div><strong>{n.title}</strong><p>{n.message}</p><time dateTime={n.event_at} title={new Date(n.event_at).toLocaleString()}>{relative(n.event_at)}</time> <span>{item.read_at?'Read':'Unread'}</span>
+   <div className={styles.actions}><Link href={bookingTarget(operator,n.booking_id)} onClick={()=>{void mutate({kind:'read',id:item.id,read:true}).catch(()=>{});onNavigate?.();}}>View booking</Link><button type="button" disabled={busy} onClick={async()=>{setBusy(true);try{await mutate({kind:'read',id:item.id,read:!item.read_at});setError('');}catch{setError('Unable to update read status.');}finally{setBusy(false);}}}>{item.read_at?'Mark unread':'Mark read'}</button></div>{error&&<p role="alert">{error}</p>}
+  </div>
+ </li>;
+}
+export function NotificationBell(){
+ const {operator,inbox,error,connection,refresh}=useNotifications();const [open,setOpen]=useState(false);const root=useRef<HTMLDivElement>(null),button=useRef<HTMLButtonElement>(null);
+ useEffect(()=>{if(!open)return;const close=(e:PointerEvent)=>{if(!root.current?.contains(e.target as Node))setOpen(false);};const key=(e:KeyboardEvent)=>{if(e.key==='Escape'){setOpen(false);button.current?.focus();}};document.addEventListener('pointerdown',close);document.addEventListener('keydown',key);return()=>{document.removeEventListener('pointerdown',close);document.removeEventListener('keydown',key);};},[open]);
+ return <div className={styles.bell} ref={root}><button type="button" ref={button} aria-label={`Notifications, ${inbox.unread} unread`} aria-expanded={open} aria-controls="admin-notification-panel" onClick={()=>setOpen(v=>!v)}><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M5 17h14l-2-3V9a5 5 0 0 0-10 0v5l-2 3Zm5 3h4"/></svg>{inbox.unread>0&&<span className={styles.badge}>{inbox.unread>99?'99+':inbox.unread}</span>}</button>
+ {open&&<section id="admin-notification-panel" className={styles.dropdown} aria-label="Recent notifications"><div className={styles.actions}><h2>Notifications</h2><button type="button" onClick={()=>setOpen(false)}>Close</button></div><p>{connection}</p>{error?<p role="alert">{error} <button onClick={()=>void refresh()}>Retry</button></p>:!inbox.items.length?<p>No notifications yet.</p>:<ul className={styles.list}>{inbox.items.slice(0,5).map(item=><Item key={item.id} item={item} onNavigate={()=>setOpen(false)}/>)}</ul>}<Link href={`/admin/${operator}/notifications`} onClick={()=>setOpen(false)}>View all notifications</Link></section>}
+ <span className={styles.sr} role="status" aria-live="polite">{inbox.unread} unread notifications</span></div>;
+}
+export function NotificationCenter(){
+ const c=useNotifications();const {request,version}=c;const [filter,setFilter]=useState('all'),[page,setPage]=useState<Inbox>(empty),[busy,setBusy]=useState(false),[error,setError]=useState('');const seq=useRef(0);
+ useEffect(()=>{let active=true;seq.current++;void request(`&filter=${filter}`).then(data=>{if(active){setPage(data as Inbox);setError('');}}).catch(()=>{if(active)setError('Unable to load notifications.');}).finally(()=>{if(active)setBusy(false);});return()=>{active=false;};},[request,version,filter]);
+ return <div className={styles.center}><p>Operational alerts for this workspace. {c.connection}. <button onClick={()=>void c.refresh()}>Refresh</button></p><div className={styles.filters} role="group" aria-label="Filter notifications">{[['all','All'],['unread','Unread'],['booking_created','Bookings'],['booking_modified','Modifications'],['booking_cancelled','Cancellations'],['system','System']].map(([value,label])=><button key={value} aria-pressed={filter===value} onClick={()=>setFilter(value)}>{label}</button>)}</div>
+ <button disabled={!c.inbox.unread||busy} onClick={async()=>{setBusy(true);try{await c.mutate({kind:'read',id:'all',read:true});}catch{setError('Unable to mark notifications read.');}finally{setBusy(false);}}}>Mark all as read</button>
+ {(error||c.error)&&<p role="alert">{error||c.error}</p>}<div aria-busy={busy}>{!page.items.length&&!busy?<p>No notifications in this view.</p>:<ul className={styles.list}>{page.items.map(item=><Item key={item.id} item={item}/>)}</ul>}</div>
+ {page.next&&<button disabled={busy} onClick={async()=>{const id=seq.current;setBusy(true);try{const next=await c.request(`&filter=${filter}&cursor=${encodeURIComponent(page.next!)}`) as Inbox;if(seq.current===id)setPage(old=>({...next,items:[...old.items,...next.items.filter((x:InboxItem)=>!old.items.some(y=>y.id===x.id))]}));}catch{setError('Unable to load more.');}finally{setBusy(false);}}}>Load more</button>}
+ <NotificationSettings/></div>;
+}
+type Settings={canManageEmail:boolean;devices:Device[];preferences:Preference[];publicKey:string;workerEnabled:boolean};
+function NotificationSettings(){
+ const {operator,mutate,request}=useNotifications();const [settings,setSettings]=useState<Settings|null>(null),[message,setMessage]=useState(''),[name,setName]=useState('This device'),[busy,setBusy]=useState(false),[current,setCurrent]=useState<{id:string;enabled:boolean}|null>(null),[support,setSupport]=useState(false);
+ const load=useCallback(async()=>{setSettings(await request('&settings=1') as Settings);if('serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window){setSupport(true);const r=await navigator.serviceWorker.getRegistration('/admin/');const sub=await r?.pushManager.getSubscription();if(sub&&Notification.permission==='granted'){setCurrent(await request('',{kind:'device-status',endpoint:sub.endpoint}) as {id:string;enabled:boolean}|null);}else setCurrent(null);}},[request]);
+ useEffect(()=>{void Promise.resolve().then(load).catch(()=>setMessage('Notification settings unavailable.'));},[load]);
+ async function enable(){setBusy(true);setMessage('');try{
+  if(!support||!settings?.publicKey)throw Error('Push is not configured or supported on this browser.');
+  const permission=await Notification.requestPermission();if(permission!=='granted')throw Error('Permission was not granted. You can change notification permission in browser settings.');
+  const prior=await navigator.serviceWorker.getRegistration('/admin/');if(prior&&prior.active?.scriptURL!==new URL('/admin/sw.js',location.origin).href)throw Error('Another service worker controls Admin. Contact the operator before enabling push.');
+  const registration=await navigator.serviceWorker.register('/admin/sw.js',{scope:'/admin/',updateViaCache:'none'});
+  if(!registration.active)await new Promise<void>((resolve,reject)=>{const worker=registration.installing??registration.waiting;if(!worker)return reject(Error('Worker unavailable'));const timer=setTimeout(()=>reject(Error('Service worker activation timed out. Retry.')),15000);worker.addEventListener('statechange',()=>{if(worker.state==='activated'){clearTimeout(timer);resolve();}else if(worker.state==='redundant'){clearTimeout(timer);reject(Error('Service worker unavailable'));}});});
+  const bytes=Uint8Array.from(atob(settings.publicKey.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));
+  const sub=await registration.pushManager.getSubscription()??await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:bytes});
+  await mutate({kind:'subscribe',subscription:sub.toJSON(),name});await load();setMessage('Push enabled for this device. Delivery also depends on your selected event preferences.');
+ }catch(e){setMessage(e instanceof Error?e.message:'Unable to enable push.');}finally{setBusy(false);}}
+ return <section className={styles.settings}><h2>Notification settings</h2><p>Preferences apply to future events. Email sending remains managed in the existing Email &amp; Notifications section by the workspace owner.</p>{!settings?<p>{message||'Loading settings...'}</p>:<>
+ {settings.canManageEmail&&<p><Link href={`/admin/${operator}/email`}>Open email status and settings</Link></p>}
+ {!settings.workerEnabled&&<p role="status">The notification worker is not enabled in this environment.</p>}
+ {settings.preferences.map(p=><fieldset key={p.type} disabled={busy}><legend>{notificationLabels[p.type]}</legend>{(['in_app','push'] as const).map(channel=><label key={channel}><input type="checkbox" checked={p[channel]} onChange={async e=>{setBusy(true);try{await mutate({kind:'preference',...p,[channel]:e.target.checked});await load();setMessage('Preference saved.');}catch{setMessage('Unable to save preference.');}finally{setBusy(false);}}}/>{channel==='in_app'?'In-app':'Push'}</label>)}</fieldset>)}
+ <h3>Push notifications</h3><p>{current?.enabled?'Enabled on this device':'Not enabled on this device'}</p><p>On iPhone or iPad, add Admin to your Home Screen and open it there before enabling push. Supported devices need HTTPS and browser notification permission. Signing out does not revoke registered devices; disable a shared device here before leaving it.</p>
+ {!support&&<p>This browser does not currently expose Web Push. Try a supported browser or the installed Home Screen app.</p>}
+ {!settings.publicKey&&<p>Push delivery has not been configured by the operator.</p>}
+ <label>Device name<input maxLength={60} value={name} onChange={e=>setName(e.target.value)}/></label><button disabled={busy||!support||!settings.publicKey||!name.trim()} onClick={()=>void enable()}>Enable Push Notifications</button>
+ {current?.enabled&&<button disabled={busy} onClick={async()=>{setBusy(true);try{await mutate({kind:'device',id:current.id});const r=await navigator.serviceWorker.getRegistration('/admin/');await(await r?.pushManager.getSubscription())?.unsubscribe();setCurrent(null);await load();setMessage('This device is disabled.');}catch{setMessage('Unable to disable this device.');}finally{setBusy(false);}}}>Disable this device</button>}
+ <h3>Your devices</h3><p>{!settings.devices.length?'No devices registered yet.':'Each device is managed separately.'}</p><ul className={styles.list}>{settings.devices.map(d=><li key={d.id} className={styles.device}><span><strong>{d.device_name}</strong> — {d.enabled?'Active':'Disabled'}{d.last_used_at&&<small>Last accepted push: {new Date(d.last_used_at).toLocaleString()}</small>}</span><div className={styles.actions}>{d.enabled&&<button disabled={busy} onClick={async()=>{setBusy(true);try{await mutate({kind:'device',id:d.id});await load();}catch{setMessage('Unable to disable device.');}finally{setBusy(false);}}}>Disable</button>}<button disabled={busy} onClick={async()=>{setBusy(true);try{await mutate({kind:'device',id:d.id,remove:true});await load();}catch{setMessage('Unable to remove device.');}finally{setBusy(false);}}}>Remove</button></div></li>)}</ul>
+ <p role="status">{message}</p></>}
+ </section>;
+}

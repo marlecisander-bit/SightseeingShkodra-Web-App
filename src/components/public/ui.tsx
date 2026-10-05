@@ -3,6 +3,7 @@ import { ButtonContent } from "@/components/ui/button";
 import Image from "next/image";
 import { PublicBookingLink as Link } from "./booking";
 import { BrandLogo } from "./brand-logo";
+import { HomeLink } from "./home-link";
 import type { ComponentProps, ReactNode } from "react";
 import { safeSocialUrl, footerDefaults, initialWebsiteContent, type WebsiteContent } from "@/modules/content/website-schema";
 
@@ -109,7 +110,7 @@ export function Footer({ content = initialWebsiteContent, previewPathname, googl
       <footer className="p-global-footer">
        <div className="p-footer-inner">
         <div className="p-footer-main">
-         <Link className="p-footer-logo" href="/" aria-label="Sightseeing Shkodra homepage"><BrandLogo /></Link>
+         <HomeLink className="p-footer-logo" aria-label="Sightseeing Shkodra homepage"><BrandLogo /></HomeLink>
          {socials.length>0&&<div className="p-footer-social" aria-label="Social and review platforms">{socials.map(([id,label,url])=><a key={id} href={url} aria-label={label} title={label} target="_blank" rel="noopener noreferrer"><Image src={'/brand/social/'+id+'.svg'} alt="" width={32} height={32} unoptimized className={id==='getyourguide'?'p-social-wide':undefined}/></a>)}</div>}
          <Link className="ss-button p-footer-staff" href="/admin"><ButtonContent>Staff Login</ButtonContent></Link>
         </div>

@@ -11,6 +11,30 @@ import { platformSql, applyMigrations, loadDevelopmentFixtures } from '../helper
 let cluster, directory, observer, first, second;
 const clients = [];
 
+test('admin projection and push claims serialize across workers without duplicate deliveries',async()=>{
+ const op='10000000-0000-4000-8000-000000000001',session='admin-push-concurrency-session-123456789';
+ const product=(await observer.query(`insert into products(operator_id,type,title,slug,status,pricing_rules,capacity_rules) values($1,'van_tour','Push concurrency',gen_random_uuid()::text,'published','{"version":1,"model":"per_guest","currency":"EUR","unit_price":1000}','{"version":1,"model":"departure_seats"}') returning id`,[op])).rows[0].id;
+ const user=(await observer.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;
+ await observer.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'owner')",[op,user]);
+ for(let i=0;i<2;i++)await observer.query("insert into admin_push_subscriptions(operator_id,user_id,endpoint,p256dh,auth,device_name) values($1,$2,'https://fcm.googleapis.com/'||gen_random_uuid(),repeat('B',87),repeat('A',22),'Concurrency device')",[op,user]);
+ const dep=(await observer.query("insert into departures(operator_id,product_id,service_date,start_time,capacity,status) values($1,$2,'2031-04-02','12:00',1,'scheduled') returning id",[op,product])).rows[0].id;
+ const hold=(await observer.query('select * from create_hold_v1($1,$2,$3,gen_random_uuid(),1)',[op,dep,session])).rows[0];
+ await observer.query("select create_meeting_point_booking_v1($1,$2,$3,'Synthetic','test@example.invalid')",[op,hold.id,session]);
+ const sql="select project_admin_notifications_v1($1,'2020-01-01') n";await first.query('begin');let pending;
+ try{
+  assert.ok((await first.query(sql,[op])).rows[0].n>0);
+  pending=second.query(sql,[op]).then(result=>({result}),error=>({error}));await waitForLock();await first.query('commit');
+  const duplicate=await pending;assert.ifError(duplicate.error);assert.equal(duplicate.result.rows[0].n,0);
+ }finally{await first.query('rollback');if(pending)await pending;}
+ await first.query('begin');await second.query('begin');
+ try{
+  const a=(await first.query('select * from claim_admin_push_v1($1)',[op])).rows[0],b=(await second.query('select * from claim_admin_push_v1($1)',[op])).rows[0];
+  assert.ok(a.id&&b.id);assert.notEqual(a.id,b.id);assert.notEqual(a.lease_token,b.lease_token);
+  await first.query('rollback');await second.query('rollback');
+  assert.equal((await observer.query("select count(*)::int n from admin_push_deliveries where id in ($1,$2) and status='pending' and attempts=0",[a.id,b.id])).rows[0].n,2);
+ }finally{await first.query('rollback');await second.query('rollback');}
+});
+
 test('schedule materialization and capacity edits serialize with authoritative holds',async()=>{
   const op='10000000-0000-4000-8000-000000000001';
   const user=(await observer.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;

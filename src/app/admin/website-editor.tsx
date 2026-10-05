@@ -16,7 +16,7 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
   const [sizes, setSizes] = useState<Record<string,string>>({});
   const [pending, start] = useTransition();
   const router = useRouter();
-  const groups = [
+  const groups = sectionId==='whatsapp' ? [{title:'WhatsApp contact',fields:section.fields}] : [
     {title:"Content",fields:section.fields.filter(f=>f.kind!=="visibility" && !["image","position","link"].includes(f.kind) && !f.key.endsWith(".alt") && !/button|link label|scroll link/i.test(f.label))},
     {title:"Images",fields:section.fields.filter(f=>["image","position"].includes(f.kind)||f.key.endsWith(".alt"))},
     {title:"Buttons & links",fields:section.fields.filter(f=>f.kind==="link"||/button|link label|scroll link/i.test(f.label))},
@@ -41,6 +41,8 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
   }}>
     {sectionId === "reviews" && <p><a href={`/admin/${operatorId}/reviews`}>Manage guest reviews and ordering</a>. This section is hidden until a review is published.</p>}
     {sectionId==='footer'&&<p>Empty social URLs are hidden. Use HTTPS links. Google Reviews uses the shared setting below.</p>}
+    {sectionId==='whatsapp'&&<p>Enter the full international business number with country code. Save Draft keeps it private; Publish updates the contact button across public pages. The number must be registered with WhatsApp Business. Empty display labels show only the icon.</p>}
+    {sectionId==='navigation'&&<p>Desktop and mobile share these links. Route and Live map lead to the combined Route &amp; Live Map page. If several links lead to the same page, the first link supplies its label. Edit that first label to customize it; the original Route and Live map labels use the combined page name.</p>}
     {sectionId.startsWith('legal')&&<p>Plain text only. Add your approved legal wording, set Published, then publish. Unpublished pages show a neutral availability notice.</p>}
     <p>Save your changes as a draft or publish them when you’re ready.</p>
     {sectionId === "tourPage" && <p>FAQ questions below appear on the dedicated FAQ page. <a href={`/admin/${operatorId}/website-preview?page=faq`}>Preview saved FAQ draft</a></p>}
@@ -50,11 +52,11 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
       {section.fields.filter(f=>f.kind==="visibility").map(f=><input key={f.key} type="hidden" name={f.key} value={values[f.key]}/>)}
       {groups.filter(group=>group.fields.length).map(group=><fieldset className={styles.fieldGroup} key={group.title}><legend>{group.title}</legend><div className={styles.fieldGrid}>{group.fields.map(field => {
         if (field.kind === "visibility") return <input key={field.key} type="hidden" name={field.key} value={values[field.key]} />;
-        const long = field.kind === "legal" || field.kind === "amenities" || /text|detail|description|alt/.test(field.key) || /description/i.test(field.label) || field.initial.includes("\n");
+        const long = field.kind === "legal" || field.kind === "amenities" || /text|detail|description|alt|message/.test(field.key) || /description/i.test(field.label) || field.initial.includes("\n");
         const heroImage = sectionId === "hero" && field.kind === "image";
         const mobileHero = heroImage && /mobile/i.test(field.key);
         return <div key={field.key} className={`${styles.field} ${long ? styles.fullField : ""} ${field.kind === "image" ? styles.imageField : ""}`}>
-          {field.kind === "publication" ? <label>{field.label}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}><option value="unpublished">Unpublished</option><option value="published">Published</option></select></label> : field.kind === "amenities" ? <AmenitiesInput value={values[field.key]} onChange={value=>setValues(v=>({...v,[field.key]:value}))}/> : field.kind === "position" ? <label>{field.label}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}>{focalPositions.map(position=><option key={position}>{position}</option>)}</select></label> : field.kind === "image" ? <>
+          {field.kind === "toggle" ? <label>{field.label}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}><option value="true">On</option><option value="false">Off</option></select></label> : field.kind === "publication" ? <label>{field.label}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}><option value="unpublished">Unpublished</option><option value="published">Published</option></select></label> : field.kind === "amenities" ? <AmenitiesInput value={values[field.key]} onChange={value=>setValues(v=>({...v,[field.key]:value}))}/> : field.kind === "position" ? <label>{field.label}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}>{focalPositions.map(position=><option key={position}>{position}</option>)}</select></label> : field.kind === "image" ? <>
             <strong>{field.label}</strong>
             <div className={heroImage ? `${styles.heroPreview} ${mobileHero ? styles.heroPreviewMobile : styles.heroPreviewDesktop}` : undefined} style={heroImage ? {objectPosition: values[mobileHero ? "hero.mobilePosition" : "hero.desktopPosition"]} : undefined}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -78,12 +80,12 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
                 }
               });
             }} /></label>
-            <small className={styles.helper}>{sectionId === "hero" ? "No original file-size limit. Large hero images are automatically optimized for the web." : "JPEG, PNG, WebP or AVIF · Maximum 8 MB per image."}</small>
+            <small className={styles.helper}>{sectionId === "hero" ? "No original file-size limit. Large hero images are automatically optimized for the web." : "JPEG, PNG, WebP or AVIF · Maximum 8 MB per original. Large images are optimized before upload."}</small>
             <details className={styles.imagePath}><summary>Advanced: image address</summary><label>{field.label} path<input name={field.key} required={!field.optional} maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} /></label></details>
             <small className={styles.helper}>Required image · Replace to change it. Alt text is editable below.</small>
           </> : <label>{field.label.replace("Eyebrow", "Small heading")}
             {long ? <textarea rows={field.key.includes("alt") ? 2 : 3} name={field.key} required={!field.optional} maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} />
-              : <input type={field.kind === "external" ? "url" : "text"} name={field.key} required={!field.optional} maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} />}
+              : <input type={field.kind === "external" ? "url" : field.kind === "phone" ? "tel" : "text"} name={field.key} required={!field.optional} maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} />}
           </label>}
         </div>;
       })}</div></fieldset>)}

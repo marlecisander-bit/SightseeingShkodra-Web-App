@@ -7,17 +7,30 @@ import { withOperatorService } from "../identity/operator-service";
 
 export type WebsiteRecord = { id: string; updated_at: string; published_at: string | null; body: { content: WebsiteContent }; published_body: { content: WebsiteContent } | null };
 // Request-scoped deduplication only; never resurrect stale optional sections on failure.
-export const getWebsitePublication = cache(async (): Promise<{ content: WebsiteContent; published: boolean }> => {
-  await connection();
-  const operator = process.env.PUBLIC_OPERATOR_ID;
-  if (!operator || !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SECRET_KEY) return { content: unavailableWebsiteContent(), published: false };
+export async function loadWebsitePublication(env: NodeJS.ProcessEnv = process.env, transport: typeof fetch = fetch, report: (event: object) => void = event => console.error(JSON.stringify(event))): Promise<{ content: WebsiteContent; published: boolean }> {
+  const operator = env.PUBLIC_OPERATOR_ID;
+  const missing = ["PUBLIC_OPERATOR_ID", "NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SECRET_KEY"].filter(key => !env[key]);
+  const unavailable = (reason: string) => {
+    // Never log credentials, raw provider errors, URLs or CMS payloads.
+    report({component:"website_publication",reason,...(reason === "missing_configuration" ? {missing} : {})});
+    return {content:unavailableWebsiteContent(),published:false};
+  };
+  if (missing.length) return unavailable("missing_configuration");
+  let stage = "client_configuration";
   try {
-    const client = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SECRET_KEY, { auth: { persistSession: false }, global: { fetch: (input, init) => fetch(input, { ...init, cache: "no-store", signal: AbortSignal.timeout(4000) }) } });
+    const client = createClient(env.NEXT_PUBLIC_SUPABASE_URL!, env.SUPABASE_SECRET_KEY!, { auth: { persistSession: false }, global: { fetch: (input, init) => transport(input, { ...init, cache: "no-store", signal: AbortSignal.timeout(4000) }) } });
+    stage = "query_failed";
     const { data, error } = await client.from("content_pages").select("published_body").eq("operator_id", operator).eq("slug", "website-homepage").eq("status", "published").maybeSingle();
-    if (error || !data?.published_body) throw Error("Published content unavailable");
+    if (error) return unavailable("query_failed");
+    if (!data?.published_body) return unavailable("not_published");
+    stage = "invalid_published_content";
     const content = validateWebsiteContent(data.published_body.content);
     return { content, published: true };
-  } catch { return { content: unavailableWebsiteContent(), published: false }; }
+  } catch { return unavailable(stage); }
+}
+export const getWebsitePublication = cache(async () => {
+  await connection();
+  return loadWebsitePublication();
 });
 export async function getPublishedWebsite() { return (await getWebsitePublication()).content; }
 

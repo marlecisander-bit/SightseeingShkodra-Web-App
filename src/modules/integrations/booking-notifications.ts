@@ -1,3 +1,5 @@
+// Legacy provider abstraction: do not activate alongside booking-email-worker.ts.
+// Email & Notifications admin uses only the current Resend event/recipient queue.
 export type Confirmation = {
   reference: string;
   confirmed: boolean;

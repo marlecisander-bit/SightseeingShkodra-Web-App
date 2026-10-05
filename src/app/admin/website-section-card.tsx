@@ -12,6 +12,7 @@ const extraIcons = {
 } as const;
 type Icon = AmenityIconName | keyof typeof extraIcons;
 export const sectionCardMetadata: Record<string, {icon:Icon; description:string; scope?:string}> = {
+  whatsapp:{icon:'info',description:'Business contact number, message and device visibility',scope:'Global public contact'},
   hero:{icon:"camera",description:"Headline, desktop/mobile photographs and booking links"},
   heroAmenities:{icon:"headphones",description:"Saved service highlights retained for reference",scope:"Not displayed on homepage"},
   intro:{icon:"ticket",description:"Tour introduction and day-planning labels"},

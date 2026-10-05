@@ -1,12 +1,13 @@
 'use client';
 import {useEffect,useState} from 'react';
-const origin='https://sightseeingshkodralivetrackingapp.netlify.app';
+import {publicMapBinding,publicMapUrl} from '@/modules/tracking/public-map-binding';
+const origin=publicMapBinding.origin;
 export function useMapStatus(enabled=true) {
  const [status,setStatus]=useState<string|null>(null);
  useEffect(()=>{
   if(!enabled)return;
   let expires:ReturnType<typeof setTimeout>|undefined;
-  const frames=()=>Array.from(document.querySelectorAll<HTMLIFrameElement>('iframe')).filter(f=>f.src.startsWith(origin+'/live-map.html?'));
+  const frames=()=>Array.from(document.querySelectorAll<HTMLIFrameElement>('iframe')).filter(f=>f.src===publicMapUrl||f.src.startsWith(publicMapUrl+'&'));
   const request=()=>frames().forEach(f=>f.contentWindow?.postMessage({type:'shkodra:request-status'},origin));
   const receive=(event:MessageEvent)=>{
    if(event.origin!==origin||!frames().some(f=>f.contentWindow===event.source))return;

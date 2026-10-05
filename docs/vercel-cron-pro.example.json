@@ -1,0 +1,6 @@
+﻿{
+  "crons": [
+    { "path": "/api/internal/booking-emails", "schedule": "* * * * *" },
+    { "path": "/api/internal/admin-notifications", "schedule": "* * * * *" }
+  ]
+}

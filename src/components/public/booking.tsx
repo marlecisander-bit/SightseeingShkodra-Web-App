@@ -8,8 +8,8 @@ import { passengerKeys, type PassengerCounts } from "@/modules/booking/passenger
 import { Button } from "@/components/ui/button";
 
 import Link from "next/link";
-import { activeNavigation } from "@/modules/content/navigation";
-import { visibleWebsiteLink, homepageVisible, resolveWebsiteLink, initialWebsiteContent, type WebsiteContent } from "@/modules/content/website-schema";
+import { activeNavigation, publicNavigation } from "@/modules/content/navigation";
+import { visibleWebsiteLink, homepageVisible, initialWebsiteContent, type WebsiteContent } from "@/modules/content/website-schema";
 import { BrandLogo } from "./brand-logo";
 import {
   createContext,
@@ -252,7 +252,7 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
   const [hash, setHash] = useState("");
   const headerRef = useRef<HTMLElement>(null);
   const scrolled = pathname !== "/" || !heroVisible;
-  const items = [{href:"/",label:c["nav.home"]}, ...[0,1,2,3,4].map(i=>{const original=c[`nav.${i}.link`];const unified=["/live","/route","/#route"].includes(original);return {href:unified?"/route":resolveWebsiteLink(original),label:unified?"Route & Live Map":c[`nav.${i}.label`]};})].filter((item,index,all)=>all.findIndex(other=>other.href===item.href)===index);
+  const items = publicNavigation(c);
   const links = items.map(item=>item.href);
   const active = activeNavigation(pathname,hash,links);
   const [menu, setMenu] = useState(false);

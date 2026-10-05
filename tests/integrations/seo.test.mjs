@@ -30,20 +30,25 @@ test("indexing requires explicit production gate and a public HTTPS origin", () 
 });
 test("sitemap only includes supported published content and removes withdrawn routes", () => {
   const home = emptyHomepage("empty");
-  assert.deepEqual(sitemapPaths(home), ["/route"]);
+  assert.deepEqual(sitemapPaths(home, []), ["/route"]);
   home.content["explore-castle"] = { title: "Castle" };
   home.content["unknown-secret"] = { title: "Hidden" };
-  assert.deepEqual(sitemapPaths(home), ["/route", "/explore", "/explore/castle"]);
+  assert.deepEqual(sitemapPaths(home, []), ["/route"]);
+  const destinations = [{slug:"new-destination",showOnPage:true,guidePublished:true}];
+  assert.deepEqual(sitemapPaths(home, destinations), ["/route", "/explore", "/explore/new-destination"]);
   home.product = { id: "product" };
-  assert.deepEqual(sitemapPaths(home), [
+  assert.deepEqual(sitemapPaths(home, destinations), [
     "/route",
     "/",
     "/tour",
     "/explore",
-    "/explore/castle",
+    "/explore/new-destination",
   ]);
   delete home.content["explore-castle"];
-  assert.deepEqual(sitemapPaths(home), ["/route", "/", "/tour"]);
+  assert.deepEqual(sitemapPaths(home, []), ["/route", "/", "/tour"]);
+  assert.deepEqual(sitemapPaths(home, [{...destinations[0],guidePublished:false}]), ["/route", "/", "/tour", "/explore"]);
+  assert.deepEqual(sitemapPaths(emptyHomepage("unavailable"), destinations), ["/explore", "/explore/new-destination"]);
+  assert.deepEqual(sitemapPaths(home, [{...destinations[0],showOnPage:false}]), ["/route", "/", "/tour", "/explore/new-destination"]);
 });
 test("structured data matches page and breadcrumbs and escapes script delimiters", () => {
   const title = "Castle </script><script>alert(1)</script>";

@@ -12,7 +12,7 @@ export type EmailJob = {
 };
 export type EmailStore = {
   enqueue(operator: string, since: string): Promise<void>;
-  claim(operator: string): Promise<EmailJob | null>;
+  claim(operator: string, since?: string): Promise<EmailJob | null>;
   prepare(job: EmailJob, envelope: EmailEnvelope): Promise<EmailJob>;
   finish(job: EmailJob, outcome: string, code?: string, reference?: string): Promise<void>;
   redact(operator: string): Promise<void>;
@@ -25,7 +25,7 @@ export function bookingEmailStore(client: Pick<SupabaseClient, "rpc">): EmailSto
   };
   return {
     async enqueue(operator, since) { await call("enqueue_booking_emails_v2", { p_operator_id: operator, p_since: since }); },
-    async claim(operator) { const rows = await call("claim_booking_email_v2", { p_operator_id: operator }); return rows?.[0] ?? null; },
+    async claim(operator, since = '-infinity') { const rows = await call("claim_booking_email_v2", { p_operator_id: operator, p_since: since }); return rows?.[0] ?? null; },
     async prepare(job, envelope) {
       const data = await call("prepare_booking_email_v2", { p_operator_id: job.operator_id, p_id: job.id, p_token: job.lease_token, p_envelope: envelope });
       const prepared = Array.isArray(data) ? data[0] : data;
@@ -42,13 +42,13 @@ type AuditEntry = { event: string; reference?: string; recipient?: string; manua
 /** Trusted scheduler only. No public caller-supplied operator, message or recipient. */
 export async function processBookingEmails(store: EmailStore, config: EmailConfig = bookingEmailConfig(), send: (key: string, message: EmailMessage) => Promise<EmailResult> = (key, message) => sendResendEmail(config.enabled ? config.apiKey : "", key, message), log: (entry: AuditEntry) => void = entry => console.info(JSON.stringify({ component: "booking_email", ...entry }))) {
   if (!config.enabled) { log({ event: "worker", status: "disabled" }); return { status: "disabled", processed: 0 }; }
-  const startDeadline = Date.now() + 25_000;
+  const startDeadline = Date.now() + 20_000;
   await store.redact(config.operatorId);
   await store.enqueue(config.operatorId, config.since);
   let processed = 0;
-  // Leave room for one claim/prepare/send/finish cycle before the 60-second limit.
+  // Leave room for the final claim/send/finish cycle and heartbeat within 60 seconds.
   for (; processed < 4 && Date.now() < startDeadline; processed++) {
-    const claimed = await store.claim(config.operatorId);
+    const claimed = await store.claim(config.operatorId, config.since);
     if (!claimed) break;
     const job = await store.prepare(claimed, { version: 1, from: config.from, owner: config.owner, replyTo: config.replyTo, siteUrl: config.siteUrl, testRecipient: config.testRecipient });
     const audit = { event: job.event_type, reference: job.booking_reference, recipient: job.recipient_type, manual: job.manual };

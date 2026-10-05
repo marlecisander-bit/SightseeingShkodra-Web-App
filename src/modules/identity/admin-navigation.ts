@@ -1,5 +1,6 @@
 import { hasPermission, type StaffRole, type Permission } from './roles';
 export const adminSections: { slug: string; label: string; permission: Permission; description: string }[] = [
+  { slug: 'notifications', label: 'Notifications', permission: 'bookings.read', description: 'Operational alerts, push devices and your notification preferences.' },
   { slug: 'email', label: 'Email & Notifications', permission: 'integrations.manage', description: 'Check booking messages and email service status.' },
   { slug: 'overview', label: 'Overview', permission: 'catalog.read', description: 'Your website and daily tour operations.' },
   { slug: 'catalog', label: 'Products & suppliers', permission: 'catalog.manage', description: 'Manage your experiences and business partners.' },

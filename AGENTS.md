@@ -18,5 +18,13 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
+## Official deployment platform
+
+Vercel is the permanent hosting platform for this Next.js application, with production branch `main` and domain `sightseeingshkodra.app`. Supabase remains the database/Auth/Storage/Realtime backend; Resend remains the email provider. Use Next.js App Router, Route Handlers, Server Actions and Vercel-native infrastructure. Do not introduce new Netlify dependencies, functions, schedules, edge functions or redirects unless explicitly requested.
+
+The owner selected Vercel Hobby with background delivery disabled. Do not activate cron, email queue processing or notification/push dispatch without a new decision. Preview must use isolated Supabase data and keep communications disabled. Follow `DEPLOYMENT.md` for environment and cutover checks.
+
+Netlify main-site infrastructure is legacy, retained only until hosted parity is verified. Do not delete or disable it prematurely. The independent Live Map at `sightseeingshkodralivetrackingapp.netlify.app` is an explicitly retained external service; its migration is a separate task.
+
 ## Content ownership rule
 One piece of content has one authoritative source, zero or one logical admin owner, and one or many public consumers. Reuse existing entities across pages; distinguish presentation from operational data. Consult docs/CMS-RECONCILIATION.md and the field/route inventory before adding CMS controls. Passenger pricing and inventory belong to Calendar & Pricing, operational stops/GPS to the independent map, and editorial destinations to the shared Website destination editor.

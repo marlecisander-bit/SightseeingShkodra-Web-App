@@ -5,8 +5,8 @@ import { useEffect, useState, useRef } from "react";
 import styles from "./live-map.module.css";
 
 import {parseJourney,type JourneySnapshot} from '@/modules/tracking/journey-contract';
-const mapOrigin = 'https://sightseeingshkodralivetrackingapp.netlify.app';
-const mapUrl = "https://sightseeingshkodralivetrackingapp.netlify.app/live-map.html?project=sightseeing-shkodra";
+import { publicMapBinding, publicMapUrl as mapUrl } from '@/modules/tracking/public-map-binding';
+const mapOrigin = publicMapBinding.origin;
 
 export function LiveMapEmbed({ priority = false, presentation = "compact", onJourney, selectedStopId }: { priority?: boolean; presentation?: "full" | "compact"; onJourney?:(snapshot:JourneySnapshot|null)=>void; selectedStopId?:string }) {
   const [reload, setReload] = useState(0);

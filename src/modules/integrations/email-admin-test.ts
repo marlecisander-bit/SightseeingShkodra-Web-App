@@ -11,6 +11,7 @@ export async function sendAdminTestEmail(operatorId: string, recipient: string, 
 }) {
   await dependencies.authorize(operatorId, 'integrations.manage');
   const env = dependencies.env;
+  if (env.VERCEL_ENV === 'preview') throw Error('test_unavailable');
   const allowed = env.EMAIL_TEST_RECIPIENT?.trim();
   if (!validEmail(recipient) || !allowed || recipient !== allowed || env.PUBLIC_OPERATOR_ID !== operatorId) throw Error('test_unavailable');
   // An explicit test may run while automatic booking delivery remains disabled.

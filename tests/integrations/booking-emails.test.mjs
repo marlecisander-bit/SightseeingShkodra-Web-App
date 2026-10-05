@@ -34,6 +34,16 @@ async function create(){
 }
 const send=async(key,message)=>{sent.push({key,...message});return {outcome:'accepted',reference:randomUUID()};};
 const run=()=>processBookingEmails(store,config,send,x=>logs.push(x));
+
+test('heartbeat persists empty completion, rejects public writes and ignores superseded run completions',async()=>{
+ const first=(await db.query('select begin_email_worker_run_v1($1) token',[op])).rows[0].token;
+ const second=(await db.query('select begin_email_worker_run_v1($1) token',[op])).rows[0].token;
+ await db.query("select finish_email_worker_run_v1($1,$2,'live',0)",[op,first]);
+ assert.equal((await db.query('select status from email_worker_status where operator_id=$1',[op])).rows[0].status,'running');
+ await db.query("select finish_email_worker_run_v1($1,$2,'test',0)",[op,second]);
+ const row=(await db.query('select * from email_worker_status where operator_id=$1',[op])).rows[0];assert.equal(row.status,'test');assert(row.last_success_at);assert.equal(row.processed,0);
+ for(const role of ['anon','authenticated']){await db.exec(`set role ${role}`);try{await assert.rejects(db.query('select begin_email_worker_run_v1($1)',[op]));await assert.rejects(db.query("update email_worker_status set status='live'"));}finally{await db.exec('reset role');}}
+});
 const jobs=async(b)=>(await db.query('select * from notification_deliveries where booking_id=$1 order by created_at,id',[b.id])).rows;
 
 test('successful committed booking sends exactly one customer and one owner email; repeat worker does not resend',async()=>{
@@ -151,4 +161,18 @@ test('worker route rejects unauthorized calls before reading bookings or provide
  const {GET}=await import('../../src/app/api/internal/booking-emails/route.ts');
  const result=await GET(new Request('https://example.invalid/api/internal/booking-emails'));
  assert.equal(result.status,401);assert.deepEqual(await result.json(),{error:'Unauthorized'});
+});
+
+test('activation excludes historical events and prequeued history while including events exactly at or after boundary',async()=>{
+ const old=await create();await db.query('select cancel_order_v1($1,$2,$3,$4)',[op,old.order_id,staff,'Historical cancellation']);
+ await store.enqueue(op,config.since); // Simulates jobs queued before the activation cutover.
+ const unqueuedOld=await create(),at=await create(),afterBoundary=await create();
+ const since=(await db.query("select created_at::text boundary from domain_events where aggregate_id=$1 and event_type='booking.confirmed'",[at.id])).rows[0].boundary;
+ const messages=[];await processBookingEmails(store,{...config,since},async(key,message)=>{messages.push(message);return {outcome:'accepted',reference:randomUUID()};},()=>{});
+ assert.equal(messages.length,4);assert(messages.every(m=>m.to.length===1&&m.to[0]===config.testRecipient));
+ assert((await jobs(old)).every(j=>['skipped','accepted','uncertain','failed'].includes(j.status)));
+ assert((await jobs(old)).filter(j=>j.last_error_code==='before_activation_boundary').length>=2);
+ assert((await jobs(at)).every(j=>j.status==='accepted'));assert((await jobs(afterBoundary)).every(j=>j.status==='accepted'));
+ await processBookingEmails(store,{...config,since},async()=>{throw Error('duplicate send');},()=>{});
+ await store.enqueue(op,since);assert.equal((await jobs(unqueuedOld)).length,0);
 });
