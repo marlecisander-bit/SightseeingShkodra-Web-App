@@ -1311,6 +1311,7 @@ body:has(.p-booking-dialog[open]) {
 .public-site .p-navigation a[aria-current] .p-nav-label::after{content:"";position:absolute;height:3px;border-radius:2px;background:var(--ss-yellow);left:0;right:0;bottom:-7px}
 .public-site .p-header .p-brand-logo{width:210px}
 .public-site .p-navigation .p-menu-book{display:none}
+.public-site .p-navigation .p-menu-back{display:none}
 .public-site .p-menu-backdrop{display:none}
 @media(min-width:901px) and (max-width:1100px){
  .public-site .p-header{gap:14px}
@@ -1377,10 +1378,12 @@ body:has(.p-booking-dialog[open]) {
  .public-site .p-menu-backdrop{display:block;position:fixed;inset:0;z-index:29;width:100%;height:100%;border:0;padding:0;background:rgba(0,0,0,.12);cursor:pointer}
  .public-site .p-navigation.is-open{background:rgba(83,8,32,.97);backdrop-filter:blur(12px);padding-bottom:calc(24px + env(safe-area-inset-bottom));scrollbar-gutter:stable}
  .public-site .p-navigation.is-open>*{flex-shrink:0}
- .public-site .p-navigation .p-menu-book{display:inline-flex;align-self:flex-start;margin-top:12px}
+ .public-site .p-header-book,.public-site .p-header-back{display:none}
+ .public-site .p-navigation .p-menu-book{display:inline-flex;align-self:stretch;width:100%;margin-block:12px}
+ .public-site .p-navigation .p-menu-back{display:block}
  .public-site:has(>.p-home) .p-navigation.is-open{top:100%}
 }
-@media(max-width:700px){.public-site .p-header-home .p-header-book{display:none}.public-site .p-header .p-brand-logo{width:145px}}
+@media(max-width:700px){.public-site .p-header .p-brand-logo{width:145px}}
 /* Crop expendable sky from the portrait photo while keeping its proportions.
    The bottom anchor brings the vehicle above the price without a taller hero. */
 @media(max-width:700px) and (orientation:portrait){

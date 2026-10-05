@@ -346,10 +346,10 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
           aria-label="Main navigation"
         >
           {links.map((href,i)=>visibleWebsiteLink(href,c) ? <PublicBookingLink key={i} href={href} aria-current={active===i ? (href.includes("#") ? "location" : "page") : undefined} onClick={()=>{if(menu)menuToggle.current?.focus();setMenu(false);setHash(href.includes("#")?"#"+href.split("#")[1]:"");}}><span className="p-nav-label">{items[i].label}</span></PublicBookingLink> : null)}
+          {inBooking ? <Link className="p-menu-back" href="/" onClick={() => setMenu(false)}>Back to website</Link> : <BookButton className="p-menu-book" onClick={() => { menuToggle.current?.focus(); setMenu(false); }}>{c["nav.book"]}</BookButton>}
           <span className="p-language" title="More languages coming soon">
             EN
           </span>
-          {!inBooking && <BookButton className="p-menu-book" onClick={() => { menuToggle.current?.focus(); setMenu(false); }}>{c["nav.book"]}</BookButton>}
         </nav>
         {inBooking ? <Link className="p-header-back" href="/">Back to website</Link> : <BookButton className="p-header-book" onClick={() => setMenu(false)}>{c["nav.book"]}</BookButton>}
       </header>

@@ -2,9 +2,9 @@ import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import sharp from 'sharp';
 const root=new URL('../',import.meta.url);
 const source=await readFile(new URL('public/brand/site-icon-source.svg',root),'utf8');
-// Trim only excess red canvas; preserve the supplied sun paths and colors.
-const square=source.replace('viewBox="0 0 420.1 595.3"','viewBox="60 151 300 300"');
-if(square===source)throw Error('Unexpected source viewBox');
+// Canonical sun-only vector: preserve transparency and original artwork colors.
+const square=source;
+if(!square.includes('viewBox="90 181 240 240"') || /<rect\b/.test(square))throw Error('Expected transparent sun-only source');
 await mkdir(new URL('public/icons/',root),{recursive:true});
 await writeFile(new URL('public/icons/site-icon.svg',root),square);
 for(const size of [32,180,192,512])await writeFile(new URL(`public/icons/site-icon-${size}.png`,root),await sharp(Buffer.from(square)).resize(size,size).png().toBuffer());
