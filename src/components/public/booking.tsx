@@ -137,15 +137,17 @@ export function PublicBookingLink({ href, onClick, ...props }: ComponentProps<ty
 export function BookButton({
   children = "Book your day",
   className = "",
+  ariaLabel,
   onClick,
 }: {
   children?: ReactNode;
   className?: string;
+  ariaLabel?: string;
   onClick?: () => void;
 }) {
   const { open } = useBooking();
   return (
-    <Button type="button" size="lg" aria-haspopup="dialog" className={`p-button p-button-booking ${className}`} onClick={() => { onClick?.(); open(); }}>
+    <Button type="button" size="lg" aria-haspopup="dialog" aria-label={ariaLabel} className={`p-button p-button-booking ${className}`} onClick={() => { onClick?.(); open(); }}>
       {children}
     </Button>
   );
@@ -249,6 +251,7 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
   const pathname = usePathname();
   const inBooking = pathname === "/book" || pathname.startsWith("/booking/");
   const [heroVisible, setHeroVisible] = useState(true);
+  const [heroCtaVisible, setHeroCtaVisible] = useState(true);
   const [hash, setHash] = useState("");
   const headerRef = useRef<HTMLElement>(null);
   const scrolled = pathname !== "/" || !heroVisible;
@@ -281,7 +284,8 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
   useEffect(() => {
     const updateHash = () => setHash(window.location.hash);
     updateHash();window.addEventListener('hashchange',updateHash);window.addEventListener('popstate',updateHash);
-    const hero = document.getElementById('home-hero');
+    const hero = pathname === '/' ? document.getElementById('home-hero') : null;
+    const heroCta = hero?.querySelector('.p-button-booking');
     let observer: IntersectionObserver | undefined;
     let headerResize: ResizeObserver | undefined;
     if(pathname === '/' && hero){
@@ -291,7 +295,14 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
         if (headerHeight === measuredHeight) return;
         measuredHeight = headerHeight;
         observer?.disconnect();
-        observer=new IntersectionObserver(([entry])=>setHeroVisible(entry.isIntersecting && entry.intersectionRatio > 0.2),{rootMargin:'-'+headerHeight+'px 0px 0px 0px',threshold:[0,0.2]});observer.observe(hero);
+        observer=new IntersectionObserver(entries=>{
+          for(const entry of entries){
+            if(entry.target===hero)setHeroVisible(entry.isIntersecting && entry.intersectionRatio > 0.2);
+            if(entry.target===heroCta)setHeroCtaVisible(entry.isIntersecting && entry.intersectionRatio > 0);
+          }
+        },{rootMargin:'-'+headerHeight+'px 0px 0px 0px',threshold:[0,0.2]});
+        observer.observe(hero);
+        if(heroCta)observer.observe(heroCta);
       };
       observeHero();
       // Breakpoints and safe areas can change the fixed header's actual height.
@@ -303,10 +314,12 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
   return (
     <>
       <header ref={headerRef}
+        data-mobile-book={!inBooking && !menu && (pathname !== "/" || !homepageVisible(c, "hero") || !heroCtaVisible)}
+        data-mobile-solid={pathname !== "/" || !homepageVisible(c, "hero") || !heroCtaVisible || menu}
         className={`p-header ${pathname === "/" ? "p-header-home" : ""} ${pathname !== "/" || !homepageVisible(c, "hero") || scrolled || menu ? "p-header-solid" : ""}`}
         onKeyDown={(event) => {
           if (event.key === "Tab" && menu) {
-            const controls = Array.from(headerRef.current?.querySelectorAll<HTMLElement>('a, button') ?? []).filter(node => node.getClientRects().length);
+            const controls = Array.from(headerRef.current?.querySelectorAll<HTMLElement>('a, button') ?? []).filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== "hidden");
             const first = controls[0], last = controls[controls.length - 1];
             if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
             else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
@@ -329,16 +342,7 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
         }}>
           <BrandLogo light />
         </Link>
-        <button
-          ref={menuToggle}
-          className="p-menu-toggle"
-          aria-expanded={menu}
-          aria-controls="public-navigation"
-          aria-label={menu ? "Close menu" : "Open menu"}
-          onClick={() => setMenu(!menu)}
-        >
-          <span aria-hidden="true">{menu ? "×" : "☰"}</span>
-        </button>
+
         <nav
           ref={navigation}
           id="public-navigation"
@@ -351,7 +355,17 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
             EN
           </span>
         </nav>
-        {inBooking ? <Link className="p-header-back" href="/">Back to website</Link> : <BookButton className="p-header-book" onClick={() => setMenu(false)}>{c["nav.book"]}</BookButton>}
+        {inBooking ? <Link className="p-header-back" href="/">Back to website</Link> : <BookButton className="p-header-book" ariaLabel={c["nav.book"]} onClick={() => setMenu(false)}><span className="p-header-book-full">{c["nav.book"]}</span><span className="p-header-book-compact" aria-hidden="true">Book</span></BookButton>}
+        <button
+          ref={menuToggle}
+          className="p-menu-toggle"
+          aria-expanded={menu}
+          aria-controls="public-navigation"
+          aria-label={menu ? "Close menu" : "Open menu"}
+          onClick={() => setMenu(!menu)}
+        >
+          <span aria-hidden="true">{menu ? "×" : "☰"}</span>
+        </button>
       </header>
       {menu && <button type="button" className="p-menu-backdrop" tabIndex={-1} aria-label="Close navigation backdrop" onClick={() => { setMenu(false); menuToggle.current?.focus(); }} />}
     </>

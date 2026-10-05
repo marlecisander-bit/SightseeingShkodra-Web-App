@@ -1522,3 +1522,19 @@ body:has(.p-booking-dialog[open]) {
  .public-site .p-footer-info nav{justify-content:center;order:-1;gap:4px 16px;}
  .public-site .p-footer-info p{flex-direction:column;gap:4px;}
 }
+
+/* One header and booking action; mobile CTA follows the actual hero action. */
+.public-site .p-header-book-compact{display:none}
+@media(max-width:900px){
+ .public-site .p-header{--p-header-height:68px;gap:10px;padding-inline:max(12px,env(safe-area-inset-left)) max(12px,env(safe-area-inset-right))}
+ .public-site .p-header .p-brand-logo{width:145px}
+ .public-site .p-header .p-wordmark{order:0}
+ .public-site .p-header .p-header-book{display:inline-flex;order:1;margin-left:auto;width:76px;min-width:76px;min-height:44px;height:44px;padding:8px 10px;visibility:hidden;pointer-events:none}
+ .public-site .p-header[data-mobile-book="true"] .p-header-book{visibility:visible;pointer-events:auto}
+ .public-site .p-header .p-menu-toggle{order:2;margin-left:0;flex:0 0 44px;width:44px;height:44px;min-height:44px;padding:0}
+ .public-site .p-header:has(.p-header-back) .p-menu-toggle{margin-left:auto}
+ .public-site .p-header-book-full{display:none}
+ .public-site .p-header-book-compact{display:inline}
+ .public-site .p-header.p-header-home[data-mobile-solid="false"]{background:transparent}
+ .public-site .p-header.p-header-home[data-mobile-solid="true"]{background:var(--ss-primary);text-shadow:none}
+}
