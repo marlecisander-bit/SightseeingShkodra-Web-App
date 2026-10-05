@@ -162,3 +162,81 @@ PASS refers to the inspected UI and existing regression contracts, not successfu
 | Auth session, including forced expiry | FAIL | Normal session passes; forced-expiry browser scenario not performed. |
 
 Each requested width and landscape: PASS for the 96 fixture layout checks. No horizontal document overflow: PASS. Physical keyboard overlap, installed PWA and exhaustive control clipping: NOT VERIFIED. These limits prevent a blanket completion claim.
+
+### Final continuation deployment and hosted acceptance
+
+Published commit `27c6846c2b20e0b172ad763b9e4767f57a2b43a0` through main. Authenticated Vercel deployment `4QGFdQNTgfoMxMmLwU8LP6iFpA5D` reached Ready / Production, and sightseeingshkodra.app served the updated header without the former Admin text.
+
+On this release, seven read-only Admin sections (Overview, Website Content, Calendar & Pricing, Products & Suppliers, Guest Reviews, Notifications, Email) passed all 12 requested viewport sizes: 84 combinations, actual viewport width verified, no horizontal document overflow or application-error page. Calendar selected-date presentation was included. One browser tab's CDP access became unavailable during a document response; the remaining checks continued in another authenticated tab and completed. Production Bookings remained excluded; its 12-size fixture checks and backend contracts are the evidence.
+
+Live CMS Hero opened; Save Draft measured 44px high at bottom 834 of the 844px viewport and form text measured 16px. Section Back, Global WhatsApp editor, notification paused states, existing saved draft preview and Live Map iframe loading passed. The map displayed its existing stops/van controls; this verifies integration, not GPS/ETA accuracy. Returned from Live Map to Admin and completed Sign out, visibly reaching Staff Login. Captured hosted error/warning log was empty. Viewport overrides reset or limited to ephemeral test tabs. No hosted Save/Publish/upload/booking/payment/review or delivery action performed.
+
+Live service: PASS. Draft preview: PASS (actual authenticated saved preview opened). Login/logout/deep-link return: PASS. Complete acceptance remains FAIL/incomplete for the limitations listed above; this release does not certify physical-device keyboard/safe areas, forced expiry, or successful browser mutation workflows. Post-deployment evidence is recorded locally after the release commit.
+
+## Final quality acceptance (154–176) — 5 October 2026
+
+This checkpoint supersedes the earlier blanket FAIL that included physical-device gaps. Code/responsive acceptance and physical-device acceptance are separate under the owner's final brief.
+
+### Two demonstrated issues corrected
+
+- WebsiteWorkspace keyed each section editor by the saved timestamp. A successful save refreshed the record and remounted the editor, immediately clearing its confirmation. Removed that remount key; existing parent stamp handling still loads authoritative saved values. In an isolated local fixture with a JSON-backed draft/published record, actual mobile form submission, draft-only state, publication, retained confirmations, clean state and unsaved Back/Discard recovery passed. The fixture uses the existing content validator; its storage/action adapter is synthetic. Existing database tests independently verify the actual save/publish RPC. No hosted CMS content was changed.
+- Opening the deployed drawer produced seven speculative route Fetch requests, including Bookings. AdminShell links now use supported Next Link prefetch=false. Client navigation remains intact, but opening global navigation no longer requests unselected workspaces. This also avoids speculative schedule preparation through those menu links. Overview's existing shortcut prefetch behavior was not changed. No query, notification subscription or infrastructure was introduced.
+
+Components modified this continuation: AdminShell and WebsiteWorkspace. Components/routes created: none. Removed obsolete editor remount behavior; no obsolete component or unrelated CSS was deleted. No duplicate mobile implementation added.
+
+### Code and responsive matrix
+
+PASS is scoped to source review, automated contracts, local browser interaction and non-destructive hosted UI evidence. It is not a claim of physical-device certification or new real customer transactions.
+
+| Check | Result | Evidence / limit |
+|---|---|---|
+| No clipped content / overlapping controls / unreachable actions | PASS | Prior 96 fixture and 84 hosted viewport checks plus focused editor/drawer inspection; keyboard on physical phones remains pending. |
+| No desktop-only workflows | PASS | Existing supported forms and disclosures fit mobile; no unsupported Admin booking-modification feature invented. |
+| Mobile information hierarchy / card density / form usability | PASS | Focused sections, compact booking summaries, 16px inputs and retained feedback. |
+| Mobile keyboard behavior | PENDING | Physical keyboard and Safari zoom cannot be certified by viewport emulation. |
+| Calendar touch UX | PASS | Date/departure selection, readable summaries, saved-context preservation and backend contracts. |
+| Image upload UX | PASS | Existing selector, preview, type/size validation and denied-upload recovery; successful hosted Storage upload not repeated. Phone picker acceptance pending. |
+| Modals / bottom sheets / drawer layering | PASS | Existing modal drawer, Close/Escape, focus and scroll-lock checks. No extra sheet implementation. |
+| Sticky action bars | PASS | Live 44px Save control at viewport bottom; physical keyboard caveat above. |
+| Toasts / empty states / loading states / error states | PASS | Existing inline status/alert feedback, paused/empty notifications, loading boundaries and declined-save recovery; no redundant toast library. |
+| Technical filenames / unnecessary UUIDs / unnecessary raw URLs hidden | PASS | Existing presentation inventory and components; support disclosures and meaningful business links retained. |
+| Database / provider / environment terminology hidden from ordinary operations | PASS | Existing owner-language labels and support-only diagnostics retained. |
+| Owner-facing errors humanized / business terminology consistent | PASS | Existing error mapping tests and surfaced save/upload feedback. |
+| Desktop sidebar / content workspace / useful tables / CMS preview / calendar | PASS | Existing desktop layouts retained; previous 1280/1440/1920 checks and saved-preview browser acceptance apply. |
+| Capacity / adult / child / infant seat logic unchanged | PASS | No booking-domain or SQL changes; full regression suite. |
+| 15-minute cutoff / modification / cancellation / capacity restoration unchanged | PASS | Existing backend and concurrency tests; no transaction initiated in hosted acceptance. |
+| Pricing / service date logic unchanged | PASS | Presentation changes only. |
+| Supabase / RLS / authorization unchanged | PASS | No schema, policy, role or permission change. |
+| Notification / WhatsApp / email / Live Map architecture unchanged | PASS | Existing providers, handlers and external map retained; delivery remains disabled. |
+| Public header / mobile navigation / homepage | PASS | Existing page/menu render and navigation verified; no public source changed by Admin work. |
+| Public booking | PASS | Booking dialog, guest/date controls and disabled Continue state inspected without booking submission; existing backend suite verifies rules. |
+| Public Route & Live Map | PASS | Actual retained iframe and stops loaded in preceding same-release walkthrough. |
+| Public visual design unchanged | PASS | Git comparison since pre-Admin release shows no public component/CSS/asset changes. |
+| Mobile Admin performance | PASS, limited | No document reload or new WebSocket during inspected navigation; redundant menu prefetch addressed. Existing source-sized CMS images remain an optimization opportunity; not a complete network/CPU profile. |
+
+Non-blocking public observation: at 390px the public header still displays its booking CTA in addition to the menu CTA. This predates the Admin changes (public files unchanged), and no overlap was observed. The earlier public-header brief intended this CTA to be hidden. Recorded separately; not silently changed in this Admin scope.
+
+### PWA / Home Screen
+
+| Check | Result | Scope |
+|---|---|---|
+| Admin manifest | PASS | Hosted /admin/manifest.webmanifest matches repository; separate id/scope retained. |
+| Admin icon | PASS | Hosted 192/512 PNG and Apple icon match existing shared sun assets; no new brand mark. |
+| Start URL | PASS | /admin; direct protected URL returns through Staff Login. |
+| Standalone display | PASS, configuration | Existing manifest display=standalone; physical launch pending. |
+| Theme color | PASS | Manifest and hosted Admin metadata use #B91546; viewport-fit=cover retained. |
+| Service worker | PASS, existing scope | Hosted /admin/sw.js matches repository. Push-only, registered on explicit enablement; no fetch handler or offline sensitive-data cache. Push was not enabled. |
+| Auth from Home Screen | PENDING | Normal browser login/deep-link return passes; actual installed launch not performed. |
+| Safe area in standalone mode | PENDING | CSS/configuration exists; requires physical-device evidence. |
+| Physical iPhone Home-Screen test | PENDING | Owner device required. |
+| Physical Android Home-Screen test | PENDING | Owner device required. |
+
+### Hosted bookings evidence and mutation boundary
+
+The final brief explicitly requests ordinary Production Bookings/Detail navigation. After owner sign-in, the actual 390px Bookings list rendered, a booking detail opened with Tour & guests, Contact, Payment and Booking emails, and browser Back collapsed it. No overflow or error alert. No Create, Modify, Cancel, Collect payment or Resend action was submitted. Unlike earlier checkpoints that avoided this route, this ordinary navigation may run the application's existing automatic schedule/inventory preparation. No assertion of a database snapshot remaining byte-for-byte unchanged is made.
+
+### Final verification
+
+Complete test chain: 335 passed, zero failed/skipped. Final menu-prefetch-only edit followed by lint, TypeScript, 18 component tests and isolated production build PASS. The 18 supporting tests are not added to the 335 total. Build source is compared before release. Private logs: admin-closure-lint.log, admin-closure-types.log, admin-closure-tests.log, admin-closure-components-final.log, admin-closure-build.log.
+
+Code/responsive acceptance: PASS, subject to final deployed-patch smoke below. Physical-device acceptance: PENDING. A successful new hosted CMS/Storage/booking transaction is not claimed; this was non-destructive acceptance.

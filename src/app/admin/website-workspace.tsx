@@ -77,7 +77,7 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
               {section.id === "heroAmenities" && <small className={styles.helper}>Retained content; amenities are not rendered on the homepage.</small>}
               {active !== section.id && feedback[section.id] && <span className={styles.notice} role="status">{feedback[section.id]}</span>}
             </summary>
-            {(active===section.id || dirtySection?.id===section.id || (!active&&index===0))&&<WebsiteSectionEditor onFeedback={onFeedback} values={values} setValues={setValues} key={record.updated_at} operatorId={operatorId} sectionId={section.id} content={content} stamp={record.updated_at} onStateChange={onStateChange} />}
+            {(active===section.id || dirtySection?.id===section.id || (!active&&index===0))&&<WebsiteSectionEditor onFeedback={onFeedback} values={values} setValues={setValues} operatorId={operatorId} sectionId={section.id} content={content} stamp={record.updated_at} onStateChange={onStateChange} />}
             {active===section.id&&section.id==="footer"&&footerGoogleEditor}
           </details>;
         })}
