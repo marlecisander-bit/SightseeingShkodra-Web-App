@@ -1,4 +1,5 @@
 "use client";
+import { ownerFieldLabel } from "./presentation";
 import { Button, ButtonContent } from "@/components/ui/button";
 import { useCallback, useState } from "react";
 import type { ReactNode } from "react";
@@ -33,10 +34,13 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
   function select(id: string, jump = false) {
     if (pending || (dirtySection && dirtySection.id !== id)) { setNotice("Save or discard your current edits before opening another section."); return; }
     setNotice(""); setActive(active === id && !jump ? null : id);
+    if(window.matchMedia("(max-width: 767px)").matches) requestAnimationFrame(()=>document.getElementById(`cms-${id}`)?.scrollIntoView({block:"start"}));
     if (jump) requestAnimationFrame(() => { const el = document.getElementById(`cms-${id}`); el?.scrollIntoView({ block: "start", behavior: "smooth" }); el?.querySelector("summary")?.focus(); });
   }
-  if(scope==="destinations") return <section className={styles.cms}><Button onClick={()=>setScope("homepage")}>Back to website content</Button>{destinationManager}</section>;
-  return <section className={styles.cms}>
+  if(scope==="destinations") return <section className={styles.cms} data-editing={!!active}><Button onClick={()=>setScope("homepage")}>Back to website content</Button>{destinationManager}</section>;
+  return <section className={styles.cms} data-editing={!!active}>
+    {active&&<Button className={styles.backToSections} type="button" disabled={pending} onClick={()=>{if(unsaved){setNotice("Save or discard your changes before returning to sections.");return;}setActive(null);}}>Back to website sections</Button>}
+    {active&&<a className={styles.focusedPreview} href={preview} target="_blank" rel="noopener noreferrer">Preview saved draft</a>}
     <header className={styles.toolbar}>
       <div><p className={styles.breadcrumb}>Website / {({homepage:"Homepage",destinations:"Destinations",pages:"Public pages",global:"Global"})[scope]}</p><h1>{({homepage:"Homepage content",destinations:"Destination content",pages:"Public page content",global:"Global website content"})[scope]}</h1><p className={styles.subtitle}>Choose what visitors see, then preview and publish when you’re ready.</p></div>
       <div className={styles.toolbarActions}>
@@ -56,7 +60,7 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
           const draft = section.fields.some(f => content[f.key] !== record.published_body?.content[f.key]);
           return <details className={styles.card} key={section.id} id={`cms-${section.id}`} data-section={section.id} data-hidden={section.fields.some(f => f.kind === "visibility") && !homepageVisible(values, section.id)} open={active === section.id}>
             <summary onClick={event => { event.preventDefault(); select(section.id); }}>
-              <SectionCardHeader id={section.id} title={section.title} index={index} open={active === section.id} onEdit={() => select(section.id)} draft={states[section.id]?.dirty ? "Unsaved" : draft ? "Draft changes" : undefined} visibility={
+              <SectionCardHeader id={section.id} title={ownerFieldLabel(section.title)} index={index} open={active === section.id} onEdit={() => select(section.id)} draft={states[section.id]?.dirty ? "Unsaved" : draft ? "Draft changes" : undefined} visibility={
               section.fields.some(f => f.kind === "visibility") && <span className={styles.visibilityRow} onClick={event => event.stopPropagation()} onKeyDown={event => event.stopPropagation()}>
 
                 <label><input type="checkbox" role="switch" aria-label={`Show ${section.title} ${visibilityScope(section.id)}`} checked={homepageVisible(values, section.id)} disabled={pending || (!!dirtySection && dirtySection.id !== section.id)} onChange={event => { setActive(null); setValues(current => ({...current, [`${section.id}.showOnHomepage`]: String(event.target.checked)})); }} /><span className={styles.visibilityCopy}><strong>{homepageVisible(values, section.id) ? "Visible" : "Hidden"}</strong><span>{visibilityScope(section.id)}</span></span></label>
@@ -72,13 +76,13 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
         })}
       </div>
       <aside className={styles.sidebar} aria-label="Website tools">
-        <div className={styles.sideCard}><p className={styles.breadcrumb}>Draft preview</p><h2>{selected.title}</h2>
-          {image && content[image.key] && <Image unoptimized loading="eager" width={480} height={270} className={styles.contextImage} src={content[image.key]} alt={`Saved ${selected.title}`} />}
+        <div className={styles.sideCard}><p className={styles.breadcrumb}>Draft preview</p><h2>{ownerFieldLabel(selected.title)}</h2>
+          {image && content[image.key] && <Image unoptimized loading="lazy" width={480} height={270} className={styles.contextImage} src={content[image.key]} alt={`Saved ${selected.title}`} />}
           <p className={styles.helper}>Save your draft first to see your latest changes in the preview.</p><a className={`${styles.secondary} ss-button`} href={preview} target="_blank" rel="noopener noreferrer"><ButtonContent>Preview saved draft</ButtonContent></a>
         </div>
         <div className={`${styles.sideCard} ${styles.tipsCard}`}><h2>Quick tips</h2><ul><li>Keep text short and clear.</li><li>Choose sharp, high-quality images.</li><li>Show only the sections you need.</li><li>Preview before publishing.</li></ul></div>
         <div className={styles.sideCard}><h2>Page status</h2><dl><div><dt>Content</dt><dd>{changed ? "Saved draft changes" : "Published"}</dd></div><div><dt>Unsaved changes</dt><dd>{unsaved ? "Yes" : "No"}</dd></div></dl><p className={styles.helper}>Publishing makes this section and all saved drafts visible on the website, according to their visibility settings.</p></div>
-        <nav className={styles.sideCard} aria-label="Website sections"><h2>Quick navigation</h2>{websiteSections.map(s => <button type="button" key={s.id} aria-current={active === s.id ? "true" : undefined} onClick={() => select(s.id, true)}>{s.title}</button>)}</nav>
+        <nav className={styles.sideCard} aria-label="Website sections"><h2>Quick navigation</h2>{websiteSections.map(s => <button type="button" key={s.id} aria-current={active === s.id ? "true" : undefined} onClick={() => select(s.id, true)}>{ownerFieldLabel(s.title)}</button>)}</nav>
       </aside>
     </div>
   </section>;

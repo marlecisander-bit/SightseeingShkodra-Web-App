@@ -13,7 +13,7 @@ export async function resendConfirmation(operatorId: string, bookingId: string, 
     if (typeof request !== "string") throw Error("Request required");
     await requestBookingEmail(operatorId, bookingId, request);
   } catch {
-    return { error: "Confirmation could not be queued. Email delivery must be configured and enabled. Check that this booking is confirmed, or wait five minutes after the last manual resend. The retry ID is preserved." };
+    return { error: "Confirmation could not be requested. Check that email sending is on and the booking is confirmed. Wait five minutes after the last resend before trying again." };
   }
   const path = `/admin/${encodeURIComponent(operatorId)}/bookings`;
   revalidatePath(path);

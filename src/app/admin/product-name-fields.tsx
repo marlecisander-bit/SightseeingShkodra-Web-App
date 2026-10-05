@@ -16,22 +16,23 @@ export function ProductNameFields() {
   return (
     <>
       <label>
-        Title
+        Product name
         <input name="title" required maxLength={200} value={title}
           onChange={event => setTitle(event.target.value)} />
       </label>
-      <label>
-        URL slug
+      <details><summary>Advanced: page address</summary><label>
+        Page address
         <input name="slug" required maxLength={200}
           pattern="[a-z0-9]+(-[a-z0-9]+)*"
           value={customSlug ?? slugFromTitle(title)}
           onChange={event => setCustomSlug(event.target.value)}
           aria-describedby={helpId} />
       </label>
-      <p id={helpId}>Generated from the title. You can edit it using lowercase letters, numbers and hyphens.</p>
+      <p id={helpId}>Created from the product name. Change only if you need a different page address. Use lowercase letters, numbers and hyphens.</p>
       {customSlug !== null && (
-        <Button type="button" onClick={() => setCustomSlug(null)}>Use title for URL slug</Button>
+        <Button type="button" onClick={() => setCustomSlug(null)}>Use product name</Button>
       )}
+      </details>
     </>
   );
 }

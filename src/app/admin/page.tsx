@@ -14,7 +14,7 @@ export default async function AdminHome() {
   const memberships = (data ?? []).filter(row => isStaffRole(row.role));
   const { data: operators } = memberships.length ? await client.from('operators').select('id,name').in('id', memberships.map(row => row.operator_id)) : { data: [] };
   return <main className={styles.shell}><header className={styles.header}><Link className={styles.adminBrand} href="/admin"><Image src="/brand/logo-light.svg" alt="Sightseeing Shkodra" width={170} height={51} unoptimized/><span>Administration</span></Link><form action={signOut}><Button>Sign out</Button></form></header>
-    <div className={styles.standaloneContent}><h1>Choose your workspace</h1><p className={styles.muted}>Access is based on your current operator membership.</p>
+    <div className={styles.standaloneContent}><h1>Choose your workspace</h1><p className={styles.muted}>Choose the business you want to manage.</p>
       {error ? <p role="alert">Workspace access is temporarily unavailable.</p> : <ul className={styles.list}>{(operators ?? []).map(operator => <li key={operator.id}><Link href={`/admin/${operator.id}/overview`}>{operator.name}</Link></li>)}</ul>}
       {!error && !operators?.length && <p>No active workspace is assigned to this account. Contact your operator administrator.</p>}</div></main>;
 }

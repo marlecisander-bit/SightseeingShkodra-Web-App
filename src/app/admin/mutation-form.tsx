@@ -31,7 +31,7 @@ export function MutationForm({ action, children, className }: {
         } catch (failure) {
           // Next redirect signals must keep their navigation behavior.
           if (failure && typeof failure === 'object' && 'digest' in failure && String(failure.digest).startsWith('NEXT_REDIRECT;')) throw failure;
-          setError('The request could not be completed. Your entries are still here. Check the current record before retrying.');
+          setError('The request could not be completed. Your entries are still here. Check the latest saved details before retrying.');
         } finally {
           inFlight.current = false;
         }

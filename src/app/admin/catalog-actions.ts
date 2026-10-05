@@ -53,7 +53,7 @@ export async function saveCatalog(
   if (failed)
     return {
       error:
-        "Unable to save. Check the unique slug, required SEO/image fields and linked records. Removal requires confirmation; linked suppliers cannot be deleted. Your entries are preserved.",
+        "Your changes could not be saved. Check the page address, search listing, image description and supplier. Confirm before removing an item; a supplier used by a product cannot be deleted. Your edits are still here.",
     };
   const path = `/admin/${encodeURIComponent(operatorId)}/catalog`;
   revalidatePath(path);

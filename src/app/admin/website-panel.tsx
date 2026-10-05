@@ -8,7 +8,7 @@ import {FooterGoogleEditor} from "./footer-google-editor";
 export async function WebsitePanel({ operatorId }: { operatorId: string }) {
   let record;
   try { record = await getWebsiteEditor(operatorId); }
-  catch { return <p role="alert">Homepage content is unavailable. Check the database connection and homepage initialization.</p>; }
+  catch (error) { console.error('Admin website content could not be loaded', error); return <p role="alert">Website content could not be loaded. Refresh the page or contact your administrator.</p>; }
   const [destinations,source]=await Promise.all([getDestinationEditor(operatorId),getDestinationStops(operatorId)]);
   const reviews=await getEditorReviewSettings(operatorId);
   return <WebsiteWorkspace footerGoogleEditor={<FooterGoogleEditor operatorId={operatorId} url={reviews.google_reviews_url}/>} operatorId={operatorId} record={record} destinationManager={<DestinationsEditor operatorId={operatorId} records={destinations} stops={source.stops} stopsAvailable={source.available}/>}/>;

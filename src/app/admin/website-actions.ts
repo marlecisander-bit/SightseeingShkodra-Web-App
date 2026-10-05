@@ -1,4 +1,5 @@
 "use server";
+import { ownerActionError } from "./action-error";
 import { revalidatePath } from "next/cache";
 import { withOperatorService } from "@/modules/identity/operator-service";
 import { validateWebsiteContent, editableWebsiteSections } from "@/modules/content/website-schema";
@@ -26,7 +27,7 @@ export async function saveWebsiteSection(operatorId: string, sectionId: string, 
     revalidatePath("/", "layout");
     revalidatePath(`/admin/${operatorId}/content`);
     return { saved: operation === "publish" ? "Published homepage changes." : "Draft saved. The public page is unchanged." };
-  } catch (error) { return { error: error instanceof Error ? error.message : "Unable to save homepage" }; }
+  } catch (error) { return { error: ownerActionError(error, "Your changes could not be saved. Check your access and try again.") }; }
 }
 
 export async function uploadWebsiteImage(operatorId: string, form: FormData) {
@@ -43,5 +44,5 @@ export async function uploadWebsiteImage(operatorId: string, form: FormData) {
       if (error) throw Error("Image upload failed. Try again.");
       return { url: client.storage.from("website-media").getPublicUrl(path).data.publicUrl };
     });
-  } catch (error) { return { error: error instanceof Error ? error.message : "Upload unavailable" }; }
+  } catch (error) { return { error: ownerActionError(error, "Image could not be uploaded. Check your access and try again.") }; }
 }

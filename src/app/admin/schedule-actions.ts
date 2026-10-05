@@ -22,7 +22,7 @@ export async function saveServiceSchedule(operatorId: string, form: FormData) {
           p_status: value('status') });
       if (error) errorMessage = error.code === 'PT409' ? 'This schedule changed. Your entries are preserved; reload the latest schedule before saving.'
         : error.code === 'P0001' ? 'Reserved seats or conflicting manual departures prevent this change. Resolve affected bookings or reconcile the manual departures first. Nothing was changed.'
-        : 'Unable to save. Check the operating period, weekdays, unique times, positive capacities and exception date. Your entries are preserved.';
+        : 'Unable to save. Check the operating period, weekdays, departure times, maximum seats and the selected date. Your entries are preserved.';
     });
   } catch { errorMessage = 'Unable to save the schedule. Check your access and entries, then try again.'; }
   if (errorMessage) return { error: errorMessage };

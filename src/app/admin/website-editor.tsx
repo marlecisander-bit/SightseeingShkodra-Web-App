@@ -1,4 +1,5 @@
 "use client";
+import { ownerFieldLabel, positionLabels, imageUploadMessage } from "./presentation";
 import { AmenitiesInput } from "./hero-amenities-input";
 import { focalPositions } from "@/modules/content/hero-amenities";
 
@@ -13,7 +14,6 @@ import { prepareWebsiteImage } from "@/modules/content/image-upload";
 export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, values, setValues, onStateChange, onFeedback }: { operatorId: string; sectionId: string; content: WebsiteContent; stamp: string; values: WebsiteContent; setValues: Dispatch<SetStateAction<WebsiteContent>>; onStateChange?: (id: string, dirty: boolean, pending: boolean) => void; onFeedback?: (id: string, message: string) => void }) {
   const section = editableWebsiteSections.find(section => section.id === sectionId)!;
   const [message, setMessage] = useState("");
-  const [sizes, setSizes] = useState<Record<string,string>>({});
   const [pending, start] = useTransition();
   const router = useRouter();
   const groups = sectionId==='whatsapp' ? [{title:'WhatsApp contact',fields:section.fields}] : [
@@ -40,8 +40,8 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
     });
   }}>
     {sectionId === "reviews" && <p><a href={`/admin/${operatorId}/reviews`}>Manage guest reviews and ordering</a>. This section is hidden until a review is published.</p>}
-    {sectionId==='footer'&&<p>Empty social URLs are hidden. Use HTTPS links. Google Reviews uses the shared setting below.</p>}
-    {sectionId==='whatsapp'&&<p>Enter the full international business number with country code. Save Draft keeps it private; Publish updates the contact button across public pages. The number must be registered with WhatsApp Business. Empty display labels show only the icon.</p>}
+    {sectionId==='footer'&&<p>Leave a social link empty to hide it. Manage your Google Reviews link below.</p>}
+    {sectionId==='whatsapp'&&<p>Use your WhatsApp Business number with its country code. Save Draft keeps changes private; Publish updates the website. Leave the button label empty to show only the icon.</p>}
     {sectionId==='navigation'&&<p>Desktop and mobile share these links. Route and Live map lead to the combined Route &amp; Live Map page. If several links lead to the same page, the first link supplies its label. Edit that first label to customize it; the original Route and Live map labels use the combined page name.</p>}
     {sectionId.startsWith('legal')&&<p>Plain text only. Add your approved legal wording, set Published, then publish. Unpublished pages show a neutral availability notice.</p>}
     <p>Save your changes as a draft or publish them when you’re ready.</p>
@@ -56,39 +56,37 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
         const heroImage = sectionId === "hero" && field.kind === "image";
         const mobileHero = heroImage && /mobile/i.test(field.key);
         return <div key={field.key} className={`${styles.field} ${long ? styles.fullField : ""} ${field.kind === "image" ? styles.imageField : ""}`}>
-          {field.kind === "toggle" ? <label>{field.label}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}><option value="true">On</option><option value="false">Off</option></select></label> : field.kind === "publication" ? <label>{field.label}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}><option value="unpublished">Unpublished</option><option value="published">Published</option></select></label> : field.kind === "amenities" ? <AmenitiesInput value={values[field.key]} onChange={value=>setValues(v=>({...v,[field.key]:value}))}/> : field.kind === "position" ? <label>{field.label}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}>{focalPositions.map(position=><option key={position}>{position}</option>)}</select></label> : field.kind === "image" ? <>
-            <strong>{field.label}</strong>
+          {field.kind === "toggle" ? <label>{ownerFieldLabel(field.label)}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}><option value="true">On</option><option value="false">Off</option></select></label> : field.kind === "publication" ? <label>{ownerFieldLabel(field.label)}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}><option value="unpublished">Unpublished</option><option value="published">Published</option></select></label> : field.kind === "amenities" ? <AmenitiesInput value={values[field.key]} onChange={value=>setValues(v=>({...v,[field.key]:value}))}/> : field.kind === "position" ? <label>{ownerFieldLabel(field.label)}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}>{focalPositions.map(position=><option key={position} value={position}>{positionLabels[position]}</option>)}</select></label> : field.kind === "image" ? <>
+            <strong>{ownerFieldLabel(field.label)}</strong>
             <div className={heroImage ? `${styles.heroPreview} ${mobileHero ? styles.heroPreviewMobile : styles.heroPreviewDesktop}` : undefined} style={heroImage ? {objectPosition: values[mobileHero ? "hero.mobilePosition" : "hero.desktopPosition"]} : undefined}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className={styles.imagePreview} ref={image => { if (image?.complete && image.naturalWidth) { const size = `${image.naturalWidth} × ${image.naturalHeight} px`; setSizes(s => s[field.key] === size ? s : {...s, [field.key]: size}); } }} src={values[field.key]} alt={`Current ${field.label}`} onLoad={event => { const size = `${event.currentTarget.naturalWidth} × ${event.currentTarget.naturalHeight} px`; setSizes(s => s[field.key] === size ? s : {...s, [field.key]: size}); }} />
+            <img loading="lazy" className={styles.imagePreview} src={values[field.key]} alt={`Current ${ownerFieldLabel(field.label)}`} />
             </div>
-            {heroImage && <small className={styles.helper}>{mobileHero ? "Mobile crop · 390 × 844 portrait, including the homepage zoom." : "Desktop crop · 1440 × 900 landscape."} Focal position updates this preview. Actual cropping varies with screen size; use Draft Preview to check the full page.</small>}
-            <p className={styles.imageMeta}>{values[field.key].split("/").pop()}<span>{sizes[field.key] ?? "Loading dimensions…"}</span></p>
-            <label className={`${styles.replaceButton} ss-button`}>Replace image<input aria-label={`Upload / replace ${field.label}`} type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={event => {
+            <label className={`${styles.replaceButton} ss-button`}>Replace image<input aria-label={`Upload / replace ${ownerFieldLabel(field.label)}`} type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={event => {
               const image = event.target.files?.[0]; if (!image) return;
               event.target.value = "";
               start(async () => {
                 try {
-                setMessage(sectionId === "hero" ? "Preparing hero image for upload…" : "Uploading image…");
+                setMessage("Uploading image…");
                 const prepared = await prepareWebsiteImage(image, sectionId === "hero");
                 const data = new FormData(); data.set("image", prepared);
                 const result = await uploadWebsiteImage(operatorId, data);
                 if ("url" in result) { setValues(v => ({ ...v, [field.key]: result.url })); setMessage("Image uploaded. Save your draft or publish to use it."); }
                 else setMessage(result.error ?? "Upload failed.");
                 } catch (error) {
-                  setMessage(error instanceof Error && !/server|fetch|network|body|413/i.test(error.message) ? error.message : "The image could not be uploaded. Check your connection and try again. Your edits are still here.");
+                  console.error("Admin image preparation failed", error);
+                  setMessage(imageUploadMessage(error));
                 }
               });
             }} /></label>
-            <small className={styles.helper}>{sectionId === "hero" ? "No original file-size limit. Large hero images are automatically optimized for the web." : "JPEG, PNG, WebP or AVIF · Maximum 8 MB per original. Large images are optimized before upload."}</small>
-            <details className={styles.imagePath}><summary>Advanced: image address</summary><label>{field.label} path<input name={field.key} required={!field.optional} maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} /></label></details>
-            <small className={styles.helper}>Required image · Replace to change it. Alt text is editable below.</small>
-          </> : <label>{field.label.replace("Eyebrow", "Small heading")}
+            <input type="hidden" name={field.key} value={values[field.key]} />
+          </> : <label>{ownerFieldLabel(field.label)}
             {long ? <textarea rows={field.key.includes("alt") ? 2 : 3} name={field.key} required={!field.optional} maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} />
               : <input type={field.kind === "external" ? "url" : field.kind === "phone" ? "tel" : "text"} name={field.key} required={!field.optional} maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} />}
           </label>}
         </div>;
       })}</div></fieldset>)}
+      {section.fields.some(f=>f.kind === "image") && <details><summary>Technical details</summary><p>For support: replace an existing image link without uploading a new file.</p>{section.fields.filter(f=>f.kind === "image").map(f=><label key={f.key}>{ownerFieldLabel(f.label)} link<input maxLength={f.max} value={values[f.key]} onChange={e=>setValues(v=>({...v,[f.key]:e.target.value}))}/></label>)}</details>}
       <div className={styles.editorActions}>
         <span className={styles.helper}>{dirty ? "Unsaved changes" : "Saved content"}</span>
         <Button className={styles.textButton} type="button" disabled={!dirty} onClick={() => {setValues(current => ({...current, ...Object.fromEntries(section.fields.map(f => [f.key, content[f.key]]))})); setMessage("Unsaved changes discarded.");}}>Discard</Button>

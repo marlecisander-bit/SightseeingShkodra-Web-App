@@ -1,3 +1,6 @@
+import styles from './admin.module.css';
+import { ownerStatus, ownerEmailStatus, ownerEmailEvent } from "./presentation";
+import { passengerLabels } from "@/modules/booking/passengers";
 import { StaffPassengers } from "./staff-passengers";
 import { withOperatorService } from "@/modules/identity/operator-service";
 import type { PassengerCategories,PassengerSnapshot } from "@/modules/booking/passengers";
@@ -163,23 +166,13 @@ export async function BookingsPanel({
       "booking_id",
       bookings.data.map((b) => b.id),
     ).order("created_at", { ascending: false }).limit(1000);
-  const confirmationLabels: Record<string, string> = {
-    pending: "Queued",
-    leased: "Preparing",
-    sending: "Sending",
-    retry: "Will retry",
-    accepted: "Accepted by provider (delivery not verified)",
-    uncertain: "Delivery uncertain - staff review required",
-    failed: "Failed - staff review required",
-    skipped: "Skipped",
-  };
   const messages: Record<string, string> = {
-    email_queued: "Confirmation emails queued for the customer and owner. Check message status below after refreshing.",
+    email_queued: "Confirmation emails requested for the customer and owner. Check message status below after refreshing.",
     created: "Reservation confirmed. Payment is due at the meeting point.",
     collected: "Full payment recorded at the meeting point.",
-    cancelled: "Order cancelled.",
+    cancelled: "Booking cancelled.",
     review:
-      "Order cancelled. Refund review requested; no refund has been issued.",
+      "Booking cancelled. Refund review requested; no refund has been issued.",
     error:
       "Unable to complete the action. Check availability, configured pricing and customer details, then refresh before retrying.",
   };
@@ -254,25 +247,39 @@ export async function BookingsPanel({
           </MutationForm>
         </details>
       )}
-      <h2>Orders</h2>
-      {orders.data.length === 0 && <p>No orders match these filters.</p>}
+      <h2>Bookings</h2>
+      {orders.data.length === 0 && <p>No bookings match these filters.</p>}
       {orders.data.map((order) => {
         const person = people.data.find((p) => p.id === order.customer_id),
           booking = bookings.data.find((b) => b.order_id === order.id);
         return (
-          <details key={order.id} id={booking ? `booking-${booking.id}` : undefined} open={booking?.id === selectedBooking}>
-            <summary>
-              {booking?.booking_reference ?? "Pending reservation"} ·{" "}
-              {person?.name ?? "Customer"} · {order.status}
+          <details className={styles.bookingCard} key={order.id} id={booking ? `booking-${booking.id}` : undefined} open={booking?.id === selectedBooking}>
+            <summary className={styles.bookingSummary}>
+              <strong>{booking?.booking_reference ?? "Pending reservation"}</strong>
+              <span>{person?.name ?? "Customer"}</span>
+              <span className={styles.bookingFacts}>{items.data.filter(i=>i.order_id===order.id).map((i,index)=>{const d=itemDepartures.data.find(d=>d.id===i.departure_id);return <span key={index}>{d?.service_date} {d?.start_time?.slice(0,5)} / {i.quantity} guests</span>;})}</span>
+              <span className={styles.bookingFacts}><span>{order.currency} {(order.total/100).toFixed(2)}</span><strong>{ownerStatus(order.status)}</strong></span>
+              <span className={styles.bookingView}>View booking</span>
             </summary>
-            <p>
-              {person?.email} {person?.phone}
-            </p>
-            <details><summary>Reference details</summary><p>Order: {order.id}</p></details>
-            <p>
+            <div className={styles.bookingContact}><h3>Tour &amp; guests</h3>            <ul>
+              {items.data
+                .filter((i) => i.order_id === order.id)
+                .map((i, index) => (
+                  <li key={index}>
+                    {products.data.find((p) => p.id === i.product_id)?.title ??
+                      "Product unavailable"}{" "}
+                    · {i.quantity} passengers · {ownerStatus(i.status)}
+                    {(i.passenger_snapshot as PassengerSnapshot|null)?.lines.map(l=><span key={l.category}> | {l.quantity} {passengerLabels[l.category]}: EUR {(l.total/100).toFixed(2)}</span>)}
+                  </li>
+                ))}
+            </ul>
+</div>
+            <div className={styles.bookingContact}><h3>Contact</h3><p>{person?.name}</p>{person?.email&&<p><a href={'mailto:'+person.email}>{person.email}</a></p>}{person?.phone&&<p><a href={'tel:'+person.phone}>{person.phone}</a></p>}</div>
+            <details><summary>Technical details</summary><p>Order: {order.id}</p></details>
+            <h3>Payment</h3><p>
               Total: {order.currency} {(order.total / 100).toFixed(2)}
             </p>
-            <p>Booking: {booking?.status ?? "Not prepared"}</p>
+            <p>Booking: {booking ? ownerStatus(booking.status) : "Not prepared"}</p>
             <p>QR status: {booking?.qr_token ? (booking.status==='cancelled'?'Retained - booking cancelled':'Issued'):'Not issued'}. Check-in: {booking?.checked_in_at ? new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeStyle:'short',timeZone:'Europe/Tirane'}).format(new Date(booking.checked_in_at)) : 'Not checked in'}.</p>
             {booking?.qr_token && <BookingQr token={booking.qr_token}/>}
             {deliveries.error ? (
@@ -280,11 +287,11 @@ export async function BookingsPanel({
             ) : (
               <div>
                 <h3>Booking emails</h3>
-                {!deliveries.data.some(d => d.booking_id === booking?.id) && <p>No emails queued yet. Delivery requires configured email settings and a running email worker.</p>}
+                {!deliveries.data.some(d => d.booking_id === booking?.id) && <p>No emails sent yet. Check Email &amp; Notifications for sending status.</p>}
                 <ul>{deliveries.data.filter(d => d.booking_id === booking?.id).slice(0, 10).map(d => <li key={d.id}>
-                  {d.recipient_type ?? "Customer"} · {d.event_type?.replaceAll("_", " ") ?? "Confirmation"}{d.manual ? " (manual resend)" : ""}: {confirmationLabels[d.status] ?? d.status} · {d.attempt_count} attempt(s){d.last_error_code ? ` · ${d.last_error_code}` : ""}
+                  {d.recipient_type === 'owner' ? 'Owner' : 'Customer'} · {ownerEmailEvent(d.event_type)}{d.manual ? " (manual resend)" : ""}: {ownerEmailStatus(d.status)}<details><summary>Technical details</summary>{d.attempt_count} attempt(s){d.last_error_code ? ` · ${d.last_error_code}` : ""}</details>
                 </li>)}</ul>
-                <small>Up to ten most recent notifications. Provider acceptance does not verify inbox delivery.</small>
+                <small>Up to ten most recent notifications. Sent does not confirm arrival in the inbox.</small>
               </div>
             )}
             {booking?.status === "confirmed" && hasPermission(context.role, "bookings.create") && <MutationForm action={resendConfirmation.bind(null, operatorId, booking.id)}>
@@ -296,27 +303,14 @@ export async function BookingsPanel({
               .filter((h) => h.order_id === order.id && h.status !== "consumed")
               .map((h, index) => (
                 <p key={index}>
-                  Hold record: {h.status} · expiry: {h.expires_at}. Unpaid
-                  inventory is not reserved beyond this time.
+                  Temporary seat reservation: {ownerStatus(h.status)} · ends {new Intl.DateTimeFormat("en-GB",{dateStyle:"medium",timeStyle:"short",timeZone:"Europe/Tirane"}).format(new Date(h.expires_at))}.
                 </p>
               ))}
-            <ul>
-              {items.data
-                .filter((i) => i.order_id === order.id)
-                .map((i, index) => (
-                  <li key={index}>
-                    {products.data.find((p) => p.id === i.product_id)?.title ??
-                      i.product_id}{" "}
-                    · {i.quantity} passengers · {i.status}
-                    {(i.passenger_snapshot as PassengerSnapshot|null)?.lines.map(l=><span key={l.category}> | {l.quantity} {l.category}: EUR {(l.total/100).toFixed(2)}</span>)}
-                  </li>
-                ))}
-            </ul>
             {payments.data
               .filter((p) => p.order_id === order.id)
               .map((p, index) => (
                 <p key={index}>
-                  Payment: {p.status} · {p.currency}{" "}
+                  Payment: {ownerStatus(p.status)} · {p.currency}{" "}
                   {(p.amount / 100).toFixed(2)}
                 </p>
               ))}
@@ -369,11 +363,11 @@ export async function BookingsPanel({
                       value="yes"
                       required
                     />{" "}
-                    Confirm cancellation and inventory release
+                    Confirm cancellation and release these seats
                   </label>
-                  <SubmitButton>Cancel order</SubmitButton>
+                  <SubmitButton>Cancel booking</SubmitButton>
                   <p>
-                    Paid orders will be flagged for refund review. This does not
+                    Paid bookings will be flagged for refund review. This does not
                     issue a refund.
                   </p>
                 </MutationForm>
@@ -382,7 +376,7 @@ export async function BookingsPanel({
         );
       })}
       <p>
-        Showing up to 100 orders and upcoming departures. Date lookup is limited
+        Showing up to 100 bookings and upcoming departures. Date lookup is limited
         to 1,000 departures/items. Only full meeting-point collection can be
         recorded here. Refunds require manual review.
       </p>

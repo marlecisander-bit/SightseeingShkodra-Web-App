@@ -4,3 +4,17 @@
 
 .service,.workspace{max-width:none;padding:0;margin:20px 0}.toolbar h2{min-width:180px;margin:0}@media(max-width:600px){.toolbar h2{flex:1 0 100%;order:-1}.toolbar>button{flex:1 1 110px}}
 .servicePeriod { color:var(--ss-muted); font-size:14px; }
+/* A compact month picker precedes the selected day's touch-friendly departures. */
+.grid { grid-template-columns:repeat(7,minmax(0,1fr)); gap:3px; }
+.grid > span { display:block; }
+.day { min-height:52px!important; padding:4px 1px!important; align-items:center!important; justify-content:center!important; font-size:14px!important; gap:2px; }
+.day small { display:none; }
+.dayStatus { font-size:9px; }
+.prices { grid-template-columns:minmax(0,1fr); }
+.editor { padding:12px; scroll-margin-top:16px; }
+.departureCard { border:1px solid var(--ss-border); border-radius:10px; background:var(--ss-white); padding:12px!important; margin:12px 0; }
+.departureCard summary { min-height:48px; }
+@media(min-width:768px) { .day { min-height:110px!important; align-items:flex-start!important; padding:10px!important; } .day small { display:block; } .dayStatus { font-size:13px; } .prices { grid-template-columns:repeat(3,minmax(0,1fr)); } .editor { padding:20px; } }
+.departureCard summary { display:grid; gap:6px; }
+.departureCard summary strong { font-size:20px; }
+.departureCard summary span { font-size:14px; font-weight:400; }

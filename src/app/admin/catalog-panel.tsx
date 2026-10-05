@@ -4,6 +4,7 @@ import { saveCatalog } from "./catalog-actions";
 import { SubmitButton } from "./submit-button";
 import { MutationForm } from "./mutation-form";
 import { ProductNameFields } from "./product-name-fields";
+import { SavedImageField } from "./image-field";
 import { CatalogCreate } from "./catalog-create";
 import styles from "./catalog.module.css";
 
@@ -19,8 +20,8 @@ const fields: Record<
   }[]
 > = {
   product: [
-    { key: "title", label: "Title", required: true },
-    { key: "slug", label: "URL slug", required: true },
+    { key: "title", label: "Product name", required: true },
+    { key: "slug", label: "Page address", required: true },
     {
       key: "type",
       label: "Experience type",
@@ -31,8 +32,8 @@ const fields: Record<
       label: "Publication",
       options: ["draft", "published", "archived"],
     },
-    { key: "meta_title", label: "SEO title (required to publish)" },
-    { key: "meta_description", label: "Tour summary / SEO description (required to publish)" },
+    { key: "meta_title", label: "Search result title (required to publish)" },
+    { key: "meta_description", label: "Tour summary for search results (required to publish)" },
     { key: "inclusions", label: "Ticket inclusions and admission information" },
     { key: "og_image", label: "Social sharing image address", type: "url" },
     {
@@ -64,7 +65,7 @@ export function CatalogRecordEditor({
       <input type="hidden" name="id" value={row.id ?? ""} />
       {entity === "product" && !row.id && <ProductNameFields />}
       {fields[entity].filter(field => !(entity === "product" && !row.id &&
-        (field.key === "title" || field.key === "slug"))).map((field) => (
+        (field.key === "title" || field.key === "slug"))).map((field) => field.key === "og_image" ? <SavedImageField key={field.key} operatorId={operatorId} name={field.key} label="Social sharing image" initial={String(row[field.key] ?? "")}/> : field.key === "slug" ? <details key={field.key}><summary>Advanced: page address</summary><label>Page address<input name="slug" required maxLength={200} defaultValue={row.slug ?? ""}/></label><p>Changing this address can affect existing links.</p></details> : (
         <label key={field.key}>
           {field.label}
           {field.options ? (

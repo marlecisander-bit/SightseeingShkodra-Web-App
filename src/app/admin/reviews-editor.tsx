@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button';
 import { ReviewCard } from '@/components/public/guest-reviews';
 import { reviewSources, type GuestReview, type ReviewSettings } from '@/modules/content/reviews';
 import { saveReview, saveReviewSettings } from './review-actions';
-import { uploadWebsiteImage } from './website-actions';
-import { prepareWebsiteImage } from '@/modules/content/image-upload';
+import { ReviewLanguage } from './review-language';
+import { ImageField } from './image-field';
 import styles from './reviews-editor.module.css';
 const blank:GuestReview={id:'',author:'',rating:5,body:'',source:'Google Maps',review_date:null,original_url:null,avatar_url:null,language:null,featured:false,published:false,display_order:0,updated_at:''};
 export function ReviewEditor({operatorId,review}:{operatorId:string;review?:GuestReview}) {
@@ -19,11 +19,10 @@ export function ReviewEditor({operatorId,review}:{operatorId:string;review?:Gues
  <label>Rating<select name="rating" value={value.rating} onChange={e=>setValue({...value,rating:Number(e.target.value)})}>{[5,4,3,2,1].map(n=><option value={n} key={n}>{n} stars</option>)}</select></label>
  <label>Review date<input name="review_date" type="date" value={value.review_date??''} onChange={e=>setValue({...value,review_date:e.target.value})}/></label>
  <label className={styles.wide}>Review text<textarea name="body" required rows={5} maxLength={10000} value={value.body} onChange={e=>setValue({...value,body:e.target.value})}/><small>Copy the genuine review exactly; do not rewrite it.</small></label>
- <label className={styles.wide}>Original {value.source==='Google Maps'?'Google ':''}review URL<input name="original_url" type="url" maxLength={2000} value={value.original_url??''} onChange={e=>setValue({...value,original_url:e.target.value})}/></label>
- <label>Language<input name="language" placeholder="en" value={value.language??''} onChange={e=>setValue({...value,language:e.target.value})}/></label>
+ <label className={styles.wide}>Original {value.source==='Google Maps'?'Google ':''}review link<input name="original_url" type="url" maxLength={2000} value={value.original_url??''} onChange={e=>setValue({...value,original_url:e.target.value})}/></label>
+ <ReviewLanguage value={value.language??''} onChange={language=>setValue(current=>({...current,language}))}/>
  <label>Display order<input name="display_order" type="number" min="0" max="100000" required value={value.display_order} onChange={e=>setValue({...value,display_order:Number(e.target.value)})}/></label>
- <label>Reviewer photo / Media Library path<input name="avatar_url" value={value.avatar_url??''} onChange={e=>setValue({...value,avatar_url:e.target.value})}/></label>
- <label>Upload reviewer photo<input type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={e=>{const file=e.target.files?.[0];if(!file)return;e.target.value='';start(async()=>{try{const prepared=await prepareWebsiteImage(file,false);const data=new FormData();data.set('image',prepared);const result=await uploadWebsiteImage(operatorId,data);if('url' in result)setValue(v=>({...v,avatar_url:result.url}));else setMessage(result.error??'Upload failed.');}catch(e){setMessage(e instanceof Error?e.message:'Upload failed.');}});}}/></label>
+ <ImageField operatorId={operatorId} name="avatar_url" label="Reviewer photo" value={value.avatar_url??''} onChange={v=>setValue(current=>({...current,avatar_url:v}))} optional/>
  <label className={styles.check}><input type="checkbox" name="featured" checked={value.featured} onChange={e=>setValue({...value,featured:e.target.checked})}/>Featured</label>
  <label className={styles.check}><input type="checkbox" name="published" checked={value.published} onChange={e=>setValue({...value,published:e.target.checked})}/>Published</label>
  </div><div className={styles.actions}><Button type="button" onClick={()=>{setValue(review??blank);setMessage('Changes discarded.');}}>Cancel</Button><Button name="operation" value="save">Save review</Button>{review&&<Button name="operation" value="delete" formNoValidate>Delete review</Button>}</div></fieldset>
@@ -33,5 +32,5 @@ export function ReviewEditor({operatorId,review}:{operatorId:string;review?:Gues
 }
 export function ReviewSettingsEditor({operatorId,settings}:{operatorId:string;settings:ReviewSettings}) {
  const [message,setMessage]=useState(''),[pending,start]=useTransition();const router=useRouter();
- return <form className={styles.form} onSubmit={e=>{e.preventDefault();const data=new FormData(e.currentTarget);start(async()=>{const r=await saveReviewSettings(operatorId,data);setMessage(r.error??r.saved??'');if(!r.error)router.refresh();});}}><fieldset disabled={pending}><div className={styles.grid}><label>Reviews displayed<select name="display_limit" defaultValue={settings.display_limit}>{[3,4,5,6].map(n=><option key={n}>{n}</option>)}</select></label><p>Google Reviews listing URL is managed in <a href={`/admin/${operatorId}/content`}>Website → Navigation, footer &amp; search → Footer</a>.</p><label>Leave a review URL<input type="url" name="leave_review_url" defaultValue={settings.leave_review_url??''}/></label></div><Button>Save review settings</Button></fieldset>{message&&<p role="status">{message}</p>}</form>;
+ return <form className={styles.form} onSubmit={e=>{e.preventDefault();const data=new FormData(e.currentTarget);start(async()=>{const r=await saveReviewSettings(operatorId,data);setMessage(r.error??r.saved??'');if(!r.error)router.refresh();});}}><fieldset disabled={pending}><div className={styles.grid}><label>Reviews displayed<select name="display_limit" defaultValue={settings.display_limit}>{[3,4,5,6].map(n=><option key={n}>{n}</option>)}</select></label><p>Google Reviews link is managed in <a href={`/admin/${operatorId}/content`}>Website → Navigation, footer &amp; search → Footer</a>.</p><label>Link for leaving a review<input type="url" name="leave_review_url" defaultValue={settings.leave_review_url??''}/></label></div><Button>Save review settings</Button></fieldset>{message&&<p role="status">{message}</p>}</form>;
 }
