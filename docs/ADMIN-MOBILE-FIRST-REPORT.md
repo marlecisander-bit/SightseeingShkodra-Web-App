@@ -1,6 +1,6 @@
 ﻿# Mobile-first Admin redesign
 
-5 October 2026. Local implementation and emulated-browser acceptance complete. Release verification follows below.
+5 October 2026. Implementation published to Vercel; local and hosted read-only acceptance are documented below. Physical-device acceptance remains unverified.
 
 ## Audit and implementation
 
@@ -57,3 +57,60 @@ Browser work used the ignored synthetic preview, with no Production credentials 
 PWA source audit: existing `/admin/manifest.webmanifest`, start `/admin`, standalone display, shared transparent sun icons, cream background and brand-red theme retained. Admin viewport adds viewport-fit=cover. Existing admin-scoped service worker has no fetch/offline booking cache; origin cookie handling, proxy session refresh and bfcache verification remain unchanged. Delivery remains disabled.
 
 Logs (ignored): private/admin-mobile-tests.log, admin-mobile-components-final.log, admin-mobile-lint-final.log, admin-mobile-types-final.log, admin-mobile-build-final.log.
+
+## Published release
+
+Commit `42652e9aab2521ecc4c9674493c093d7ba6e575e` pushed to main. Vercel deployment `6J2fg2xamuZr5ewfu3zGHxaYzpJm` is Ready / Production / Current on sightseeingshkodra.app; authenticated dashboard and GitHub Vercel status both verified.
+
+Live 390px read-only smoke passed: owner Overview, mobile drawer -> Website Content, focused Hero editor with Save Draft at viewport bottom (44px high), calendar month/selected day with four actual departures and configured prices, catalog, reviews, notifications and email. No horizontal overflow or application-error page observed on those surfaces. Owner session persisted after production calendar reload. This establishes normal Chrome session persistence across the release, not physical installed-PWA persistence. Existing saved CMS drafts were observed and left unchanged. No Save, Publish, upload, booking mutation, email/push action, environment or database modification performed during hosted acceptance. Production Bookings was not opened; synthetic booking presentation/navigation and automated contracts are the supporting evidence.
+
+Unrelated documentation, owner SQL, private files and legacy configuration were excluded from the release. This publication checkpoint is recorded locally after the implementation commit.
+
+## Additional mobile workflow requirements (46–99) — 5 October 2026
+
+Targeted follow-up to the published mobile Admin, preserving its existing architecture and data owners.
+
+- Expired sessions retain all eight existing Admin sections and valid booking/date context. The return URL remains strictly allowlisted; external URLs, unknown parameters, duplicate keys and invalid dates/IDs are rejected.
+- Focused CMS, booking cards and selected calendar days use same-page browser history. Browser Back closes the focused editor. CMS Back retains unsaved values and requires Save or Discard. URL fragments describe presentation state only; they do not invoke server actions or add routes.
+- Closed departures remain visible in the date editor and can be reopened with the existing calendar save handler. Reopening one time on a closed day keeps other times closed. Prices, capacities, SQL rules and historical booking snapshots remain unchanged. Calendar phone cells retain Offer and Full indicators; numeric price inputs request a decimal keyboard.
+- Cancellation is in its own disclosure with the existing reason and confirmation. Inactive notification filters are neutral. Today spacing and CMS Edit/Close hover contrast corrected.
+- Closed CMS cards no longer mount every editor: only the selected/dirty editor and the existing default publication form are mounted as needed. Existing save/publish ownership and image upload path remain unchanged.
+
+### Acceptance checklist
+
+PASS below means inspected source, automated contracts and/or desktop Chrome viewport evidence in this report. It does not certify physical Safari/Android or successful hosted write operations.
+
+| Check | Result | Evidence / scope |
+|---|---|---|
+| Mobile table/card transformation | PASS | Booking list/details and departure cards inspected at 390px and desktop. |
+| Sticky Save/Publish actions | PASS | Existing CMS sticky actions retained and visually inspected; physical keyboard acceptance remains below. |
+| Mobile modals/sheets | PASS | Existing native Admin drawer retained; preceding focus/Escape/layer checks apply. |
+| Search & filters | PASS | Existing date/exact-email booking filters preserved; notification filter layout inspected. No new broad query. |
+| Notification bell | PASS | Existing provider, unread state and booking links retained; no new polling. |
+| Admin navigation state | PASS | Section navigation and focused-panel Back tested with safe fixtures. CMS unsaved Back/Discard recovery passed. |
+| Desktop Admin preserved | PASS | Eight representative screenshots inspected at 1440px. |
+| Tablet Admin | PASS | Five critical routes and expanded calendar checked at 768px without overflow. |
+| Non-technical owner language | PASS | Prior simplification retained; additional unsaved-visibility wording now appears only for visibility edits. |
+| Technical clutter removed | PASS | Existing technical disclosures retained outside primary workflows. |
+| Original brand identity preserved | PASS | Existing logo, colours, type and components retained. |
+| No new design system | PASS | Existing styles; small shared browser-history hook and booking disclosure component only. |
+| Booking business logic unchanged | PASS | Server actions, transactional capacity, payment and booking rules unchanged. |
+| Pricing logic unchanged | PASS | Existing cents, quotes and save contracts retained; focused tests cover reopening payload preservation. |
+| Supabase/RLS unchanged | PASS | No migration, query, policy or database modification. |
+| Public website unchanged | PASS | No public presentation files changed. |
+| Live Map logic unchanged | PASS | No map engine or embed changes. |
+| Lint | PASS | private/admin-followup-lint.log |
+| TypeScript | PASS | private/admin-followup-types.log |
+| Tests | PASS | Complete chain: 335 passed, zero failed/skipped (18 components, 17 identity, 120 integrations, 156 database, 24 PostgreSQL concurrency). |
+| Production build | PASS | Isolated current-source production build, 31 pages; private/admin-followup-build.log. |
+
+Representative screenshots inspected at 390px and 1440px: Overview, Bookings, booking detail, Calendar & Pricing, Website Content list, section editor, Notifications and WhatsApp. Screenshot inspection found and resolved the Today spacing and Edit/Close contrast defects. Critical routes additionally checked at 390/768/1440px: no document overflow or application error page. Fixture calendar includes a closed departure; reopening its checkbox changed the local summary correctly without a production save. New tests verify only the intended departure reopens and retain other price/capacity overrides. Local console contained browser-extension message-channel errors, not an identified application stack or hydration error.
+
+### Remaining acceptance limitations
+
+- Physical iOS Safari/Android keyboard overlap, installed-PWA safe areas, installation and installed-session persistence are NOT VERIFIED. Chrome viewport checks cannot establish those results.
+- Successful production Save/Publish/upload/booking/payment/review mutations were intentionally not performed. Existing backend regression tests and safe fixture interaction checks provide supporting evidence, not a new end-to-end live write certification.
+- Overview remains real Today links and permission-filtered shortcuts; a live occupancy/attention/recent-activity dashboard was not invented or queried.
+- Calendar date links select the relevant month; the Today button opens today's editor when its date is in the displayed month. Automatic editor opening from a date URL is not implemented.
+
+No full physical-device acceptance claim. Release and hosted checks are recorded separately after publication.

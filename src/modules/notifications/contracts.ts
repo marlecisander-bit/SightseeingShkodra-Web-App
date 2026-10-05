@@ -12,7 +12,19 @@ export function bookingTarget(operator:string,booking:string) {
 }
 export function safeAdminReturn(value:unknown):string {
  if(typeof value!=='string')return '/admin';
- return /^\/admin\/[0-9a-f-]{36}\/(?:bookings\?booking=[0-9a-f-]{36}|notifications)$/.test(value)?value:'/admin';
+ const match=/^\/admin\/([^/]+)\/(overview|bookings|departures|content|reviews|catalog|notifications|email)(?:\?([^#]*))?$/.exec(value);
+ if(!match||!uuid.test(match[1]))return '/admin';
+ if(!match[3])return value;
+ const query=new URLSearchParams(match[3]);
+ const seen=new Set<string>();
+ for(const [key,item] of query){
+  if(seen.has(key))return '/admin';
+  seen.add(key);
+  if(key==='booking'&&match[2]==='bookings'&&uuid.test(item))continue;
+  if(key==='date'&&['bookings','departures'].includes(match[2])&&/^\d{4}-\d{2}-\d{2}$/.test(item)&&!Number.isNaN(Date.parse(item))&&new Date(item).toISOString().slice(0,10)===item)continue;
+  return '/admin';
+ }
+ return value;
 }
 /** Explicit browser push services only. No arbitrary URLs, IPs or redirect targets. */
 export function validPushSubscription(value:unknown): value is {endpoint:string;keys:{p256dh:string;auth:string}} {

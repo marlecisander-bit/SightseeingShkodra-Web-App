@@ -1,4 +1,5 @@
 import styles from './admin.module.css';
+import { BookingCard } from './booking-card';
 import { ownerStatus, ownerEmailStatus, ownerEmailEvent } from "./presentation";
 import { passengerLabels } from "@/modules/booking/passengers";
 import { StaffPassengers } from "./staff-passengers";
@@ -253,14 +254,13 @@ export async function BookingsPanel({
         const person = people.data.find((p) => p.id === order.customer_id),
           booking = bookings.data.find((b) => b.order_id === order.id);
         return (
-          <details className={styles.bookingCard} key={order.id} id={booking ? `booking-${booking.id}` : undefined} open={booking?.id === selectedBooking}>
-            <summary className={styles.bookingSummary}>
+          <BookingCard key={order.id} id={booking?.id ?? order.id} initiallyOpen={booking?.id === selectedBooking} summary={<>
               <strong>{booking?.booking_reference ?? "Pending reservation"}</strong>
               <span>{person?.name ?? "Customer"}</span>
               <span className={styles.bookingFacts}>{items.data.filter(i=>i.order_id===order.id).map((i,index)=>{const d=itemDepartures.data.find(d=>d.id===i.departure_id);return <span key={index}>{d?.service_date} {d?.start_time?.slice(0,5)} / {i.quantity} guests</span>;})}</span>
               <span className={styles.bookingFacts}><span>{order.currency} {(order.total/100).toFixed(2)}</span><strong>{ownerStatus(order.status)}</strong></span>
               <span className={styles.bookingView}>View booking</span>
-            </summary>
+            </>}>
             <div className={styles.bookingContact}><h3>Tour &amp; guests</h3>            <ul>
               {items.data
                 .filter((i) => i.order_id === order.id)
@@ -349,6 +349,8 @@ export async function BookingsPanel({
               ["pending", "awaiting_payment", "paid", "confirmed"].includes(
                 order.status,
               ) && (
+                <details>
+                <summary>Cancel this booking</summary>
                 <MutationForm
                   action={cancelBooking.bind(null, operatorId, order.id)}
                 >
@@ -371,8 +373,9 @@ export async function BookingsPanel({
                     issue a refund.
                   </p>
                 </MutationForm>
+                </details>
               )}
-          </details>
+          </BookingCard>
         );
       })}
       <p>

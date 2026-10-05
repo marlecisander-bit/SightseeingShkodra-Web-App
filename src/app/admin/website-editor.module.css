@@ -134,7 +134,7 @@
 .sectionHeading .visibilityCopy { order:0; }
 .sectionHeading .visibilityActions { margin:0; }
 .cms .sectionHeading .editLabel { min-width:64px; min-height:44px; padding:8px; background:transparent; color:var(--brand-text); border-color:transparent; margin:0; gap:4px; grid-column:auto; }
-.cms .sectionHeading .editLabel:hover { background:var(--brand-red-soft); }
+.cms .sectionHeading .editLabel:hover { background:var(--brand-red-soft); color:var(--brand-text); }
 .cms .sectionHeading .editLabel:focus-visible { outline:2px solid var(--ss-focus); outline-offset:2px; }
 .sectionHeading .number { font-weight:400; }
 .card { container-type:inline-size; }

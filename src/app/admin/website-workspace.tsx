@@ -9,6 +9,7 @@ import type { WebsiteRecord } from "@/modules/content/website-server";
 import { visibilityScope, websiteEditorGroups, homepageVisible } from "@/modules/content/website-schema";
 import { WebsiteSectionEditor } from "./website-editor";
 import styles from "./website-editor.module.css";
+import { usePanelHistory } from './use-panel-history';
 
 
 export function WebsiteWorkspace({ operatorId, record, destinationManager, footerGoogleEditor }: { operatorId: string; record: WebsiteRecord; destinationManager: ReactNode; footerGoogleEditor?:ReactNode }) {
@@ -28,18 +29,24 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
   const dirtySection = websiteSections.find(s => s.fields.some(f => values[f.key] !== content[f.key]));
   const unsaved = !!dirtySection;
   const pending = Object.values(states).some(s => s.pending);
+  const panelHistory = usePanelHistory('website-section', value => { setActive(value); setNotice(''); }, () => {
+    if (unsaved || pending) { setNotice('Save or discard your changes before returning to sections.'); return false; }
+    return true;
+  });
   const selected = websiteSections.find(s => s.id === active) ?? websiteSections[0];
   const image = selected.fields.find(f => f.kind === "image");
   const preview = `/admin/${operatorId}/website-preview?page=${({legalprivacy:"privacy-policy",legalterms:"terms-and-conditions",how:"tour",tourPage:"tour",explorePage:"explore",bookPage:"book",dayPage:"your-day"} as Record<string,string>)[selected.id]??"home"}`;
   function select(id: string, jump = false) {
     if (pending || (dirtySection && dirtySection.id !== id)) { setNotice("Save or discard your current edits before opening another section."); return; }
-    setNotice(""); setActive(active === id && !jump ? null : id);
+    setNotice("");
+    if(active === id && !jump) panelHistory.close();
+    else { panelHistory.open(id); setActive(id); }
     if(window.matchMedia("(max-width: 767px)").matches) requestAnimationFrame(()=>document.getElementById(`cms-${id}`)?.scrollIntoView({block:"start"}));
     if (jump) requestAnimationFrame(() => { const el = document.getElementById(`cms-${id}`); el?.scrollIntoView({ block: "start", behavior: "smooth" }); el?.querySelector("summary")?.focus(); });
   }
   if(scope==="destinations") return <section className={styles.cms} data-editing={!!active}><Button onClick={()=>setScope("homepage")}>Back to website content</Button>{destinationManager}</section>;
   return <section className={styles.cms} data-editing={!!active}>
-    {active&&<Button className={styles.backToSections} type="button" disabled={pending} onClick={()=>{if(unsaved){setNotice("Save or discard your changes before returning to sections.");return;}setActive(null);}}>Back to website sections</Button>}
+    {active&&<Button className={styles.backToSections} type="button" disabled={pending} onClick={()=>panelHistory.close()}>Back to website sections</Button>}
     {active&&<a className={styles.focusedPreview} href={preview} target="_blank" rel="noopener noreferrer">Preview saved draft</a>}
     <header className={styles.toolbar}>
       <div><p className={styles.breadcrumb}>Website / {({homepage:"Homepage",destinations:"Destinations",pages:"Public pages",global:"Global"})[scope]}</p><h1>{({homepage:"Homepage content",destinations:"Destination content",pages:"Public page content",global:"Global website content"})[scope]}</h1><p className={styles.subtitle}>Choose what visitors see, then preview and publish when you’re ready.</p></div>
@@ -66,12 +73,12 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
                 <label><input type="checkbox" role="switch" aria-label={`Show ${section.title} ${visibilityScope(section.id)}`} checked={homepageVisible(values, section.id)} disabled={pending || (!!dirtySection && dirtySection.id !== section.id)} onChange={event => { setActive(null); setValues(current => ({...current, [`${section.id}.showOnHomepage`]: String(event.target.checked)})); }} /><span className={styles.visibilityCopy}><strong>{homepageVisible(values, section.id) ? "Visible" : "Hidden"}</strong><span>{visibilityScope(section.id)}</span></span></label>
                 {dirtySection?.id === section.id && active !== section.id && <span className={styles.visibilityActions}><Button form={`cms-form-${section.id}`} name="operation" value="draft" disabled={pending}>Save Draft</Button><Button type="button" disabled={pending} onClick={() => setValues(current => ({...current, ...Object.fromEntries(section.fields.map(f => [f.key, content[f.key]]))}))}>Discard</Button></span>}
               </span>} />
-              {dirtySection?.id === section.id && section.fields.some(f => f.kind === "visibility") && <small className={styles.helper}>Unsaved visibility. Last saved: {homepageVisible(content, section.id) ? "Visible" : "Hidden"}. Save Draft keeps changes private until you publish.</small>}
+              {dirtySection?.id === section.id && section.fields.some(f => f.kind === "visibility" && values[f.key] !== content[f.key]) && <small className={styles.helper}>Unsaved visibility. Last saved: {homepageVisible(content, section.id) ? "Visible" : "Hidden"}. Save Draft keeps changes private until you publish.</small>}
               {section.id === "heroAmenities" && <small className={styles.helper}>Retained content; amenities are not rendered on the homepage.</small>}
               {active !== section.id && feedback[section.id] && <span className={styles.notice} role="status">{feedback[section.id]}</span>}
             </summary>
-            <WebsiteSectionEditor onFeedback={onFeedback} values={values} setValues={setValues} key={record.updated_at} operatorId={operatorId} sectionId={section.id} content={content} stamp={record.updated_at} onStateChange={onStateChange} />
-            {section.id==="footer"&&footerGoogleEditor}
+            {(active===section.id || dirtySection?.id===section.id || (!active&&index===0))&&<WebsiteSectionEditor onFeedback={onFeedback} values={values} setValues={setValues} key={record.updated_at} operatorId={operatorId} sectionId={section.id} content={content} stamp={record.updated_at} onStateChange={onStateChange} />}
+            {active===section.id&&section.id==="footer"&&footerGoogleEditor}
           </details>;
         })}
       </div>

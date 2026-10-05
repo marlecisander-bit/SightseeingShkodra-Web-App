@@ -195,7 +195,7 @@
  .shell .workspace { grid-template-columns:var(--admin-sidebar) minmax(0,1fr); padding:24px 32px; }
 }
 @media(max-height:800px) { .desktopNavigation { position:static; } }
-.todayActions { border-bottom:1px solid var(--ss-border); padding-bottom:20px; }
+.todayActions { border-bottom:1px solid var(--ss-border); padding:0 0 20px; margin:0; }
 .todayActions h2 { margin-top:0; }
 .todayActions > div { display:flex; flex-wrap:wrap; gap:8px; }
 .todayActions a { display:flex; align-items:center; justify-content:center; min-height:48px; flex:1 1 130px; border:1px solid var(--brand-red-border); padding:10px; border-radius:10px; text-decoration:none; font-weight:700; background:var(--brand-red-soft); }

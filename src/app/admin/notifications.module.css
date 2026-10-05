@@ -1,4 +1,6 @@
 .bell{position:relative;color:var(--brand-text)}
+.center .filters button[aria-pressed=false] { background:var(--ss-white); color:var(--ss-ink,#25232A); border:1px solid var(--ss-border); }
+.center .filters button[aria-pressed=false]:not(:disabled):hover { background:var(--brand-red-soft); color:var(--ss-ink,#25232A); }
 .bell>button{display:flex;align-items:center;gap:.4rem;min-width:44px;min-height:44px;border:1px solid currentColor}
 .badge{border-radius:2rem;padding:.1rem .4rem;background:#F6C928;color:#25232A;font-weight:bold}
 .dropdown{position:absolute;right:0;top:calc(100% + .5rem);width:min(440px,calc(100vw - 32px));max-height:75svh;overflow:auto;z-index:80;background:white;color:#25232A;border:1px solid #DED5CB;border-radius:12px;padding:1rem;box-shadow:0 8px 32px #25232A33}

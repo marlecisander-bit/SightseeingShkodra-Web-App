@@ -20,7 +20,14 @@ export default async function Workspace({ params, searchParams }: { params: Prom
   let context;
   try { context = await requirePermission(operatorId, selected.permission); }
   catch (error) {
-    if (error instanceof AuthorizationError) redirect(`/auth/sign-in?next=${encodeURIComponent(safeAdminReturn(`/admin/${operatorId}/${section}${section==='bookings'&&(await searchParams).booking?'?booking='+(await searchParams).booking:''}`))}&error=${error.code === 'UNAUTHENTICATED' ? 'signin' : error.code === 'FORBIDDEN' ? 'access' : 'unavailable'}`);
+    if (error instanceof AuthorizationError) {
+      const search = await searchParams;
+      const query = new URLSearchParams();
+      if (section === 'bookings' && search.booking) query.set('booking', search.booking);
+      if (['bookings', 'departures'].includes(section) && search.date) query.set('date', search.date);
+      const next = safeAdminReturn(`/admin/${operatorId}/${section}${query.size ? '?' + query.toString() : ''}`);
+      redirect(`/auth/sign-in?next=${encodeURIComponent(next)}&error=${error.code === 'UNAUTHENTICATED' ? 'signin' : error.code === 'FORBIDDEN' ? 'access' : 'unavailable'}`);
+    }
     throw error;
   }
   const client = await createSessionClient();
