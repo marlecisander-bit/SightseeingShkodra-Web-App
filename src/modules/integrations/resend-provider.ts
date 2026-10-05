@@ -1,5 +1,5 @@
 import "server-only";
-export type EmailMessage = { from: string; to: string[]; reply_to: string; subject: string; html: string; text: string };
+export type EmailMessage = { from: string; to: string[]; reply_to: string; subject: string; html: string; text: string; attachments?: { content: string; filename: string; content_type: string; content_id: string }[] };
 export type EmailResult = { outcome: "accepted" | "retry" | "failed"; code?: string; reference?: string };
 /** No SDK retries: the durable queue owns retries and the immutable idempotency key. */
 export async function sendResendEmail(apiKey: string, key: string, message: EmailMessage, transport: typeof fetch = fetch): Promise<EmailResult> {

@@ -1,16 +1,19 @@
 import { meetingPoint } from "../booking/meeting-point";
+import { bookingEmailTemplateV2 } from "./booking-email-template-v2";
 // Version 1 must remain stable for in-flight provider retries. New designs need a new version.
 export type BookingEmailEvent = "BOOKING_CREATED" | "BOOKING_MODIFIED" | "BOOKING_CANCELLED";
 export type RecipientType = "customer" | "owner";
 export type EmailBooking = {
   managementToken?: string;
+  qrToken?: string;
+  previous?: { date: string | null; time: string | null; counts: { adult: number; child: number; infant: number }; total: number } | null;
   reference: string; status: string; name: string; email: string | null; phone: string | null;
   createdAt: string; cancelledAt: string | null; currency: string; total: number;
   collectionMode: string; paid: boolean; paymentStatuses: string[]; refundStatuses: string[]; refundReview: boolean; source: string;
   initiatedBy: string | null; reason: string | null;
-  items: { title: string; date: string | null; time: string | null; timezone: string; guests: number }[];
+  items: { title: string; description?: string | null; inclusions?: string | null; date: string | null; time: string | null; timezone: string; guests: number; seats?: number; counts?: { adult: number; child: number; infant: number } | null }[];
 };
-export type EmailEnvelope = { version: 1; from: string; owner: string; replyTo: string; siteUrl: string; testRecipient: string | null };
+export type EmailEnvelope = { version: 1 | 2; from: string; owner: string; replyTo: string; siteUrl: string; testRecipient: string | null };
 const escape = (v: unknown) => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 const headerText = (v: string) => v.replace(/[\r\n\x00-\x1f\x7f]/g, " ").slice(0, 200);
 const labels = {
@@ -19,6 +22,7 @@ const labels = {
   BOOKING_CANCELLED: { customer: "Booking Cancelled", owner: "Booking Cancelled" },
 };
 export function bookingEmailTemplate(event: BookingEmailEvent, recipient: RecipientType, b: EmailBooking, envelope: EmailEnvelope, operatorId: string, bookingId: string) {
+  if (envelope.version === 2) return bookingEmailTemplateV2(event, recipient, b, envelope, operatorId, bookingId);
   const title = labels[event][recipient];
   const cancelled = event === "BOOKING_CANCELLED";
   const payment = b.paymentStatuses.length ? b.paymentStatuses.join(", ").replaceAll("_", " ") : b.paid ? "Payment received" : cancelled ? "No payment recorded" : b.collectionMode === "meeting_point" ? "Payment due at the meeting point" : "Payment not recorded";

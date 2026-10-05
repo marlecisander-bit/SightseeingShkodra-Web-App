@@ -5,7 +5,7 @@ import { emailEvents } from '@/modules/integrations/email-admin-status';
 import { ownerEmailStatus } from './presentation';
 import { bookingEmailPreview } from '@/modules/integrations/booking-email-preview';
 import { workerHealth } from '@/modules/integrations/email-worker-heartbeat';
-import { resendConfirmation } from './booking-actions';
+import { resendRecipientEmail } from './email-actions';
 import { MutationForm } from './mutation-form';
 import { SubmitButton } from './submit-button';
 import { EmailTestForm } from './email-test-form';
@@ -55,10 +55,10 @@ export function EmailPanelView({operatorId,data,delivery,recipient}:{operatorId:
       <form className={styles.filters} method="get"><label>Status<select name="delivery" defaultValue={delivery??''}><option value="">All</option><option value="pending">Pending</option><option value="sent">Sent</option><option value="failed">Failed</option></select></label><label>Recipient<select name="recipient" defaultValue={recipient??''}><option value="">All recipients</option><option value="customer">Customer</option><option value="owner">Owner</option></select></label><Button type="submit">Apply filters</Button></form>
       {data.rows.length===0?<p>No matching email deliveries.</p>:<ul className={styles.activity}>{data.rows.map(row=><li key={row.id}>
         <Link href={`/admin/${operatorId}/bookings?booking=${row.booking_id}#booking-${row.booking_id}`}>{row.booking_reference??'Open booking'}</Link>
-        <dl><dt>Date</dt><dd>{date(row.created_at)}</dd><dt>Event</dt><dd>{emailEvents.find(e=>e.type===row.event_type)?.label??'Booking update'}</dd><dt>Recipient</dt><dd>{row.recipient_type==='owner'?'Owner':'Customer'}</dd><dt>Status</dt><dd><span className={styles.badge}>{ownerEmailStatus(row.status)}</span></dd></dl><details><summary>Technical details</summary><p>Sending attempts: {row.attempt_count}</p></details>
-        {enabled&&data.resendable.includes(row.booking_id)&&(row.status==='failed'||row.status==='uncertain')&&<MutationForm action={resendConfirmation.bind(null,operatorId,row.booking_id)}>
-          <input type="hidden" name="request_id" value={randomUUID()}/><label><span><input style={{width:'auto',minHeight:24}} type="checkbox" name="confirm" value="yes" required/> I checked whether the email arrived and want to send another confirmation.</span></label>
-          <p>This sends the current confirmation to both customer and owner. Wait five minutes between resend requests.</p><SubmitButton>Resend confirmation</SubmitButton>
+        <dl><dt>Date</dt><dd>{date(row.created_at)}</dd><dt>Event</dt><dd>{emailEvents.find(e=>e.type===row.event_type)?.label??'Booking update'}</dd><dt>Recipient</dt><dd>{row.recipient_type==='owner'?'Owner':'Customer'}{row.recipient_email ? " - " + row.recipient_email : ""}</dd><dt>Status</dt><dd><span className={styles.badge}>{ownerEmailStatus(row.status)}</span></dd></dl><details><summary>Technical details</summary><p>Sending attempts: {row.attempt_count}</p><p>Provider: {row.provider??'Not attempted'}</p><p>Provider message: {row.provider_reference??'None'}</p><p>Sent: {date(row.sent_at??null)}</p><p>Failure: {row.last_error_code??'None'}</p></details>
+        {enabled&&['accepted','failed','uncertain'].includes(row.status)&&<MutationForm action={resendRecipientEmail.bind(null,operatorId,row.id)}>
+          <input type="hidden" name="request_id" value={randomUUID()}/><label><span><input style={{width:'auto',minHeight:24}} type="checkbox" name="confirm" value="yes" required/> I checked whether the email arrived and want to send this recipient another email.</span></label>
+          <p>This sends only the selected recipient the current booking information for this event. Wait five minutes between resend requests.</p><SubmitButton>{row.recipient_type==='customer'?'Resend customer email':'Resend owner notification'}</SubmitButton>
         </MutationForm>}
       </li>)}</ul>}<p>Showing up to 100 recent matching messages. Skipped messages appear under All.</p></section>
     <div className={styles.grid}>

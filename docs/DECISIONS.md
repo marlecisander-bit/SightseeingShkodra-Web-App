@@ -127,3 +127,7 @@ configuration and acceptance limits are recorded in ADMIN-NOTIFICATIONS-REPORT.m
 ## 5 October 2026 ? Permanent Vercel hosting amendment
 
 User explicitly designated Vercel as the permanent main Next.js host, main as production branch and sightseeingshkodra.app as production domain. Supabase and Resend retain their existing responsibilities. Netlify is legacy and may not receive new main-app functionality. Retain the separate sightseeingshkodralivetrackingapp.netlify.app map and legacy fallback until hosted parity. This amends hosting assumptions without rewriting Roadmap V4 or business rules. User selected Hobby with background delivery disabled; no upgrade or active cron is authorized. See [DEPLOYMENT.md](../DEPLOYMENT.md).
+
+## 5 October 2026 — Transactional email completion scope
+
+The user requested completing the existing Resend booking-email system, then explicitly selected “Complete implementation; keep live delivery disabled.” Extend the existing event/recipient queue, preserve the canonical booking QR and versioned in-flight retries, and test against isolated data/fake provider responses. This does not authorize live email, scheduler activation, deployment or hosted migrations. Vercel Hobby communications pause remains in force. See BOOKING-EMAILS.md.

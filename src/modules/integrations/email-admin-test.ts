@@ -17,7 +17,7 @@ export async function sendAdminTestEmail(operatorId: string, recipient: string, 
   // An explicit test may run while automatic booking delivery remains disabled.
   const config = bookingEmailConfig({ ...env, EMAIL_ENABLED: 'true' });
   if (!config.enabled || !config.testRecipient) throw Error('test_unavailable');
-  const template = bookingEmailPreview('BOOKING_CREATED', 'customer');
+  const template = { ...bookingEmailPreview('BOOKING_CREATED', 'customer', config.siteUrl), subject: '[TEST] Sightseeing Shkodra — Email System Test' };
   const bucket = Math.floor(dependencies.now() / 300000);
   const identity = createHash('sha256').update(JSON.stringify([operatorId,recipient,config.from,config.replyTo,template,bucket])).digest('hex');
   const result = await dependencies.send(config.apiKey, `admin-email-test/${identity}`, {

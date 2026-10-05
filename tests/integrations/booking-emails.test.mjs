@@ -66,7 +66,7 @@ test('cancel retry sends one pair, shows real cancellation and no refund promise
  const b=await create();await run();const n=sent.length;
  for(let i=0;i<2;i++) await db.query('select cancel_order_v1($1,$2,$3,$4)',[op,b.order_id,staff,'Guest requested cancellation']);
  await run();await run();assert.equal(sent.length-n,2);
- assert.ok(sent.slice(n).every(x=>x.subject.includes('Booking Cancelled')&&x.text.includes('Guest requested cancellation')&&x.text.includes('Cancelled at')));
+ assert.ok(sent.slice(n).every(x=>/cancelled/i.test(x.subject)&&x.text.includes('Guest requested cancellation')&&x.text.includes('Cancellation timestamp')));
  assert.equal((await db.query('select status from bookings where id=$1',[b.id])).rows[0].status,'cancelled');
 });
 test('rolled-back mutation emits no event and no email',async()=>{
@@ -175,4 +175,56 @@ test('activation excludes historical events and prequeued history while includin
  assert((await jobs(at)).every(j=>j.status==='accepted'));assert((await jobs(afterBoundary)).every(j=>j.status==='accepted'));
  await processBookingEmails(store,{...config,since},async()=>{throw Error('duplicate send');},()=>{});
  await store.enqueue(op,since);assert.equal((await jobs(unqueuedOld)).length,0);
+});
+
+test('v2 ticket lifecycle uses canonical passenger seats and QR, reliable before/after and cancellation invalidation',async()=>{
+ await run();await run();
+ const {PNG}=await import('pngjs');const {default:jsQR}=await import('jsqr');
+ const pid=(await db.query(`insert into products(operator_id,type,title,slug,status,pricing_rules,capacity_rules,passenger_pricing,inclusions) values($1,'van_tour','Daily Ticket',gen_random_uuid()::text,'published','{"version":1,"model":"per_guest","currency":"EUR","unit_price":1000}','{"version":1,"model":"departure_seats"}','{"adult":{"min":13,"max":null,"price":1000},"child":{"min":3,"max":12,"price":500},"infant":{"min":0,"max":2,"price":0}}','Selected service day, hop on and off according to the service rules.') returning id`,[op])).rows[0].id;
+ const dep=async(time)=>(await db.query("insert into departures(operator_id,product_id,service_date,start_time,capacity,status) values($1,$2,'2035-01-01',$3,8,'scheduled') returning id",[op,pid,time])).rows[0].id;
+ const a=await dep('09:00'),z=await dep('11:00'),session='email-lifecycle-'+randomUUID();
+ const h=(await db.query('select * from create_passenger_hold_v1($1,$2,$3,$4,4,$5)',[op,a,session,randomUUID(),{adult:2,child:1,infant:1}])).rows[0];
+ const created=(await db.query("select create_meeting_point_booking_v1($1,$2,$3,'Email Test','guest@example.invalid') b",[op,h.id,session])).rows[0].b;
+ const b=(await db.query('select * from bookings where order_id=$1',[created.orderId])).rows[0];
+ let n=sent.length;await run();const pair=sent.slice(n);assert.equal(pair.length,2);
+ const customer=pair.find(m=>m.attachments);assert(customer);const png=PNG.sync.read(Buffer.from(customer.attachments[0].content,'base64'));
+ assert.equal(jsQR(new Uint8ClampedArray(png.data),png.width,png.height)?.data,b.qr_token);
+ assert(customer.text.includes('Total passengers: 4'));assert(customer.text.includes('Seats occupied: 3'));assert(customer.text.includes('Infants: 1'));assert(customer.text.includes('EUR 25.00'));assert(customer.text.includes('Selected service day'));
+ assert(customer.html.includes('cid:booking-qr'));assert(customer.text.includes('/booking/manage#token='+b.management_token));
+ assert(!pair.find(m=>!m.attachments).text.includes(b.management_token));
+ const request=randomUUID();
+ for(let i=0;i<2;i++)await db.query('select modify_customer_booking_v1($1,0,$2,$3,1500,$4)',[b.management_token,z,{adult:1,child:1,infant:2},request]);
+ n=sent.length;await run();await run();const modified=sent.slice(n);assert.equal(modified.length,2);
+ assert(modified.every(m=>m.text.includes('11:00 (Europe/Tirane)')&&m.text.includes('Seats occupied: 2')&&m.text.includes('EUR 15.00')));
+ const updateJob=(await jobs(b)).find(j=>j.event_type==='BOOKING_MODIFIED'&&j.recipient_type==='customer');
+ assert.equal(updateJob.send_snapshot.qrToken,b.qr_token);assert.deepEqual(updateJob.send_snapshot.previous.counts,{adult:2,child:1,infant:1});assert.equal(updateJob.send_snapshot.previous.total,2500);assert(modified[0].text.includes('Previous'));
+ n=sent.length;await db.query('select cancel_customer_booking_v1($1)',[b.management_token]);await run();const cancelled=sent.slice(n);assert.equal(cancelled.length,2);assert(cancelled.every(m=>!m.attachments&&!m.html.includes('cid:booking-qr')&&m.text.includes('no longer a valid ticket')&&m.text.includes('Seats released: 2')));
+ assert.equal((await db.query('select resolve_booking_pass_v1($1,$2,$3,false) r',[op,staff,b.qr_token])).rows[0].r.status,'CANCELLED');
+ assert.equal((await db.query("select count(*)::int n from booking_items where departure_id=$1 and status='confirmed'",[z])).rows[0].n,0);
+ const j=await jobs(b);assert(j.every(x=>x.provider==='resend'&&x.provider_reference&&x.sent_at&&x.recipient_email===config.testRecipient));
+});
+
+test('selected-recipient resend preserves event, does not fan out, is idempotent and supports cancellations',async()=>{
+ const b=await create();await run();await db.query('select cancel_order_v1($1,$2,$3,$4)',[op,b.order_id,staff,'Test cancellation']);await run();
+ const source=(await jobs(b)).find(j=>j.event_type==='BOOKING_CANCELLED'&&j.recipient_type==='owner');const req=randomUUID(),n=sent.length;
+ for(let i=0;i<2;i++)await db.query('select request_booking_email_recipient_v1($1,$2,$3,$4)',[op,staff,source.id,req]);
+ await assert.rejects(db.query('select request_booking_email_recipient_v1($1,$2,$3,$4)',[op,staff,source.id,randomUUID()]),/five minutes/);
+ await assert.rejects(db.query('select request_booking_email_recipient_v1($1,$2,$3,$4)',[other,staff,source.id,randomUUID()]),/Permission/);
+ await run();await run();assert.equal(sent.length-n,1);assert.match(sent[n].subject,/BOOKING CANCELLED/);
+ assert.equal((await jobs(b)).filter(j=>j.manual).length,1);
+ const stale=(await jobs(b)).find(j=>j.event_type==='BOOKING_CREATED');await assert.rejects(db.query('select request_booking_email_recipient_v1($1,$2,$3,$4)',[op,staff,stale.id,randomUUID()]),/current booking/);
+ for(const role of ['anon','authenticated']){await db.exec('set role '+role);try{await assert.rejects(db.query('select request_booking_email_recipient_v1($1,$2,$3,$4)',[op,staff,source.id,randomUUID()]),e=>e.code==='42501');}finally{await db.exec('reset role');}}
+});
+
+test('frozen version-one retries keep original rendering and no new QR attachment',async()=>{
+ const b=await create();await store.enqueue(op,config.since);const j=await store.claim(op);const prepared=await store.prepare(j,{version:1,from:config.from,owner:config.owner,replyTo:config.replyTo,siteUrl:config.siteUrl,testRecipient:config.testRecipient});
+ const before=bookingEmailTemplate(prepared.event_type,prepared.recipient_type,prepared.send_snapshot,prepared.envelope,op,b.id);
+ await store.finish(prepared,'retry','resend_http_500');await db.query('update notification_deliveries set next_attempt_at=clock_timestamp() where id=$1',[j.id]);
+ const n=sent.length;await run();const retried=sent.slice(n).find(m=>m.key==='booking-email/'+j.id);assert.equal(retried.html,before.html);assert.equal(retried.subject,before.subject);assert.equal(retried.attachments,undefined);
+});
+
+test('production rejects Resend sandbox sender and Vercel diagnostics reflect the delivery pause',async()=>{
+ const {emailAdminStatus}=await import('../../src/modules/integrations/email-admin-status.ts');
+ const env={NODE_ENV:'production',APP_ENV:'production',VERCEL_ENV:'production',EMAIL_ENABLED:'true',RESEND_API_KEY:'fake',RESEND_FROM_EMAIL:'Sightseeing Shkodra <onboarding@resend.dev>',BOOKING_OWNER_EMAIL:config.owner,BOOKING_REPLY_TO_EMAIL:config.replyTo,PUBLIC_OPERATOR_ID:op,EMAIL_START_AT:config.since,NEXT_PUBLIC_SITE_URL:config.siteUrl};
+ assert.throws(()=>bookingEmailConfig(env),/configuration/);assert.equal(emailAdminStatus(op,{...env,RESEND_FROM_EMAIL:config.from}).enabled,false);
 });

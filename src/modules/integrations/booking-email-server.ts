@@ -24,10 +24,22 @@ export async function runBookingEmailWorker() {
 export async function requestBookingEmail(operatorId: string, bookingId: string, requestId: string) {
   return withOperatorService(operatorId, "bookings.create", async (client, context) => {
     const config = bookingEmailConfig();
-    if (!config.enabled || config.operatorId !== context.operatorId) throw Error("Email delivery is not enabled for this workspace.");
+    if (backgroundDeliveryPaused() || !config.enabled || config.operatorId !== context.operatorId) throw Error("Email delivery is not enabled for this workspace.");
     const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuid.test(bookingId) || !uuid.test(requestId)) throw Error("Invalid resend request");
     const { error } = await client.rpc("request_booking_email_v2", { p_operator_id: context.operatorId, p_actor_id: context.staffProfileId, p_booking_id: bookingId, p_request_id: requestId });
     if (error) throw Error("Unable to queue confirmation");
+  });
+}
+
+/** Owner-only resend of one recipient/event; queue and provider retry identity stay separate. */
+export async function requestRecipientEmail(operatorId: string, deliveryId: string, requestId: string) {
+  return withOperatorService(operatorId, 'integrations.manage', async (client, context) => {
+    const config = bookingEmailConfig();
+    if (backgroundDeliveryPaused() || !config.enabled || config.operatorId !== context.operatorId) throw Error('Email delivery is disabled.');
+    const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuid.test(deliveryId) || !uuid.test(requestId)) throw Error('Invalid resend request');
+    const {error} = await client.rpc('request_booking_email_recipient_v1',{p_operator_id:context.operatorId,p_actor_id:context.staffProfileId,p_delivery_id:deliveryId,p_request_id:requestId});
+    if(error) throw Error('Unable to queue selected email');
   });
 }

@@ -30,6 +30,6 @@ export function bookingEmailConfig(env: NodeJS.ProcessEnv = process.env): EmailC
     || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(operatorId)
     || !/^\d{4}-\d{2}-\d{2}T.*(?:Z|[+-]\d{2}:\d{2})$/.test(since) || !Number.isFinite(Date.parse(since))
     || !["http:","https:"].includes(site.protocol) || site.username || site.password
-    || (production && site.protocol !== "https:")) throw Error("email_configuration_invalid");
+    || (production && (site.protocol !== "https:" || fromAddress.toLowerCase().endsWith("@resend.dev")))) throw Error("email_configuration_invalid");
   return { enabled: true, apiKey: env.RESEND_API_KEY, from, owner, replyTo, testRecipient, operatorId, since, siteUrl: site.origin };
 }

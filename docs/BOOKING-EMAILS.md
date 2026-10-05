@@ -211,3 +211,67 @@ Official Resend guidance: [domain verification](https://resend.com/docs/dashboar
 ### Preparation verification
 
 All provider calls in tests were mocked. In-memory PostgreSQL-compatible and local embedded PostgreSQL databases only; no hosted database changes. Tests cover actual route 401 rejection/authorized disabled response, test redirection, event-recipient pairs, retry, manual resend, enqueue/claim concurrency, activation boundary equality/new/old events, prequeued historical jobs, heartbeat permissions/overlap/empty completion and stale status. No deployment or real email is claimed. See EMAIL-ACTIVATION-PREPARATION.md for the final test/file inventory.
+
+## Transactional email completion — 5 October 2026
+
+**IMPLEMENTATION GATE: PASS. LIVE DELIVERY: DISABLED. REAL RESEND ACCEPTANCE: BLOCKED / NOT RUN.** The owner explicitly chose “Complete implementation; keep live delivery disabled.” This continuation does not activate delivery, cron, notification projection or push. No commit, push, deployment, hosted migration, production booking, or real email send was performed.
+
+This section supersedes historical template/configuration descriptions above. The intended sender is `Sightseeing Shkodra <tickets@sightseeingshkodra.app>` configured through `RESEND_FROM_EMAIL`; the intended domain is **sightseeingshkodra.app**, not the historical .com example. It is not a hardcoded delivery fallback. No provider/domain verification is claimed from configuration presence alone.
+
+### Existing architecture audited and reused
+
+- `booking-email-config.ts`, `resend-provider.ts`, `booking-email-worker.ts`, `booking-email-server.ts`: server-only configuration, protected worker and existing Resend adapter.
+- `booking-email-template.ts`, `booking-email-preview.ts`, Admin Email panel/actions/test form: existing versioned templates and owner diagnostics.
+- Existing `domain_events` and `notification_deliveries`, including creation, modification and cancellation producers, leases, activation boundary, retention and recipient deduplication. No second queue or notification architecture.
+- Existing `bookings.qr_token`, `bookingQrMatrix`, staff `resolve_booking_pass_v1`, booking management token and `/booking/manage#token=...`; `/route`, `/book` and existing admin booking detail links.
+- The shared booking `meetingPoint` remains the approved boarding link. No copied operational stop list or invented start-stop name was added.
+
+### Completed implementation
+
+New queue deliveries use template version 2; already prepared version-1 jobs retain the original rendering and payload. Six branded HTML/plain-text variants include the existing product title/description/inclusions, service date/time/timezone, customer, reference, payment status, adults/children/infants where recorded, total passengers and authoritative occupied seats. Legacy records without a category snapshot do not invent age categories. Product inclusions supply configured daily-ticket/hop-on-hop-off wording; no new entitlement or capacity rule is inferred from marketing text.
+
+A PNG derivative of the existing logo supports mail clients without SVG support. Customer confirmed/updated messages include an inline PNG QR containing the same opaque booking credential as the public pass, generated locally. Owner emails contain no customer management bearer token or QR. Cancellation emails have no QR, explicitly invalidate the ticket, show released seats/timestamp and offer Book Again. Previous/new values appear only when the existing customer-modification audit snapshot matches the same event and current allocation; unavailable or superseded history is omitted.
+
+The migration extends the existing queue with recipient email, provider and accepted timestamp; existing provider reference, failure code, attempt count and status remain authoritative. No HTML/email bodies are stored. Existing 60-day snapshot/envelope redaction also removes recipient addresses. Each selected-recipient manual resend is authenticated, owner-only, operator-scoped, audited, rate-limited and idempotent. It preserves the original canonical event type, cannot fan out to the other recipient, rejects pending duplicates and refuses an event incompatible with the current booking status. Cancellation resends are supported. Existing confirmation resend remains available where already used, with the same Vercel pause guard.
+
+Admin now shows provider/message ID, recipient address, acceptance time and sanitized failure details. It offers separate customer/owner resend controls only when effective sending is enabled. Effective status respects the Vercel Hobby pause even if EMAIL_ENABLED were accidentally true. The safe configured-recipient test is explicitly labelled `Sightseeing Shkodra — Email System Test`; it creates no booking and does not drain the queue. Production sandbox senders under resend.dev are rejected. No secret values are displayed.
+
+Resend references used: [inline CID images](https://resend.com/changelog/embed-images-using-cid), [idempotency keys](https://resend.com/changelog/idempotency-keys). The existing retry policy stops before the provider's 24-hour idempotency window expires. The new QR attachment uses `content_id` and deterministic local PNG rendering, with no remote QR service.
+
+### Migration and activation boundary
+
+`supabase/migrations/20261005000400_transactional_email_completion.sql` was applied only to disposable automated-test databases. Apply it through a separately authorized hosted release before deploying the changed Email admin query/worker. Historical migrations were not edited. Booking, pricing, inventory, modification/cancellation, Auth and RLS logic remain unchanged.
+
+The inspected local `.env.local` has no configured RESEND_API_KEY, RESEND_FROM_EMAIL, BOOKING_OWNER_EMAIL, BOOKING_REPLY_TO_EMAIL, EMAIL_TEST_RECIPIENT or EMAIL_START_AT. EMAIL_ENABLED is absent and defaults false. This is local evidence; Vercel/Resend account configuration was not independently verified in this task.
+
+Before any later real acceptance, configure a verified Resend sending domain and server-only key, the sender and monitored reply-to, the owner and approved controlled test recipient, canonical site/operator bindings and explicit activation timestamp. Review one supported scheduler and the Vercel pause guard under a new activation decision; do not bypass the guard or enable an old Netlify worker. The current Hobby decision remains unchanged.
+
+### Verification
+
+Full chain: **348 passed, zero failed/skipped** (27 components, 17 identity, 124 integrations, 156 database, 24 PostgreSQL concurrency). After the final preview-origin adjustment, **34 targeted email/admin/scheduler tests**, lint, TypeScript and isolated production build all passed. Build copied the candidate source without environment credentials; it verifies compilation, not hosted configuration. Whitespace check passed.
+
+New isolated lifecycle evidence: creation emits exactly one customer and one owner message; decoded email PNG equals the canonical QR token; four passengers including one infant occupy three seats; modification changes departure/counts/price and preserves QR identity; reliable previous/new snapshot is displayed; repeated modification does not duplicate; cancellation releases occupied capacity and makes the scanner return CANCELLED; cancellation messages omit QR. Selected-owner cancellation resend emits exactly one message; duplicate request, cross-operator/public-role attempts and stale confirmation after cancellation are rejected. Version-one retry content is unchanged. Existing failure tests prove provider failure preserves the reservation and retry payload/key; all provider sends here are simulated.
+
+All six generated variants were inspected for overflow/images at 320px and 600px in Chrome, plus customer/owner checks at 390px. Logo and customer QR loaded; cancellation contains no QR. Customer ticket and update layouts were visually inspected. This does not certify Gmail, Apple Mail or Outlook rendering/inbox arrival. No actual Resend API request was sent or accepted. Private evidence: `private/email-completion-{full,final-targeted,lint,types,build}.log`; synthetic HTML in `private/email-preview-v2`.
+
+### Requested final acceptance matrix
+
+| Item | Status | Scope / remaining requirement |
+|---|---|---|
+| Resend configuration | BLOCKED | Local provider configuration absent; no authenticated provider acceptance test. |
+| Domain | BLOCKED | Intended sightseeingshkodra.app; verified sending status not independently checked here. |
+| Sender | BLOCKED | Configure/verify RESEND_FROM_EMAIL with the verified domain. |
+| Owner email | BLOCKED | BOOKING_OWNER_EMAIL absent locally; controlled recipient required for live acceptance. |
+| Customer booking email | BLOCKED | Implemented and simulated PASS; real provider acceptance intentionally not run. |
+| Owner booking notification | BLOCKED | Implemented and simulated PASS; real provider acceptance intentionally not run. |
+| Customer modification email | BLOCKED | Implemented and simulated PASS; real provider acceptance intentionally not run. |
+| Owner modification notification | BLOCKED | Implemented and simulated PASS; real provider acceptance intentionally not run. |
+| Customer cancellation email | BLOCKED | Implemented and simulated PASS; real provider acceptance intentionally not run. |
+| Owner cancellation notification | BLOCKED | Implemented and simulated PASS; real provider acceptance intentionally not run. |
+| QR integration | PASS | Canonical credential decoded from email PNG; cancellation rejected by existing resolver in isolated DB. |
+| Email logging | PASS | Existing queue metadata/acceptance/failure history and retention verified locally. |
+| Admin resend | PASS | Recipient-specific server/database authorization, deduplication, state and rate checks passed; live delivery disabled. |
+| Test email | BLOCKED | Safe function implemented/tested with fake provider; no actual Resend acceptance. |
+| Duplicate protection | PASS | Event/recipient uniqueness, leases, frozen retry payloads and manual request identity verified. |
+| Security | PASS | Server-only provider calls, existing booking authorization, owner/operator checks, no secret output; local scoped validation. |
+| End-to-end test | BLOCKED | Isolated simulated A–E lifecycle passed. Real Resend and mail-client acceptance intentionally deferred by owner decision. |

@@ -7,7 +7,7 @@ export async function getEmailAdmin(operatorId: string, filter?: string, recipie
   return run(operatorId, 'integrations.manage', async client => {
     const config = emailAdminStatus(operatorId);
     const heartbeat = await client.from('email_worker_status').select('started_at,finished_at,last_success_at,status,processed').eq('operator_id',operatorId).maybeSingle();
-    const base = () => client.from('notification_deliveries').select('id,booking_id,booking_reference,event_type,recipient_type,status,attempt_count,created_at,updated_at')
+    const base = () => client.from('notification_deliveries').select('id,booking_id,booking_reference,event_type,recipient_type,status,attempt_count,created_at,updated_at,recipient_email,provider,provider_reference,sent_at,last_error_code')
       .eq('operator_id', operatorId).in('recipient_type', ['customer','owner']);
     let history = base().order('created_at', {ascending:false}).limit(100);
     if (filter && filter in deliveryGroups) history = history.in('status', deliveryGroups[filter as keyof typeof deliveryGroups]);

@@ -1,3 +1,4 @@
+import { backgroundDeliveryPaused } from './background-delivery';
 import 'server-only';
 import { bookingEmailConfig, validEmail } from './booking-email-config';
 
@@ -14,7 +15,7 @@ export function emailAdminStatus(operatorId: string, env: NodeJS.ProcessEnv = pr
     try { ready = bookingEmailConfig({ ...env, EMAIL_ENABLED: 'true' }).enabled; } catch { /* Missing/invalid configuration. */ }
   }
   return {
-    bound, enabled: bound && env.EMAIL_ENABLED === 'true', ready, siteConfigured,
+    bound, enabled: bound && env.EMAIL_ENABLED === 'true' && !backgroundDeliveryPaused(env), ready, siteConfigured,
     apiKeyConfigured: bound && Boolean(env.RESEND_API_KEY),
     cronConfigured: bound && (env.CRON_SECRET?.length ?? 0) >= 32,
     senderName: match?.[1].trim() ?? '', senderEmail: validEmail(address) ? address : '',

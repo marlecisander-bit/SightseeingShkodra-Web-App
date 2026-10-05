@@ -1,3 +1,4 @@
+import { bookingEmailAttachments } from "./booking-email-attachments";
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { bookingEmailConfig, validEmail, type EmailConfig } from "./booking-email-config";
@@ -50,11 +51,11 @@ export async function processBookingEmails(store: EmailStore, config: EmailConfi
   for (; processed < 4 && Date.now() < startDeadline; processed++) {
     const claimed = await store.claim(config.operatorId, config.since);
     if (!claimed) break;
-    const job = await store.prepare(claimed, { version: 1, from: config.from, owner: config.owner, replyTo: config.replyTo, siteUrl: config.siteUrl, testRecipient: config.testRecipient });
+    const job = await store.prepare(claimed, { version: 2, from: config.from, owner: config.owner, replyTo: config.replyTo, siteUrl: config.siteUrl, testRecipient: config.testRecipient });
     const audit = { event: job.event_type, reference: job.booking_reference, recipient: job.recipient_type, manual: job.manual };
     if (job.status === "skipped") { log({ ...audit, status: "skipped" }); continue; }
     // A saved production job must never escape into live delivery on a development host.
-    if (job.envelope.version !== 1 || job.envelope.testRecipient !== config.testRecipient) {
+    if (![1, 2].includes(job.envelope.version) || job.envelope.testRecipient !== config.testRecipient) {
       await store.finish(job, "failed", "email_mode_changed"); log({ ...audit, status: "failed", code: "email_mode_changed" }); continue;
     }
     const originalTo = job.recipient_type === "customer" ? job.send_snapshot.email : job.envelope.owner;
@@ -62,7 +63,8 @@ export async function processBookingEmails(store: EmailStore, config: EmailConfi
       await store.finish(job, "skipped", "recipient_email_invalid"); log({ ...audit, status: "skipped", code: "recipient_email_invalid" }); continue;
     }
     const template = bookingEmailTemplate(job.event_type, job.recipient_type, job.send_snapshot, job.envelope, job.operator_id, job.booking_id);
-    const result = await send(`booking-email/${job.id}`, { from: job.envelope.from, to: [job.envelope.testRecipient ?? originalTo], reply_to: job.envelope.replyTo, ...template });
+    const attachments = await bookingEmailAttachments(job.event_type, job.recipient_type, job.send_snapshot, job.envelope);
+    const result = await send(`booking-email/${job.id}`, { from: job.envelope.from, to: [job.envelope.testRecipient ?? originalTo], reply_to: job.envelope.replyTo, ...template, ...(attachments ? { attachments } : {}) });
     const outcome = result.outcome === "retry" && job.attempt_count >= 5 ? "uncertain" : result.outcome;
     await store.finish(job, outcome, result.code, result.reference);
     log({ ...audit, status: outcome, providerId: result.reference, code: result.code });
