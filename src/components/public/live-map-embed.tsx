@@ -8,7 +8,7 @@ import {parseJourney,type JourneySnapshot} from '@/modules/tracking/journey-cont
 import { publicMapBinding, publicMapUrl as mapUrl } from '@/modules/tracking/public-map-binding';
 const mapOrigin = publicMapBinding.origin;
 
-export function LiveMapEmbed({ priority = false, presentation = "compact", onJourney, selectedStopId }: { priority?: boolean; presentation?: "full" | "compact"; onJourney?:(snapshot:JourneySnapshot|null)=>void; selectedStopId?:string }) {
+export function LiveMapEmbed({ priority = false, presentation = "compact", collapseRecovery = false, onJourney, selectedStopId }: { priority?: boolean; collapseRecovery?: boolean; presentation?: "full" | "compact"; onJourney?:(snapshot:JourneySnapshot|null)=>void; selectedStopId?:string }) {
   const [reload, setReload] = useState(0);
   const frame=useRef<HTMLIFrameElement>(null);
   useEffect(()=>{
@@ -47,7 +47,7 @@ export function LiveMapEmbed({ priority = false, presentation = "compact", onJou
     {presentation === "compact" && !interactive && <div className={styles.scrollSurface} aria-hidden="true" />}
     </div>
     {presentation === "compact" && <div className={styles.interaction}><Button type="button" aria-pressed={interactive} onClick={() => setInteractive(value => !value)}>{interactive ? "Done interacting" : "Interact with map"}</Button><span>{interactive ? "Pan and zoom the map, or finish to scroll the page." : "Scroll freely, or enable map controls."}</span></div>}
-    {onJourney ? <details className={styles.help}><summary>Map help</summary>
+    {onJourney || collapseRecovery ? <details className={styles.help}><summary>Map help</summary>
     <div className={`widget-action-bar ${styles.recovery}`}>
       <Button type="button" onClick={() => { onJourney?.(null); setLoaded(false); setSlow(false); setReload(value => value + 1); }}>Reload map</Button>
       <a className={`ss-button ${styles.secondary}`} href={mapUrl} target="_blank" rel="noopener noreferrer"><ButtonContent>Open map in a new tab</ButtonContent></a>
@@ -62,4 +62,10 @@ export function LiveMapEmbed({ priority = false, presentation = "compact", onJou
     </>}
 
   </div>;
+}
+
+/** Do not create the external map document until the visitor requests it. */
+export function HomepageMapDisclosure() {
+  const [open, setOpen] = useState(false);
+  return <details className="p-home-inline-map" onToggle={event=>setOpen(event.currentTarget.open)}><summary>Show live map here</summary>{open && <LiveMapEmbed collapseRecovery/>}</details>;
 }

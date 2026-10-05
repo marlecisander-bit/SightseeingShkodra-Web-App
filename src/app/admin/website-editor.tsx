@@ -41,6 +41,10 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
   }}>
     {sectionId === "reviews" && <p><a href={`/admin/${operatorId}/reviews`}>Manage guest reviews and ordering</a>. This section is hidden until a review is published.</p>}
     {sectionId==='footer'&&<p>Leave a social link empty to hide it. Manage your Google Reviews link below.</p>}
+    {sectionId==='how'&&<p>These steps appear on the homepage and Tour page. The homepage introduction visibility switch also controls its How it works section.</p>}
+    {sectionId==='intro'&&<p>This story appears after Route &amp; Live Service. Its visibility switch also controls the homepage How it works section; edit those shared steps under How it works in Homepage content.</p>}
+    {sectionId==='route'&&<p>This copy introduces destination highlights. The homepage stop overview uses the published stops from Live Map. This visibility switch controls both.</p>}
+    {sectionId==='departures'&&<p>On the homepage, this copy appears in the Live Service summary. Scheduled times still come from Calendar &amp; Pricing.</p>}
     {sectionId==='whatsapp'&&<p>Use your WhatsApp Business number with its country code. Save Draft keeps changes private; Publish updates the website. Leave the button label empty to show only the icon.</p>}
     {sectionId==='navigation'&&<p>Desktop and mobile share these links. Route and Live map lead to the combined Route &amp; Live Map page. If several links lead to the same page, the first link supplies its label. Edit that first label to customize it; the original Route and Live map labels use the combined page name.</p>}
     {sectionId.startsWith('legal')&&<p>Plain text only. Add your approved legal wording, set Published, then publish. Unpublished pages show a neutral availability notice.</p>}

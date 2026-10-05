@@ -1546,3 +1546,108 @@ body:has(.p-booking-dialog[open]) {
 @media(max-width:900px) and (max-height:650px){
  .public-site .p-hero-v2 h1{padding-top:calc(var(--p-header-height) + env(safe-area-inset-top) + 16px)}
 }
+
+/* Homepage information flow; shared Tour, booking and map pages retain their styling. */
+.public-site .p-home .p-section{padding-block:64px}
+.public-site .p-home .p-section-heading{margin-bottom:28px}
+.public-site .p-home .p-home-how ol{list-style:none;padding:0;margin:0 0 24px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+.public-site .p-home-how li{display:flex;gap:12px;border-top:1px solid var(--ss-border);padding-top:16px}
+.public-site .p-home-how li>span,.public-site .p-home-stops li>span{color:var(--brand-red);font-size:13px;font-weight:700}
+.public-site .p-home .p-home-how h3{font-size:20px;margin:0 0 6px;line-height:1.2}
+.public-site .p-home .p-home-how li p{font-size:16px;line-height:1.5;margin:0}
+.public-site .p-home-stops{border-top:1px solid var(--ss-border)}
+.public-site .p-home-stops ol{list-style:none;padding:0;margin:24px 0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:20px}
+.public-site .p-home-stops li{display:flex;gap:12px;align-items:baseline;min-width:0}
+.public-site .p-home-stops li a{font-size:18px;line-height:1.4;min-height:44px;display:flex;align-items:center}
+.public-site .p-home-service{background:var(--ss-sand,#fff8ee)}
+.public-site .p-home-service-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}
+.public-site .p-home-service-grid>div{min-width:0}
+.public-site .p-home-service-grid h2{font-size:clamp(28px,3vw,42px);line-height:1.1;margin:0 0 16px}
+.public-site .p-home-service-grid>div>p{max-width:48ch}
+.public-site .p-home-service-grid .p-button{display:flex;width:fit-content;margin-top:20px}
+.public-site .p-home-timetable{border-top:1px solid var(--ss-border);margin-top:24px;padding-top:20px}
+.public-site .p-home-timetable h3{font-size:20px;line-height:1.2;margin:0 0 14px}
+.public-site .p-home-service-summary{margin:16px 0}
+.public-site .p-home-service-summary strong{font-size:20px}
+.public-site .p-home-service-summary small{font-size:13px;display:block;max-width:45ch}
+.public-site .p-home-service iframe{height:320px}
+.public-site .p-home-ticket{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:40px;border:1px solid var(--ss-border);border-radius:var(--ss-radius);padding:32px;background:var(--ss-sand,#fff8ee)}
+.public-site .p-home-ticket h2{font-size:clamp(28px,3vw,42px);line-height:1.1;margin:0 0 20px}
+.public-site .p-home-ticket h3{font-size:20px;margin:24px 0 12px}
+.public-site .p-ticket-inclusions{white-space:pre-line}
+.public-site .p-home-ticket-action{align-self:center;min-width:0}
+.public-site .p-home-ticket-action>.p-button{width:100%}
+.public-site .p-home-ticket-action>.p-preview{font-size:14px}
+.public-site .p-hero-commercial .p-hero-product{font-size:16px;line-height:1.3;font-weight:700;margin:0 0 6px;max-width:40ch}
+.public-site .p-hero-commercial .p-hero-benefits{font-size:14px;line-height:1.4;margin:0 0 10px}
+.public-site .p-home .p-hero-commercial .p-booking-price strong{font-size:clamp(32px,4vw,44px);line-height:1.1}
+@media(max-width:900px){
+ .public-site .p-home .p-section{padding-block:40px}
+ .public-site .p-home .p-section-heading{gap:16px;margin-bottom:22px}
+ .public-site .p-home .p-section h2{font-size:clamp(28px,4vw,32px);line-height:1.12}
+ .public-site .p-home .p-home-how ol{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 16px}
+ .public-site .p-home-service-grid{grid-template-columns:1fr;gap:24px}
+ .public-site .p-home-stops ol{grid-template-columns:1fr;gap:0;margin:16px 0 24px}
+ .public-site .p-home-stops li{border-bottom:1px solid var(--ss-border);padding:4px 0}
+ .public-site .p-home-ticket{grid-template-columns:1fr;gap:24px;padding:24px}
+ .public-site .p-home-ticket-action{border-top:1px solid var(--ss-border);padding-top:20px}
+ .public-site .p-home .p-hero-commercial{margin-top:clamp(80px,22vw,120px)}
+ .public-site .p-home .p-hero-v2 h1{font-size:clamp(32px,10.8vw,44px);line-height:.97}
+ .public-site .p-home .p-hero-commercial .p-booking-price strong{font-size:36px}
+ .public-site .p-home .p-hero-commercial .p-hero-product{font-size:15px}
+ .public-site .p-home .p-stop-preview>div{padding:20px}
+ .public-site .p-home .p-stop-preview h3{font-size:24px}
+}
+@media(min-width:431px) and (max-width:900px){
+ .public-site .p-home .p-hero-v2 h1{font-size:clamp(44px,5.8vw,51.28px)}
+}
+@media(max-width:360px){
+ .public-site .p-home .p-home-how ol{grid-template-columns:1fr;gap:14px}
+ .public-site .p-home .p-home-how li p{font-size:15px}
+ .public-site .p-home-ticket{padding:20px}
+}
+.public-site .p-home-how-details{margin:0 0 12px;font-size:16px}
+.public-site .p-home-how-details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;text-decoration:underline}
+.public-site .p-home-how-details summary:focus-visible{outline:3px solid var(--brand-red);outline-offset:3px}
+.public-site .p-home-how-details p{max-width:65ch}
+@media(max-width:900px){
+ .public-site .p-home-service iframe{height:260px}
+ .public-site .p-home .p-route-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .public-site .p-home .p-route-list .p-preview{grid-column:1/-1;margin:0 0 8px}
+ .public-site .p-home .p-route-list button{padding:12px 8px;gap:8px;min-height:64px}
+ .public-site .p-home .p-route-list button small{display:none}
+ .public-site .p-home .p-route-list .p-stop-number{font-size:13px}
+ .public-site .p-home .p-stop-preview>.p-media{height:220px;min-height:0;aspect-ratio:auto}
+ .public-site .p-home .p-route-layout{gap:20px}
+}
+.public-site .p-home>.p-section.p-home-service{padding-block:48px}
+.public-site .p-home-timetable{padding-top:8px;margin-top:16px}
+.public-site .p-home-timetable summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-size:12px;letter-spacing:.08em}
+.public-site .p-home-timetable summary::after{content:'+';margin-left:auto;font-size:20px}
+.public-site .p-home-timetable[open] summary::after{content:'−'}
+.public-site .p-home-timetable summary:focus-visible{outline:3px solid var(--brand-red);outline-offset:3px}
+@media(max-width:900px){
+ .public-site .p-home>.p-section.p-home-service{padding-block:32px}
+ .public-site .p-home-service .interactive-widget[data-presentation="compact"] iframe{height:240px}
+ .public-site .p-home-service-summary{margin-block:8px 12px}
+ .public-site .p-home-service-summary p{margin-block:8px}
+ .public-site .p-home-service-grid>div>p{line-height:1.5;margin-bottom:12px}
+ .public-site .p-home-ticket p{font-size:16px;line-height:1.5}
+ .public-site .p-home .p-home-how li{padding-top:12px}
+ .public-site .p-home .p-home-how ol{margin-bottom:12px;gap:12px 16px}
+ .public-site .p-home-how-details{margin-bottom:4px}
+}
+.public-site .p-home-inline-map{margin-top:12px;border-top:1px solid var(--ss-border)}
+.public-site .p-home-inline-map summary{min-height:44px;display:flex;align-items:center;cursor:pointer;text-decoration:underline;font-size:14px}
+.public-site .p-home-inline-map summary:focus-visible{outline:3px solid var(--brand-red);outline-offset:3px}
+.public-site .p-home-service-grid>div+div{border:1px solid var(--ss-border);border-radius:var(--ss-radius);padding:20px;background:var(--ss-white,#fff)}
+.public-site .p-home-service-grid>div+div .p-home-timetable{margin-top:0;border-top:0;padding-top:0}
+@media(max-width:900px){.public-site .p-home-service-grid{gap:20px}}
+.public-site .p-home-service-grid[data-live="false"]{grid-template-columns:1fr}
+.public-site .p-home .p-home-service+.p-section{padding-top:64px}
+.public-site .p-home .p-booking-price .p-price-prefix{font-size:.65em;font-weight:400}
+.public-site .p-home .p-hero-service{font-size:13px;line-height:18px;min-height:18px;margin-top:8px}
+@media(max-width:900px){.public-site .p-home .p-home-service+.p-section{padding-top:40px}}
+@media(max-width:900px) and (max-height:650px){
+ .public-site .p-home .p-hero-commercial{margin-top:40px}
+}

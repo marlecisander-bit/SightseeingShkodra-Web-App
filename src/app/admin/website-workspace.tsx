@@ -35,7 +35,7 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
   });
   const selected = websiteSections.find(s => s.id === active) ?? websiteSections[0];
   const image = selected.fields.find(f => f.kind === "image");
-  const preview = `/admin/${operatorId}/website-preview?page=${({legalprivacy:"privacy-policy",legalterms:"terms-and-conditions",how:"tour",tourPage:"tour",explorePage:"explore",bookPage:"book",dayPage:"your-day"} as Record<string,string>)[selected.id]??"home"}`;
+  const preview = `/admin/${operatorId}/website-preview?page=${({legalprivacy:"privacy-policy",legalterms:"terms-and-conditions",how:"home",tourPage:"tour",explorePage:"explore",bookPage:"book",dayPage:"your-day"} as Record<string,string>)[selected.id]??"home"}`;
   function select(id: string, jump = false) {
     if (pending || (dirtySection && dirtySection.id !== id)) { setNotice("Save or discard your current edits before opening another section."); return; }
     setNotice("");
