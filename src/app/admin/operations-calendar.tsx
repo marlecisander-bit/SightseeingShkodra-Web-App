@@ -12,6 +12,7 @@ export type CalendarSlot={id:string|null;time:string;capacity:number;open:boolea
 export type CalendarDay={date:string;slots:CalendarSlot[];range:Settings|null;exception:{calendar_settings:Settings;closed:boolean;departure_times:ScheduleTime[]}|null};
 type Offer={name:string;label:string;type:'fixed'|'percent'|'amount';values:Partial<Record<'adult'|'child'|'infant',number>>;times?:string[]};
 export type Settings={closed?:boolean;times?:ScheduleTime[];capacity?:number;prices?:Partial<Record<'adult'|'child'|'infant',number>>;offer?:Offer;departures?:Record<string,Settings>};
+const daySettings=(day:CalendarDay):Settings=>(day.exception?{...day.exception.calendar_settings,closed:day.exception.closed,times:day.exception.departure_times}:{times:day.slots.filter(s=>s.open).map(s=>({time:s.time})),closed:!day.slots.some(s=>s.open)});
 const money=(n:number)=>new Intl.NumberFormat('en-IE',{style:'currency',currency:'EUR'}).format(n/100);
 function PriceFields({value,onChange,percent=false}:{value:Settings['prices'];onChange:(v:Settings['prices'])=>void;percent?:boolean}) {return <div className={styles.prices}>{passengerKeys.map(k=><label key={k}>{passengerLabels[k]} ({percent?'%':'EUR'})<input inputMode="decimal" type="number" min="0" max={percent?100:9999999} step={percent?1:0.01} placeholder="Use usual price" value={value?.[k]===undefined?'':value[k]!/(percent?1:100)} onChange={e=>{const next={...value};if(e.target.value==='')delete next[k];else next[k]=Math.round(Number(e.target.value)*(percent?1:100));onChange(next);}}/></label>)}</div>;}
 export function StandardPricing({operatorId,productId,stamp,categories}:{operatorId:string;productId:string;stamp:string;categories:PassengerCategories}) {
@@ -20,12 +21,14 @@ export function StandardPricing({operatorId,productId,stamp,categories}:{operato
 }
 export function OperationsCalendar({operatorId,schedule,days,month,today}:{operatorId:string;schedule:ServiceSchedule;days:CalendarDay[];month:string;today:string}) {
  const editor=useRef<HTMLFormElement>(null);const [newTime,setNewTime]=useState('');
+ const [loadedStamp,setLoadedStamp]=useState(schedule.updated_at);
  const router=useRouter(),[from,setFrom]=useState(''),[to,setTo]=useState(''),[weekdays,setWeekdays]=useState([1,2,3,4,5,6,7]),[settings,setSettings]=useState<Settings>({}),[message,setMessage]=useState(''),[confirmed,setConfirmed]=useState(false),[pending,start]=useTransition();
  const selected=days.find(d=>d.date===from),offset=(new Date(month+'T12:00:00Z').getUTCDay()+6)%7;
+ if(loadedStamp!==schedule.updated_at){setLoadedStamp(schedule.updated_at);if(from===to&&selected)setSettings(daySettings(selected));}
  function navigate(delta:number){const d=new Date(month+'T12:00:00Z');d.setUTCMonth(d.getUTCMonth()+delta);router.push(`?date=${d.toISOString().slice(0,10)}`);}
  const panelHistory=usePanelHistory(`calendar:${schedule.id}`,value=>{setFrom(value??'');setTo(value??'');},()=>!pending);
- function open(day:CalendarDay){panelHistory.open(day.date);requestAnimationFrame(()=>editor.current?.scrollIntoView({block:'start',behavior:'smooth'}));setFrom(day.date);setTo(day.date);setConfirmed(false);setMessage('');setSettings(day.exception?{...day.exception.calendar_settings,closed:day.exception.closed,times:day.exception.departure_times}:{times:day.slots.filter(s=>s.open).map(s=>({time:s.time})),closed:!day.slots.some(s=>s.open)});}
- function apply(restore=false){start(async()=>{const r=await saveCalendar(operatorId,schedule.id,schedule.updated_at,{from,to,weekdays,settings,confirmed,restore});setMessage(r.error??'Calendar saved. Existing bookings are unchanged.');if(!r.error){router.refresh();setFrom('');}});}
+ function open(day:CalendarDay){panelHistory.open(day.date);requestAnimationFrame(()=>editor.current?.scrollIntoView({block:'start',behavior:'smooth'}));setFrom(day.date);setTo(day.date);setConfirmed(false);setMessage('');setSettings(daySettings(day));}
+ function apply(restore=false){start(async()=>{const r=await saveCalendar(operatorId,schedule.id,schedule.updated_at,{from,to,weekdays,settings,confirmed,restore});setMessage(r.error??'Calendar saved. Existing bookings are unchanged.');if(!r.error){router.refresh();}});}
  function departure(time:string,value:Settings){setSettings({...settings,departures:{...settings.departures,[time]:value}});}
  function toggleDeparture(time:string,enabled:boolean){setSettings(toggleCalendarDeparture(settings,selected,schedule.departure_times,time,enabled));}
  const departureTimes=Array.from(new Set([...(settings.times??schedule.departure_times).map(t=>t.time),...(selected?.slots.map(s=>s.time)??[])])).sort();

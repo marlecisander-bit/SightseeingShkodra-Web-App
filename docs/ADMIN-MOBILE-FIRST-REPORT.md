@@ -114,3 +114,51 @@ Representative screenshots inspected at 390px and 1440px: Overview, Bookings, bo
 - Calendar date links select the relevant month; the Today button opens today's editor when its date is in the displayed month. Automatic editor opening from a date URL is not implemented.
 
 No full physical-device acceptance claim. Release and hosted checks are recorded separately after publication.
+
+### Follow-up deployment and hosted acceptance
+
+Published commit `0c3a95208b8c7d95fc9b31a1469ef4fab7d7f313` through main. Authenticated Vercel deployment `BWoiDaVoH78MxZyYWcQdKk7k5id2` is Ready / Production with sightseeingshkodra.app assigned, and the dashboard identifies this exact commit.
+
+On the deployed release, authenticated Overview, Website Content, Calendar & Pricing and Notifications passed at 390/768/1440px (12 route/viewport combinations): no horizontal document overflow or application error page. Published CMS Hero opened with the new panel URL fragment and browser Back returned to the section list. Captured hosted warning/error log was empty. Existing owner session remained usable. Viewport override reset; owner Overview left available.
+
+Hosted Bookings was deliberately not loaded because its existing render can materialize inventory; its follow-up acceptance used the synthetic fixture and complete regression suite. No production Save/Publish, upload, booking/payment/review mutation, database/configuration change, email or push dispatch occurred. Physical-device limitations above remain open. Follow-up local booking browser Back and closed-departure reopening checks passed.
+
+## Final owner-workflow continuation (100–153) — 5 October 2026
+
+Implementation: compact logo/bell/menu header without the extra Admin label; sticky drawer Close row; tighter booking-card spacing; 16px mobile form text; calendar save refresh retains the selected date instead of closing/remounting the editor. Updated server settings replace the selected day's editable values when the schedule stamp changes. No handler, booking rule, schema, RLS, public component or delivery configuration changed.
+
+Components created: none. Components modified: AdminShell, CalendarPanel, OperationsCalendar; shared Admin CSS. Routes created/modified: none; existing Admin routes consume these components.
+
+Fresh verification: lint PASS; TypeScript PASS; complete npm test chain 335 PASS, zero failed/skipped (18 component, 17 identity, 120 integration, 156 database, 24 PostgreSQL concurrency); isolated production build PASS. Logs are private/admin-final-{lint,types,tests,build}.log. Source copies used for the build are checked before release.
+
+Chrome fixture matrix: eight Admin sections at 320x568, 360x800, 375x667, 390x844, 414x896, 430x932, 844x390 landscape, 768x1024, 820x1180, 1280x720, 1440x900 and 1920x1080. All 96 document-overflow checks passed. Mobile menu visibility follows the desktop breakpoint; one transient measurement during navigation was rechecked at 320px and passed. The initial browser viewport capability did not resize this CDP-attached tab; those measurements were discarded and the matrix rerun with actual innerWidth verified.
+
+390px workflow evidence: Overview to Today bookings; booking expand/Back; drawer to calendar; selected date and departure; denied price save retained entered value; a separate private success stub returned the saved confirmation and retained the selected date/editor. This is UI response verification, not persistence. CMS Hero editing, Discard and section Back passed; sticky Save measured 44px and mobile input text 16px. Notifications, paused delivery states and Global WhatsApp editor inspected. Drawer remained modal with background scroll locked; after scrolling navigation, Close remained at top 12px with a 44px target and Sign out was reachable. No production test content was saved.
+
+Real production authentication: Sign out reached Staff Login; protected Website Content redirected with a safe return path; owner manually signed in and returned to Website Content. Login/logout/deep-link return PASS. Normal session remained valid; forced expiry and physical installed-session behavior remain unverified.
+
+### Acceptance status and limits
+
+PASS refers to the inspected UI and existing regression contracts, not successful new production writes. FAIL below means the requested complete acceptance has not been established, not necessarily a demonstrated defect.
+
+| Check | Result | Scope |
+|---|---|---|
+| Mobile-first Admin, complete acceptance | FAIL | Physical keyboard/safe-area and complete successful browser write workflows remain unverified. |
+| Global shell / mobile header / bell / drawer / active navigation / Back | PASS | Rendered fixture and earlier hosted checks; current release hosted check follows. |
+| Safe areas | FAIL | Standard CSS insets retained; physical notched-device/PWA evidence unavailable. |
+| Touch targets | PASS | Main controls measured; not an exhaustive physical-device certification. |
+| Overview | PASS | Existing Today links and shortcuts; no invented live metrics. |
+| Bookings list / search-filter / detail | PASS | Synthetic layout and existing filtering contracts; production Bookings avoided because rendering can materialize inventory. |
+| Booking modify | FAIL | No existing Admin modification editor; customer self-service is separate and was not retested in this walkthrough. |
+| Booking cancel | FAIL | Confirmation UI and automated rules pass; successful browser cancellation not performed. |
+| Calendar / departure management / pricing management | PASS | UI, denied-save recovery, simulated successful response and backend contracts; no new hosted write claim. |
+| Products / suppliers / guest reviews | PASS | Existing editors and responsive rendering preserved; successful hosted mutation not retested. |
+| Website content / section editor | PASS | Edit, discard, Back and sticky action controls inspected. |
+| Image management / draft save / publish | FAIL | Controls/contracts retained; successful upload/save/publish browser acceptance not completed in this continuation. |
+| Draft preview | PASS | Existing authenticated preview link retained; previous acceptance evidence applies. |
+| Notifications / email / WhatsApp | PASS | Existing UI and disabled delivery states; no delivery enabled. |
+| Live service | PENDING | Current hosted walkthrough follows release. |
+| Login / logout / deep-link return | PASS | Actual owner cycle this turn. |
+| Auth session, including forced expiry | FAIL | Normal session passes; forced-expiry browser scenario not performed. |
+
+Each requested width and landscape: PASS for the 96 fixture layout checks. No horizontal document overflow: PASS. Physical keyboard overlap, installed PWA and exhaustive control clipping: NOT VERIFIED. These limits prevent a blanket completion claim.
