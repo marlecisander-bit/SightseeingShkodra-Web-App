@@ -170,3 +170,11 @@
 @media(max-width:767px) { .focusedPreview { display:inline-flex; min-height:44px; align-items:center; align-self:start; } }
 @media(max-width:767px) { .editor :is(input,textarea,select) { scroll-margin-block:24px 150px; } }
 @media(min-width:768px) and (max-width:1023px) { .editorActions { position:sticky; bottom:0; background:var(--ss-white); z-index:4; padding:12px 16px max(12px,env(safe-area-inset-bottom)); border:1px solid var(--ss-border); border-radius:10px; } }
+.faqList{display:grid;gap:20px;min-width:0;}
+.editor .faqItem{display:grid;gap:14px;padding:18px;border:1px solid var(--ss-border);border-radius:var(--ss-radius-control);}
+.faqItem legend{font-weight:700;padding-inline:6px;}
+.faqItem label{display:grid;gap:6px;}
+.faqActions{display:flex;flex-wrap:wrap;gap:8px;}
+.faqList .faqToggle{display:flex;align-items:center;gap:10px;min-height:44px;}
+.cms .field .faqToggle input,.faqList .faqToggle input{width:20px;height:20px;min-height:20px;margin:0;flex:none;}
+.faqItem select{max-width:100%;min-height:44px;}

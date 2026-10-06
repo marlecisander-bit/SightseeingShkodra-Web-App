@@ -1,4 +1,5 @@
 "use client";
+import {FaqInput} from './faq-input';
 import { ownerFieldLabel, positionLabels, imageUploadMessage } from "./presentation";
 import { AmenitiesInput } from "./hero-amenities-input";
 import { focalPositions } from "@/modules/content/hero-amenities";
@@ -41,26 +42,25 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
   }}>
     {sectionId === "reviews" && <p><a href={`/admin/${operatorId}/reviews`}>Manage guest reviews and ordering</a>. This section is hidden until a review is published.</p>}
     {sectionId==='footer'&&<p>Leave a social link empty to hide it. Manage your Google Reviews link below.</p>}
-    {sectionId==='how'&&<p>These steps appear on the homepage and Tour page. The homepage introduction visibility switch also controls its How it works section.</p>}
-    {sectionId==='intro'&&<p>This story appears after Route &amp; Live Service. Its visibility switch also controls the homepage How it works section; edit those shared steps under How it works in Homepage content.</p>}
-    {sectionId==='route'&&<p>This copy introduces destination highlights. The homepage stop overview uses the published stops from Live Map. This visibility switch controls both.</p>}
+    {sectionId==='intro'&&<p>This heading introduces the compact homepage ticket summary. Product details and pricing retain their existing owners.</p>}
+    {sectionId==='route'&&<p>This copy introduces Tour destination stories. The homepage and Route stop overviews use published Live Map stops. The shared visibility switch controls these presentations.</p>}
     {sectionId==='departures'&&<p>On the homepage, this copy appears in the Live Service summary. Scheduled times still come from Calendar &amp; Pricing.</p>}
     {sectionId==='whatsapp'&&<p>Use your WhatsApp Business number with its country code. Save Draft keeps changes private; Publish updates the website. Leave the button label empty to show only the icon.</p>}
     {sectionId==='navigation'&&<p>Desktop and mobile share these links. Route and Live map lead to the combined Route &amp; Live Map page. If several links lead to the same page, the first link supplies its label. Edit that first label to customize it; the original Route and Live map labels use the combined page name.</p>}
     {sectionId.startsWith('legal')&&<p>Plain text only. Add your approved legal wording, set Published, then publish. Unpublished pages show a neutral availability notice.</p>}
     <p>Save your changes as a draft or publish them when you’re ready.</p>
-    {sectionId === "tourPage" && <p>FAQ questions below appear on the dedicated FAQ page. <a href={`/admin/${operatorId}/website-preview?page=faq`}>Preview saved FAQ draft</a></p>}
+    {sectionId === "faq" && <p>Save a draft to preview; publish to update the public FAQ. Questions below appear on the dedicated FAQ page. <a href={`/admin/${operatorId}/website-preview?page=faq`}>Preview saved FAQ draft</a></p>}
     {["intro","departures","tourPage"].includes(sectionId) && <p><a href={`/admin/${operatorId}/catalog`}>Products & suppliers</a> | <a href={`/admin/${operatorId}/departures`}>Calendar & Pricing</a>. Stops and live vehicle information are managed from Live Map.</p>}
     <input type="hidden" name="updated_at" value={stamp} />
     <fieldset disabled={pending}>
       {section.fields.filter(f=>f.kind==="visibility").map(f=><input key={f.key} type="hidden" name={f.key} value={values[f.key]}/>)}
       {groups.filter(group=>group.fields.length).map(group=><fieldset className={styles.fieldGroup} key={group.title}><legend>{group.title}</legend><div className={styles.fieldGrid}>{group.fields.map(field => {
         if (field.kind === "visibility") return <input key={field.key} type="hidden" name={field.key} value={values[field.key]} />;
-        const long = field.kind === "legal" || field.kind === "amenities" || /text|detail|description|alt|message/.test(field.key) || /description/i.test(field.label) || field.initial.includes("\n");
+        const long = field.kind === "faq" || field.kind === "legal" || field.kind === "amenities" || /text|detail|description|alt|message/.test(field.key) || /description/i.test(field.label) || field.initial.includes("\n");
         const heroImage = sectionId === "hero" && field.kind === "image";
         const mobileHero = heroImage && /mobile/i.test(field.key);
         return <div key={field.key} className={`${styles.field} ${long ? styles.fullField : ""} ${field.kind === "image" ? styles.imageField : ""}`}>
-          {field.kind === "toggle" ? <label>{ownerFieldLabel(field.label)}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}><option value="true">On</option><option value="false">Off</option></select></label> : field.kind === "publication" ? <label>{ownerFieldLabel(field.label)}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}><option value="unpublished">Unpublished</option><option value="published">Published</option></select></label> : field.kind === "amenities" ? <AmenitiesInput value={values[field.key]} onChange={value=>setValues(v=>({...v,[field.key]:value}))}/> : field.kind === "position" ? <label>{ownerFieldLabel(field.label)}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}>{focalPositions.map(position=><option key={position} value={position}>{positionLabels[position]}</option>)}</select></label> : field.kind === "image" ? <>
+          {field.kind === "faq" ? <FaqInput value={values[field.key]} onChange={value=>setValues(v=>({...v,[field.key]:value}))}/> : field.kind === "toggle" ? <label>{ownerFieldLabel(field.label)}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}><option value="true">On</option><option value="false">Off</option></select></label> : field.kind === "publication" ? <label>{ownerFieldLabel(field.label)}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}><option value="unpublished">Unpublished</option><option value="published">Published</option></select></label> : field.kind === "amenities" ? <AmenitiesInput value={values[field.key]} onChange={value=>setValues(v=>({...v,[field.key]:value}))}/> : field.kind === "position" ? <label>{ownerFieldLabel(field.label)}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}>{focalPositions.map(position=><option key={position} value={position}>{positionLabels[position]}</option>)}</select></label> : field.kind === "image" ? <>
             <strong>{ownerFieldLabel(field.label)}</strong>
             <div className={heroImage ? `${styles.heroPreview} ${mobileHero ? styles.heroPreviewMobile : styles.heroPreviewDesktop}` : undefined} style={heroImage ? {objectPosition: values[mobileHero ? "hero.mobilePosition" : "hero.desktopPosition"]} : undefined}>
             {/* eslint-disable-next-line @next/next/no-img-element */}

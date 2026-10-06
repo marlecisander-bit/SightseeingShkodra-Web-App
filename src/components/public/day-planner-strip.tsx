@@ -8,8 +8,9 @@ import { plannerClock, plannerSummary, type DayPlannerData } from '@/modules/con
 // The server-rendered hero target is stable for this page's lifetime. Hydration
 // attaches a second presentation to the same clock/data owner, without polling twice.
 const subscribeHeroTarget=()=>()=>{};
-export function DayPlannerStrip({initial, compact=false, service=false, showSchedule=true, showLive=true, heroSummaryTarget}:{initial?:DayPlannerData;compact?:boolean;service?:boolean;showSchedule?:boolean;showLive?:boolean;heroSummaryTarget?:string}) {
+export function DayPlannerStrip({initial, compact=false, service=false, showSchedule=true, showLive=true, heroSummaryTarget,ticketSummaryTarget}:{initial?:DayPlannerData;compact?:boolean;service?:boolean;showSchedule?:boolean;showLive?:boolean;heroSummaryTarget?:string;ticketSummaryTarget?:string}) {
  const heroTarget=useSyncExternalStore(subscribeHeroTarget,()=>heroSummaryTarget?document.getElementById(heroSummaryTarget):null,()=>null);
+ const ticketTarget=useSyncExternalStore(subscribeHeroTarget,()=>ticketSummaryTarget?document.getElementById(ticketSummaryTarget):null,()=>null);
  const [data,setData]=useState<DayPlannerData|null>(initial??null),[failed,setFailed]=useState(false),[now,setNow]=useState(()=>new Date());
  const liveStatus=useMapStatus(!compact && showLive, service);
  const day=plannerClock(now).date;
@@ -27,7 +28,7 @@ export function DayPlannerStrip({initial, compact=false, service=false, showSche
  if(service) return <><div className="p-home-service-summary">
   {showSchedule && <div><strong role="status">{summary?.status??(failed?'Schedule temporarily unavailable':'Checking today\u2019s service\u2026')}</strong>{!!summary?.upcoming?.length && <p>{summary.upcoming.join(' \u00b7 ')}</p>}<small>Scheduled departures &middot; Local Shkodra time. Check availability when booking.</small></div>}
   {showLive && <p role="status">{liveStatus??'Open the live map for the current van status.'}</p>}
- </div>{showSchedule && heroTarget && createPortal(<span>{summary?.upcoming?.length?`Next departure ${summary.upcoming[0]}`:summary?.status??'Check today’s schedule'}</span>,heroTarget)}</>;
+ </div>{showSchedule&&ticketTarget&&createPortal(<span>Departures today: {data?.date===day&&data.times?.length?data.times.join(" · "):summary?.status??"Check today’s schedule"}</span>,ticketTarget)}{showSchedule && heroTarget && createPortal(<span>{summary?.upcoming?.length?`Next departure ${summary.upcoming[0]}`:summary?.status??'Check today’s schedule'}</span>,heroTarget)}</>;
  return <div className={`p-facts p-day-planner${compact?" p-day-planner-compact":""}`} aria-label="Plan your day">
   <Link href="/book"><span>01 / HOP ON</span><strong>{summary?.price!=null?`From ${new Intl.NumberFormat('en-IE',{style:'currency',currency:'EUR'}).format(summary.price/100)} per adult`:data||failed?'View tickets':'Loading fare…'}</strong><small>{data?.title??'Daily ticket'}</small></Link>
   {!compact&&<PlannerPanel title="Route & stops" label={<><span>02 / EXPLORE</span><strong>{data?.stops?`${data.stops.length} stops around Shkodra`:data||failed?'Explore route':'Loading route…'}</strong><small>View route &amp; stops</small></>}><ol>{data?.stops?.map(s=><li key={s.id}>{s.label}</li>)}</ol><Link href="/route">Open live map</Link></PlannerPanel>}

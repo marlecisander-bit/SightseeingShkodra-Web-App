@@ -1192,12 +1192,12 @@ body:has(.p-booking-dialog[open]) {
   .public-site .p-editorial h3 {
     font-size: 29px;
   }
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
   .public-site .p-subpage {
     padding-top: 115px;
     padding-bottom: 45px;
@@ -1297,7 +1297,7 @@ body:has(.p-booking-dialog[open]) {
  .public-site .p-hero:not(.p-hero-v2) .p-hero-content { padding:125px var(--p-gutter) 150px; }
  .public-site .p-hero:not(.p-hero-v2) { height:auto; max-height:none; }
  .public-site .p-hero h1 { font-size:clamp(2.65rem,10vw,4rem); }
- 
+
 }
 
 .public-site .p-navigation a[aria-current=page] { text-decoration:underline; text-decoration-color:var(--ss-yellow); text-decoration-thickness:3px; text-underline-offset:7px; }
@@ -1550,11 +1550,7 @@ body:has(.p-booking-dialog[open]) {
 /* Homepage information flow; shared Tour, booking and map pages retain their styling. */
 .public-site .p-home .p-section{padding-block:64px}
 .public-site .p-home .p-section-heading{margin-bottom:28px}
-.public-site .p-home .p-home-how ol{list-style:none;padding:0;margin:0 0 24px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
-.public-site .p-home-how li{display:flex;gap:12px;border-top:1px solid var(--ss-border);padding-top:16px}
-.public-site .p-home-how li>span,.public-site .p-home-stops li>span{color:var(--brand-red);font-size:13px;font-weight:700}
-.public-site .p-home .p-home-how h3{font-size:20px;margin:0 0 6px;line-height:1.2}
-.public-site .p-home .p-home-how li p{font-size:16px;line-height:1.5;margin:0}
+.public-site .p-home-stops li>span{color:var(--brand-red);font-size:13px;font-weight:700}
 .public-site .p-home-stops{border-top:1px solid var(--ss-border)}
 .public-site .p-home-stops ol{list-style:none;padding:0;margin:24px 0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:20px}
 .public-site .p-home-stops li{display:flex;gap:12px;align-items:baseline;min-width:0}
@@ -1585,7 +1581,6 @@ body:has(.p-booking-dialog[open]) {
  .public-site .p-home .p-section{padding-block:40px}
  .public-site .p-home .p-section-heading{gap:16px;margin-bottom:22px}
  .public-site .p-home .p-section h2{font-size:clamp(28px,4vw,32px);line-height:1.12}
- .public-site .p-home .p-home-how ol{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 16px}
  .public-site .p-home-service-grid{grid-template-columns:1fr;gap:24px}
  .public-site .p-home-stops ol{grid-template-columns:1fr;gap:0;margin:16px 0 24px}
  .public-site .p-home-stops li{border-bottom:1px solid var(--ss-border);padding:4px 0}
@@ -1602,14 +1597,8 @@ body:has(.p-booking-dialog[open]) {
  .public-site .p-home .p-hero-v2 h1{font-size:clamp(44px,5.8vw,51.28px)}
 }
 @media(max-width:360px){
- .public-site .p-home .p-home-how ol{grid-template-columns:1fr;gap:14px}
- .public-site .p-home .p-home-how li p{font-size:15px}
  .public-site .p-home-ticket{padding:20px}
 }
-.public-site .p-home-how-details{margin:0 0 12px;font-size:16px}
-.public-site .p-home-how-details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;text-decoration:underline}
-.public-site .p-home-how-details summary:focus-visible{outline:3px solid var(--brand-red);outline-offset:3px}
-.public-site .p-home-how-details p{max-width:65ch}
 @media(max-width:900px){
  .public-site .p-home-service iframe{height:260px}
  .public-site .p-home .p-route-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -1633,9 +1622,6 @@ body:has(.p-booking-dialog[open]) {
  .public-site .p-home-service-summary p{margin-block:8px}
  .public-site .p-home-service-grid>div>p{line-height:1.5;margin-bottom:12px}
  .public-site .p-home-ticket p{font-size:16px;line-height:1.5}
- .public-site .p-home .p-home-how li{padding-top:12px}
- .public-site .p-home .p-home-how ol{margin-bottom:12px;gap:12px 16px}
- .public-site .p-home-how-details{margin-bottom:4px}
 }
 .public-site .p-home-inline-map{margin-top:12px;border-top:1px solid var(--ss-border)}
 .public-site .p-home-inline-map summary{min-height:44px;display:flex;align-items:center;cursor:pointer;text-decoration:underline;font-size:14px}

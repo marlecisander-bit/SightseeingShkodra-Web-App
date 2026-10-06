@@ -1,4 +1,4 @@
-﻿import {registerHooks} from 'node:module';
+import {registerHooks} from 'node:module';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import React from 'react';
@@ -13,11 +13,12 @@ const home={...emptyHomepage('ready'),product:{id:'product',slug:'ticket',title:
 const planner={date:plannerClock().date,title:home.product.title,times:[],fares:[],stops:[{id:'operational-1',label:'Actual boarding point'}]};
 const c={...initialWebsiteContent,'how.0.title':'Published step','intro.title':'Published story','route.title':'Published highlights','notebook.showOnHomepage':'false'};
 const render=(content=c,data=home,plan=planner)=>renderToStaticMarkup(React.createElement(BookingProvider,null,React.createElement(HomepageView,{home:data,content,planner:plan,places:[]})));
-test('homepage guides visitors through shared CMS steps, operational stops, service, story and product',()=>{
+test('homepage guides visitors through operational stops, service and compact product',()=>{
  const html=render();
- const markers=['id="home-hero"','id="home-intro"','id="route"','aria-label="Live service"','id="home-experience"','id="home-highlights"','id="home-ticket"'];
+ const markers=['id="home-hero"','id="route"','aria-label="Live service"','id="home-ticket"'];
  for(let i=1;i<markers.length;i++)assert.ok(html.indexOf(markers[i])>html.indexOf(markers[i-1]),markers[i]);
- for(const value of ['Published step','Actual boarding point','Published story','Only the configured inclusion','17.50'])assert.ok(html.includes(value),value);
+ for(const value of ['Actual boarding point','Published story','Only the configured inclusion','17.50'])assert.ok(html.includes(value),value);
+ assert.ok(!html.includes('Published step'));assert.ok(!html.includes('Published highlights'));assert.ok(!html.includes('home-intro'));
  assert.ok(html.includes('1 stop around Shkodra'));
  assert.ok(html.includes('No service today'));
  assert.equal(html.includes('Wi-Fi'),false);
@@ -43,8 +44,8 @@ test('visibility removes all new consumers of the same section while preserving 
 
 test('Admin homepage order has one owner per section and matches the public progression',async()=>{
  const {websiteEditorGroups,editableWebsiteSections}=await import('../../src/modules/content/website-schema.ts');
- assert.deepEqual(websiteEditorGroups.homepage.map(s=>s.id),['hero','how','route','live','departures','intro','notebook','reviews','final']);
- assert.equal(editableWebsiteSections.filter(s=>s.id==='how').length,1);
+ assert.deepEqual(websiteEditorGroups.homepage.map(s=>s.id),['hero','route','live','departures','intro','notebook','reviews','final']);
+ assert.equal(editableWebsiteSections.filter(s=>s.id==='how').length,0);
  assert.equal(new Set(editableWebsiteSections.flatMap(s=>s.fields.map(f=>f.key))).size,editableWebsiteSections.flatMap(s=>s.fields).length);
 });
 

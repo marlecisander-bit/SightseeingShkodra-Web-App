@@ -22,3 +22,23 @@
 @media(max-width:700px){.page.page.page{padding-top:calc(var(--p-header-height,76px) + 20px);}.stops{grid-template-columns:repeat(2,minmax(0,1fr));}.stop{min-height:110px;padding:12px;}.page .section{padding-block:24px;}}
 
 .thumbnail{width:160px;height:110px;object-fit:cover;border-radius:8px;margin-bottom:12px;}
+/* The Route page gives the existing frame more room without another map mount. */
+.page.page.page{width:90%;max-width:1720px;padding-inline:0;}
+.map{scroll-margin-top:calc(var(--p-header-height,76px) + 12px);}
+.page .metadata{font-size:13px;color:var(--ss-muted);}
+.times li[data-state=past]{color:var(--ss-muted);background:var(--ss-cream);}
+.times li[data-state=next]{border:2px solid var(--brand-red);background:var(--brand-red-soft);}
+.descriptor{font-size:13px;color:var(--ss-muted);}
+.ticket{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,.45fr);gap:24px;padding:28px;background:var(--ss-cream);border-radius:16px;margin-top:28px;}
+.ticket h2{font-size:clamp(26px,3vw,38px);line-height:1.15;white-space:pre-line;margin:0 0 16px;}
+.ticket h3{font-size:20px;}
+.ticket>div{min-width:0;}
+@media(max-width:700px){
+ .page.page.page{width:calc(100% - 28px);}
+ .stops{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 4px 14px;gap:12px;}
+ .stops li{flex:0 0 76%;max-width:270px;scroll-snap-align:start;}
+ .stop{height:100%;min-height:150px;}
+ .ticket{grid-template-columns:minmax(0,1fr);padding:20px;}
+ .times{gap:8px;}.times li{padding:10px;}.times time{font-size:20px;}
+}
+.descriptor{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
