@@ -7,7 +7,9 @@ export async function sendTestEmail(operatorId: string, _previous: {message:stri
   try {
     const recipient=form.get('recipient');
     if(typeof recipient!=='string') throw Error();
-    await sendAdminTestEmail(operatorId,recipient.trim());
+    const kind=form.get('recipientType');
+    if(kind!=='customer'&&kind!=='owner')throw Error();
+    await sendAdminTestEmail(operatorId,recipient.trim(),undefined,kind);
     return {ok:true,message:'Test email sent successfully to Resend. Provider acceptance does not confirm inbox delivery. Identical requests in the same five-minute window are deduplicated.'};
   } catch { return {ok:false,message:'Unable to send test email. Check your access, server configuration and configured test recipient.'}; }
 }

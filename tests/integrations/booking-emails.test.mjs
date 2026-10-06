@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {processPush} from '../../src/modules/notifications/push.ts';
 import { before, after, test } from 'node:test';
 import { randomUUID } from 'node:crypto';
 import { createTestDatabase, loadDevelopmentFixtures } from '../helpers/database.mjs';
@@ -192,13 +193,20 @@ test('v2 ticket lifecycle uses canonical passenger seats and QR, reliable before
  assert(customer.text.includes('Total passengers: 4'));assert(customer.text.includes('Seats occupied: 3'));assert(customer.text.includes('Infants: 1'));assert(customer.text.includes('EUR 25.00'));assert(customer.text.includes('Selected service day'));
  assert(customer.html.includes('cid:booking-qr'));assert(customer.text.includes('/booking/manage#token='+b.management_token));
  assert(!pair.find(m=>!m.attachments).text.includes(b.management_token));
+ const user=(await db.query('select auth_user_id from staff_profiles where id=$1',[staff])).rows[0].auth_user_id;
+ await db.query("insert into admin_push_subscriptions(operator_id,user_id,endpoint,p256dh,auth,device_name) values($1,$2,$3,$4,$5,'Lifecycle test')",[op,user,'https://fcm.googleapis.com/fcm/send/lifecycle','B'.repeat(87),'A'.repeat(22)]);
+ const pushes=[];
+ const pushStore={claim:async()=>(await db.query('select * from claim_admin_push_v1($1)',[op])).rows[0]??null,read:async job=>{const sub=(await db.query('select * from admin_push_subscriptions where id=$1',[job.subscription_id])).rows[0];const notification=(await db.query('select * from admin_notifications where id=$1',[job.notification_id])).rows[0];return {subscription:sub,notification};},finish:async(job,result,code)=>{await db.query('select finish_admin_push_v1($1,$2,$3,$4,$5)',[op,job.id,job.lease_token,result,code]);}};
+ const boundary=(await db.query("select created_at::text value from domain_events where aggregate_id=$1 and event_type='booking.confirmed'",[b.id])).rows[0].value;
+ const push=async()=>{await db.query('select project_admin_notifications_v1($1,$2)',[op,boundary]);await processPush(pushStore,async(sub,payload)=>pushes.push(JSON.parse(payload)));};
+ await push();assert.equal(pushes.length,1);
  const request=randomUUID();
  for(let i=0;i<2;i++)await db.query('select modify_customer_booking_v1($1,0,$2,$3,1500,$4)',[b.management_token,z,{adult:1,child:1,infant:2},request]);
- n=sent.length;await run();await run();const modified=sent.slice(n);assert.equal(modified.length,2);
+ n=sent.length;await run();await run();const modified=sent.slice(n);assert.equal(modified.length,2);await push();assert.equal(pushes.length,2);
  assert(modified.every(m=>m.text.includes('11:00 (Europe/Tirane)')&&m.text.includes('Seats occupied: 2')&&m.text.includes('EUR 15.00')));
  const updateJob=(await jobs(b)).find(j=>j.event_type==='BOOKING_MODIFIED'&&j.recipient_type==='customer');
  assert.equal(updateJob.send_snapshot.qrToken,b.qr_token);assert.deepEqual(updateJob.send_snapshot.previous.counts,{adult:2,child:1,infant:1});assert.equal(updateJob.send_snapshot.previous.total,2500);assert(modified[0].text.includes('Previous'));
- n=sent.length;await db.query('select cancel_customer_booking_v1($1)',[b.management_token]);await run();const cancelled=sent.slice(n);assert.equal(cancelled.length,2);assert(cancelled.every(m=>!m.attachments&&!m.html.includes('cid:booking-qr')&&m.text.includes('no longer a valid ticket')&&m.text.includes('Seats released: 2')));
+ n=sent.length;await db.query('select cancel_customer_booking_v1($1)',[b.management_token]);await run();const cancelled=sent.slice(n);assert.equal(cancelled.length,2);await push();await push();assert.equal(pushes.length,3);assert(pushes.every(p=>p.url.endsWith(b.id)&&!p.body.includes('guest@example.invalid')));assert(cancelled.every(m=>!m.attachments&&!m.html.includes('cid:booking-qr')&&m.text.includes('no longer a valid ticket')&&m.text.includes('Seats released: 2')));
  assert.equal((await db.query('select resolve_booking_pass_v1($1,$2,$3,false) r',[op,staff,b.qr_token])).rows[0].r.status,'CANCELLED');
  assert.equal((await db.query("select count(*)::int n from booking_items where departure_id=$1 and status='confirmed'",[z])).rows[0].n,0);
  const j=await jobs(b);assert(j.every(x=>x.provider==='resend'&&x.provider_reference&&x.sent_at&&x.recipient_email===config.testRecipient));

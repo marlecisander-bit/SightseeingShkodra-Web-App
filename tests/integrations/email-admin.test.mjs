@@ -67,3 +67,8 @@ test('history scopes every query, excludes legacy deliveries and offers resend o
 test('history authorization failure cannot enter the database callback',async()=>{
   await assert.rejects(getEmailAdmin(op,undefined,undefined,async()=>{throw Error('denied');}),/denied/);
 });
+
+test('owner test uses owner template through same adapter and approved recipient only',async()=>{
+ const sent=[];await sendAdminTestEmail(op,'qa@example.invalid',{authorize,env,now:()=>0,send:async(...args)=>{sent.push(args);return {outcome:'accepted'};}},'owner');
+ assert.deepEqual(sent[0][2].to,['qa@example.invalid']);assert.match(sent[0][2].subject,/owner/);assert.match(sent[0][2].html,/Customer email/);
+});

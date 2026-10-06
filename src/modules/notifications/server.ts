@@ -1,4 +1,6 @@
 import 'server-only';
+import { sendTestPush } from './test-push';
+import { notificationStatus } from './config';
 import { hasPermission } from '@/modules/identity/roles';
 import { withOperatorService } from '@/modules/identity/operator-service';
 import { notificationTypes, uuid, validPushSubscription, type Inbox, type InboxItem, type Preference } from './contracts';
@@ -21,12 +23,16 @@ export async function readNotificationSettings(operatorId:string) {
  return withOperatorService(operatorId,'bookings.read',async(client,c)=>{
   const [devices,prefs]=await Promise.all([client.from('admin_push_subscriptions').select('id,device_name,enabled,created_at,last_used_at').eq('operator_id',c.operatorId).eq('user_id',c.userId).order('created_at',{ascending:false}).limit(50),client.from('admin_notification_preferences').select('type,in_app,push').eq('operator_id',c.operatorId).eq('user_id',c.userId)]);
   if(devices.error||prefs.error)throw Error('Settings unavailable');
-  return {canManageEmail:hasPermission(c.role,'integrations.manage'),devices:devices.data,preferences:notificationTypes.map(type=>(prefs.data as Preference[]).find(p=>p.type===type)??{type,in_app:true,push:true}),publicKey:process.env.ADMIN_PUSH_ENABLED==='true'?process.env.VAPID_PUBLIC_KEY??'':'',workerEnabled:process.env.ADMIN_NOTIFICATIONS_ENABLED==='true'};
+  const ids=(devices.data??[]).map(d=>d.id);
+  const history=ids.length?await client.from('admin_push_deliveries').select('id,status,attempts,error_code,created_at,notification:admin_notifications(title,message)').eq('operator_id',c.operatorId).in('subscription_id',ids).order('created_at',{ascending:false}).limit(25):{data:[],error:null};
+  if(history.error)throw Error('Delivery history unavailable');
+  return {history:history.data??[],canManageEmail:hasPermission(c.role,'integrations.manage'),devices:devices.data,preferences:notificationTypes.map(type=>(prefs.data as Preference[]).find(p=>p.type===type)??{type,in_app:true,push:true}),publicKey:notificationStatus().pushEnabled?process.env.VAPID_PUBLIC_KEY??'':'',...notificationStatus()};
  });
 }
 export async function changeNotification(operatorId:string,action:unknown) {
  if(!action||typeof action!=='object')throw Error('Invalid request');
  const a=action as Record<string,unknown>;
+ if(a.kind==='test-push'){if(typeof a.id!=='string')throw Error('Invalid device');return sendTestPush(operatorId,a.id);}
  return withOperatorService(operatorId,'bookings.read',async(client,c)=>{
   if(a.kind==='read'){
    if(typeof a.read!=='boolean'||(a.id!=='all'&&(typeof a.id!=='string'||!uuid.test(a.id))))throw Error('Invalid receipt');

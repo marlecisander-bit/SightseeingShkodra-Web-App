@@ -30,3 +30,11 @@ test('paused workers never touch network and Preview diagnostics never send',asy
   assert.equal(calls,0);
  } finally {globalThis.fetch=transport;if(previous===undefined)delete process.env.VERCEL_ENV;else process.env.VERCEL_ENV=previous;}
 });
+
+test('explicit activation unlocks Production only and Preview build rejects activation',()=>{
+ const env={VERCEL_ENV:'production',APP_ENV:'production',BACKGROUND_DELIVERY_ENABLED:'true'};
+ assert.equal(backgroundDeliveryPaused(env),false);
+ for(const VERCEL_ENV of ['preview','development'])assert.equal(backgroundDeliveryPaused({...env,VERCEL_ENV}),true);
+ assert.equal(backgroundDeliveryPaused({...env,APP_ENV:'development'}),true);
+ assert(previewConfigurationErrors({...env,VERCEL_ENV:'preview'}).length);
+});

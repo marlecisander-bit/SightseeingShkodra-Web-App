@@ -1,6 +1,6 @@
 import 'server-only';
 import { createClient } from '@supabase/supabase-js';
-import webpush from 'web-push';
+import { sendWebPush } from './provider';
 import { processPush, type PushJob, type PushStore, type PushData } from './push';
 import { uuid } from './contracts';
 import { backgroundDeliveryPaused } from '../integrations/background-delivery';
@@ -30,6 +30,6 @@ export async function runAdminNotifications(){
   },
   async finish(j,result,code){await call('finish_admin_push_v1',{...identity(j),p_result:result,p_code:code});},
  };
- const processed=await processPush(store,(subscription,payload)=>webpush.sendNotification(subscription,payload,{vapidDetails:{subject,publicKey,privateKey},TTL:3600,timeout:3000,urgency:'normal'}));
+ const processed=await processPush(store,sendWebPush);
  return {status:'push',projected,processed};
 }

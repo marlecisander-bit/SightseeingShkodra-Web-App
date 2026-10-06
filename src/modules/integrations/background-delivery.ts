@@ -1,7 +1,9 @@
-/** Hosted delivery is paused on Vercel Hobby by the owner's migration decision.
+/** Hosted delivery requires explicit Production activation after scheduler configuration.
  * Keep this guard at the worker boundary, including direct/manual invocations.
- * A future activation requires a separately reviewed scheduling change.
+ * Preview and hosted Development remain unconditionally paused.
  */
 export function backgroundDeliveryPaused(env: NodeJS.ProcessEnv = process.env): boolean {
-  return Boolean(env.VERCEL_ENV);
+  if (!env.VERCEL_ENV) return false;
+  return env.VERCEL_ENV !== 'production' || env.APP_ENV !== 'production'
+    || env.BACKGROUND_DELIVERY_ENABLED !== 'true';
 }

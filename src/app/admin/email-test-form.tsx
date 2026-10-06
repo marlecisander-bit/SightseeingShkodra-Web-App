@@ -6,7 +6,7 @@ export function EmailTestForm({operatorId,recipient,ready}:{operatorId:string;re
   const [state,action,pending]=useActionState(sendTestEmail.bind(null,operatorId),{message:'',ok:false});
   return <form action={action}>
     <label>Send test to<input name="recipient" type="email" required maxLength={254} defaultValue={recipient} disabled={pending||!ready}/></label>
-    <p>Use the approved test email address. This sends an example booking and does not change automatic emails.</p>
+    <label>Template<select name="recipientType" disabled={pending||!ready}><option value="customer">Customer ticket</option><option value="owner">Owner notification</option></select></label><p>Use the approved test email address. This sends an example booking and does not change automatic emails.</p>
     <Button type="submit" disabled={pending||!ready}>{pending?'Sending...':'Send test email'}</Button>
     {!ready&&<p>Ask your administrator to set up a test recipient before sending a test email.</p>}
     {state.message&&<p role={state.ok?'status':'alert'}>{state.message}</p>}

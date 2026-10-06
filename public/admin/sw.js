@@ -2,7 +2,7 @@
 self.addEventListener('push',event=>{
  let data;try{data=event.data?.json();}catch{data=null;}
  const url=typeof data?.url==='string'&&/^\/admin\/[0-9a-f-]{36}\/bookings\?booking=[0-9a-f-]{36}$/.test(data.url)?data.url:'/admin';
- event.waitUntil(self.registration.showNotification('Sightseeing Shkodra',{body:typeof data?.body==='string'?data.body.slice(0,500):'New operational notification. Open Admin for details.',tag:typeof data?.tag==='string'?data.tag:undefined,icon:'/icons/site-icon-192.png',data:{url}}));
+ event.waitUntil(self.registration.showNotification(['New Sightseeing Shkodra booking','Booking modified','Booking cancelled','Test notification'].includes(data?.title)?data.title:'Sightseeing Shkodra',{body:typeof data?.body==='string'?data.body.slice(0,500):'New operational notification. Open Admin for details.',tag:typeof data?.tag==='string'?data.tag:undefined,icon:'/icons/site-icon-192.png',data:{url}}));
 });
 self.addEventListener('notificationclick',event=>{
  event.notification.close();

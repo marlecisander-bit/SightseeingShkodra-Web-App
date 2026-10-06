@@ -13,7 +13,7 @@ export async function processPush(store:PushStore,send:PushSender,limit=8){
   if(!data){await store.finish(job,'skipped','access_revoked');continue;}
   const subscription={endpoint:data.subscription.endpoint,keys:{p256dh:data.subscription.p256dh,auth:data.subscription.auth}};
   if(!validPushSubscription(subscription)){await store.finish(job,'expired','unsupported_endpoint');continue;}
-  const payload=JSON.stringify({title:'Sightseeing Shkodra',body:`${data.notification.title}\n${data.notification.message}`.slice(0,500),tag:data.notification.id,url:bookingTarget(job.operator_id,data.notification.booking_id)});
+  const payload=JSON.stringify({title:data.notification.title==='New booking'?'New Sightseeing Shkodra booking':data.notification.title,body:data.notification.message.slice(0,500),tag:data.notification.id,url:bookingTarget(job.operator_id,data.notification.booking_id)});
   let result='accepted',code='accepted';
   try{await send(subscription,payload);}catch(error){({result,code}=pushFailure(error));}
   await store.finish(job,result,code);processed++;

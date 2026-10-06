@@ -9,7 +9,7 @@ const missing = missingProductionEnvironment(process.env);
 export function previewConfigurationErrors(env) {
   if (env.VERCEL_ENV !== 'preview') return [];
   const errors = [];
-  if (['EMAIL_ENABLED', 'ADMIN_PUSH_ENABLED', 'ADMIN_NOTIFICATIONS_ENABLED', 'SITE_INDEXING_ENABLED'].some(key => env[key] === 'true')) errors.push('Preview communications and indexing must be disabled');
+  if (['BACKGROUND_DELIVERY_ENABLED', 'EMAIL_ENABLED', 'ADMIN_PUSH_ENABLED', 'ADMIN_NOTIFICATIONS_ENABLED', 'SITE_INDEXING_ENABLED'].some(key => env[key] === 'true')) errors.push('Preview communications and indexing must be disabled');
   if (env.NEXT_PUBLIC_SUPABASE_URL || env.SUPABASE_SECRET_KEY || env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
     // Compare an explicitly allowed test project with the known production project.
     // These identifiers are not credentials. Never print supplied values.
