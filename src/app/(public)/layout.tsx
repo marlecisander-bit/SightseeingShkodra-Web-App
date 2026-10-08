@@ -1,3 +1,4 @@
+import {getCurrentMeetingPoint} from "@/modules/booking/meeting-point-server";
 import { BookingProvider, Header } from "@/components/public/booking";
 import { Footer } from "@/components/public/ui";
 import "./public.css";
@@ -12,10 +13,10 @@ export default async function PublicLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [content,reviews] = await Promise.all([getPublishedWebsite(),getPublicReviewSettings()]);
+  const [content,reviews,currentMeetingPoint] = await Promise.all([getPublishedWebsite(),getPublicReviewSettings(),getCurrentMeetingPoint()]);
   return (
     <div className="public-site">
-      <BookingProvider>
+      <BookingProvider content={content} currentMeetingPoint={currentMeetingPoint}>
         <a className="p-skip" href="#main-content">
           Skip to content
         </a>

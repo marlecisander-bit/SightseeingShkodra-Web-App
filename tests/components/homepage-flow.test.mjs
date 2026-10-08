@@ -29,7 +29,7 @@ test('missing product, operational route and schedule never fabricate a price, f
  assert.equal(html.includes('5 stops'),false);
  assert.equal(html.includes('From €'),false);
  assert.ok(html.includes('Check availability'));
- assert.ok(html.includes('Explore the route'));
+ assert.ok(html.includes('Published stops around Shkodra'));
 });
 test('visibility removes all new consumers of the same section while preserving independent service content',()=>{
  const hidden=render({...c,'intro.showOnHomepage':'false','route.showOnHomepage':'false','live.showOnHomepage':'false'});
@@ -44,7 +44,7 @@ test('visibility removes all new consumers of the same section while preserving 
 
 test('Admin homepage order has one owner per section and matches the public progression',async()=>{
  const {websiteEditorGroups,editableWebsiteSections}=await import('../../src/modules/content/website-schema.ts');
- assert.deepEqual(websiteEditorGroups.homepage.map(s=>s.id),['hero','route','live','departures','intro','notebook','reviews','final']);
+ assert.deepEqual(websiteEditorGroups.homepage.map(s=>s.id),['hero','homeRoute','route','live','departures','intro','notebook','reviews','final']);
  assert.equal(editableWebsiteSections.filter(s=>s.id==='how').length,0);
  assert.equal(new Set(editableWebsiteSections.flatMap(s=>s.fields.map(f=>f.key))).size,editableWebsiteSections.flatMap(s=>s.fields).length);
 });

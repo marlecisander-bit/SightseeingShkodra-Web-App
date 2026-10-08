@@ -6,11 +6,11 @@ const op='10000000-0000-4000-8000-000000000001';
 before(async()=>{
   db=await createTestDatabase();await loadDevelopmentFixtures(db);
   const user=(await db.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;
-  actor=(await db.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'content_editor') returning id",[op,user])).rows[0].id;
+  actor=(await db.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'owner') returning id",[op,user])).rows[0].id;
 });
 after(async()=>{await db.close();});
 async function save(id,data,stamp=null,operator=op){return(await db.query('select save_content_page_v1($1,$2,$3,$4,$5) as id',[operator,actor,id,JSON.stringify(data),stamp])).rows[0].id;}
-test('content editor can draft, publish and archive; validation and stale edits fail closed',async()=>{
+test('publisher can draft, publish and archive; validation and stale edits fail closed',async()=>{
   const draft={title:'Explore',slug:'explore-test',status:'draft',text:'<script>not executable</script>'};
   const id=await save(null,draft);
   const stamp=(await db.query('select updated_at::text as stamp from content_pages where id=$1',[id])).rows[0].stamp;

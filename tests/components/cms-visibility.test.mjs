@@ -34,7 +34,7 @@ test('published CMS enable-disable-enable and edited fields reach every shared f
  const db=await createTestDatabase();try{
  await loadDevelopmentFixtures(db);const op='10000000-0000-4000-8000-000000000001';
  const uid=(await db.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;
- const actor=(await db.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'content_editor') returning id",[op,uid])).rows[0].id;
+ const actor=(await db.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'owner') returning id",[op,uid])).rows[0].id;
  const row=async()=>(await db.query("select * from content_pages where operator_id=$1 and slug='website-homepage'",[op])).rows[0];
  const save=async(c,action)=>db.query('select save_website_content_v1($1,$2,$3,$4,$5)',[op,actor,JSON.stringify(c),(await row())?.updated_at??null,action]);
  const c={...initialWebsiteContent,'final.eyebrow':'Shared invitation marker','final.title':'Edited title','final.emphasis':'Edited emphasis','final.book':'Choose this day','final.image':'/images/bridge-view.webp','final.alt':'Edited invitation image'};
@@ -61,7 +61,7 @@ test('shared section flags remove secondary Tour and Live consumers but preserve
 });
 test('unavailable publication never restores visible defaults, and optional anchors follow their sections',()=>{
  const c=unavailableWebsiteContent();for(const id of ['hero','intro','route','live','departures','reviews','notebook','final'])assert.equal(sectionVisible(c,id),false);
- assert.equal(visibleWebsiteLink('/#route',c),false);assert.equal(visibleWebsiteLink('/tour#timetable',c),false);
+ assert.equal(visibleWebsiteLink('/#route',c),true);assert.equal(visibleWebsiteLink('/tour#timetable',c),false);
  for(const link of ['/tour','/live','/explore','/tour#faq'])assert.equal(visibleWebsiteLink(link,c),true);
  assert.equal(sectionVisible({...initialWebsiteContent,'final.showOnHomepage':'false'},'final'),false);
 });

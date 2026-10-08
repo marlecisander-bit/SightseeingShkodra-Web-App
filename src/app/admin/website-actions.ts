@@ -1,4 +1,5 @@
 "use server";
+import { hasPermission } from "@/modules/identity/roles";
 import { ownerActionError } from "./action-error";
 import { revalidatePath } from "next/cache";
 import { withOperatorService } from "@/modules/identity/operator-service";
@@ -11,7 +12,8 @@ export async function saveWebsiteSection(operatorId: string, sectionId: string, 
     if (!section) throw Error("Unknown section");
     const operation = form.get("operation");
     if (operation !== "draft" && operation !== "publish") throw Error("Unknown operation");
-    await withOperatorService(operatorId, "content.manage", async (client, context) => {
+    await withOperatorService(operatorId, operation === "publish" ? "content.publish" : "content.draft", async (client, context) => {
+      if (["footer","whatsapp","legalprivacy","legalterms"].includes(sectionId) && !hasPermission(context.role,"content.sensitive")) throw Error("Owner access required for business, contact and legal settings.");
       const { data: current, error } = await client.from("content_pages").select("body,updated_at").eq("operator_id", context.operatorId).eq("slug", "website-homepage").single();
       if (error || !current) throw Error("Homepage unavailable");
       const content = validateWebsiteContent(current.body.content);
@@ -32,7 +34,7 @@ export async function saveWebsiteSection(operatorId: string, sectionId: string, 
 
 export async function uploadWebsiteImage(operatorId: string, form: FormData) {
   try {
-    return await withOperatorService(operatorId, "content.manage", async (client, context) => {
+    return await withOperatorService(operatorId, "content.draft", async (client, context) => {
       const file = form.get("image");
       if (!(file instanceof File) || file.size < 1) throw Error("Choose a non-empty image.");
       if (file.size > IMAGE_UPLOAD_BYTES) throw Error(imageSizeError(file.size));

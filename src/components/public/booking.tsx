@@ -1,4 +1,6 @@
 "use client";
+import type {MeetingPoint} from "@/modules/booking/meeting-point";
+import {MeetingPointSummary} from "./meeting-point-summary";
 import { lowestQuotedFare } from "./booking-presentation";
 
 import { clearCheckoutSession, freshBookingSelection } from "@/modules/booking/checkout-browser-state";
@@ -37,6 +39,7 @@ const CheckoutFlow = dynamic(
 );
 
 type BookingContextValue = {
+  currentMeetingPoint?:MeetingPoint|null;
   selection: BookingSelection;
   setSelection: Dispatch<SetStateAction<BookingSelection>>;
   open: () => void;
@@ -51,7 +54,7 @@ export function useBooking() {
   if (!value) throw new Error("BookingProvider is required");
   return value;
 }
-export function BookingProvider({ children }: { children: ReactNode }) {
+export function BookingProvider({ children, content = initialWebsiteContent, preview = false, currentMeetingPoint }: { children: ReactNode; content?: WebsiteContent; preview?:boolean;currentMeetingPoint?:MeetingPoint|null }) {
   const [selection, setSelection] = useState<BookingSelection>({
     date: "",
     guests: 1,
@@ -73,6 +76,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     <BookingContext.Provider
       value={{
         selection,
+        currentMeetingPoint,
         reset,
         generation,
         setSelection,
@@ -107,17 +111,17 @@ export function BookingProvider({ children }: { children: ReactNode }) {
           }
         }}
       >
-        {opened && <BookingDialogContent key={generation} />}
+        {opened && <BookingDialogContent key={generation} content={content} preview={preview} />}
       </dialog>
     </BookingContext.Provider>
   );
 }
 
-function BookingDialogContent() {
-  const {close}=useBooking();
+function BookingDialogContent({content,preview=false}: {content: WebsiteContent;preview?:boolean}) {
+  const {close,currentMeetingPoint}=useBooking();
   const closeButton = useRef<HTMLButtonElement>(null);
   useEffect(() => { closeButton.current?.focus(); }, []);
-  return <><header className={styles.header}><div><BrandLogo light/><h2 id="booking-dialog-title">Book your day</h2></div><button ref={closeButton} type="button" className={styles.close} aria-label="Close booking" onClick={close}>&times;</button></header><div className={styles.content}><CheckoutFlow /></div></>;
+  return <><header className={styles.header}><div><BrandLogo light/><h2 id="booking-dialog-title">{content["bookingDialog.title"]}</h2></div><button ref={closeButton} type="button" className={styles.close} aria-label="Close booking" onClick={close}>&times;</button></header><div className={styles.content}><p>{content["bookingDialog.text"]}</p><MeetingPointSummary value={currentMeetingPoint}/>{preview ? <p>Saved editorial preview. Booking actions are unavailable here.</p> : <CheckoutFlow />}</div></>;
 }
 
 /** Keep link styling and direct/new-tab access; ordinary booking activation opens the shared dialog. */
@@ -372,6 +376,6 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
   );
 }
 export function BookingFlow() {
-  const {generation} = useBooking();
-  return <CheckoutFlow key={generation} />;
+  const {generation,currentMeetingPoint} = useBooking();
+  return <><MeetingPointSummary value={currentMeetingPoint}/><CheckoutFlow key={generation} /></>;
 }

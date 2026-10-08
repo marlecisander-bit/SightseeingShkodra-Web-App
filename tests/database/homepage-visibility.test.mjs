@@ -8,7 +8,7 @@ const op = '10000000-0000-4000-8000-000000000001';
 before(async () => {
   db = await createTestDatabase(); await loadDevelopmentFixtures(db);
   const uid = (await db.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;
-  actor = (await db.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'content_editor') returning id", [op, uid])).rows[0].id;
+  actor = (await db.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'owner') returning id", [op, uid])).rows[0].id;
 });
 after(async () => db?.close());
 async function record() { return (await db.query("select * from content_pages where operator_id=$1 and slug='website-homepage'", [op])).rows[0]; }

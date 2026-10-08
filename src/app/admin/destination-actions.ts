@@ -7,7 +7,7 @@ import { getDestinationStops } from "@/modules/content/destination-stops-server"
 export async function saveDestination(operatorId:string,id:string|null,stamp:string|null,data:Destination,operation:string,order:number) {
   try {
     if(["draft","publish"].includes(operation))validateDestination(data,operation==="publish");
-    const saved=await withOperatorService(operatorId,"content.manage",async(client,context)=>{
+    const saved=await withOperatorService(operatorId,operation==="draft"?"content.draft":"content.publish",async(client,context)=>{
       if(data.stopId && ["draft","publish"].includes(operation)) {
         const existing=id?await client.from("content_pages").select("body").eq("operator_id",operatorId).eq("id",id).single():null;
         if(existing?.data?.body?.stopId!==data.stopId) {const source=await getDestinationStops(operatorId);if(!source.stops.some(s=>s.id===data.stopId))throw Error("Choose an available published route stop, or no associated stop.");}

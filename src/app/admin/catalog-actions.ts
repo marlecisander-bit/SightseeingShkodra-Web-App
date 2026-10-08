@@ -33,6 +33,11 @@ export async function saveCatalog(
           if (typeof value === "string") data[key] = value;
         }
         const id = form.get("id");
+        if (entity === "product" && typeof id === "string" && id) {
+          const {data: existing,error: loadError} = await client.from("products").select("slug,type").eq("operator_id",context.operatorId).eq("id",id).single();
+          if(loadError || !existing) throw Error("Product unavailable");
+          for(const key of ["slug","type"] as const) { if(data[key] && data[key] !== existing[key]) throw Error("Protected product binding"); data[key]=existing[key]; }
+        }
         const remove = form.get("operation") === "remove";
         if (remove && form.get("confirm_remove") !== "yes")
           throw Error("Confirmation required");
@@ -69,7 +74,7 @@ export async function saveProductPricing(
   try {
     await withOperatorService(
       operatorId,
-      "catalog.manage",
+      "pricing.manage",
       async (client, context) => {
         const price = form.get("price_eur"),
           stamp = form.get("updated_at");

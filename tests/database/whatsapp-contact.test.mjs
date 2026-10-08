@@ -4,7 +4,7 @@ import {createTestDatabase,loadDevelopmentFixtures} from '../helpers/database.mj
 import {initialWebsiteContent,validateWebsiteContent,globalEditorSections} from '../../src/modules/content/website-schema.ts';
 import {whatsappLink,normalizeWhatsAppNumber,whatsappDock} from '../../src/modules/content/whatsapp.ts';
 let db,actor;const op='10000000-0000-4000-8000-000000000001';
-before(async()=>{db=await createTestDatabase();await loadDevelopmentFixtures(db);const user=(await db.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;actor=(await db.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'content_editor') returning id",[op,user])).rows[0].id;});
+before(async()=>{db=await createTestDatabase();await loadDevelopmentFixtures(db);const user=(await db.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;actor=(await db.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'owner') returning id",[op,user])).rows[0].id;});
 after(async()=>db?.close());
 const valid=async c=>(await db.query('select validate_website_content_v1($1) ok',[JSON.stringify(c)])).rows[0].ok;
 test('service role can resolve the private validator without exposing it to browsers',async()=>{

@@ -110,3 +110,5 @@ export function safeJsonLd(value: unknown) {
 }
 
 export function websiteMetadata(c:Record<string,string>,published=true){const metadata=pageMetadata("/",c["seo.title"],c["seo.description"],published);return {...metadata,title:c["seo.title"],openGraph:{...metadata.openGraph,images:[{url:c["seo.image"],alt:c["seo.alt"]}]}};}
+
+export function editorialMetadata(path:string,prefix:string,c:Record<string,string>,published=true){const m=pageMetadata(path,c[prefix+'.seoTitle'],c[prefix+'.seoDescription'],published);return {...m,openGraph:{...m.openGraph,images:[{url:c[prefix+'.seoImage'],alt:c[prefix+'.seoAlt']}]}};}

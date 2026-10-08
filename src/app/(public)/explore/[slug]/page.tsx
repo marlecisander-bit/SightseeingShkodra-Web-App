@@ -1,3 +1,4 @@
+import { getPublishedWebsite } from "@/modules/content/website-server";
 import { GuideView } from "@/components/public/editorial-pages";
 import { notFound, permanentRedirect } from "next/navigation";
 import { getPublicDestinations } from "@/modules/content/destinations-server";
@@ -32,11 +33,12 @@ export async function generateMetadata({ params }: Props) {
 export default async function Guide({ params }: Props) {
   const { slug } = await params;
   const { place, content } = await guide(slug);
+  const c = await getPublishedWebsite();
   const { origin } = seoConfig();
   return (
     <main id="main-content" className="p-subpage p-container">
       <GuideView content={content} place={place}/>
-      <ActionLink href="/tour">View the day tour</ActionLink>
+      <ActionLink href="/tour">{c["labels.tour"]}</ActionLink>
       {origin && (
         <script
           type="application/ld+json"

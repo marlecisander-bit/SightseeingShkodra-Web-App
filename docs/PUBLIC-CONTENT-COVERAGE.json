@@ -1,0 +1,162 @@
+{
+  "date": "2026-10-08",
+  "scope": "Current local implementation inventory; no coverage percentage or hosted acceptance claim",
+  "websiteDocument": "content_pages[website-homepage].published_body.content",
+  "verificationReport": "PUBLIC-ADMIN-CONNECTIONS-REPORT.md",
+  "rows": [
+    {
+      "element": "Hero",
+      "admin": "Website ? Hero",
+      "source": "hero.*",
+      "consumer": "HomepageHero",
+      "boundary": "Existing copy, responsive images, alt and focal positions retained"
+    },
+    {
+      "element": "Homepage ticket",
+      "admin": "Website ? A day with possibilities; Products",
+      "source": "intro headings/visibility; products.description/inclusions",
+      "consumer": "HomepageView; Route ticket heading",
+      "boundary": "Whole homepage ticket hides together; product remains copy authority"
+    },
+    {
+      "element": "Homepage stop overview",
+      "admin": "Website ? Homepage stop overview",
+      "source": "homeRoute.*; published map stops",
+      "consumer": "HomepageView",
+      "boundary": "New copy/action controls; count is operational, never manually maintained"
+    },
+    {
+      "element": "Route & Live Map presentation",
+      "admin": "Website ? Public pages ? Route & Live Map",
+      "source": "routePage.*",
+      "consumer": "RouteJourney; /route metadata",
+      "boundary": "New headings/introduction/actions and SEO; iframe/status logic remains code-owned"
+    },
+    {
+      "element": "Destination-story presentation",
+      "admin": "Website ? The places between",
+      "source": "route.*",
+      "consumer": "Tour / sample companion; shared visibility also affects stop overviews",
+      "boundary": "Existing editorial presentation retained"
+    },
+    {
+      "element": "Live promotion and timetable",
+      "admin": "Website ? Live / Today at a glance",
+      "source": "live.*, departures.*; canonical planner",
+      "consumer": "Homepage / Tour / Route as described in editor",
+      "boundary": "Presentation separate from schedules, prices and live tracking"
+    },
+    {
+      "element": "Notebook",
+      "admin": "Website ? Local notebook; shared Destinations",
+      "source": "notebook headings/action; destination_v1",
+      "consumer": "HomepageView",
+      "boundary": "Legacy static notebook cards hidden from editor"
+    },
+    {
+      "element": "Reviews",
+      "admin": "Website ? Guest Reviews introduction; Guest Reviews module",
+      "source": "reviews.* introduction; reviews/review_settings",
+      "consumer": "Homepage GuestReviews; footer Google link",
+      "boundary": "Owner/admin curate; owner manages external review settings"
+    },
+    {
+      "element": "Closing invitation",
+      "admin": "Website ? Final booking invitation",
+      "source": "final.*",
+      "consumer": "Footer FinalInvitation, route exclusions retained",
+      "boundary": "Existing visibility and banner source retained"
+    },
+    {
+      "element": "Tour content and SEO",
+      "admin": "Website ? Tour introduction; Products",
+      "source": "tourPage.eyebrow/includedTitle; products metadata/inclusions/image",
+      "consumer": "TourView and /tour metadata; homepage inclusions heading",
+      "boundary": "Product identity protected; description/image labels clarify consumers"
+    },
+    {
+      "element": "FAQ",
+      "admin": "Website ? Questions & answers",
+      "source": "managed FAQ fields; faqPage.seo*",
+      "consumer": "FaqPage and /faq metadata",
+      "boundary": "Dedicated FAQ consumer, not removed Tour FAQ; technical answers remain guarded"
+    },
+    {
+      "element": "Explore",
+      "admin": "Website ? Explore introduction / search & social preview",
+      "source": "explorePage.*",
+      "consumer": "ExploreView and /explore metadata",
+      "boundary": "New SEO image/alt/title/description controls"
+    },
+    {
+      "element": "Booking introduction and SEO",
+      "admin": "Website ? Booking introduction / search & social preview",
+      "source": "bookPage.*",
+      "consumer": "/book PageIntro and metadata",
+      "boundary": "No quote, price or booking-mechanics editing"
+    },
+    {
+      "element": "Shared action labels and dialog",
+      "admin": "Website ? Shared visitor action labels",
+      "source": "labels.*, bookingDialog.*",
+      "consumer": "Homepage / Tour / Explore / guide / reviews / BookingProvider",
+      "boundary": "Shared labels reused; dialog preview blocks checkout actions"
+    },
+    {
+      "element": "Sample travel companion",
+      "admin": "Website ? Travel companion introduction",
+      "source": "dayPage.*",
+      "consumer": "/your-day",
+      "boundary": "Sample presentation only; sample SEO remains code-owned"
+    },
+    {
+      "element": "Editorial destinations",
+      "admin": "Website ? Destinations",
+      "source": "content_pages destination_v1 draft/published bodies, aliases and ordering",
+      "consumer": "Explore / guide / Tour / Homepage / Route mapped details",
+      "boundary": "One editor; coordinates removed; publisher controls immediate order/publication"
+    },
+    {
+      "element": "Homepage and guide SEO",
+      "admin": "Website ? Homepage search & sharing; Destinations",
+      "source": "seo.*; destination SEO fields",
+      "consumer": "Homepage/guide metadata",
+      "boundary": "Existing owners retained"
+    },
+    {
+      "element": "Navigation",
+      "admin": "Website ? Navigation",
+      "source": "nav.*; published operator destination slugs/aliases",
+      "consumer": "Header desktop/mobile",
+      "boundary": "Approved selector; app + SQL allowlist; legacy /live and /#route resolve to /route"
+    },
+    {
+      "element": "Contact/footer/legal",
+      "admin": "Website ? Global; footer Google control",
+      "source": "footer.*, whatsapp.*, legal.*; review_settings.google_reviews_url",
+      "consumer": "Footer / WhatsApp / LegalPage",
+      "boundary": "Owner-sensitive; no fabricated legal approval or content"
+    },
+    {
+      "element": "Meeting point",
+      "admin": "Calendar & Pricing ? Owner: booking meeting point",
+      "source": "meeting_point_versions ? bookings.meeting_point_snapshot",
+      "consumer": "Prebooking summary; confirmation/pass/manage; fresh v2 email snapshots",
+      "boundary": "Effective-dated versions; existing bookings retain original promise"
+    },
+    {
+      "element": "Fares and scheduling",
+      "admin": "Calendar & Pricing",
+      "source": "Existing pricing/schedule/inventory sources",
+      "consumer": "Planner / booking / price presentation",
+      "boundary": "Owner/admin prices; operations schedule only with commercial values unchanged"
+    },
+    {
+      "element": "Operational stops/GPS/ETA",
+      "admin": "Independent Live Map admin handoff",
+      "source": "Existing independent map publication and bridge",
+      "consumer": "Embedded map / public route",
+      "boundary": "No new stop/GPS editor or tracking engine"
+    }
+  ]
+}

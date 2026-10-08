@@ -4,6 +4,7 @@ import { bookingEmailTemplateV2 } from "./booking-email-template-v2";
 export type BookingEmailEvent = "BOOKING_CREATED" | "BOOKING_MODIFIED" | "BOOKING_CANCELLED";
 export type RecipientType = "customer" | "owner";
 export type EmailBooking = {
+  meetingPoint?: typeof meetingPoint;
   managementToken?: string;
   qrToken?: string;
   previous?: { date: string | null; time: string | null; counts: { adult: number; child: number; infant: number }; total: number } | null;

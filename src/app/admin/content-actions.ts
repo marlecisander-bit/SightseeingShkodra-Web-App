@@ -9,7 +9,7 @@ export async function saveContent(operatorId:string,form:FormData) {
   if (typeof slug !== 'string' || !['explore-centre','explore-castle','explore-lake','explore-bridge'].includes(slug)) return {error:'Use a configured Explore guide slot. Other public presentation is managed in Website content.'};
   let result='saved';
   try {
-    await withOperatorService(operatorId,'content.manage',async(client,context)=>{
+    await withOperatorService(operatorId,'content.publish',async(client,context)=>{
       const data:Record<string,string>={};
       for(const key of ['title','slug','status','text','meta_title','meta_description','og_image','og_image_alt']) {
         const value=form.get(key);if(typeof value==='string')data[key]=value;

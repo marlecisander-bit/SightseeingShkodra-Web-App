@@ -20,6 +20,11 @@ export const permissions = [
   "payments.refund",
   "customers.read",
   "content.manage",
+  "content.draft",
+  "content.publish",
+  "content.sensitive",
+  "pricing.manage",
+  "schedule.manage",
   "tracking.manage",
   "audit.read",
 ] as const;
@@ -28,6 +33,7 @@ export type Permission = (typeof permissions)[number];
 const rolePermissions: Record<StaffRole, readonly Permission[]> = {
   owner: permissions,
   admin: [
+    "content.draft", "content.publish", "pricing.manage", "schedule.manage",
     "catalog.read",
     "catalog.manage",
     "departures.manage",
@@ -42,6 +48,7 @@ const rolePermissions: Record<StaffRole, readonly Permission[]> = {
     "audit.read",
   ],
   operations: [
+    "schedule.manage",
     "catalog.read",
     "departures.manage",
     "bookings.read",
@@ -51,7 +58,7 @@ const rolePermissions: Record<StaffRole, readonly Permission[]> = {
     "customers.read",
     "tracking.manage",
   ],
-  content_editor: ["catalog.read", "content.manage"],
+  content_editor: ["catalog.read", "content.manage", "content.draft"],
 };
 
 export function isStaffRole(value: unknown): value is StaffRole {

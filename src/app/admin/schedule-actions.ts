@@ -7,7 +7,7 @@ export async function saveServiceSchedule(operatorId: string, form: FormData) {
   let errorMessage = '';
   try {
     const value = (key: string) => String(form.get(key) ?? '');
-    await withOperatorService(operatorId, 'departures.manage', async (client, context) => {
+    await withOperatorService(operatorId, form.get('mode') === 'exception' ? 'pricing.manage' : 'schedule.manage', async (client, context) => {
       const exception = value('mode') === 'exception';
       const common = { p_operator_id: context.operatorId, p_actor_id: context.staffProfileId,
         p_expected_updated_at: value('updated_at') || null };

@@ -1,3 +1,4 @@
+import {editorialSections,editorialDefaults} from './editorial-fields';
 import {legacyFaq,parseFaq} from './faq';
 import {whatsappDefaults,validateWhatsApp} from './whatsapp';
 import { parseAmenities, focalPositions } from "./hero-amenities";
@@ -44,6 +45,7 @@ export const websiteSections: {id:string;title:string;fields:WebsiteField[]}[] =
  {id:"faq",title:"Questions & answers",fields:[f("tourPage.faqTitle","FAQ heading","A few questions, answered."),{key:"faq.items",label:"Questions",initial:JSON.stringify(legacyFaq(Object.fromEntries(pageSections.flatMap(s=>s.fields).map(f=>[f.key,f.initial])))),kind:"faq",max:230000}]},
  ...legalSections,
   ...pageSections,
+  ...editorialSections,
   { id: "hero", title: "Hero", fields: [
     f("hero.eyebrow", "Eyebrow", "SHKODËR, ALBANIA · GO A LITTLE FURTHER"),
     f("hero.title", "Main heading", "Discover Shkodra."), f("hero.emphasis", "Emphasized heading", "Your way."),
@@ -102,25 +104,23 @@ for (const section of websiteSections) {
   if (homepageVisibilitySections.some(id => id === section.id)) section.fields.push(f(`${section.id}.showOnHomepage`, `Show ${visibilityScope(section.id)}`, "true", "visibility"));
 }
 // Retain the stored schema and historical showcase headings without offering obsolete controls.
-const homepageEditorOrder = ["hero","how","route","live","departures","intro","notebook","reviews","final"];
-export const homepageEditorSections = websiteSections.filter(s => !["how","faq","whatsapp","heroAmenities","destinations","navigation","footer","seo",...legalSections.map(s=>s.id),...pageSections.map(p=>p.id)].includes(s.id)).map(s => s.id === "reviews" ? {...s,title:"Guest Reviews",fields:s.fields.filter(f => f.key !== "reviews.second")} : s.id === "notebook" ? {...s,fields:s.fields.filter(f=>!/^notebook\.[0-9]+\./.test(f.key)||f.key==="notebook.0.linkLabel").map(f=>f.key==="notebook.0.linkLabel"?{...f,label:"Destination card link label"}:f)} : s.id === "how" ? {...s,title:"How it works"} : s).sort((a,b)=>homepageEditorOrder.indexOf(a.id)-homepageEditorOrder.indexOf(b.id));
+const homepageEditorOrder = ["hero","homeRoute","route","live","departures","intro","notebook","reviews","final"];
+export const homepageEditorSections = websiteSections.filter(s => !["how","faq","whatsapp","heroAmenities","destinations","navigation","footer","seo",...legalSections.map(s=>s.id),...pageSections.map(p=>p.id),...editorialSections.filter(p=>p.id!=="homeRoute").map(p=>p.id)].includes(s.id)).map(s => s.id === "intro" ? {...s,fields:s.fields.filter(f=>!["intro.text","intro.link","intro.linkLabel"].includes(f.key))} : s.id === "reviews" ? {...s,title:"Guest Reviews",fields:s.fields.filter(f => f.key !== "reviews.second")} : s.id === "notebook" ? {...s,fields:s.fields.filter(f=>!/^notebook\.[0-9]+\./.test(f.key)||f.key==="notebook.0.linkLabel").map(f=>f.key==="notebook.0.linkLabel"?{...f,label:"Destination card link label"}:f)} : s.id === "how" ? {...s,title:"How it works"} : s).sort((a,b)=>homepageEditorOrder.indexOf(a.id)-homepageEditorOrder.indexOf(b.id));
 export const destinationEditorSections = websiteSections.filter(s => s.id === "destinations").map(s => ({ ...s, title: "Destination content", fields: s.fields.filter(f => f.key.startsWith("place.")) }));
 export const globalEditorSections = websiteSections.filter(s=>["whatsapp","navigation","footer","seo",...legalSections.map(s=>s.id)].includes(s.id)).map(s=>s.id==="footer"?{...s,fields:footerFields}:s.id==="navigation"?{...s,fields:s.fields.filter(f=>!["nav.mobileBook","nav.mobileMap"].includes(f.key))}:s);
-export const publicPageEditorSections = [...pageSections.map(s=>s.id==="tourPage"?{...s,fields:s.fields.filter(f=>!f.key.startsWith("tourPage.faq"))}:s),websiteSections.find(s=>s.id==="faq")!];
+export const publicPageEditorSections = [...editorialSections.filter(s=>s.id!=="homeRoute"),...pageSections.map(s=>s.id==="tourPage"?{...s,fields:s.fields.filter(f=>!f.key.startsWith("tourPage.faq"))}:s),websiteSections.find(s=>s.id==="faq")!];
 export const editableWebsiteSections: {id:string;title:string;fields:WebsiteField[]}[] = [...homepageEditorSections, ...globalEditorSections, ...publicPageEditorSections];
 export const websiteEditorGroups = {homepage:homepageEditorSections,destinations:destinationEditorSections,pages:publicPageEditorSections,global:globalEditorSections};
 export const websiteFields = [...new Map(websiteSections.flatMap(section => section.fields).map(f=>[f.key,f])).values()];
 export const initialWebsiteContent: WebsiteContent = Object.fromEntries(websiteFields.map(field => [field.key, field.initial]));
-export function safeWebsiteLink(value: string) {
-  return /^\/(?:$|#(?:route|booking|destinations)$|(?:tour|live|explore|book|credits|admin|faq)(?:#(?:faq|timetable|centre|castle|lake|bridge))?$|explore\/(?:centre|castle|lake|bridge)$)/.test(value);
-}
+export function safeWebsiteLink(value:string){return /^\/(?:$|#(?:route|booking|destinations)$|(?:tour|route|live|explore|book|credits|admin|faq|privacy-policy|terms-and-conditions)(?:#(?:faq|timetable|centre|castle|lake|bridge))?$|explore\/[a-z0-9]+(?:-[a-z0-9]+)*$)/.test(value);}
 export function safeWebsiteImage(value: string) {
   if (/^\/images\/[a-zA-Z0-9/_-]+\.(?:webp|png|jpg|jpeg|avif)$/.test(value)) return true;
   try { const url = new URL(value); return url.protocol === "https:" && !url.username && !url.password && !url.hash && !url.search && url.hostname.endsWith(".supabase.co") && /^\/storage\/v1\/object\/public\/website-media\/[a-f0-9-]+\/[a-f0-9-]+\.(?:webp|png|jpg|avif)$/.test(url.pathname); } catch { return false; }
 }
 export function validateWebsiteContent(value: unknown): WebsiteContent {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw Error("Invalid homepage content");
-  const record = { "faq.items":JSON.stringify(legacyFaq(value as WebsiteContent)), ...whatsappDefaults, ...footerDefaults, ...Object.fromEntries(homepageVisibilitySections.map(id => [`${id}.showOnHomepage`, "true"])), ...value } as WebsiteContent;
+  const record = { ...editorialDefaults, "faq.items":JSON.stringify(legacyFaq(value as WebsiteContent)), ...whatsappDefaults, ...footerDefaults, ...Object.fromEntries(homepageVisibilitySections.map(id => [`${id}.showOnHomepage`, "true"])), ...value } as WebsiteContent;
   if (Object.keys(record).length !== websiteFields.length) throw Error("Invalid homepage fields");
   for (const field of websiteFields) {
     const v = record[field.key];
@@ -134,6 +134,7 @@ export function validateWebsiteContent(value: unknown): WebsiteContent {
   }
   for(const id of ['privacy','terms'])if(record['legal.'+id+'.status']==='published'&&!record['legal.'+id+'.text'].trim())throw Error('Add legal text before publishing');
   if(!/^\d{4}$/.test(record['footer.year']))throw Error('Use a four-digit copyright year');
+  if (record["homeRoute.title"].replaceAll("{count}","").match(/[{}0-9]/) || record["homeRoute.title"].split("{count}").length > 2) throw Error("Use {count} once for the live count; do not enter a manual number");
   validateWhatsApp(record);
   return { ...record };
 }
@@ -143,5 +144,5 @@ export function websitePlaces(content: WebsiteContent) {
 
 // Resolve retired homepage anchors without changing saved editorial records.
 export function resolveWebsiteLink(link: string) {
-  return link === "/tour#faq" ? "/faq" : link === "/live" ? "/route" : link === "/#booking" ? "/book" : link === "/#destinations" ? "/explore" : link;
+  return link === "/tour#faq" ? "/faq" : ["/live","/#route"].includes(link) ? "/route" : link === "/#booking" ? "/book" : link === "/#destinations" ? "/explore" : link;
 }

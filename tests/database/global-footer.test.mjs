@@ -4,7 +4,7 @@ import {before,after} from 'node:test';
 import {createTestDatabase,loadDevelopmentFixtures} from '../helpers/database.mjs';
 import {initialWebsiteContent,footerDefaults,validateWebsiteContent} from '../../src/modules/content/website-schema.ts';
 let db,actor;const op='10000000-0000-4000-8000-000000000001';
-before(async()=>{db=await createTestDatabase();await loadDevelopmentFixtures(db);const uid=(await db.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;actor=(await db.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'content_editor') returning id",[op,uid])).rows[0].id;});
+before(async()=>{db=await createTestDatabase();await loadDevelopmentFixtures(db);const uid=(await db.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;actor=(await db.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'owner') returning id",[op,uid])).rows[0].id;});
 after(async()=>db?.close());
 const valid=async c=>(await db.query('select validate_website_content_v1($1) valid',[JSON.stringify(c)])).rows[0].valid;
 test('footer migration accepts old documents, optional social links and unpublished legal defaults',async()=>{const old={...initialWebsiteContent};for(const k of Object.keys(footerDefaults))delete old[k];assert.ok(await valid(old));const c=validateWebsiteContent(old);assert.equal(c['footer.vat'],'M66526001A');assert.equal(c['legal.privacy.text'],'');assert.equal(c['legal.privacy.status'],'unpublished');});

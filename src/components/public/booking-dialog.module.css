@@ -9,10 +9,19 @@
 :global(.public-site) .dialog .close{width:44px;height:44px;min-width:44px;min-height:44px;padding:0;flex:0 0 44px;background:transparent;color:white;border:0;border-radius:var(--ss-radius-control);font-size:28px}
 .content{overflow-y:auto;overscroll-behavior:contain;min-height:0;padding:24px}
 @media(max-width:767px){
- :global(.public-site) .dialog.dialog{position:fixed;inset:auto 0 0;margin:0;width:100%;max-width:none;max-height:94dvh;border-radius:18px 18px 0 0;animation:enter 160ms ease-out}
- .header{padding:12px 16px}.header>div{gap:12px}
- :global(.public-site) .dialog .header h2{font-size:20px}
- .content{padding:16px}.content h3{font-size:20px;margin:0 0 16px}
+ :global(.public-site) .dialog.dialog{position:fixed;inset:auto max(12px,env(safe-area-inset-right)) 0 max(12px,env(safe-area-inset-left));margin:0;width:auto;max-width:none;box-sizing:border-box;max-height:calc(100dvh - max(12px,env(safe-area-inset-top)));border-radius:14px 14px 0 0;animation:enter 160ms ease-out}
+ .header{padding:8px 16px;gap:8px}.header>div{gap:10px;min-width:0}
+ .header img,.header svg{width:72px;height:auto;flex:0 0 72px}
+ :global(.public-site) .dialog .header h2{font-size:18px;line-height:1.2;min-width:0}
+ :global(.public-site) .dialog .close{-webkit-tap-highlight-color:transparent;box-shadow:none;border-radius:50%}
+ :global(.public-site) .dialog .close:focus:not(:focus-visible){outline:none}
+ :global(.public-site) .dialog .close:focus-visible{outline:2px solid white;outline-offset:-5px}
+ .content{padding:16px 16px max(16px,env(safe-area-inset-bottom));min-width:0;scroll-padding-block:16px}.content h3{font-size:20px;margin:0 0 16px}
+ .content :global(input),.content :global(select),.content :global(textarea){width:100%;max-width:100%;min-width:0;box-sizing:border-box}
+ .content :global(.p-progress){flex-wrap:wrap;row-gap:8px}
+ .content :global(.p-booking-action){flex-direction:column;align-items:stretch;gap:8px;padding-block:8px}
+ .content :global(.p-booking-action .p-transaction-action){width:100%;flex:auto}
+ .content :global(.p-action-total){min-width:0}
 }
 @keyframes enter{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
 @media(prefers-reduced-motion:reduce){:global(.public-site) .dialog.dialog{animation:none}}

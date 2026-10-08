@@ -1,3 +1,4 @@
+import type {MeetingPoint} from "./meeting-point";
 import type { PassengerCounts, PassengerCategories, PassengerSnapshot } from "./passengers";
 /** V1 booking domain DTOs. Safe for type-only imports in browser/partner clients. */
 export type OrderStatus =
@@ -67,6 +68,7 @@ export type BookingPass = {
   departures: { date: string; time: string; guests: number }[];
 };
 export type PendingOrder = {
+  meetingPoint?: MeetingPoint;
   managementToken?: string;
   pass?: BookingPass;
   version: 1;

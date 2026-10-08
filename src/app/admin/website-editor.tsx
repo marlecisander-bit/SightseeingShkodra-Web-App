@@ -1,4 +1,5 @@
 "use client";
+import {sectionConsumers} from "@/modules/content/editorial-fields";
 import {FaqInput} from './faq-input';
 import { ownerFieldLabel, positionLabels, imageUploadMessage } from "./presentation";
 import { AmenitiesInput } from "./hero-amenities-input";
@@ -12,7 +13,7 @@ import { saveWebsiteSection, uploadWebsiteImage } from "./website-actions";
 import styles from "./website-editor.module.css";
 import { prepareWebsiteImage } from "@/modules/content/image-upload";
 
-export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, values, setValues, onStateChange, onFeedback }: { operatorId: string; sectionId: string; content: WebsiteContent; stamp: string; values: WebsiteContent; setValues: Dispatch<SetStateAction<WebsiteContent>>; onStateChange?: (id: string, dirty: boolean, pending: boolean) => void; onFeedback?: (id: string, message: string) => void }) {
+export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, values, setValues, onStateChange, onFeedback, canPublish = false, destinationLinks = [] }: { canPublish?:boolean; destinationLinks?:{value:string;label:string}[]; operatorId: string; sectionId: string; content: WebsiteContent; stamp: string; values: WebsiteContent; setValues: Dispatch<SetStateAction<WebsiteContent>>; onStateChange?: (id: string, dirty: boolean, pending: boolean) => void; onFeedback?: (id: string, message: string) => void }) {
   const section = editableWebsiteSections.find(section => section.id === sectionId)!;
   const [message, setMessage] = useState("");
   const [pending, start] = useTransition();
@@ -40,9 +41,10 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
       if (!result.error) router.refresh();
     });
   }}>
+    <p>Used on: {sectionConsumers[sectionId] ?? "Shared public content"}.</p>
     {sectionId === "reviews" && <p><a href={`/admin/${operatorId}/reviews`}>Manage guest reviews and ordering</a>. This section is hidden until a review is published.</p>}
     {sectionId==='footer'&&<p>Leave a social link empty to hide it. Manage your Google Reviews link below.</p>}
-    {sectionId==='intro'&&<p>This heading introduces the compact homepage ticket summary. Product details and pricing retain their existing owners.</p>}
+    {sectionId==='intro'&&<p>The homepage visibility switch hides the complete optional ticket summary. These headings are also shared with the Route ticket presentation. Product details and pricing retain their existing owners.</p>}
     {sectionId==='route'&&<p>This copy introduces Tour destination stories. The homepage and Route stop overviews use published Live Map stops. The shared visibility switch controls these presentations.</p>}
     {sectionId==='departures'&&<p>On the homepage, this copy appears in the Live Service summary. Scheduled times still come from Calendar &amp; Pricing.</p>}
     {sectionId==='whatsapp'&&<p>Use your WhatsApp Business number with its country code. Save Draft keeps changes private; Publish updates the website. Leave the button label empty to show only the icon.</p>}
@@ -60,7 +62,7 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
         const heroImage = sectionId === "hero" && field.kind === "image";
         const mobileHero = heroImage && /mobile/i.test(field.key);
         return <div key={field.key} className={`${styles.field} ${long ? styles.fullField : ""} ${field.kind === "image" ? styles.imageField : ""}`}>
-          {field.kind === "faq" ? <FaqInput value={values[field.key]} onChange={value=>setValues(v=>({...v,[field.key]:value}))}/> : field.kind === "toggle" ? <label>{ownerFieldLabel(field.label)}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}><option value="true">On</option><option value="false">Off</option></select></label> : field.kind === "publication" ? <label>{ownerFieldLabel(field.label)}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}><option value="unpublished">Unpublished</option><option value="published">Published</option></select></label> : field.kind === "amenities" ? <AmenitiesInput value={values[field.key]} onChange={value=>setValues(v=>({...v,[field.key]:value}))}/> : field.kind === "position" ? <label>{ownerFieldLabel(field.label)}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}>{focalPositions.map(position=><option key={position} value={position}>{positionLabels[position]}</option>)}</select></label> : field.kind === "image" ? <>
+          {field.kind === "link" ? <label>{field.label}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}>{Array.from(new Map([{value:values[field.key],label:"Current: "+values[field.key]}, ...["/","/tour","/route","/explore","/faq","/book","/credits","/admin","/privacy-policy","/terms-and-conditions"].map(value=>({value,label:value})),...destinationLinks].map(o=>[o.value,o])).values()).map(o=><option key={o.value} value={o.value}>{o.label}</option>)}</select></label> : field.kind === "faq" ? <FaqInput value={values[field.key]} onChange={value=>setValues(v=>({...v,[field.key]:value}))}/> : field.kind === "toggle" ? <label>{ownerFieldLabel(field.label)}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}><option value="true">On</option><option value="false">Off</option></select></label> : field.kind === "publication" ? <label>{ownerFieldLabel(field.label)}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}><option value="unpublished">Unpublished</option><option value="published">Published</option></select></label> : field.kind === "amenities" ? <AmenitiesInput value={values[field.key]} onChange={value=>setValues(v=>({...v,[field.key]:value}))}/> : field.kind === "position" ? <label>{ownerFieldLabel(field.label)}<select name={field.key} value={values[field.key]} onChange={e=>setValues(v=>({...v,[field.key]:e.target.value}))}>{focalPositions.map(position=><option key={position} value={position}>{positionLabels[position]}</option>)}</select></label> : field.kind === "image" ? <>
             <strong>{ownerFieldLabel(field.label)}</strong>
             <div className={heroImage ? `${styles.heroPreview} ${mobileHero ? styles.heroPreviewMobile : styles.heroPreviewDesktop}` : undefined} style={heroImage ? {objectPosition: values[mobileHero ? "hero.mobilePosition" : "hero.desktopPosition"]} : undefined}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -95,7 +97,7 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
         <span className={styles.helper}>{dirty ? "Unsaved changes" : "Saved content"}</span>
         <Button className={styles.textButton} type="button" disabled={!dirty} onClick={() => {setValues(current => ({...current, ...Object.fromEntries(section.fields.map(f => [f.key, content[f.key]]))})); setMessage("Unsaved changes discarded.");}}>Discard</Button>
         <Button className={styles.secondary} name="operation" value="draft">{pending ? "Saving…" : "Save Draft"}</Button>
-        <Button className={styles.primary} name="operation" value="publish">Publish</Button>
+        <Button className={styles.primary} name="operation" value="publish" disabled={!canPublish}>Publish</Button>
       </div>
       <p className={styles.helper}>Publish applies this section and all previously saved website drafts.</p>
     </fieldset>

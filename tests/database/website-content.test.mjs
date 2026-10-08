@@ -4,7 +4,7 @@ import { createTestDatabase, loadDevelopmentFixtures } from '../helpers/database
 import { initialWebsiteContent, validateWebsiteContent } from '../../src/modules/content/website-schema.ts';
 let db, actor;
 const op = '10000000-0000-4000-8000-000000000001';
-before(async()=>{ db=await createTestDatabase(); await loadDevelopmentFixtures(db); const user=(await db.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id; actor=(await db.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'content_editor') returning id",[op,user])).rows[0].id; });
+before(async()=>{ db=await createTestDatabase(); await loadDevelopmentFixtures(db); const user=(await db.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id; actor=(await db.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'owner') returning id",[op,user])).rows[0].id; });
 after(async()=>{await db.close();});
 async function save(content, operation, stamp=null, operator=op) { return (await db.query('select * from save_website_content_v1($1,$2,$3,$4,$5)',[operator,actor,JSON.stringify(content),stamp,operation])).rows[0]; }
 test('homepage drafts remain private until publish; stale edits, invalid URLs and wrong tenants fail',async()=>{

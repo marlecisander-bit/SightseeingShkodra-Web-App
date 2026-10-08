@@ -33,7 +33,7 @@ const fields: Record<
       options: ["draft", "published", "archived"],
     },
     { key: "meta_title", label: "Search result title (required to publish)" },
-    { key: "meta_description", label: "Tour summary for search results (required to publish)" },
+    { key: "meta_description", label: "Tour description and search summary (shared; required to publish)" },
     { key: "inclusions", label: "Ticket inclusions and admission information" },
     { key: "og_image", label: "Social sharing image address", type: "url" },
     {
@@ -64,8 +64,9 @@ export function CatalogRecordEditor({
     >
       <input type="hidden" name="id" value={row.id ?? ""} />
       {entity === "product" && !row.id && <ProductNameFields />}
-      {fields[entity].filter(field => !(entity === "product" && !row.id &&
-        (field.key === "title" || field.key === "slug"))).map((field) => field.key === "og_image" ? <SavedImageField key={field.key} operatorId={operatorId} name={field.key} label="Social sharing image" initial={String(row[field.key] ?? "")}/> : field.key === "slug" ? <details key={field.key}><summary>Advanced: page address</summary><label>Page address<input name="slug" required maxLength={200} defaultValue={row.slug ?? ""}/></label><p>Changing this address can affect existing links.</p></details> : (
+      {entity === "product" && row.id && <p>Page address and operational type are developer-controlled bindings.</p>}
+      {fields[entity].filter(field => !(entity === "product" && row.id && ["slug","type"].includes(field.key))).filter(field => !(entity === "product" && !row.id &&
+        (field.key === "title" || field.key === "slug"))).map((field) => field.key === "og_image" ? <SavedImageField key={field.key} operatorId={operatorId} name={field.key} label="Tour hero and social sharing image (shared)" initial={String(row[field.key] ?? "")}/> : field.key === "slug" ? <details key={field.key}><summary>Advanced: page address</summary><label>Page address<input name="slug" required maxLength={200} defaultValue={row.slug ?? ""}/></label><p>Changing this address can affect existing links.</p></details> : (
         <label key={field.key}>
           {field.label}
           {field.options ? (
