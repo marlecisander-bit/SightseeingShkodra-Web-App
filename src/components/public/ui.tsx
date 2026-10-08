@@ -107,7 +107,7 @@ export function Footer({ content = initialWebsiteContent, previewPathname, googl
         <PreviewNote />
       </div>
       </section></FinalInvitation>
-      <footer className="p-global-footer">
+      <footer className="p-global-footer" data-floating-obstacle>
        <div className="p-footer-inner">
         <div className="p-footer-main">
          <HomeLink className="p-footer-logo" aria-label="Sightseeing Shkodra homepage"><BrandLogo /></HomeLink>

@@ -51,7 +51,8 @@ test('published CMS enable-disable-enable and edited fields reach every shared f
  }finally{await db.close();}
 });
 test('shared section flags remove secondary Tour and Live consumers but preserve independent map and booking',()=>{
- const enabled=render(h(TourView,{tour:home,c:initialWebsiteContent,reviews,places:[]}));for(const id of ['tour-route','tour-live','timetable'])assert.ok(enabled.includes('id="'+id+'"'));
+ const enabled=render(h(TourView,{tour:home,c:initialWebsiteContent,reviews,places:[]}));for(const id of ['tour-route','timetable'])assert.ok(enabled.includes('id="'+id+'"'));
+ assert.ok(!enabled.includes('<iframe'));assert.ok(!enabled.includes('tour-live'));assert.ok(enabled.includes('href="/route"'));
  const c={...initialWebsiteContent,...Object.fromEntries(['route','live','departures','reviews'].map(id=>[id+'.showOnHomepage','false']))};
  const tour=render(h(TourView,{tour:home,c,reviews,places:[]}));
  for(const id of ['tour-route','tour-live','timetable','reviews'])assert.ok(!tour.includes('id="'+id+'"'));

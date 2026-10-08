@@ -1494,34 +1494,8 @@ body:has(.p-booking-dialog[open]) {
 @media(max-width:767px){.public-site .p-booking-action{position:sticky;bottom:0;padding-bottom:max(12px,env(safe-area-inset-bottom));z-index:2}.public-site .p-contact-fields:focus-within~.p-booking-action{position:static}.public-site .p-flow-when .p-flow-layout>aside{display:none}}
 
 /* Shared compact footer. Invitation remains a separate section above it. */
-.public-site .p-global-footer{background:var(--ss-charcoal);color:#fff;padding:32px var(--p-gutter) 20px;}
-.public-site .p-footer-inner{max-width:var(--p-container);margin-inline:auto;}
-.public-site .p-footer-main{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
-.public-site .p-footer-logo{display:inline-flex;width:190px;max-width:100%;}
-.public-site .p-footer-logo img{width:100%;height:auto;}
-.public-site .p-footer-social{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;}
-.public-site .p-footer-social a{display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:8px;}
-.public-site .p-footer-social img{width:28px;height:28px;object-fit:contain;filter:brightness(0) invert(1);}
-.public-site .p-footer-social .p-social-wide{width:40px;height:32px;}
-.public-site .p-footer-social a:hover{background:#ffffff20;}
-.public-site .p-footer-staff{background:transparent;border:1px solid #ffffff80;color:#fff;min-height:44px;padding:10px 18px;font-size:14px;}
-.public-site .p-footer-staff:hover{background:#fff;color:var(--ss-charcoal);}
-.public-site .p-global-footer a:focus-visible{outline:3px solid var(--ss-yellow);outline-offset:4px;}
-.public-site .p-footer-info{border-top:1px solid #ffffff30;margin-top:24px;padding-top:16px;display:flex;align-items:center;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;font-size:13px;color:#e5e2e5;}
-.public-site .p-footer-info p{margin:0;display:flex;flex-wrap:wrap;gap:4px 16px;}
-.public-site .p-footer-info nav{display:flex;gap:8px 20px;flex-wrap:wrap;}
-.public-site .p-footer-info nav a{min-height:44px;display:inline-flex;align-items:center;text-decoration:underline;text-underline-offset:4px;}
-.public-site .p-footer-info a:hover{color:var(--ss-yellow);}
 .public-site .p-legal-page{padding-block:calc(var(--p-header-height) + 40px) 56px;min-height:50vh;}
 .public-site .p-legal-text{white-space:pre-wrap;overflow-wrap:anywhere;max-width:75ch;line-height:1.75;}
-@media(max-width:700px){
- .public-site .p-global-footer{padding-block:28px 20px;}
- .public-site .p-footer-main{flex-direction:column;gap:16px;}
- .public-site .p-footer-logo{width:168px;}
- .public-site .p-footer-info{flex-direction:column;align-items:center;gap:8px;text-align:center;margin-top:20px;}
- .public-site .p-footer-info nav{justify-content:center;order:-1;gap:4px 16px;}
- .public-site .p-footer-info p{flex-direction:column;gap:4px;}
-}
 
 /* One header and booking action; mobile CTA follows the actual hero action. */
 .public-site .p-header-book-compact{display:none}
@@ -1550,11 +1524,6 @@ body:has(.p-booking-dialog[open]) {
 /* Homepage information flow; shared Tour, booking and map pages retain their styling. */
 .public-site .p-home .p-section{padding-block:64px}
 .public-site .p-home .p-section-heading{margin-bottom:28px}
-.public-site .p-home-stops li>span{color:var(--brand-red);font-size:13px;font-weight:700}
-.public-site .p-home-stops{border-top:1px solid var(--ss-border)}
-.public-site .p-home-stops ol{list-style:none;padding:0;margin:24px 0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:20px}
-.public-site .p-home-stops li{display:flex;gap:12px;align-items:baseline;min-width:0}
-.public-site .p-home-stops li a{font-size:18px;line-height:1.4;min-height:44px;display:flex;align-items:center}
 .public-site .p-home-service{background:var(--ss-sand,#fff8ee)}
 .public-site .p-home-service-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}
 .public-site .p-home-service-grid>div{min-width:0}
@@ -1567,13 +1536,7 @@ body:has(.p-booking-dialog[open]) {
 .public-site .p-home-service-summary strong{font-size:20px}
 .public-site .p-home-service-summary small{font-size:13px;display:block;max-width:45ch}
 .public-site .p-home-service iframe{height:320px}
-.public-site .p-home-ticket{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:40px;border:1px solid var(--ss-border);border-radius:var(--ss-radius);padding:32px;background:var(--ss-sand,#fff8ee)}
-.public-site .p-home-ticket h2{font-size:clamp(28px,3vw,42px);line-height:1.1;margin:0 0 20px}
-.public-site .p-home-ticket h3{font-size:20px;margin:24px 0 12px}
 .public-site .p-ticket-inclusions{white-space:pre-line}
-.public-site .p-home-ticket-action{align-self:center;min-width:0}
-.public-site .p-home-ticket-action>.p-button{width:100%}
-.public-site .p-home-ticket-action>.p-preview{font-size:14px}
 .public-site .p-hero-commercial .p-hero-product{font-size:16px;line-height:1.3;font-weight:700;margin:0 0 6px;max-width:40ch}
 .public-site .p-hero-commercial .p-hero-benefits{font-size:14px;line-height:1.4;margin:0 0 10px}
 .public-site .p-home .p-hero-commercial .p-booking-price strong{font-size:clamp(32px,4vw,44px);line-height:1.1}
@@ -1582,10 +1545,6 @@ body:has(.p-booking-dialog[open]) {
  .public-site .p-home .p-section-heading{gap:16px;margin-bottom:22px}
  .public-site .p-home .p-section h2{font-size:clamp(28px,4vw,32px);line-height:1.12}
  .public-site .p-home-service-grid{grid-template-columns:1fr;gap:24px}
- .public-site .p-home-stops ol{grid-template-columns:1fr;gap:0;margin:16px 0 24px}
- .public-site .p-home-stops li{border-bottom:1px solid var(--ss-border);padding:4px 0}
- .public-site .p-home-ticket{grid-template-columns:1fr;gap:24px;padding:24px}
- .public-site .p-home-ticket-action{border-top:1px solid var(--ss-border);padding-top:20px}
  .public-site .p-home .p-hero-commercial{margin-top:clamp(80px,22vw,120px)}
  .public-site .p-home .p-hero-v2 h1{font-size:clamp(32px,10.8vw,44px);line-height:.97}
  .public-site .p-home .p-hero-commercial .p-booking-price strong{font-size:36px}
@@ -1595,9 +1554,6 @@ body:has(.p-booking-dialog[open]) {
 }
 @media(min-width:431px) and (max-width:900px){
  .public-site .p-home .p-hero-v2 h1{font-size:clamp(44px,5.8vw,51.28px)}
-}
-@media(max-width:360px){
- .public-site .p-home-ticket{padding:20px}
 }
 @media(max-width:900px){
  .public-site .p-home-service iframe{height:260px}
@@ -1621,7 +1577,6 @@ body:has(.p-booking-dialog[open]) {
  .public-site .p-home-service-summary{margin-block:8px 12px}
  .public-site .p-home-service-summary p{margin-block:8px}
  .public-site .p-home-service-grid>div>p{line-height:1.5;margin-bottom:12px}
- .public-site .p-home-ticket p{font-size:16px;line-height:1.5}
 }
 .public-site .p-home-inline-map{margin-top:12px;border-top:1px solid var(--ss-border)}
 .public-site .p-home-inline-map summary{min-height:44px;display:flex;align-items:center;cursor:pointer;text-decoration:underline;font-size:14px}
@@ -1636,4 +1591,87 @@ body:has(.p-booking-dialog[open]) {
 @media(max-width:900px){.public-site .p-home .p-home-service+.p-section{padding-top:40px}}
 @media(max-width:900px) and (max-height:650px){
  .public-site .p-home .p-hero-commercial{margin-top:40px}
+}
+
+
+/* Connected published route: flexible columns; vertical timeline below tablet. */
+.public-site .p-home-stops{border-top:1px solid var(--ss-border)}
+.public-site .p-home-route-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:24px 48px}
+.public-site .p-home-route-heading>div{min-width:0;max-width:65ch}
+.public-site .p-home-route-heading h2{font-size:clamp(28px,3vw,42px);line-height:1.12;margin-bottom:16px}
+.public-site .p-home-route-heading p:last-child{margin-bottom:0}
+.public-site .p-home-route-heading>.p-button{flex:none;max-width:100%}
+.public-site .p-home-stops ol{list-style:none;padding:0;margin:36px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:24px 0}
+.public-site .p-home-stops li{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:12px;min-width:0;padding-right:24px}
+.public-site .p-home-stops li:not(:last-child)::before{content:"";position:absolute;top:22px;left:44px;right:0;height:1px;background:var(--ss-primary-border)}
+.public-site .p-home-stops li>span{display:grid;place-items:center;flex:none;width:44px;height:44px;border:1px solid var(--ss-primary-border);border-radius:50%;background:var(--ss-primary-soft);color:var(--ss-primary);font-size:13px;font-weight:700}
+.public-site .p-home-stops li a{font-size:18px;font-weight:600;line-height:1.4;min-height:44px;display:flex;align-items:flex-start;padding-block:8px;overflow-wrap:anywhere}
+.public-site .p-home-stops li a:hover{color:var(--ss-primary);text-decoration:underline;text-underline-offset:4px}
+.public-site .p-home-stops li a:focus-visible{outline:3px solid var(--ss-focus);outline-offset:4px;border-radius:4px}
+/* One scoped ticket panel; specificity protects section padding and heading sizes. */
+.public-site .p-daily-ticket{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(280px,1fr);gap:clamp(28px,4vw,64px);padding:clamp(28px,4vw,56px);border:1px solid var(--ss-border);border-radius:var(--ss-radius);background:var(--ss-cream)}
+.public-site .p-route-ticket{margin-top:32px}
+.public-site .p-daily-ticket>div{min-width:0}
+.public-site .p-daily-ticket.p-daily-ticket h2{font-size:clamp(30px,3vw,44px);line-height:1.12;margin:0 0 24px;max-width:20ch}
+.public-site .p-daily-ticket h3{font-size:22px;line-height:1.3;margin:0 0 16px;letter-spacing:-.025em}
+.public-site .p-daily-ticket .p-ticket-inclusions-heading{font-size:16px;letter-spacing:0;line-height:1.4;margin:24px 0 8px}
+.public-site .p-daily-ticket>div:first-child>p,.public-site .p-daily-ticket>div:first-child>div:not(.p-ticket-support){max-width:60ch}
+.public-site .p-ticket-support{border-top:1px solid var(--ss-border);margin-top:24px;padding-top:16px;display:grid;gap:8px;color:var(--ss-muted)}
+.public-site .p-ticket-support p{font-size:14px;line-height:1.6;margin:0}
+.public-site .p-ticket-support p:empty{display:none}
+.public-site .p-ticket-support:empty{display:none}
+.public-site .p-ticket-action{align-self:center;display:flex;flex-direction:column;align-items:stretch;gap:16px;padding:28px;background:var(--ss-white);border:1px solid var(--ss-border);border-radius:var(--ss-radius)}
+.public-site .p-ticket-action .p-booking-price{margin:0 0 8px}
+.public-site .p-ticket-action .p-booking-price strong{font-size:clamp(26px,3vw,38px);line-height:1.2;overflow-wrap:anywhere}
+.public-site .p-ticket-action>.p-button{width:100%;min-height:52px}
+.public-site .p-ticket-action>.p-preview,.public-site .p-ticket-action>p:last-child{font-size:14px;line-height:1.5;margin:0;color:var(--ss-muted)}
+.public-site .p-ticket-action>.p-text-link{align-self:center;min-height:44px;display:inline-flex;align-items:center}
+/* Shared footer uses the same fluid gutters and maximum width as public content. */
+.public-site .p-global-footer{background:var(--ss-charcoal);color:#fff;padding:48px var(--p-gutter) max(32px,env(safe-area-inset-bottom))}
+.public-site .p-footer-inner{width:100%;max-width:var(--p-container);margin-inline:auto;min-width:0}
+.public-site .p-footer-main{display:grid;grid-template-columns:minmax(190px,1fr) auto minmax(190px,1fr);align-items:center;gap:24px 40px}
+.public-site .p-footer-logo{display:inline-flex;width:210px;max-width:100%;justify-self:start}
+.public-site .p-footer-logo img{width:100%;height:auto}
+.public-site .p-footer-social{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;min-width:0;grid-column:2}
+.public-site .p-footer-social a{display:flex;align-items:center;justify-content:center;flex:none;width:48px;height:48px;border-radius:8px}
+.public-site .p-footer-social img{width:28px;height:28px;object-fit:contain;filter:brightness(0) invert(1)}
+.public-site .p-footer-social .p-social-wide{width:40px;height:32px}
+.public-site .p-footer-social a:hover{background:#ffffff20}
+.public-site .p-footer-staff{grid-column:3;justify-self:end;background:transparent;border:1px solid #ffffff80;color:#fff;min-height:48px;padding:12px 20px;font-size:14px;max-width:100%}
+.public-site .p-footer-staff:hover{background:#fff;color:var(--ss-charcoal)}
+.public-site .p-global-footer a:focus-visible{outline:3px solid var(--ss-yellow);outline-offset:4px}
+.public-site .p-footer-info{border-top:1px solid #ffffff30;margin-top:32px;padding-top:20px;display:flex;align-items:center;justify-content:space-between;gap:16px 32px;font-size:14px;color:#e5e2e5;flex-wrap:wrap}
+.public-site .p-footer-info p{margin:0;display:flex;flex-wrap:wrap;gap:4px 20px;min-width:0}
+.public-site .p-footer-info p span{overflow-wrap:anywhere}
+.public-site .p-footer-info nav{display:flex;gap:8px 24px;flex-wrap:wrap;min-width:0}
+.public-site .p-footer-info nav a{min-height:44px;display:inline-flex;align-items:center;text-decoration:underline;text-underline-offset:4px;overflow-wrap:anywhere}
+.public-site .p-footer-info a:hover{color:var(--ss-yellow)}
+@media(max-width:1000px){
+ .public-site .p-footer-main{grid-template-columns:minmax(0,1fr) auto;gap:24px}
+ .public-site .p-footer-social{grid-column:1/-1;grid-row:2;justify-content:flex-start}
+ .public-site .p-footer-staff{grid-column:2;grid-row:1}
+}
+@media(max-width:900px){
+ .public-site .p-home-route-heading{align-items:flex-start;flex-direction:column;gap:24px}
+ .public-site .p-home-stops ol{grid-template-columns:minmax(0,1fr);gap:0;margin-top:28px}
+ .public-site .p-home-stops li{flex-direction:row;align-items:flex-start;padding:0 0 20px;gap:16px}
+ .public-site .p-home-stops li:last-child{padding-bottom:0}
+ .public-site .p-home-stops li:not(:last-child)::before{top:44px;bottom:0;left:22px;right:auto;width:1px;height:auto}
+ .public-site .p-home-stops li a{align-items:center;padding-block:8px}
+ .public-site .p-daily-ticket{grid-template-columns:minmax(0,1fr);gap:28px;padding:28px}
+ .public-site .p-ticket-action{padding:24px}
+}
+@media(max-width:600px){
+ .public-site .p-daily-ticket{padding:24px 20px;gap:24px}
+ .public-site .p-daily-ticket.p-daily-ticket h2{font-size:30px;margin-bottom:20px}
+ .public-site .p-daily-ticket h3{font-size:20px}
+ .public-site .p-ticket-action{padding:20px}
+ .public-site .p-global-footer{padding-block:36px 32px}
+ .public-site .p-footer-main{grid-template-columns:minmax(0,1fr);gap:24px}
+ .public-site .p-footer-logo{width:190px}
+ .public-site .p-footer-social{grid-column:1;grid-row:auto;justify-content:flex-start;gap:8px}
+ .public-site .p-footer-staff{grid-column:1;grid-row:auto;justify-self:start}
+ .public-site .p-footer-info{flex-direction:column;align-items:flex-start;gap:16px;margin-top:28px}
+ .public-site .p-footer-info p{flex-direction:column;gap:6px}
+ .public-site .p-footer-info nav{gap:4px 20px}
 }
