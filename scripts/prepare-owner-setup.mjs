@@ -1,11 +1,12 @@
+import { assertIsolatedDevelopmentTarget } from "./isolated-development-target.mjs";
 import assert from 'node:assert/strict';
 import {mkdir, writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {createClient} from '@supabase/supabase-js';
 
 // Explicit development bootstrap only. Never expose link generation as a public endpoint.
-assert.equal(process.env.APP_ENV, 'development');
-assert.equal(process.env.NEXT_PUBLIC_SUPABASE_URL, 'https://ybngoppqqiohcduojfyg.supabase.co');
+assertIsolatedDevelopmentTarget();
+assert.ok(process.env.PUBLIC_OPERATOR_ID, 'An isolated owner workspace binding is required.');
 const email = process.argv[2]?.trim().toLowerCase();
 assert.ok(email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), 'Supply the authorized owner email.');
 const client = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SECRET_KEY, {auth:{persistSession:false, autoRefreshToken:false}});
@@ -18,7 +19,7 @@ for(let page=1;;page++) {
 }
 assert.ok(user, 'An existing authorized account is required.');
 const memberships=ok(await client.from('staff_profiles').select('id').eq('auth_user_id',user.id)
-  .eq('operator_id','9185510e-0e82-4027-ab1c-8604dad5c92e').eq('role','owner').eq('is_active',true));
+  .eq('operator_id',process.env.PUBLIC_OPERATOR_ID).eq('role','owner').eq('is_active',true));
 assert.equal(memberships.length,1,'Expected the approved development owner membership.');
 const type=user.email_confirmed_at?'recovery':'invite';
 const data=ok(await client.auth.admin.generateLink({type,email}));

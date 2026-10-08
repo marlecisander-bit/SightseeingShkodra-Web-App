@@ -22,7 +22,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 Vercel is the permanent hosting platform for this Next.js application, with production branch `main` and domain `sightseeingshkodra.app`. Supabase remains the database/Auth/Storage/Realtime backend; Resend remains the email provider. Use Next.js App Router, Route Handlers, Server Actions and Vercel-native infrastructure. Do not introduce new Netlify dependencies, functions, schedules, edge functions or redirects unless explicitly requested.
 
-The owner selected Vercel Hobby with background delivery disabled. Do not activate cron, email queue processing or notification/push dispatch without a new decision. Preview must use isolated Supabase data and keep communications disabled. Follow `DEPLOYMENT.md` for environment and cutover checks.
+The 5 October decision selected Vercel Hobby with background delivery disabled. The 8 October read-only audit subsequently observed an active Supabase minute scheduler and enabled production delivery; local stage-A approval authorizes documentation/safety maintenance, not cloud changes. Preserve observed infrastructure and record the policy discrepancy; do not activate, disable or reconfigure delivery without a separate decision. Preview must use isolated Supabase data and keep communications disabled. Follow `DEPLOYMENT.md` for environment and cutover checks.
 
 Netlify main-site infrastructure is legacy, retained only until hosted parity is verified. Do not delete or disable it prematurely. The independent Live Map at `sightseeingshkodralivetrackingapp.netlify.app` is an explicitly retained external service; its migration is a separate task.
 

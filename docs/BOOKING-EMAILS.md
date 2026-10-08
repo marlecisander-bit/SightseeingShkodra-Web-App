@@ -1,5 +1,12 @@
 > Current hosting decision (5 October 2026): Vercel is the permanent main-app host. The owner chose Hobby with background delivery disabled. Netlify scheduling instructions below are historical/legacy only and must not be used for new activation. Follow [DEPLOYMENT.md](../DEPLOYMENT.md). Notification projection and push dispatch are paused on Vercel.
 
+## Current-state correction — 8 October 2026
+
+The read-only audit observed production communications flags enabled, one active Supabase minute cron invoking both authenticated Vercel worker routes through Vault/pg_net, advancing successful worker heartbeats, and a verified Resend domain. This replaces earlier statements of observed disabled/unconfigured state; it does not retroactively establish who authorized activation. The owner approved local stage-A maintenance only. Preserve current infrastructure; no new activation, disablement, scheduler, secret rotation or cloud change is authorized here. Preview/Development must remain isolated with communications disabled.
+
+The legacy main Netlify URL returns 404 and is absent from the current team listing; it is not a verified rollback target. Keep the independent Netlify map unchanged. Historical setup instructions below are evidence, not current activation instructions; use root DEPLOYMENT.md for current platform/configuration.
+
+
 # Resend booking emails
 
 Implemented 2026-09-25. Delivery is **disabled** in the current development environment. No real emails were sent. Production enablement, DNS and the scheduler are still to be configured by the owner.

@@ -1,13 +1,10 @@
+import { assertIsolatedDevelopmentTarget } from "./isolated-development-target.mjs";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
 import { createClient } from "@supabase/supabase-js";
-assert.equal(process.env.APP_ENV, "development");
-assert.equal(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  "https://ybngoppqqiohcduojfyg.supabase.co",
-);
+assertIsolatedDevelopmentTarget();
 if (process.argv.includes("--browser")) assert.ok(process.stdin.isTTY);
 const client = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,

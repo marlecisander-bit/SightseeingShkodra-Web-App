@@ -1,3 +1,4 @@
+import { assertIsolatedDevelopmentTarget } from "./isolated-development-target.mjs";
 import assert from 'node:assert/strict';
 import { randomUUID, randomBytes } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
@@ -6,8 +7,7 @@ import { NextRequest } from 'next/server';
 import { proxy } from '../src/proxy.ts';
 
 // Explicit opt-in: never include hosted mutations in the ordinary test suite.
-assert.equal(process.env.APP_ENV, 'development');
-assert.equal(process.env.NEXT_PUBLIC_SUPABASE_URL, 'https://ybngoppqqiohcduojfyg.supabase.co');
+assertIsolatedDevelopmentTarget();
 const options = { auth: { persistSession: false, autoRefreshToken: false } };
 const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SECRET_KEY, options);
 const client = () => createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, options);
