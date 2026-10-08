@@ -1626,10 +1626,10 @@ body:has(.p-booking-dialog[open]) {
 .public-site .p-ticket-action>.p-button{width:100%;min-height:52px}
 .public-site .p-ticket-action>.p-preview,.public-site .p-ticket-action>p:last-child{font-size:14px;line-height:1.5;margin:0;color:var(--ss-muted)}
 .public-site .p-ticket-action>.p-text-link{align-self:center;min-height:44px;display:inline-flex;align-items:center}
-/* Shared footer uses the same fluid gutters and maximum width as public content. */
-.public-site .p-global-footer{background:var(--ss-charcoal);color:#fff;padding:48px var(--p-gutter) max(32px,env(safe-area-inset-bottom))}
-.public-site .p-footer-inner{width:100%;max-width:var(--p-container);margin-inline:auto;min-width:0}
-.public-site .p-footer-main{display:grid;grid-template-columns:minmax(190px,1fr) auto minmax(190px,1fr);align-items:center;gap:24px 40px}
+/* One shared footer: equal desktop columns keep social links on the true centerline. */
+.public-site .p-global-footer{background:var(--ss-charcoal);color:#fff;width:100%;padding:32px clamp(16px,4vw,64px) max(24px,env(safe-area-inset-bottom))}
+.public-site .p-footer-inner{width:100%;max-width:1280px;margin-inline:auto;min-width:0}
+.public-site .p-footer-main{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;gap:24px}
 .public-site .p-footer-logo{display:inline-flex;width:210px;max-width:100%;justify-self:start}
 .public-site .p-footer-logo img{width:100%;height:auto}
 .public-site .p-footer-social{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;min-width:0;grid-column:2}
@@ -1640,15 +1640,15 @@ body:has(.p-booking-dialog[open]) {
 .public-site .p-footer-staff{grid-column:3;justify-self:end;background:transparent;border:1px solid #ffffff80;color:#fff;min-height:48px;padding:12px 20px;font-size:14px;max-width:100%}
 .public-site .p-footer-staff:hover{background:#fff;color:var(--ss-charcoal)}
 .public-site .p-global-footer a:focus-visible{outline:3px solid var(--ss-yellow);outline-offset:4px}
-.public-site .p-footer-info{border-top:1px solid #ffffff30;margin-top:32px;padding-top:20px;display:flex;align-items:center;justify-content:space-between;gap:16px 32px;font-size:14px;color:#e5e2e5;flex-wrap:wrap}
+.public-site .p-footer-info{border-top:1px solid #ffffff30;margin-top:24px;padding-top:12px;display:flex;align-items:center;justify-content:space-between;gap:16px 32px;font-size:14px;color:#e5e2e5;flex-wrap:wrap}
 .public-site .p-footer-info p{margin:0;display:flex;flex-wrap:wrap;gap:4px 20px;min-width:0}
 .public-site .p-footer-info p span{overflow-wrap:anywhere}
 .public-site .p-footer-info nav{display:flex;gap:8px 24px;flex-wrap:wrap;min-width:0}
 .public-site .p-footer-info nav a{min-height:44px;display:inline-flex;align-items:center;text-decoration:underline;text-underline-offset:4px;overflow-wrap:anywhere}
 .public-site .p-footer-info a:hover{color:var(--ss-yellow)}
 @media(max-width:1000px){
- .public-site .p-footer-main{grid-template-columns:minmax(0,1fr) auto;gap:24px}
- .public-site .p-footer-social{grid-column:1/-1;grid-row:2;justify-content:flex-start}
+ .public-site .p-footer-main{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+ .public-site .p-footer-social{grid-column:1/-1;grid-row:2;justify-content:center}
  .public-site .p-footer-staff{grid-column:2;grid-row:1}
 }
 @media(max-width:900px){
@@ -1666,12 +1666,12 @@ body:has(.p-booking-dialog[open]) {
  .public-site .p-daily-ticket.p-daily-ticket h2{font-size:30px;margin-bottom:20px}
  .public-site .p-daily-ticket h3{font-size:20px}
  .public-site .p-ticket-action{padding:20px}
- .public-site .p-global-footer{padding-block:36px 32px}
- .public-site .p-footer-main{grid-template-columns:minmax(0,1fr);gap:24px}
- .public-site .p-footer-logo{width:190px}
- .public-site .p-footer-social{grid-column:1;grid-row:auto;justify-content:flex-start;gap:8px}
- .public-site .p-footer-staff{grid-column:1;grid-row:auto;justify-self:start}
- .public-site .p-footer-info{flex-direction:column;align-items:flex-start;gap:16px;margin-top:28px}
- .public-site .p-footer-info p{flex-direction:column;gap:6px}
- .public-site .p-footer-info nav{gap:4px 20px}
+ .public-site .p-global-footer{padding-block:28px max(24px,env(safe-area-inset-bottom))}
+ .public-site .p-footer-main{grid-template-columns:minmax(0,1fr);justify-items:center;gap:16px}
+ .public-site .p-footer-logo{width:190px;justify-self:center}
+ .public-site .p-footer-social{grid-column:1;grid-row:auto;justify-content:center;gap:8px}
+ .public-site .p-footer-staff{grid-column:1;grid-row:auto;justify-self:center}
+ .public-site .p-footer-info{flex-direction:column;align-items:center;text-align:center;gap:8px;margin-top:24px}
+ .public-site .p-footer-info p{flex-direction:column;gap:4px}
+ .public-site .p-footer-info nav{justify-content:center;gap:4px 20px}
 }
