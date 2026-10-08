@@ -1,0 +1,14 @@
+-- Read-only catalog snapshot. No application rows, tokens, passwords or keys are read.
+-- Run this whole script in the Supabase SQL Editor. Export the result privately.
+BEGIN TRANSACTION READ ONLY;
+SET LOCAL statement_timeout = '15s';
+SELECT jsonb_build_object(
+ 'columns', (SELECT jsonb_agg(jsonb_build_object('table',table_schema||'.'||table_name,'column',column_name,'type',udt_name,'nullable',is_nullable,'default',column_default) ORDER BY table_schema,table_name,ordinal_position) FROM information_schema.columns WHERE table_schema IN ('public','private')),
+ 'constraints', (SELECT jsonb_agg(jsonb_build_object('table',n.nspname||'.'||c.relname,'name',k.conname,'definition',pg_get_constraintdef(k.oid),'validated',k.convalidated) ORDER BY n.nspname,c.relname,k.conname) FROM pg_constraint k JOIN pg_class c ON c.oid=k.conrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname IN ('public','private')),
+ 'indexes', (SELECT jsonb_agg(jsonb_build_object('table',schemaname||'.'||tablename,'name',indexname,'definition',indexdef) ORDER BY schemaname,tablename,indexname) FROM pg_indexes WHERE schemaname IN ('public','private')),
+ 'functions', (SELECT jsonb_agg(jsonb_build_object('name',n.nspname||'.'||p.proname,'arguments',pg_get_function_identity_arguments(p.oid),'body_md5',md5(p.prosrc),'result',pg_get_function_result(p.oid),'security_definer',p.prosecdef,'config',p.proconfig,'anon_execute',has_function_privilege('anon',p.oid,'EXECUTE'),'authenticated_execute',has_function_privilege('authenticated',p.oid,'EXECUTE'),'service_role_execute',has_function_privilege('service_role',p.oid,'EXECUTE')) ORDER BY n.nspname,p.proname,p.oid) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname IN ('public','private') AND p.prokind='f'),
+ 'triggers', (SELECT jsonb_agg(jsonb_build_object('table',n.nspname||'.'||c.relname,'name',t.tgname,'definition',pg_get_triggerdef(t.oid),'enabled',t.tgenabled) ORDER BY n.nspname,c.relname,t.tgname) FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname IN ('public','private') AND NOT t.tgisinternal),
+ 'rls', (SELECT jsonb_agg(jsonb_build_object('table',n.nspname||'.'||c.relname,'enabled',c.relrowsecurity,'forced',c.relforcerowsecurity,'anon_select',has_table_privilege('anon',c.oid,'SELECT'),'authenticated_select',has_table_privilege('authenticated',c.oid,'SELECT'),'service_role_select',has_table_privilege('service_role',c.oid,'SELECT')) ORDER BY n.nspname,c.relname) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname IN ('public','private') AND c.relkind IN ('r','p')),
+ 'policies', (SELECT jsonb_agg(jsonb_build_object('table',schemaname||'.'||tablename,'name',policyname,'roles',roles,'command',cmd,'using',qual,'check',with_check) ORDER BY schemaname,tablename,policyname) FROM pg_policies WHERE schemaname IN ('public','private'))
+) AS schema_audit;
+ROLLBACK;

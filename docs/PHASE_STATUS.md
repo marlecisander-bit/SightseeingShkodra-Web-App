@@ -490,3 +490,32 @@ Applied and recorded only 20261005000100 and 20261005000200 transactionally. Not
 
 ## WhatsApp permission correction - 5 October 2026
 20261005000300 applied and recorded: only private-schema USAGE for service_role. Exact application SDK validation now passes; 42501 resolved. Browser helper denial and existing RLS preserved, data/function/policy fingerprints unchanged. 16 targeted tests pass. DATABASE READY - RETURN TO VERCEL CUTOVER. No commit, push, deployment or delivery activation. See latest VERCEL-CUTOVER-REPORT checkpoint.
+
+
+## 8 October 2026 — Approved local stage-A stabilization
+
+Existing edits, maintenance branch/stash and private configuration preserved. Repository-local GitHub
+Desktop GCM configured; GitHub remote read and push dry-run passed (no push). Clean npm ci in the clone
+passed with the compatible local Next/eslint-config-next 16.3.8 patches. Production-only audit: zero findings;
+five high dev-chain findings remain. Six hosted development entry points now reject production targets
+before creating clients and require explicit isolated-project/mutation opt-in. Removed hardcoded production
+owner workspace binding. Added DEVELOPMENT.md, example opt-in placeholders and six guard regression tests.
+Reconciled scheduler documentation with observed active Supabase Cron; historical disabled-delivery
+decision preserved, no retroactive activation approval inferred. Corrected stale admin explanatory text.
+
+Credential-free disposable verification: npm ci and npm run check passed; npm test 372/372 passed
+(31 component, 17 identity, 135 integration, 165 database, 24 PostgreSQL). After adding the last two entry-point
+guards, focused six-test suite, syntax checks, final full lint and git diff --check passed. No migrations,
+.env.local edits, cloud changes, communications, resources, commits, pushes or deployment. Published HEAD
+remains 4a2e50d; patches are unpublished. Functional isolation, Auth redirect correction and fresh schema
+reconciliation remain pending. No roadmap phase completion or full hosted parity claimed.
+
+
+## 8 October 2026 — Stage-B Auth correction and resource constraint
+
+Approved production Auth Site URL/activation redirect saved and verified after reload; all four prior entries retained. No recovery email or user mutation. Owner declined creating/duplicating databases; production project unchanged otherwise, no production Preview bindings. Proposal updated to current 44-migration baseline and stage-A guards; historical reconciliation marked stale where appropriate. Fresh disposable 44-migration catalog reference generated in /private/tmp before the no-creation decision; existing private snapshots untouched. Full current hosted catalog comparison still pending. No source/dependency changes, deployment, push or migrations in this step.
+
+
+## 8 October 2026 - Readiness release preparation (unpublished)
+
+User authorized local safety/documentation review and CI/reconciliation/acceptance proposals only. Fresh 44-migration evidence supersedes historical email-function drift: final structure matches; seven missing history entries and eleven trigger grants need separate decisions. Published source remains 18c48d0; same-source approved credential rotation already completed. New CI draft, review packet and bounded acceptance/reconciliation procedures are local only. No commit, push, deployment, cloud configuration, migration or production data change in this preparation. Original historical entries and mixed-encoding bytes preserved.

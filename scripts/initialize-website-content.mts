@@ -1,8 +1,8 @@
-﻿import assert from 'node:assert/strict';
+import { assertIsolatedDevelopmentTarget } from "./isolated-development-target.mjs";
+import assert from 'node:assert/strict';
 import {createClient} from '@supabase/supabase-js';
 import {initialWebsiteContent} from '../src/modules/content/website-schema.ts';
-assert.equal(process.env.APP_ENV,'development');
-assert.equal(process.env.NEXT_PUBLIC_SUPABASE_URL,'https://ybngoppqqiohcduojfyg.supabase.co');
+assertIsolatedDevelopmentTarget();
 const op=process.env.PUBLIC_OPERATOR_ID;
 const client=createClient(process.env.NEXT_PUBLIC_SUPABASE_URL,process.env.SUPABASE_SECRET_KEY,{auth:{persistSession:false}});
 const old=await client.from('content_pages').select('slug').eq('operator_id',op).eq('status','published').in('slug',['homepage-hero','homepage-intro','homepage-final']);

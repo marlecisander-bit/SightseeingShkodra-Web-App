@@ -1,3 +1,4 @@
+import { assertIsolatedDevelopmentTarget } from "./isolated-development-target.mjs";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { spawn } from "node:child_process";
@@ -7,17 +8,13 @@ import { loadHomepage } from "../src/modules/content/homepage.ts";
 import { getAvailability } from "../src/modules/booking/availability-server.ts";
 
 // Explicit development-only integration verification. No real owner data is used.
-assert.equal(process.env.APP_ENV, "development");
+assertIsolatedDevelopmentTarget();
 if (process.argv.includes("--browser")) {
   assert.ok(
     process.stdin.isTTY,
     "Run --browser in an interactive terminal (tty=true)",
   );
 }
-assert.equal(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  "https://ybngoppqqiohcduojfyg.supabase.co",
-);
 const client = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.SUPABASE_SECRET_KEY,

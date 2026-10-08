@@ -23,4 +23,6 @@ Booking email setup and verification: [Resend booking emails](docs/BOOKING-EMAIL
 
 ## Deployment
 
-Vercel is the official host; production branch `main`, domain `sightseeingshkodra.app`. Supabase and Resend remain the backend and email provider. Follow [DEPLOYMENT.md](DEPLOYMENT.md) for Production, isolated Preview, and local Development configuration. Vercel Hobby background delivery is paused by owner decision. Netlify is retained only as legacy fallback pending parity; the independent Live Map remains external.
+Vercel is the official host; production branch `main`, domain `sightseeingshkodra.app`. Supabase and Resend remain the backend and email provider. Follow [DEPLOYMENT.md](DEPLOYMENT.md) for Production, isolated Preview, and local Development configuration. The 8 October audit observed active Supabase Cron delivery to protected Vercel workers; see DEPLOYMENT.md for current evidence and the earlier disabled-delivery decision. No activation or cloud change is authorized by local maintenance. The legacy main Netlify URL returns 404 and is not a verified fallback; the independent Live Map remains external.
+
+Mac setup, private isolated configuration and safe Git workflow: [Development guide](docs/DEVELOPMENT.md).

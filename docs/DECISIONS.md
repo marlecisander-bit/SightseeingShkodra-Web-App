@@ -131,3 +131,16 @@ User explicitly designated Vercel as the permanent main Next.js host, main as pr
 ## 5 October 2026 — Transactional email completion scope
 
 The user requested completing the existing Resend booking-email system, then explicitly selected “Complete implementation; keep live delivery disabled.” Extend the existing event/recipient queue, preserve the canonical booking QR and versioned in-flight retries, and test against isolated data/fake provider responses. This does not authorize live email, scheduler activation, deployment or hosted migrations. Vercel Hobby communications pause remains in force. See BOOKING-EMAILS.md.
+
+## 8 October 2026 — Local Mac stabilization approval
+
+The owner approved stage A: preserve/finalize compatible local dependency patches, configure this clone's Git credential helper, guard hosted development scripts against production and update development/deployment guidance. No commit, push, deployment, cloud settings, migration, resource creation or cleanup is authorized. Production scheduler/delivery observed active on 8 October differs from the 5 October disabled decision; this entry records evidence and preservation, not retroactive activation authorization. See DEPLOYMENT.md and DEVELOPMENT.md. Roadmap and booking architecture unchanged.
+
+## 8 October 2026 — Existing backend only and approved Auth correction
+
+Owner explicitly declined creation/duplication of a Supabase backend and identified ybngoppqqiohcduojfyg as the existing database. Keep that production project; do not bind it to Preview or use hosted development mutation scripts against it. Isolated provisioning proposal remains unapproved; disposable local automated tests and read-only production checks remain available. Owner separately approved setting production Auth Site URL to https://sightseeingshkodra.app and adding https://sightseeingshkodra.app/auth/activate while retaining existing redirects. Those settings were saved and verified after reload. No email, migration, resource creation, commit, push or deployment was authorized by this decision.
+
+
+## 8 October 2026 - Readiness release preparation (unpublished)
+
+User authorized local safety/documentation review and CI/reconciliation/acceptance proposals only. Fresh 44-migration evidence supersedes historical email-function drift: final structure matches; seven missing history entries and eleven trigger grants need separate decisions. Published source remains 18c48d0; same-source approved credential rotation already completed. New CI draft, review packet and bounded acceptance/reconciliation procedures are local only. No commit, push, deployment, cloud configuration, migration or production data change in this preparation. Original historical entries and mixed-encoding bytes preserved.
