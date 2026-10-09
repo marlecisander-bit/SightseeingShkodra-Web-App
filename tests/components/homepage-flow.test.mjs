@@ -29,7 +29,8 @@ test('missing product, operational route and schedule never fabricate a price, f
  assert.equal(html.includes('5 stops'),false);
  assert.equal(html.includes('From €'),false);
  assert.ok(html.includes('Check availability'));
- assert.ok(html.includes('Published stops around Shkodra'));
+ assert.match(html, /<h2>[^<]*Published stops[^<]*<\/h2>/);
+ assert.ok(html.includes('Published stops are temporarily unavailable.'));
 });
 test('visibility removes all new consumers of the same section while preserving independent service content',()=>{
  const hidden=render({...c,'intro.showOnHomepage':'false','route.showOnHomepage':'false','live.showOnHomepage':'false'});

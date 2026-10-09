@@ -1601,13 +1601,13 @@ body:has(.p-booking-dialog[open]) {
 .public-site .p-home-route-heading h2{font-size:clamp(28px,3vw,42px);line-height:1.12;margin-bottom:16px}
 .public-site .p-home-route-heading p:last-child{margin-bottom:0}
 .public-site .p-home-route-heading>.p-button{flex:none;max-width:100%}
-.public-site .p-home-stops ol{list-style:none;padding:0;margin:36px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:24px 0}
-.public-site .p-home-stops li{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:12px;min-width:0;padding-right:24px}
-.public-site .p-home-stops li:not(:last-child)::before{content:"";position:absolute;top:22px;left:44px;right:0;height:1px;background:var(--ss-primary-border)}
-.public-site .p-home-stops li>span{display:grid;place-items:center;flex:none;width:44px;height:44px;border:1px solid var(--ss-primary-border);border-radius:50%;background:var(--ss-primary-soft);color:var(--ss-primary);font-size:13px;font-weight:700}
-.public-site .p-home-stops li a{font-size:18px;font-weight:600;line-height:1.4;min-height:44px;display:flex;align-items:flex-start;padding-block:8px;overflow-wrap:anywhere}
-.public-site .p-home-stops li a:hover{color:var(--ss-primary);text-decoration:underline;text-underline-offset:4px}
-.public-site .p-home-stops li a:focus-visible{outline:3px solid var(--ss-focus);outline-offset:4px;border-radius:4px}
+.public-site .p-home-stops > ol{list-style:none;padding:0;margin:36px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:24px 0}
+.public-site .p-home-stops > ol > li{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:12px;min-width:0;padding-right:24px}
+.public-site .p-home-stops > ol > li:not(:last-child)::before{content:"";position:absolute;top:22px;left:44px;right:0;height:1px;background:var(--ss-primary-border)}
+.public-site .p-home-stops > ol > li>span{display:grid;place-items:center;flex:none;width:44px;height:44px;border:1px solid var(--ss-primary-border);border-radius:50%;background:var(--ss-primary-soft);color:var(--ss-primary);font-size:13px;font-weight:700}
+.public-site .p-home-stops > ol > li a{font-size:18px;font-weight:600;line-height:1.4;min-height:44px;display:flex;align-items:flex-start;padding-block:8px;overflow-wrap:anywhere}
+.public-site .p-home-stops > ol > li a:hover{color:var(--ss-primary);text-decoration:underline;text-underline-offset:4px}
+.public-site .p-home-stops > ol > li a:focus-visible{outline:3px solid var(--ss-focus);outline-offset:4px;border-radius:4px}
 /* One scoped ticket panel; specificity protects section padding and heading sizes. */
 .public-site .p-daily-ticket{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(280px,1fr);gap:clamp(28px,4vw,64px);padding:clamp(28px,4vw,56px);border:1px solid var(--ss-border);border-radius:var(--ss-radius);background:var(--ss-cream)}
 .public-site .p-route-ticket{margin-top:32px}
@@ -1661,11 +1661,11 @@ body:has(.p-booking-dialog[open]) {
 }
 @media(max-width:900px){
  .public-site .p-home-route-heading{align-items:flex-start;flex-direction:column;gap:24px}
- .public-site .p-home-stops ol{grid-template-columns:minmax(0,1fr);gap:0;margin-top:28px}
- .public-site .p-home-stops li{flex-direction:row;align-items:flex-start;padding:0 0 20px;gap:16px}
- .public-site .p-home-stops li:last-child{padding-bottom:0}
- .public-site .p-home-stops li:not(:last-child)::before{top:44px;bottom:0;left:22px;right:auto;width:1px;height:auto}
- .public-site .p-home-stops li a{align-items:center;padding-block:8px}
+ .public-site .p-home-stops > ol{grid-template-columns:minmax(0,1fr);gap:0;margin-top:28px}
+ .public-site .p-home-stops > ol > li{flex-direction:row;align-items:flex-start;padding:0 0 20px;gap:16px}
+ .public-site .p-home-stops > ol > li:last-child{padding-bottom:0}
+ .public-site .p-home-stops > ol > li:not(:last-child)::before{top:44px;bottom:0;left:22px;right:auto;width:1px;height:auto}
+ .public-site .p-home-stops > ol > li a{align-items:center;padding-block:8px}
  .public-site .p-daily-ticket{grid-template-columns:minmax(0,1fr);gap:28px;padding:28px}
  .public-site .p-ticket-action{padding:24px}
 }
