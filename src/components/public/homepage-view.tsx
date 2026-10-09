@@ -1,3 +1,4 @@
+import {SightseeingStopsExperience} from './sightseeing-stops-experience';
 import {routeHeading} from '@/modules/content/editorial-fields';
 import { ExpandableText } from "./expandable-text";
 import { BookingPriceIndicator } from "./booking-controls";
@@ -21,7 +22,7 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
     {homepageVisible(c,"route") && <section id="route" className="p-section p-container p-home-stops" aria-label="Route and stops">
       <div className="p-home-route-heading"><div><p className="p-eyebrow">{c["homeRoute.eyebrow"]}</p>
       <h2>{routeHeading(c["homeRoute.title"],planner?.stops?.length)}</h2><p>{c["homeRoute.text"]}</p></div><ActionLink href="/route">{c["homeRoute.action"]}</ActionLink></div>
-      {planner?.stops?.length ? <ol>{planner.stops.map((stop,i)=><li key={stop.id}><span aria-hidden="true">{String(i+1).padStart(2,"0")}</span><Link href="/route">{stop.label}</Link></li>)}</ol> : null}
+      <SightseeingStopsExperience mode="discover" stops={planner?.stops??[]} places={destinations} learnLabel={c['labels.destination']}/>
     </section>}
     {(homepageVisible(c,"live") || homepageVisible(c,"departures")) && <section className="p-section p-home-service" aria-label="Live service">
       <div className="p-container p-home-service-grid" data-live={homepageVisible(c,"live")}>{homepageVisible(c,"live") && <div>
