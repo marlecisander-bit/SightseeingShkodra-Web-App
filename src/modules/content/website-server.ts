@@ -7,13 +7,13 @@ import { withOperatorService } from "../identity/operator-service";
 
 export type WebsiteRecord = { id: string; updated_at: string; published_at: string | null; body: { content: WebsiteContent }; published_body: { content: WebsiteContent } | null };
 // Request-scoped deduplication only; never resurrect stale optional sections on failure.
-export async function loadWebsitePublication(env: NodeJS.ProcessEnv = process.env, transport: typeof fetch = fetch, report: (event: object) => void = event => console.error(JSON.stringify(event))): Promise<{ content: WebsiteContent; published: boolean }> {
+export async function loadWebsitePublication(env: NodeJS.ProcessEnv = process.env, transport: typeof fetch = fetch, report: (event: object) => void = event => console.error(JSON.stringify(event))): Promise<{ content: WebsiteContent; published: boolean; unavailable?: boolean }> {
   const operator = env.PUBLIC_OPERATOR_ID;
   const missing = ["PUBLIC_OPERATOR_ID", "NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SECRET_KEY"].filter(key => !env[key]);
   const unavailable = (reason: string) => {
     // Never log credentials, raw provider errors, URLs or CMS payloads.
     report({component:"website_publication",reason,...(reason === "missing_configuration" ? {missing} : {})});
-    return {content:unavailableWebsiteContent(),published:false};
+    return {content:unavailableWebsiteContent(),published:false,unavailable:reason !== "not_published"};
   };
   if (missing.length) return unavailable("missing_configuration");
   let stage = "client_configuration";

@@ -14,6 +14,6 @@ test('publication query reads only published operator-scoped data without cachin
 });
 test('provider, missing publication and invalid CMS failures are distinct and sanitized',async()=>{
  for(const [response,reason] of [[Response.json({message:'secret provider detail',code:'42501'},{status:403}),'query_failed'],[Response.json(null),'not_published'],[Response.json({published_body:{content:{}}}),'invalid_published_content']]){
-  const events=[];const result=await loadWebsitePublication(env,async()=>response,e=>events.push(e));assert.equal(result.published,false);assert.deepEqual(events,[{component:'website_publication',reason}]);assert(!JSON.stringify(events).includes('secret'));
+  const events=[];const result=await loadWebsitePublication(env,async()=>response,e=>events.push(e));assert.equal(result.published,false);assert.equal(result.unavailable,reason!=='not_published');assert.deepEqual(events,[{component:'website_publication',reason}]);assert(!JSON.stringify(events).includes('secret'));
  }
 });
