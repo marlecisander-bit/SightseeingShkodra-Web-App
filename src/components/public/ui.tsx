@@ -109,15 +109,11 @@ export function Footer({ content = initialWebsiteContent, previewPathname, googl
       </section></FinalInvitation>
       <footer className="p-global-footer" data-floating-obstacle>
        <div className="p-footer-inner">
-        <div className="p-footer-main">
          <HomeLink className="p-footer-logo" aria-label="Sightseeing Shkodra homepage"><BrandLogo /></HomeLink>
          {socials.length>0&&<div className="p-footer-social" aria-label="Social and review platforms">{socials.map(([id,label,url])=><a key={id} href={url} aria-label={label} title={label} target="_blank" rel="noopener noreferrer"><Image src={'/brand/social/'+id+'.svg'} alt="" width={32} height={32} unoptimized className={id==='getyourguide'?'p-social-wide':undefined}/></a>)}</div>}
          <Link className="ss-button p-footer-staff" href="/admin"><ButtonContent>Staff Login</ButtonContent></Link>
-        </div>
-        <div className="p-footer-info">
-         <p><span>© {c['footer.year']} {c['footer.business']}</span><span>VAT: {c['footer.vat']}</span></p>
-         <nav aria-label="Legal"><Link href="/privacy-policy">Privacy Policy</Link><Link href="/terms-and-conditions">Terms &amp; Conditions</Link></nav>
-        </div>
+         <p className="p-footer-identity"><span>© {c['footer.year']} {c['footer.business']}</span><span>VAT: {c['footer.vat']}</span></p>
+         <nav className="p-footer-legal" aria-label="Legal"><Link href="/privacy-policy">Privacy Policy</Link><Link href="/terms-and-conditions">Terms &amp; Conditions</Link></nav>
        </div>
       </footer>
     </>
