@@ -5,6 +5,7 @@ import "./widget-controls.css";
 import "./button-system.css";
 
 export const metadata: Metadata = {
+  verification: { google: process.env.GOOGLE_SITE_VERIFICATION || undefined },
   title: "Sightseeing Shkodra",
   description: "Explore Shkodra. A new travel experience is on its way.",
   robots: { index: false, follow: false },

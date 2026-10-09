@@ -2,11 +2,11 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   seoConfig,
-  sitemapPaths,
   guideStructuredData,
   safeJsonLd,
+  tourStructuredData,
 } from "../../src/modules/content/seo.ts";
-import { emptyHomepage } from "../../src/modules/content/homepage.ts";
+import { publishedSitemapPaths } from "../../src/modules/content/sitemap.ts";
 test("indexing requires explicit production gate and a public HTTPS origin", () => {
   const enabled = {
     APP_ENV: "production",
@@ -17,8 +17,11 @@ test("indexing requires explicit production gate and a public HTTPS origin", () 
     origin: "https://example.com",
     index: true,
   });
+  assert.equal(seoConfig({ ...enabled, VERCEL_ENV: "production" }).index, true);
   for (const override of [
     { APP_ENV: "development" },
+    { VERCEL_ENV: "preview" },
+    { VERCEL_ENV: "development" },
     { SITE_INDEXING_ENABLED: "false" },
     { NEXT_PUBLIC_SITE_URL: "http://example.com" },
     { NEXT_PUBLIC_SITE_URL: "https://localhost" },
@@ -28,27 +31,16 @@ test("indexing requires explicit production gate and a public HTTPS origin", () 
   ])
     assert.equal(seoConfig({ ...enabled, ...override }).index, false);
 });
-test("sitemap only includes supported published content and removes withdrawn routes", () => {
-  const home = emptyHomepage("empty");
-  assert.deepEqual(sitemapPaths(home, []), ["/route"]);
-  home.content["explore-castle"] = { title: "Castle" };
-  home.content["unknown-secret"] = { title: "Hidden" };
-  assert.deepEqual(sitemapPaths(home, []), ["/route"]);
-  const destinations = [{slug:"new-destination",showOnPage:true,guidePublished:true}];
-  assert.deepEqual(sitemapPaths(home, destinations), ["/route", "/explore", "/explore/new-destination"]);
-  home.product = { id: "product" };
-  assert.deepEqual(sitemapPaths(home, destinations), [
-    "/route",
-    "/",
-    "/tour",
-    "/explore",
-    "/explore/new-destination",
-  ]);
-  delete home.content["explore-castle"];
-  assert.deepEqual(sitemapPaths(home, []), ["/route", "/", "/tour"]);
-  assert.deepEqual(sitemapPaths(home, [{...destinations[0],guidePublished:false}]), ["/route", "/", "/tour", "/explore"]);
-  assert.deepEqual(sitemapPaths(emptyHomepage("unavailable"), destinations), ["/explore", "/explore/new-destination"]);
-  assert.deepEqual(sitemapPaths(home, [{...destinations[0],showOnPage:false}]), ["/route", "/", "/tour", "/explore/new-destination"]);
+test("sitemap publication is independent of operational availability and excludes unpublished pages", () => {
+  const published = { published: true, content: {} };
+  assert.deepEqual(publishedSitemapPaths(published, true, []), ['/', '/route', '/explore', '/faq', '/tour', '/book']);
+  assert.deepEqual(publishedSitemapPaths({published:false,content:{}}, false, []), []);
+  assert.deepEqual(publishedSitemapPaths(published, false, []), ['/', '/route', '/explore', '/faq']);
+  const c = {'legal.privacy.status':'published','legal.privacy.text':'Real policy','legal.terms.status':'draft','legal.terms.text':'Draft terms'};
+  const paths = publishedSitemapPaths({published:true,content:c}, true, [{slug:'castle',guidePublished:true},{slug:'castle',guidePublished:true},{slug:'private',guidePublished:false}]);
+  assert.ok(paths.includes('/privacy-policy'));assert.ok(!paths.includes('/terms-and-conditions'));
+  assert.equal(paths.filter(p=>p==='/explore/castle').length,1);assert.ok(!paths.includes('/explore/private'));
+  for (const p of ['/credits','/your-day','/booking/manage','/admin','/auth/sign-in','/api/public/checkout','/live']) assert.ok(!paths.includes(p));
 });
 test("structured data matches page and breadcrumbs and escapes script delimiters", () => {
   const title = "Castle </script><script>alert(1)</script>";
@@ -67,4 +59,12 @@ test("structured data matches page and breadcrumbs and escapes script delimiters
   );
   assert.ok(!encoded.includes("aggregateRating"));
   assert.ok(!encoded.includes('"offers"'));
+});
+
+test("tour schema uses actual product without invented offers or ratings", () => {
+  const graph = tourStructuredData('https://sightseeingshkodra.app', { title: 'Published tour', description: 'Published details' });
+  assert.equal(graph['@graph'][1].name, 'Published tour');
+  assert.equal(graph['@graph'][1]['@type'], 'TouristTrip');
+  assert.ok(!JSON.stringify(graph).includes('offers'));
+  assert.ok(!JSON.stringify(graph).includes('aggregateRating'));
 });
