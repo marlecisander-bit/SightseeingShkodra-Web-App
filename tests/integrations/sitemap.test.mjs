@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { resolveSitemap } from 'next/dist/build/webpack/loaders/metadata/resolve-route-data.js';
 import { loadPublishedSitemapPaths } from '../../src/modules/content/sitemap-server.ts';
 import { pageMetadata } from '../../src/modules/content/seo.ts';
@@ -21,7 +23,7 @@ test('published catalog/content produce nonempty Next.js XML consistent with can
     assert.match(xml, /<urlset xmlns="http:\/\/www.sitemaps.org\/schemas\/sitemap\/0.9">/);
     assert.equal((xml.match(/<loc>/g)||[]).length,10);
     assert.ok(!xml.includes('localhost'));
-    fs.writeFileSync('/private/tmp/ss-generated-sitemap.xml',xml);
+    fs.writeFileSync(join(tmpdir(), 'ss-generated-sitemap.xml'),xml);
   } finally {
     for (const key of Object.keys(process.env)) if (!(key in old)) delete process.env[key];
     Object.assign(process.env,old);
