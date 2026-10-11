@@ -109,4 +109,4 @@ Before approving release, review the diff and separate this task from earlier pe
 
 User subsequently authorized publication. Candidate based on production ac26b8e excludes unpublished analytics and Classic Modern timeline changes. The validation counts above describe the original workspace; clean release verification is recorded separately.
 
-Clean authorized release validation: locked install, ESLint, TypeScript and optimized build passed. Full suite: 38 components, 17 identity, 140 integrations, 165 database, 32 PostgreSQL concurrency tests; 392 total, no failures or skips. No hosted data writes.
+Clean authorized release validation: locked install, ESLint, TypeScript and optimized build passed. Full suite: 38 components, 17 identity, 140 integrations, 165 database, 24 PostgreSQL concurrency tests; 384 total, no failures or skips. No hosted data writes.
