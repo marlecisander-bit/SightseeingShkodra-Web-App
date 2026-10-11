@@ -9,11 +9,11 @@ import { initialWebsiteContent, sectionVisible, visibleWebsiteLink, unavailableW
 registerHooks({load(url,context,next){if(url.endsWith('.module.css'))return {format:'module',source:'export default {}',shortCircuit:true};return next(url,context);}});
 const { Footer } = await import('../../src/components/public/ui.tsx');
 const { BookingProvider } = await import('../../src/components/public/booking.tsx');
-const { TourView, LiveView } = await import('../../src/components/public/editorial-pages.tsx');
+const { LiveView } = await import('../../src/components/public/editorial-pages.tsx');
 const { HomepageView } = await import('../../src/components/public/homepage-view.tsx');
 const h=React.createElement;
 const render=child=>renderToStaticMarkup(h(BookingProvider,null,child));
-const routes=['/','/tour','/explore','/explore/lake','/live','/your-day','/credits'];
+const routes=['/','/route','/explore','/explore/lake','/live','/your-day','/credits'];
 const home={state:'empty',product:null,content:{},date:null,timezone:null,price:'',frequency:'Unavailable',departures:[],schedule:'empty',adultFares:[]};
 const reviews={reviews:[{id:'review-1',author:'Fixture guest',rating:5,body:'A published fixture review.',source:'Direct',review_date:null,original_url:null,avatar_url:null,language:null,featured:false,published:true,display_order:0,updated_at:''}],settings:{display_limit:3,google_reviews_url:null,leave_review_url:null}};
 
@@ -50,13 +50,8 @@ test('published CMS enable-disable-enable and edited fields reach every shared f
  for(const pathname of ['/faq','/book','/booking/example']){const html=render(h(Footer,{content:c,previewPathname:pathname}));assert.ok(!html.includes('p-footer-cta'));assert.ok(!html.includes('Edited invitation image'));}
  }finally{await db.close();}
 });
-test('shared section flags remove secondary Tour and Live consumers but preserve independent map and booking',()=>{
- const enabled=render(h(TourView,{tour:home,c:initialWebsiteContent,reviews,places:[]}));for(const id of ['tour-route','timetable'])assert.ok(enabled.includes('id="'+id+'"'));
- assert.ok(!enabled.includes('<iframe'));assert.ok(!enabled.includes('tour-live'));assert.ok(enabled.includes('href="/route"'));
+test('shared section flags remove secondary Live consumers but preserve independent map and booking',()=>{
  const c={...initialWebsiteContent,...Object.fromEntries(['route','live','departures','reviews'].map(id=>[id+'.showOnHomepage','false']))};
- const tour=render(h(TourView,{tour:home,c,reviews,places:[]}));
- for(const id of ['tour-route','tour-live','timetable','reviews'])assert.ok(!tour.includes('id="'+id+'"'));
- assert.ok(!tour.includes('id="faq"'));assert.ok(tour.includes('Book your day'));
  const live=render(h(LiveView,{c,places:[]}));assert.ok(live.includes('<h1>Live map</h1>'));assert.ok(live.includes('<iframe'));assert.ok(!live.includes(c['route.title']));assert.ok(!live.includes(c['live.title']));
  const homepage=render(h(HomepageView,{home,content:c,reviews,places:[]}));assert.ok(!homepage.includes('id="route"'));
 });
@@ -80,12 +75,10 @@ test('unified journey shares visibility flags while preserving one map and booki
  }
 });
 
- test('Tour excludes FAQ and reviews; dedicated FAQ reuses edited CMS questions and product inclusions',async()=>{
+ test('dedicated FAQ retains edited CMS questions and product inclusions',async()=>{
  const {FaqPage}=await import('../../src/components/public/faq-page.tsx');
  const c={...initialWebsiteContent,'tourPage.faqTitle':'Edited FAQ title','tourPage.faqBook':'Edited booking question'};
  delete c['faq.items']; // Historical content is normalized without losing custom questions.
- const tour=render(h(TourView,{tour:home,c,places:[]}));
- for(const marker of ['Edited FAQ title','Edited booking question','id="reviews"','href="#faq"','href="#reviews"'])assert.ok(!tour.includes(marker));
  const faq=render(h(FaqPage,{content:c,inclusions:'Published inclusion answer'}));
  for(const marker of ['Edited FAQ title','Edited booking question','Published inclusion answer'])assert.ok(faq.includes(marker));
  assert.equal((faq.match(/<details/g)||[]).length,4);

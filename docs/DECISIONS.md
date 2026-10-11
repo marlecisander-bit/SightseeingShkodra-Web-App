@@ -144,3 +144,9 @@ Owner explicitly declined creation/duplication of a Supabase backend and identif
 ## 8 October 2026 - Readiness release preparation (unpublished)
 
 User authorized local safety/documentation review and CI/reconciliation/acceptance proposals only. Fresh 44-migration evidence supersedes historical email-function drift: final structure matches; seven missing history entries and eleven trigger grants need separate decisions. Published source remains 18c48d0; same-source approved credential rotation already completed. New CI draft, review packet and bounded acceptance/reconciliation procedures are local only. No commit, push, deployment, cloud configuration, migration or production data change in this preparation. Original historical entries and mixed-encoding bytes preserved.
+
+## 11 October 2026 — Remove the Tour public page
+
+The user explicitly requested complete local removal of `/tour`, including page/view/styles, links, SEO and exclusive CMS controls, with a permanent HTTP 301 to `/route`. Keep a redirect-only Route Handler; drop obsolete query parameters. Shared product data, homepage inclusions and dedicated FAQ fields retain their existing stored keys and appropriate editors. Preserve records/media and historical validation compatibility; no migration, production change or deployment authorized. This supersedes roadmap requirements for a dedicated Tour presentation. See TOUR-REMOVAL-2026-10-11.md. The original roadmap is unchanged.
+
+11 October follow-up: user explicitly authorized publication. Release excludes unrelated analytics/timeline work; no database or configuration changes.

@@ -11,7 +11,7 @@ registerHooks({load(url,context,next){if(url.endsWith('.module.css'))return {for
 const {BookingProvider}=await import('../../src/components/public/booking.tsx');
 const {HomepageView}=await import('../../src/components/public/homepage-view.tsx');
 const {RouteJourney}=await import('../../src/components/public/route-journey.tsx');
-const {ExploreView,TourView}=await import('../../src/components/public/editorial-pages.tsx');
+const {ExploreView}=await import('../../src/components/public/editorial-pages.tsx');
 const h=React.createElement,render=(component,props)=>renderToStaticMarkup(h(BookingProvider,{preview:true},h(component,props)));
 const home={...emptyHomepage('ready'),product:{id:'test',slug:'test',title:'Synthetic ticket',description:'Authoritative product description',inclusions:'Synthetic inclusions',stops:[]}};
 const c={...initial,...Object.fromEntries(editableWebsiteSections.flatMap(s=>s.fields).filter(f=>f.key.startsWith('labels.')||/^(homeRoute|routePage)\./.test(f.key)&&f.kind==='text').map(f=>[f.key,'Edited '+f.key])),'homeRoute.title':'Visit {count} stops'};
@@ -24,7 +24,6 @@ test('real public components consume edited route presentation, labels and canon
  assert.ok(html.includes('Visit 1 stop'));assert.ok(html.includes(home.product.description));
  const route=render(RouteJourney,{content:c,initial:planner,places:[place]});for(const key of ['routePage.eyebrow','routePage.title','routePage.text','routePage.departures','routePage.stops'])assert.ok(route.includes(c[key]),key);
  assert.ok(render(ExploreView,{c,places:[place]}).includes(c['labels.guide']));
- assert.ok(render(TourView,{c,tour:home,places:[place]}).includes(c['labels.destination']));
  const hidden=render(HomepageView,{home,content:{...c,'intro.showOnHomepage':'false'},planner,places:[],reviews});
  assert.equal(hidden.includes('id="home-ticket"'),false);assert.equal(hidden.includes(home.product.description),false);
 });

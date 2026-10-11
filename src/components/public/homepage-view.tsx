@@ -31,7 +31,7 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
       </div>}<div>
         {homepageVisible(c,"departures") && <details className="p-home-timetable"><summary>{c["departures.eyebrow"]}</summary><TimetableHeading>{c["departures.title"]}</TimetableHeading></details>}
         <DayPlannerStrip initial={planner} ticketSummaryTarget={home.product?"home-ticket-service":undefined} heroSummaryTarget={homepageVisible(c,"hero") ? "home-hero-service" : undefined} service showSchedule={homepageVisible(c,"departures")} showLive={homepageVisible(c,"live")}/>
-        {homepageVisible(c,"departures") && <Link className="p-text-link" href="/tour#timetable">{c["departures.linkLabel"]}</Link>}
+        {homepageVisible(c,"departures") && <Link className="p-text-link" href="/route#journey-departures">{c["departures.linkLabel"]}</Link>}
         {homepageVisible(c,"live") && <HomepageMapDisclosure/>}
       </div></div>
     </section>}
@@ -43,7 +43,7 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
       <div className="p-home-ticket p-daily-ticket"><div><p className="p-eyebrow">{c["intro.eyebrow"]}</p><h2>{homepageVisible(c,"intro")?c["intro.title"]:home.product.title}</h2><h3>{home.product.title}</h3>
         {home.product.description && <ExpandableText text={home.product.description}/>}
         {home.product.inclusions && <><h3 className="p-ticket-inclusions-heading">{c["tourPage.includedTitle"]}</h3><ExpandableText text={home.product.inclusions} collapsedLines={{mobile:3,tablet:4,desktop:6}} className="p-ticket-inclusions"/></>}
-        <div className="p-ticket-support">{homepageVisible(c,"route")&&!!planner?.stops?.length&&<p>{planner?.stops?.length} stops · Live van tracking</p>}{homepageVisible(c,"departures")&&<p id="home-ticket-service"/>}</div><Link className="p-text-link" href="/tour#included">{c["labels.ticket"]}</Link>
+        <div className="p-ticket-support">{homepageVisible(c,"route")&&!!planner?.stops?.length&&<p>{planner?.stops?.length} stops · Live van tracking</p>}{homepageVisible(c,"departures")&&<p id="home-ticket-service"/>}</div><Link className="p-text-link" href="/book">{c["labels.ticket"]}</Link>
       </div><div className="p-home-ticket-action p-ticket-action"><BookingPriceIndicator amount={home.heroFare?.amount} date={home.heroFare?.date} currency={home.heroFare?.currency}/><ActionLink href="/book" className="p-button-booking">{c["hero.book"]}</ActionLink><PreviewNote/><Link className="p-text-link" href="/faq">{c["labels.faq"]}</Link></div></div>
     </section>}
     {homepageVisible(c,"reviews") && <GuestReviews labels={c} selection={reviews} eyebrow={c["reviews.eyebrow"]} title={c["reviews.title"]} subtitle={c["reviews.text"]}/>}

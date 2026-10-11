@@ -195,18 +195,10 @@ try {
   assert.ok(!published.includes("<script>qaUnsafe()"));
   assert.ok(!published.includes("MUST NOT APPEAR"));
   assert.match(published, /noindex/);
-  const tour = await html("/tour");
-  assert.match(tour, /QA Published Tour/);
-  assert.match(tour, /QA Published Boarding Stop/);
-  assert.match(tour, /12\.50 per guest/);
-  assert.match(tour, /23:59/);
-  assert.match(tour, /Europe\/Tirane/);
-  assert.ok(!tour.includes("MUST NOT APPEAR"));
-  assert.ok(
-    !tour.includes("QA Published Homepage"),
-    "Homepage copy must not become tour copy",
-  );
-  assert.match(tour, /noindex/);
+  const retiredTour = await fetch('http://127.0.0.1:3001/tour', {redirect:'manual'});
+  assert.equal(retiredTour.status, 301);
+  assert.equal(new URL(retiredTour.headers.get('location'),'http://127.0.0.1:3001').pathname, '/route');
+  assert.match(await html('/route'), /<iframe/);
   const availabilityUrl = `http://127.0.0.1:3001/api/public/availability?date=${snapshot.service_date}&guests=2`;
   const availableResponse = await fetch(availabilityUrl);
   assert.equal(availableResponse.status, 200);
@@ -241,11 +233,7 @@ try {
   assert.ok(!withdrawn.includes("QA Published Homepage"));
   assert.ok(!withdrawn.includes("QA Published Boarding Stop"));
   assert.ok(!withdrawn.includes("12.50 per guest"));
-  const withdrawnTour = await html("/tour");
-  assert.ok(!withdrawnTour.includes("QA Published Tour"));
-  assert.ok(!withdrawnTour.includes("QA Published Boarding Stop"));
-  assert.ok(!withdrawnTour.includes("12.50 per guest"));
-  assert.match(withdrawnTour, /This tour has not been published yet/);
+  assert.equal((await fetch('http://127.0.0.1:3001/tour',{redirect:'manual'})).status,301);
   assert.equal((await fetch(availabilityUrl)).status, 404);
   console.log(
     "PASS: public availability uses domain totals/group capacity, rejects tenant overrides and hides archived products",

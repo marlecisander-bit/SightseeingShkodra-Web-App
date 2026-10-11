@@ -27,7 +27,6 @@ export const sectionCardMetadata: Record<string, {icon:Icon; description:string;
   seo:{icon:"search",description:"Homepage search title, description and social image",scope:"Homepage search & sharing"},
   legalprivacy:{icon:"document",description:"Privacy policy text and publication status",scope:"Privacy Policy page"},
   legalterms:{icon:"document",description:"Terms and conditions text and publication status",scope:"Terms & Conditions page"},
-  tourPage:{icon:"ticket",description:"Tour page introduction and information",scope:"Tour page"},
   explorePage:{icon:"pin",description:"Destination listing introduction",scope:"Explore page"},
   bookPage:{icon:"ticket",description:"Booking page introduction",scope:"Booking page"},
   dayPage:{icon:"clock",description:"Your day page introduction",scope:"Your day page"},
