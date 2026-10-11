@@ -37,7 +37,7 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
   });
   const selected = websiteSections.find(s => s.id === active) ?? websiteSections[0];
   const image = selected.fields.find(f => f.kind === "image");
-  const preview = `/admin/${operatorId}/website-preview?page=${({routePage:"route",homeRoute:"home",bookSeo:"book",faqSeo:"faq",exploreSeo:"explore",legalprivacy:"privacy-policy",legalterms:"terms-and-conditions",faq:"faq",tourPage:"tour",explorePage:"explore",bookPage:"book",dayPage:"your-day"} as Record<string,string>)[selected.id]??"home"}`;
+  const preview = `/admin/${operatorId}/website-preview?page=${({routePage:"route",homeRoute:"home",bookSeo:"book",faqSeo:"faq",exploreSeo:"explore",legalprivacy:"privacy-policy",legalterms:"terms-and-conditions",faq:"faq",explorePage:"explore",bookPage:"book",dayPage:"your-day"} as Record<string,string>)[selected.id]??"home"}`;
   function select(id: string, jump = false) {
     if (pending || (dirtySection && dirtySection.id !== id)) { setNotice("Save or discard your current edits before opening another section."); return; }
     setNotice("");

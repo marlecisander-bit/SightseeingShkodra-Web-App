@@ -1,7 +1,7 @@
 // Read-only local HTML crawl. Does not submit bookings or fetch external sites.
 import assert from "node:assert/strict";
 const origin = "http://127.0.0.1:3000";
-const queue = ["/", "/tour", "/explore", "/live", "/your-day", "/credits"];
+const queue = ["/", "/route", "/explore", "/live", "/your-day", "/credits"];
 const pages = new Map(), links = [], failures = [];
 const decode = value => value.replaceAll("&amp;", "&").replaceAll("&#x27;", "'").replaceAll("&quot;", '"');
 while (queue.length && pages.size < 50) {

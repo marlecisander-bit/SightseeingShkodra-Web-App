@@ -106,6 +106,5 @@ export async function saveProductPricing(
   const path = `/admin/${encodeURIComponent(operatorId)}/catalog`;
   revalidatePath(path);
   revalidatePath("/");
-  revalidatePath("/tour");
   redirect(`${path}?result=saved`);
 }

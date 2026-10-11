@@ -1,14 +1,16 @@
-import { resolveWebsiteLink, type WebsiteContent } from './website-schema';
+import { resolveWebsiteLink, retiredTourLink, type WebsiteContent } from './website-schema';
 
 /** One CMS projection for both header layouts; first link owns duplicate targets. */
 export function publicNavigation(content: WebsiteContent) {
  const items = [{href:'/',label:content['nav.home']}, ...[0,1,2,3,4].map(index => {
   const original = content[`nav.${index}.link`];
+  const retired = retiredTourLink(original);
   const unified = ['/live','/route','/#route'].includes(original);
   const label = content[`nav.${index}.label`];
-  return {href:unified?'/route':resolveWebsiteLink(original),label:unified && ['Route','Live map'].includes(label)?'Route & Live Map':label};
+  return {href:unified?'/route':resolveWebsiteLink(original),label:(unified || retired) && ['Tour','The day tour','Route','Live map'].includes(label)?'Route & Live Map':label,retired:retired&&!original.includes('#')};
  })];
- return items.filter((item,index)=>items.findIndex(other=>other.href===item.href)===index);
+ const active=items.filter(item=>!('retired' in item&&item.retired));
+ return active.filter((item,index)=>active.findIndex(other=>other.href===item.href)===index);
 }
 
 export function activeNavigation(pathname:string,hash:string,links:string[]):number{

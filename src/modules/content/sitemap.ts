@@ -6,7 +6,6 @@ export function publishedSitemapPaths(
   destinations: Pick<Destination, 'slug' | 'guidePublished'>[],
 ) {
   const paths = website.published ? ['/', '/route', '/explore', '/faq'] : [];
-  if (productPublished) paths.push('/tour');
   if (website.published && productPublished) paths.push('/book');
   for (const [kind, path] of [['privacy', '/privacy-policy'], ['terms', '/terms-and-conditions']]) {
     if (website.published && website.content[`legal.${kind}.status`] === 'published' && website.content[`legal.${kind}.text`]?.trim()) paths.push(path);

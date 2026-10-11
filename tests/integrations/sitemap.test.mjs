@@ -16,13 +16,13 @@ test('published catalog/content produce nonempty Next.js XML consistent with can
   Object.assign(process.env,{APP_ENV:'production',VERCEL_ENV:'production',SITE_INDEXING_ENABLED:'true',NEXT_PUBLIC_SITE_URL:'https://sightseeingshkodra.app'});
   try {
     const paths = await loadPublishedSitemapPaths(sources);
-    assert.equal(paths.length,10);
+    assert.equal(paths.length,9);
     const urls = paths.map(path => ({url:pageMetadata(path,'Published page','Description').alternates.canonical}));
     for(const path of paths)assert.equal(pageMetadata(path,'Title','Description').robots.index,true);
     const xml = resolveSitemap(urls);
     assert.match(xml, /<urlset xmlns="http:\/\/www.sitemaps.org\/schemas\/sitemap\/0.9">/);
-    assert.equal((xml.match(/<loc>/g)||[]).length,10);
-    assert.ok(!xml.includes('localhost'));
+    assert.equal((xml.match(/<loc>/g)||[]).length,9);
+    assert.ok(!xml.includes('localhost'));assert.ok(!paths.includes('/tour'));assert.ok(!xml.includes('/tour'));
     fs.writeFileSync(join(tmpdir(), 'ss-generated-sitemap.xml'),xml);
   } finally {
     for (const key of Object.keys(process.env)) if (!(key in old)) delete process.env[key];

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import type { Homepage } from "./homepage";
 export function seoConfig(env = process.env) {
   let origin: string | null = null;
   try {
@@ -101,11 +100,3 @@ export function safeJsonLd(value: unknown) {
 export function websiteMetadata(c:Record<string,string>,published=true){const metadata=pageMetadata("/",c["seo.title"],c["seo.description"],published);return {...metadata,title:c["seo.title"],openGraph:{...metadata.openGraph,images:[{url:c["seo.image"],alt:c["seo.alt"]}]}};}
 
 export function editorialMetadata(path:string,prefix:string,c:Record<string,string>,published=true){const m=pageMetadata(path,c[prefix+'.seoTitle'],c[prefix+'.seoDescription'],published);return {...m,openGraph:{...m.openGraph,images:[{url:c[prefix+'.seoImage'],alt:c[prefix+'.seoAlt']}]}};}
-
-export function tourStructuredData(origin: string, product: NonNullable<Homepage['product']>) {
-  return { '@context': 'https://schema.org', '@graph': [
-    { '@type': 'Organization', '@id': origin + '/#organization', name: 'Sightseeing Shkodra', url: origin + '/' },
-    { '@type': 'TouristTrip', '@id': origin + '/tour#trip', name: product.title, ...(product.description ? { description: product.description } : {}), url: origin + '/tour', provider: { '@id': origin + '/#organization' } },
-    { '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: origin + '/' }, { '@type': 'ListItem', position: 2, name: product.title, item: origin + '/tour' }] },
-  ] };
-}

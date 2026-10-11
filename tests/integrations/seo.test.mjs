@@ -4,7 +4,6 @@ import {
   seoConfig,
   guideStructuredData,
   safeJsonLd,
-  tourStructuredData,
 } from "../../src/modules/content/seo.ts";
 import { publishedSitemapPaths } from "../../src/modules/content/sitemap.ts";
 test("indexing requires explicit production gate and a public HTTPS origin", () => {
@@ -33,7 +32,7 @@ test("indexing requires explicit production gate and a public HTTPS origin", () 
 });
 test("sitemap publication is independent of operational availability and excludes unpublished pages", () => {
   const published = { published: true, content: {} };
-  assert.deepEqual(publishedSitemapPaths(published, true, []), ['/', '/route', '/explore', '/faq', '/tour', '/book']);
+  assert.deepEqual(publishedSitemapPaths(published, true, []), ['/', '/route', '/explore', '/faq', '/book']);
   assert.deepEqual(publishedSitemapPaths({published:false,content:{}}, false, []), []);
   assert.deepEqual(publishedSitemapPaths(published, false, []), ['/', '/route', '/explore', '/faq']);
   const c = {'legal.privacy.status':'published','legal.privacy.text':'Real policy','legal.terms.status':'draft','legal.terms.text':'Draft terms'};
@@ -59,12 +58,4 @@ test("structured data matches page and breadcrumbs and escapes script delimiters
   );
   assert.ok(!encoded.includes("aggregateRating"));
   assert.ok(!encoded.includes('"offers"'));
-});
-
-test("tour schema uses actual product without invented offers or ratings", () => {
-  const graph = tourStructuredData('https://sightseeingshkodra.app', { title: 'Published tour', description: 'Published details' });
-  assert.equal(graph['@graph'][1].name, 'Published tour');
-  assert.equal(graph['@graph'][1]['@type'], 'TouristTrip');
-  assert.ok(!JSON.stringify(graph).includes('offers'));
-  assert.ok(!JSON.stringify(graph).includes('aggregateRating'));
 });

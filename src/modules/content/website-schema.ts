@@ -16,7 +16,7 @@ export const homepageVisible = sectionVisible;
 export function visibilityScope(section: string) { return ["route", "live", "departures", "reviews", "final"].includes(section) ? "across public pages" : "on homepage"; }
 export function visibleWebsiteLink(link: string, content: WebsiteContent) {
   const resolved = resolveWebsiteLink(link);
-  return !(resolved === "/#route" && !sectionVisible(content, "route") || resolved === "/tour#timetable" && !sectionVisible(content, "departures"));
+  return !(resolved === "/#route" && !sectionVisible(content, "route") || (link === "/tour#timetable" || resolved === "/route#journey-departures") && !sectionVisible(content, "departures"));
 }
 export function invitationVisible(content: WebsiteContent, pathname: string) {
   return sectionVisible(content, "final") && pathname !== "/faq" && pathname !== "/book" && !pathname.startsWith("/booking/");
@@ -60,7 +60,7 @@ export const websiteSections: {id:string;title:string;fields:WebsiteField[]}[] =
   { id: "intro", title: "A day with possibilities", fields: [
     f("intro.eyebrow", "Eyebrow", "A DAY WITH POSSIBILITIES"), f("intro.title", "Heading", "One ticket. One day.\nShkodra at your pace."),
     f("intro.text", "Description", "A coffee in the old town. A castle above the rivers. An unhurried afternoon by the lake. Leave space for the moments you didn’t plan."),
-    f("intro.linkLabel", "Tour link label", "Meet your day tour"), f("intro.link", "Tour link", "/tour", "link"),
+    f("intro.linkLabel", "Route link label", "View Route & Live Map"), f("intro.link", "Route link", "/route", "link"),
   ] },
   { id: "route", title: "The places between", fields: [
     f("route.eyebrow", "Eyebrow", "THE PLACES BETWEEN"), f("route.title", "Heading", "A route worth taking."),
@@ -90,11 +90,11 @@ export const websiteSections: {id:string;title:string;fields:WebsiteField[]}[] =
   ] },
   { id: "final", title: "Final booking invitation", fields: [f("final.eyebrow", "Eyebrow", "LESS RUSH. MORE SHKODRA."), f("final.title", "Heading", "A day you’ll"), f("final.emphasis", "Emphasized heading", "make your own."), f("final.book", "Booking button label", "Book your day"), f("final.image", "Banner image", "/images/castle.webp", "image"), f("final.alt", "Image description", "Rozafa Castle and the green landscape around Shkodra")] },
   { id: "navigation", title: "Navigation", fields: [f("nav.home", "Home link label", "Home"),
-    ...[["Tour", "/tour"], ["Route", "/#route"], ["Explore Shkodra", "/explore"], ["Live map", "/live"], ["FAQ", "/faq"]].flatMap(([label, link], i) => [f(`nav.${i}.label`, `Link ${i + 1} label`, label), f(`nav.${i}.link`, `Link ${i + 1} destination`, link, "link")]),
+    ...[["Home", "/"], ["Route", "/#route"], ["Explore Shkodra", "/explore"], ["Live map", "/live"], ["FAQ", "/faq"]].flatMap(([label, link], i) => [f(`nav.${i}.label`, `Link ${i + 1} label`, label), f(`nav.${i}.link`, `Link ${i + 1} destination`, link, "link")]),
     f("nav.book", "Header booking button", "Book your day"), f("nav.mobileBook", "Mobile booking button", "Book your day"), f("nav.mobileMap", "Mobile map link label", "Live van"),
   ] },
   { id: "footer", title: "Footer", fields: [f("footer.line1", "Tagline first line", "A little closer to the place."), f("footer.line2", "Tagline second line", "A little more of your own pace."),
-    ...[["The day tour", "/tour"], ["Live map", "/live"], ["Explore Shkodra", "/explore"], ["Questions & answers", "/faq"], ["Photography credits", "/credits"], ["Staff sign-in", "/admin"]].flatMap(([label, link], i) => [f(`footer.${i}.label`, `Link ${i + 1} label`, label), f(`footer.${i}.link`, `Link ${i + 1} destination`, link, "link")]),
+    ...[["Route & Live Map", "/route"], ["Live map", "/live"], ["Explore Shkodra", "/explore"], ["Questions & answers", "/faq"], ["Photography credits", "/credits"], ["Staff sign-in", "/admin"]].flatMap(([label, link], i) => [f(`footer.${i}.label`, `Link ${i + 1} label`, label), f(`footer.${i}.link`, `Link ${i + 1} destination`, link, "link")]),
     ...footerFields,
     f("footer.location", "Location", "Shkodër, Albania"), f("footer.language", "Language note", "English · More languages coming soon"), f("footer.contact", "Contact and legal note", "Contact and legal information before launch"),
   ] },
@@ -105,14 +105,15 @@ for (const section of websiteSections) {
 }
 // Retain the stored schema and historical showcase headings without offering obsolete controls.
 const homepageEditorOrder = ["hero","homeRoute","route","live","departures","intro","notebook","reviews","final"];
-export const homepageEditorSections = websiteSections.filter(s => !["how","faq","whatsapp","heroAmenities","destinations","navigation","footer","seo",...legalSections.map(s=>s.id),...pageSections.map(p=>p.id),...editorialSections.filter(p=>p.id!=="homeRoute").map(p=>p.id)].includes(s.id)).map(s => s.id === "intro" ? {...s,fields:s.fields.filter(f=>!["intro.text","intro.link","intro.linkLabel"].includes(f.key))} : s.id === "reviews" ? {...s,title:"Guest Reviews",fields:s.fields.filter(f => f.key !== "reviews.second")} : s.id === "notebook" ? {...s,fields:s.fields.filter(f=>!/^notebook\.[0-9]+\./.test(f.key)||f.key==="notebook.0.linkLabel").map(f=>f.key==="notebook.0.linkLabel"?{...f,label:"Destination card link label"}:f)} : s.id === "how" ? {...s,title:"How it works"} : s).sort((a,b)=>homepageEditorOrder.indexOf(a.id)-homepageEditorOrder.indexOf(b.id));
+export const homepageEditorSections = websiteSections.filter(s => !["how","faq","whatsapp","heroAmenities","destinations","navigation","footer","seo",...legalSections.map(s=>s.id),...pageSections.map(p=>p.id),...editorialSections.filter(p=>p.id!=="homeRoute").map(p=>p.id)].includes(s.id)).map(s => s.id === "intro" ? {...s,fields:[...s.fields.filter(f=>!["intro.text","intro.link","intro.linkLabel"].includes(f.key)),pageSections.find(p=>p.id==="tourPage")!.fields.find(f=>f.key==="tourPage.includedTitle")!]} : s.id === "reviews" ? {...s,title:"Guest Reviews",fields:s.fields.filter(f => f.key !== "reviews.second")} : s.id === "notebook" ? {...s,fields:s.fields.filter(f=>!/^notebook\.[0-9]+\./.test(f.key)||f.key==="notebook.0.linkLabel").map(f=>f.key==="notebook.0.linkLabel"?{...f,label:"Destination card link label"}:f)} : s.id === "how" ? {...s,title:"How it works"} : s).sort((a,b)=>homepageEditorOrder.indexOf(a.id)-homepageEditorOrder.indexOf(b.id));
 export const destinationEditorSections = websiteSections.filter(s => s.id === "destinations").map(s => ({ ...s, title: "Destination content", fields: s.fields.filter(f => f.key.startsWith("place.")) }));
 export const globalEditorSections = websiteSections.filter(s=>["whatsapp","navigation","footer","seo",...legalSections.map(s=>s.id)].includes(s.id)).map(s=>s.id==="footer"?{...s,fields:footerFields}:s.id==="navigation"?{...s,fields:s.fields.filter(f=>!["nav.mobileBook","nav.mobileMap"].includes(f.key))}:s);
-export const publicPageEditorSections = [...editorialSections.filter(s=>s.id!=="homeRoute"),...pageSections.map(s=>s.id==="tourPage"?{...s,fields:s.fields.filter(f=>!f.key.startsWith("tourPage.faq"))}:s),websiteSections.find(s=>s.id==="faq")!];
+export const publicPageEditorSections = [...editorialSections.filter(s=>s.id!=="homeRoute").map(s=>s.id==="editorialLabels"?{...s,fields:s.fields.filter(f=>f.key!=="labels.tour")}:s),...pageSections.filter(s=>s.id!=="tourPage"),websiteSections.find(s=>s.id==="faq")!];
 export const editableWebsiteSections: {id:string;title:string;fields:WebsiteField[]}[] = [...homepageEditorSections, ...globalEditorSections, ...publicPageEditorSections];
 export const websiteEditorGroups = {homepage:homepageEditorSections,destinations:destinationEditorSections,pages:publicPageEditorSections,global:globalEditorSections};
 export const websiteFields = [...new Map(websiteSections.flatMap(section => section.fields).map(f=>[f.key,f])).values()];
 export const initialWebsiteContent: WebsiteContent = Object.fromEntries(websiteFields.map(field => [field.key, field.initial]));
+// Historical /tour values stay valid for full-document saves; consumers resolve them to active routes.
 export function safeWebsiteLink(value:string){return /^\/(?:$|#(?:route|booking|destinations)$|(?:tour|route|live|explore|book|credits|admin|faq|privacy-policy|terms-and-conditions)(?:#(?:faq|timetable|centre|castle|lake|bridge))?$|explore\/[a-z0-9]+(?:-[a-z0-9]+)*$)/.test(value);}
 export function safeWebsiteImage(value: string) {
   if (/^\/images\/[a-zA-Z0-9/_-]+\.(?:webp|png|jpg|jpeg|avif)$/.test(value)) return true;
@@ -142,7 +143,12 @@ export function websitePlaces(content: WebsiteContent) {
   return destinations.map(place => ({ ...place, ...Object.fromEntries(["name", "tag", "text", "detail", "image", "alt", "link"].map(key => [key, key === "link" ? resolveWebsiteLink(content[`place.${place.id}.${key}`]) : content[`place.${place.id}.${key}`]])) })) as Array<{id:string;name:string;tag:string;text:string;detail:string;image:string;alt:string;link:string}>;
 }
 
-// Resolve retired homepage anchors without changing saved editorial records.
+// Resolve retired public destinations without changing saved editorial records.
+export function retiredTourLink(link: string) { return /^\/tour\/?(?:[?#]|$)/.test(link); }
 export function resolveWebsiteLink(link: string) {
-  return link === "/tour#faq" ? "/faq" : ["/live","/#route"].includes(link) ? "/route" : link === "/#booking" ? "/book" : link === "/#destinations" ? "/explore" : link;
+  if(retiredTourLink(link)) {
+    const anchor=link.split('#')[1];
+    return anchor==='faq'?'/faq':anchor==='included'?'/book':'/route';
+  }
+  return ["/live","/#route"].includes(link) ? "/route" : link === "/#booking" ? "/book" : link === "/#destinations" ? "/explore" : link;
 }

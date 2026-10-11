@@ -38,7 +38,7 @@ export default async function Guide({ params }: Props) {
   return (
     <main id="main-content" className="p-subpage p-container">
       <GuideView content={content} place={place}/>
-      <ActionLink href="/tour">{c["labels.tour"]}</ActionLink>
+      <ActionLink href="/route">{c["homeRoute.action"]}</ActionLink>
       {origin && (
         <script
           type="application/ld+json"
