@@ -9,5 +9,14 @@ const stops=[{id:'a',label:'Start'},{id:'b',label:'Lake'}];const places=[{id:'gu
 const journey={type:'shkodra:journey',version:1,unavailable:false,stops:[{id:'a',label:'Start',state:'departed',eta:''},{id:'b',label:'Lake',state:'next',eta:'14 min'}]};
 const render=props=>renderToStaticMarkup(React.createElement(SightseeingStopsExperience,{stops,places,...props}));
 test('discover consumes CMS links and photos independently of live data',()=>{const html=render({mode:'discover',journey});assert.ok(html.includes('/explore/lake'));assert.ok(html.includes('Published description'));assert.ok(html.includes('Lake photograph'));assert.ok(html.includes('Next stop'));assert.ok(!html.includes('14 min'));assert.ok(!html.includes('data-state="departed"'));assert.ok(!html.includes('<iframe'));assert.ok(html.includes('aria-expanded="false"'));});
-test('live presents exact confirmed states and neutralizes stale progress',()=>{const html=render({mode:'live',journey});assert.ok(html.includes('Departure confirmed'));assert.ok(html.includes('NEXT · 14 min'));const stale=render({mode:'live',journey,stale:true});assert.ok(stale.includes('Live updates are stale'));assert.ok(!stale.includes('14 min'));assert.ok(!stale.includes('data-state="departed"'));assert.ok(stale.includes('Published description'));});
+test('live presents exact confirmed states and neutralizes stale progress',()=>{const html=render({mode:'live',journey});assert.ok(html.includes('Departure confirmed'));assert.ok(html.includes('Next stop · 14 min'));const stale=render({mode:'live',journey,stale:true});assert.ok(stale.includes('Live updates are stale'));assert.ok(!stale.includes('14 min'));assert.ok(!stale.includes('data-state="departed"'));assert.ok(stale.includes('Start'));assert.ok(stale.includes('Lake'));});
 test('published editorial changes propagate without a second card source',()=>{assert.ok(render({mode:'live',places:[{...places[0],text:'Updated published copy'}]}).includes('Updated published copy'));assert.ok(render({mode:'discover',places:[{...places[0],text:'Updated published copy'}]}).includes('Updated published copy'));});
+test('arrival indicator and next status stay distinct and unavailable removes both',()=>{
+ const current={...journey,stops:[{...journey.stops[0],state:'current'},{...journey.stops[1]}]};
+ const html=render({mode:'live',journey:current});
+ assert.ok(html.includes('Van here'));assert.ok(html.includes('Next stop'));
+ assert.ok(!html.includes('Next stop · 14 min'));
+ const unavailable=render({mode:'live',journey:{...current,unavailable:true}});
+ assert.ok(!unavailable.includes('data-state="current"'));assert.ok(!unavailable.includes('data-state="next"'));
+ assert.ok(!unavailable.includes('Van here'));
+});
