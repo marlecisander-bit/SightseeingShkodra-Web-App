@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import {useId,useRef,useState} from 'react';
+import {useEffect,useId,useRef,useState} from 'react';
 import {sightseeingStops,sightseeingStatus,type StopPlace} from '@/modules/content/sightseeing-stops';
 import type {JourneySnapshot} from '@/modules/tracking/journey-contract';
 import styles from './sightseeing-stops.module.css';
@@ -8,14 +8,25 @@ function VanIcon(){return <svg aria-hidden="true" width="24" height="18" viewBox
 export function SightseeingStopsExperience({mode,stops,places,journey,stale=false,onMap,learnLabel='Learn more',mapLabel='View on map'}:{mode:'live'|'discover';stops:readonly {id:string;label:string}[];places:readonly StopPlace[];journey?:JourneySnapshot|null;stale?:boolean;onMap?:(id:string)=>void;learnLabel?:string;mapLabel?:string}){
  const [selected,setSelected]=useState('');const [active,setActive]=useState(0);const list=useRef<HTMLOListElement>(null);const detailId=useId();const trigger=useRef<HTMLButtonElement|null>(null);const close=()=>{setSelected('');trigger.current?.focus();};
  const items=sightseeingStops(stops,places,mode==='live'&&!stale?journey:null);const chosen=items.find(s=>s.id===selected);const parked=items.some(s=>s.state==='current');
+ // Center once for each authoritative target transition; a heartbeat never resets a swipe.
+ const target=mode==='live'?items.find(s=>s.state==='current')?.id||items.find(s=>s.state==='next')?.id:undefined;
+ const lastTarget=useRef<string|undefined>(undefined);
+ useEffect(()=>{
+  if(!target){lastTarget.current=undefined;return;}
+  if(lastTarget.current===target)return;
+  lastTarget.current=target;
+  const rail=list.current;
+  const node=rail?.querySelector<HTMLElement>(`[data-stop-id="${CSS.escape(target)}"]`);
+  if(rail&&node&&rail.scrollWidth>rail.clientWidth&&(node.offsetLeft<rail.scrollLeft||node.offsetLeft+node.offsetWidth>rail.scrollLeft+rail.clientWidth))rail.scrollTo({left:node.offsetLeft-(rail.clientWidth-node.offsetWidth)/2,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+ },[target]);
  const go=(index:number)=>{const node=list.current?.children[index];if(node instanceof HTMLElement){node.scrollIntoView({block:'nearest',inline:'center',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});setActive(index);}};
  return <div className={styles.experience} data-mode={mode} data-floating-obstacle>
   {mode==='live'&&<p className={styles.status} role="status"><span><VanIcon/></span>{sightseeingStatus(items,journey,stale)}</p>}
   {!items.length&&<p>Published stops are temporarily unavailable.</p>}
-  <ol ref={list} className={styles.stops} onScroll={event=>{if(mode!=='discover')return;const el=event.currentTarget;const children=Array.from(el.children) as HTMLElement[];const nearest=children.reduce((best,node,i)=>Math.abs(node.offsetLeft-el.offsetLeft-el.scrollLeft)<Math.abs(children[best].offsetLeft-el.offsetLeft-el.scrollLeft)?i:best,0);setActive(nearest);}}>{items.map(s=><li key={s.id} data-state={s.state}>
-   <button className={styles.card} type="button" aria-expanded={selected===s.id} aria-controls={detailId} onClick={event=>{trigger.current=event.currentTarget;setSelected(selected===s.id?'':s.id);}}>
-    <span className={styles.photo}>{s.place?.image?<Image src={s.place.image} alt={s.place.alt||s.name} width={180} height={180} unoptimized/>:<span className={styles.placeholder}>Photo coming soon</span>}<span className={styles.number}>{s.number}</span>{s.state==='current'&&<span className={styles.van}><VanIcon/>Van here</span>}</span>
-    <span className={styles.copy}><strong>{s.name}</strong><span className={styles.description}>{s.place?.text||'Discover this stop on the route.'}</span>{mode==='live'&&<small className={styles.badge}>{s.state==='current'?'Van at stop':s.state==='next'?`NEXT${!parked&&s.eta?` · ${s.eta}`:''}`:s.state==='departed'?'Departure confirmed':'Stop '+s.number}</small>}</span>
+  <ol ref={list} className={styles.stops} onScroll={event=>{if(mode!=='discover')return;const el=event.currentTarget;const children=Array.from(el.children) as HTMLElement[];const nearest=children.reduce((best,node,i)=>Math.abs(node.offsetLeft-el.offsetLeft-el.scrollLeft)<Math.abs(children[best].offsetLeft-el.offsetLeft-el.scrollLeft)?i:best,0);setActive(nearest);}}>{items.map(s=><li key={s.id} data-state={s.state} data-stop-id={s.id}>
+   <button className={styles.card} type="button" aria-label={mode==='live'?`Stop ${s.number}: ${s.name}. ${s.state==='current'?'Van here':s.state==='next'?'Next stop':s.state==='departed'?'Departure confirmed':'Upcoming'}. Show details`:undefined} aria-expanded={selected===s.id} aria-controls={detailId} onClick={event=>{trigger.current=event.currentTarget;setSelected(selected===s.id?'':s.id);}}>
+    <span className={styles.photo}>{s.place?.image?<Image src={s.place.image} alt={s.place.alt||s.name} width={180} height={180} unoptimized={mode!=='live'} sizes="(min-width: 1024px) 104px, 80px"/>:<span className={styles.placeholder}>Photo coming soon</span>}<span className={styles.number}>{s.number}</span>{s.state==='current'&&<span className={styles.van}><VanIcon/><span className={styles.indicatorText}>Van here</span></span>}{mode==='live'&&s.state==='departed'&&<span className={styles.check} aria-hidden="true">✓</span>}</span>
+    <span className={styles.copy}><strong>{s.name}</strong><span className={styles.description}>{s.place?.text||'Discover this stop on the route.'}</span>{mode==='live'&&s.state!=='upcoming'&&<small className={styles.badge}>{s.state==='current'?'Van here':s.state==='next'?`Next stop${!parked&&s.eta?` · ${s.eta}`:''}`:s.state==='departed'?'Departure confirmed':'Stop '+s.number}</small>}</span>
    </button>{mode==='discover'&&s.place&&<a className={styles.learn} href={s.place.link}>{learnLabel} →</a>}
   </li>)}</ol>
   {mode==='discover'&&items.length>1&&<div className={styles.controls} aria-label="Choose a stop"><button type="button" aria-label="Previous stop" disabled={active===0} onClick={()=>go(active-1)}>←</button>{items.map((s,i)=><button key={s.id} type="button" aria-label={`Show stop ${s.number}: ${s.name}`} aria-current={active===i?'true':undefined} onClick={()=>go(i)}><span/></button>)}<button type="button" aria-label="Next stop" disabled={active===items.length-1} onClick={()=>go(active+1)}>→</button></div>}
