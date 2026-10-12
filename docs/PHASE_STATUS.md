@@ -538,3 +538,6 @@ LATEST USER TASK — 11 October 2026: Route-only Classic Modern stops timeline i
 
 
 12 October 2026 - Owner authorized publication of the latest homepage hero visual refinement. Scoped candidate from main 0b8f2a7 contains hero CSS, responsive picture breakpoint and evidence docs only. Original photos, CMS bindings and booking widget/logic preserved; deployment verification pending.
+
+
+12 October 2026 - Owner explicitly authorized V2 hero publication. Scoped candidate from main 79198a6: hero component/CSS, CMS-benefit regression test, local review and this checkpoint only. Earlier clean check and 389 tests passed; release CI and hosted checks pending. CMS records/copy and booking widget/logic remain unchanged; no fixture, price or Wi-Fi claim is hardcoded.
