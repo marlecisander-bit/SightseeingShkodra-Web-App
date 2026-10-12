@@ -535,3 +535,6 @@ LATEST USER TASK — 11 October 2026: Route-only Classic Modern stops timeline i
 
 
 12 October follow-up: owner explicitly authorized publishing the complete hero redesign and visual integration refinement. Release excludes unrelated analytics; no CMS records or cloud settings changed.
+
+
+12 October 2026 - Owner authorized publication of the latest homepage hero visual refinement. Scoped candidate from main 0b8f2a7 contains hero CSS, responsive picture breakpoint and evidence docs only. Original photos, CMS bindings and booking widget/logic preserved; deployment verification pending.

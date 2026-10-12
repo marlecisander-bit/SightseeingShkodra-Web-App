@@ -116,3 +116,29 @@ Temporary local page/layout and comparison components were removed; original rou
 ## Publication authorization
 
 Owner subsequently requested publication. Scoped release based on production 415f747 excludes unrelated analytics. Final full disposable suite passes 388 tests: 42 components, 17 identity, 140 integrations, 165 database and 24 PostgreSQL concurrency; no failures/skips. Production CMS wording and image configuration are preserved. Merge only after successful Project CI and Vercel Preview.
+
+
+## 12 October — original-photograph visual brief (latest local result)
+
+This addendum supersedes the earlier visual descriptions above. The task began with the existing unpublished hero/card in this mixed workspace. Read-only production inspection confirmed the same van photograph, CMS headline and card. No booking component was recreated.
+
+Changes in this request are exactly `src/components/public/homepage-hero.module.css`, `src/components/public/homepage-hero.tsx` (picture source breakpoint only), this report and `docs/PHASE_STATUS.md`. All pre-existing unrelated work remains intact.
+
+Desktop: removed cream headline panel; white heading, yellow CMS emphasis and compact benefits sit on a left gradient. Taller reserved photo region exposes the roof, front, wheels and rear at inspected desktop widths. Existing card width/internal spacing/form remains unchanged, overlapping the lower edge by 40px. Headline aligns with the same capped content grid. Original colors remain visible on the right. Header gets a scoped subtle background and uses its existing CTA intersection state to suppress the desktop duplicate, retaining layout space and sticky behavior.
+
+Phones: original CMS portrait photograph in a bounded 300–353px region, followed by compact heading/benefits and the unchanged card in normal flow. No negative card margin. At 320px, only the outer content gutter reduces to 8px so the native date value fits. Tablet: existing landscape photograph replaces the unsuitable portrait crop, preserving desktop focal settings; heading/card stay below the photograph. Phone focal setting remains connected. No new image, schema, text, dependency or booking logic.
+
+Audit: `HomepageView` supplies published hero content, operational stop count, product title and dated canonical fare. `HomepageHero` uses `getImageProps` and a responsive picture/img (not a background image), quality 75, eager/high priority and CMS alt/focal fields. `HeroBookingWidget` uses the existing BookingProvider, BookingDateSelector, QuantityStepper, availability quote, passenger model and dialog/CheckoutFlow. Website > Homepage > Hero remains the single CMS owner. No new field/admin control. Original saved alt describes the lake despite the van photograph; it is preserved per brief and can be corrected editorially later.
+
+Validation: `npm run check` passes lint, TypeScript and optimized build; 44 component, 140 integration and 165 disposable database tests pass, zero skipped/failed. After the tablet source change, check and 3 hero tests pass again. Final gutter-only adjustment verified in browser; git diff --check passes. Booking widget byte comparison with task-start snapshot is identical. Existing capacity/pricing/category/publication tests are included in those suites.
+
+Chrome geometry at 320, 375, 390, 430, 768, 1024, 1280, 1440 and 1920: no page horizontal overflow, headline/card separation, every visible hero interactive target >=44px. Original mobile/tablet/desktop assets loaded; tablet and 1024 loading checks repeated after source requests settled. Screenshots at all nine widths inspected at the narrow phone, tablet and desktop extremes. Expanded family selection prevents last-adult removal; submit opens one existing dialog retaining 1 adult/1 child/1 infant and 1 July 2030 test date. Availability honestly unavailable in this credential-free fixture; no hold/booking/checkout or CMS write. Header CTA hidden with visible hero action, visible/solid after scrollY 1552 in a taller next-section fixture. Temporary page/layout fixture restored afterward.
+
+Evidence: `/private/tmp/hero-visual/` contains `responsive.json`, before-mobile.jpg, before-desktop.jpg, after-320.jpg through after-1920.jpg, after-tablet.jpg and check/test logs. Before captures are published content; after captures use the same photographs and saved headline with synthetic €17.50/date in an isolated local fixture. Next-section fixture is labelled, not a redesign of that section. Native scrollbar reduces usable width by 15px in Chrome. Dev-tool icon visible in local screenshots is not shipped in production.
+
+NOT VERIFIED: physical iPhone Safari/Android Chrome, measured runtime CLS, authenticated CMS publish-to-public save, real seasonal availability and end-to-end reservation against hosted data. CMS field consumption is verified by component/publication tests; reservation/payment/provider services were untouched. Responsive image cropping remains dependent on future CMS photographs/focal settings and unusually long editorial content. No new horizontal overflow or unreserved media region observed; no numeric CLS claim.
+
+Local implementation is ready for visual review and a separately approved scoped release. Current mixed workspace must be isolated before publication. No commit, push, deployment, production environment change, Supabase write or independent Netlify map modification.
+
+
+Publication candidate: owner approved deployment on 12 October. Clean npm ci/check passes; 42 component + 17 identity + 165 disposable database + 140 integration + 24 PostgreSQL tests pass (388 total). PostgreSQL socket restriction resolved by an approved local-only run. Exactly four scoped files from production 0b8f2a7; no booking/widget/API/CMS configuration/backend/map edits. GitHub CI/Preview/Production verification follows publication.
