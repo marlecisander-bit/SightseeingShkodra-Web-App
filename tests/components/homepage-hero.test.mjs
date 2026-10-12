@@ -22,3 +22,10 @@ test('unpublished product and missing fare never fabricate ticket offers or pric
  const absent=render({}, {productTitle:undefined,fare:undefined,stopCount:undefined});assert.ok(!absent.includes('type="date"'));assert.ok(!absent.includes('All Day'));assert.ok(!absent.includes('From €'));assert.ok(!absent.includes('5 Stops'));
  const noFare=render({}, {fare:undefined});assert.ok(noFare.includes('Choose a date'));assert.ok(!noFare.includes('From €'));
 });
+test('hero benefits use published CMS amenities, preserving order and suppressing draft claims',()=>{
+ const item=(id,title,icon,display_order,published=true)=>({id:`00000000-0000-4000-8000-${id.padStart(12,'0')}`,title,icon,description:'Saved detail',display_order,published,created_at:'2026-01-01T00:00:00Z',updated_at:'2026-01-01T00:00:00Z'});
+ const html=render({'hero.amenities':JSON.stringify([item('1','Draft Wi-Fi','wifi',0,false),item('2','Saved tracking','map',2),item('3','Saved iconic stops','stop',1)])});
+ assert.ok(html.includes('Saved iconic stops'));assert.ok(html.includes('Saved tracking'));assert.ok(!html.includes('Draft Wi-Fi'));
+ assert.ok(html.indexOf('Saved iconic stops')<html.indexOf('Saved tracking'));assert.ok(!html.includes('Hop On / Hop Off'));
+ const fallback=render();assert.ok(!fallback.includes('Free Wi-Fi'));assert.ok(fallback.includes('5 Stops'));
+});
