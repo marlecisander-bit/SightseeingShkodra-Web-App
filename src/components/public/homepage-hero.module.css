@@ -73,7 +73,6 @@
  .feedback{grid-column:1/-1;}
  .shortcuts{justify-content:flex-start;gap:24px;}
  .about{justify-self:end;}
- :global(.public-site:has(#home-hero) .p-header-home[data-mobile-book="false"] .p-header-book){visibility:hidden;pointer-events:none;}
  :global(.public-site:has(#home-hero) .p-header-home:not(.p-header-solid)){background:linear-gradient(180deg,rgba(18,25,28,.42),transparent);}
 }
 @media(min-width:901px) and (max-width:1200px){.visual .intro{max-width:440px;}.benefits{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-width:420px;}}
@@ -81,9 +80,3 @@
 
 /* Wide panoramic crop: retain the CMS horizontal focus and explicit top/bottom choices. */
 @media(min-width:1600px){.visual{padding-inline:var(--ss-gutter);}.visual .media img{object-position:var(--hero-wide-position);}}
-
-/* Balance the complete logo-to-language row when the hero action is visible. */
-@media(min-width:901px){
- :global(.public-site:has(#home-hero) .p-header-home:not(.p-header-solid)[data-mobile-book="false"] .p-header-book){display:none;}
- :global(.public-site:has(#home-hero) .p-header-home:not(.p-header-solid)[data-mobile-book="false"] .p-navigation){flex:1;min-width:0;margin-left:clamp(24px,4vw,80px);justify-content:space-between;gap:clamp(12px,2vw,32px);}
-}

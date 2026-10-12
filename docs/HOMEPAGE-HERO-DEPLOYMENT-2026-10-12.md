@@ -1,0 +1,15 @@
+# Homepage hero visual refinement published — 12 October 2026
+
+Owner explicitly requested publication after local review. Published through [PR #10](https://github.com/marlecisander-bit/SightseeingShkodra-Web-App/pull/10). Source commit 25a5d4b1d38df7de9b90d8003cc219e94f1f5bec; main merge 79198a6c78b301571e49a083d74e41f79da1372b. [Vercel production deployment](https://vercel.com/aleksander-marleci/sightseeing-shkodra-web-app/9yo6sCjbJ9sFu6mTDC9xBJFzyjAP) reports Ready/Production with current sightseeingshkodra.app domain. Prior ready deployment 3MNUrotFZx6pFG1XnmuKi9T3wkj6 is retained; rollback not needed.
+
+Isolated checkout from production 0b8f2a7: exactly four files (homepage-hero.tsx, homepage-hero.module.css, HOMEPAGE-HERO-REDESIGN-RESULT.md, PHASE_STATUS.md). Original dirty workspace preserved. No booking widget, shared booking logic, API, pricing, database, CMS record, configuration, communications or independent map changes.
+
+Clean npm ci, lint, TypeScript, optimized build/start HTTP 200 and all 388 tests pass. Production npm audit has zero vulnerabilities. GitHub PR checks 3/3 pass, including Project CI and Vercel Preview. Preview is the expected unconfigured-content shell; production data was never bound to Preview. A first sandboxed PostgreSQL test attempt failed to bind a socket; approved local loopback run passed all 24 PostgreSQL tests.
+
+Live Chrome checks at 320/375/390/430/768/1024/1280/1440/1920: no horizontal overflow, heading/card separation and >=44px hero targets. Original photographs, CMS headline/subtitle/actions and real EUR10 dated fare render. Screenshots inspected at 390 and 1440; all widths captured. No new assets or image modification. Family 1 adult + 1 child + 1 infant prevents removal of last adult; one existing dialog retains counts and current date; existing availability lists 11:00, 13:00 and 15:00 as available. No departure chosen, hold created, customer details entered or reservation submitted. Header CTA returns visible with solid header after scrollY 1958.5; mobile menu retains Home, Route & Live Map, Explore and FAQ.
+
+Read-only live HTTP smoke: homepage, Route, Book, Explore, FAQ, Your Day, Privacy and Terms 200. Sitemap XML parses with nine URLs; robots 200. Tour returns exact 301 Location /route. Source diff confirms below-hero sections and map unchanged. Full map/GPS accuracy, physical iPhone Safari/Android Chrome, numeric CLS and live reservation transaction NOT VERIFIED. Authenticated CMS write deliberately not performed; CMS field consumption/publication and untouched widget verified by tests/source and actual saved content rendering.
+
+Evidence: /private/tmp/hero-visual/live/{320,375,390,430,768,1024,1280,1440,1920}.jpg, responsive.json and booking-dialog.txt; production-before-http.json / production-after-http.json; release-*.log. These production screenshots show real saved content/pricing, unlike earlier local synthetic-fare screenshots.
+
+This post-deployment report is local evidence and was not redeployed. Original workspace remains on its existing local HEAD with unrelated edits intact.

@@ -1,5 +1,5 @@
 .date,.passengers,.departures,.summary{min-width:0;}
-.date{display:grid;gap:8px;font-weight:600;}
+.date{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;font-weight:600;max-width:100%;}
 :global(.public-site) .date input{width:100%;min-width:0;min-height:48px;padding:10px 12px;border:1px solid var(--ss-input-border);border-radius:var(--ss-radius-control);font:inherit;font-size:16px;background:var(--p-paper);color:var(--p-ink);box-sizing:border-box;}
 .passengers,.departures{border:0;margin:0;padding:0;}
 .passengers legend,.departures legend{font-weight:700;margin-bottom:16px;}
@@ -24,3 +24,11 @@
 
 .breakdown{display:grid;gap:10px;margin:0}.breakdown>div{display:flex;justify-content:space-between;gap:16px}.breakdown dd{margin:0;font-weight:600}.breakdown small{display:block;color:var(--ss-muted)}.breakdown>div:last-child{border-top:1px solid var(--ss-input-border);padding-top:12px;font-weight:700}
 :global(.public-site) .grid button:not(:disabled):not([aria-pressed=true])>span{color:var(--ss-green-ink)}
+
+/* Constrain native date controls, including iOS Safari's intrinsic date width. */
+:global(.public-site) .date input[type="date"]{display:block;inline-size:100%;max-inline-size:100%;min-inline-size:0;-webkit-appearance:none;appearance:none;}
+@media(max-width:900px){
+ :global(.public-site) .date input[type="date"]{text-align:center;padding-inline:10px;}
+ :global(.public-site) .date input[type="date"]::-webkit-date-and-time-value{min-width:0;text-align:center;}
+ :global(.public-site) .date input[type="date"]::-webkit-datetime-edit{min-width:0;padding:0;text-align:center;}
+}

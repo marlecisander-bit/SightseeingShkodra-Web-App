@@ -1,3 +1,4 @@
+import { PublicAnalytics } from "@/components/public/analytics";
 import {getCurrentMeetingPoint} from "@/modules/booking/meeting-point-server";
 import { BookingProvider, Header } from "@/components/public/booking";
 import { Footer } from "@/components/public/ui";
@@ -21,6 +22,7 @@ export default async function PublicLayout({
           Skip to content
         </a>
         <Header content={content} />
+        {process.env.GA4_ENABLED === "true" && process.env.APP_ENV === "production" && process.env.VERCEL_ENV !== "preview" && process.env.NEXT_PUBLIC_SITE_URL === "https://sightseeingshkodra.app" && <PublicAnalytics />}
         {children}
         <Footer content={content} googleReviewsUrl={reviews.google_reviews_url} />
         <WhatsAppContact href={whatsappLink(content)} label={content['whatsapp.label']??''} desktop={content['whatsapp.desktop']==='true'} mobile={content['whatsapp.mobile']==='true'}/>

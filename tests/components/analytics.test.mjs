@@ -1,0 +1,33 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { analyticsAllowedPath, initializeAnalytics, trackBookingEvent, trackPage, consentKey } from '../../src/modules/analytics/browser.ts';
+test('analytics excludes private, utility and unexpected paths', () => {
+  for (const path of ['/admin', '/auth/activate', '/api/public/checkout', '/booking/manage', '/your-day', '/tour', '/dev/example', '/explore/secret@example.com']) assert.equal(analyticsAllowedPath(path), false);
+  for (const path of ['/', '/route', '/book', '/explore/rozafa-castle']) assert.equal(analyticsAllowedPath(path), true);
+});
+test('consent, sanitized payloads and persistent conversion deduplication', async () => {
+  const values = new Map();
+  globalThis.localStorage = { getItem: key => values.get(key), setItem: (key, value) => values.set(key, value) };
+  globalThis.window = { dataLayer: [] };
+  globalThis.location = { pathname: '/book', href: 'https://sightseeingshkodra.app/book?email=private@example.com#secret' };
+  trackBookingEvent('purchase', 'opaque-id', 2500);
+  assert.equal(window.dataLayer.length, 0);
+  values.set(consentKey, 'granted');
+  initializeAnalytics(); initializeAnalytics();
+  assert.equal(window.dataLayer.length, 3);
+  trackPage('/book');
+  trackBookingEvent('purchase', 'opaque-id', 2500);
+  trackBookingEvent('purchase', 'opaque-id', 2500);
+  await new Promise(resolve => setTimeout(resolve, 30));
+  const purchases = window.dataLayer.filter(event => event[1] === 'purchase');
+  assert.equal(purchases.length, 1);
+  assert.equal(purchases[0][2].value, 25);
+  assert.equal(purchases[0][2].transaction_id.length, 64);
+  assert.ok(!JSON.stringify(window.dataLayer).includes('private@example.com'));
+  assert.ok(!JSON.stringify(window.dataLayer).includes('opaque-id'));
+  values.set(consentKey, 'denied');
+  const length = window.dataLayer.length;
+  trackPage('/route'); trackBookingEvent('purchase', 'other', 5000);
+  await new Promise(resolve => setTimeout(resolve, 20));
+  assert.equal(window.dataLayer.length, length);
+});
