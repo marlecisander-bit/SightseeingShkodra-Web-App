@@ -81,3 +81,9 @@
 
 /* Wide panoramic crop: retain the CMS horizontal focus and explicit top/bottom choices. */
 @media(min-width:1600px){.visual{padding-inline:var(--ss-gutter);}.visual .media img{object-position:var(--hero-wide-position);}}
+
+/* Balance the complete logo-to-language row when the hero action is visible. */
+@media(min-width:901px){
+ :global(.public-site:has(#home-hero) .p-header-home:not(.p-header-solid)[data-mobile-book="false"] .p-header-book){display:none;}
+ :global(.public-site:has(#home-hero) .p-header-home:not(.p-header-solid)[data-mobile-book="false"] .p-navigation){flex:1;min-width:0;margin-left:clamp(24px,4vw,80px);justify-content:space-between;gap:clamp(12px,2vw,32px);}
+}
