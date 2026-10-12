@@ -1589,3 +1589,9 @@ body:has(.p-booking-dialog[open]) {
  .public-site .p-ticket-action{padding:20px}
 
 }
+
+/* A little more breathing room in the desktop footer. */
+@media(min-width:901px){
+ .public-site .p-global-footer{padding-block:28px max(24px,env(safe-area-inset-bottom));}
+ .public-site .p-footer-inner{row-gap:12px;}
+}

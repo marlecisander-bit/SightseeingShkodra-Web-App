@@ -1,0 +1,13 @@
+# Hero header alignment and desktop footer spacing — 12 October 2026
+
+Publication explicitly approved by the user; release validation and deployment follow the existing Vercel workflow. User asked to justify the logo-to-language hero header while preserving its scrolled booking-button layout, and make the desktop footer a little thicker.
+
+The hidden desktop booking button retained width through visibility:hidden. On the homepage hero only, while the header is transparent and the existing observer marks the hero action visible, the hidden header button now uses display:none. The navigation flexes into that space and distributes its links with space-between and fluid margins/gaps. Selectors exclude the solid/scrolled header and widths <=900px, preserving menu and booking behavior. No JavaScript/header markup change.
+
+Desktop footer (>=901px): top/bottom padding increases from 16/12px to 28/24px, row gap from8 to12px. Height with five existing icons increases 133.7 ->161.7px. Mobile remains138px; tablet remains133.7px. Existing max width, logo, icons, link targets, touch sizes, CMS visibility/content and legal/staff ownership unchanged.
+
+Exact implementation changes: src/components/public/homepage-hero.module.css and src/app/(public)/public.css, six appended lines each. This report and docs/PHASE_STATUS.md record evidence. Original unrelated dirty workspace preserved. Isolated candidate is based on published main d6f3c5b and contains only the two CSS changes; temporary layout/page fixtures restored.
+
+Chrome widths320/390/768/900/901/1024/1280/1440/1920: no horizontal overflow, all five footer icons, expected mobile/tablet heights, centered logo-to-language span on desktop (0px geometric center error). At1440px baseline header span was offset81.1px; after0px. Scrolled at2193px: solid header, visible booking button and original normal justification/margin restored. Header screenshot visually inspected; footer assets scrolled into view and loaded before final capture. No physical-device or hosted-change claim.
+
+Original workspace and isolated candidate npm run check pass (lint, TypeScript, optimized build); eight existing footer/CMS visibility tests pass; git diff --check passes. No new test/dependency, booking/API/CMS/backend/map/configuration change. Evidence: /private/tmp/header-footer-refinement/{before-header,after-header,before-footer,after-footer}.jpg, responsive.json, check.log, candidate-check.log and tests.log. Fixtures use existing components with synthetic content and five example social links; no link/CMS value was saved. Production remains unchanged.

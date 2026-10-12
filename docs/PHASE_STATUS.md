@@ -541,3 +541,7 @@ LATEST USER TASK — 11 October 2026: Route-only Classic Modern stops timeline i
 
 
 12 October 2026 - Owner explicitly authorized V2 hero publication. Scoped candidate from main 79198a6: hero component/CSS, CMS-benefit regression test, local review and this checkpoint only. Earlier clean check and 389 tests passed; release CI and hosted checks pending. CMS records/copy and booking widget/logic remain unchanged; no fixture, price or Wi-Fi claim is hardcoded.
+
+
+### 12 October 2026 — Header/footer spacing publication
+User explicitly approved publication. Scoped candidate from main d6f3c5b removes reserved hidden-button width only in the transparent desktop homepage header, distributes navigation responsively, and adds 28px desktop footer height. Scrolled header and mobile layout remain unchanged. Nine viewport widths had no overflow. See docs/HEADER-FOOTER-SPACING-2026-10-12.md. No backend, CMS, booking, environment or infrastructure changes.
