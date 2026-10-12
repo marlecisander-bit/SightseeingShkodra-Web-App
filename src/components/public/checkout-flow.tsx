@@ -1,4 +1,5 @@
 "use client";
+import { trackBookingEvent } from "@/modules/analytics/browser";
 import { checkoutStorageKey } from "@/modules/booking/checkout-browser-state";
 
 import { BookingProgress, BookingAction, BookingSummary, BookingPriceBreakdown } from "./booking-controls";
@@ -49,6 +50,12 @@ export function CheckoutFlow() {
   const { selection, setSelection, availability, reset } = useBooking();
   const [attempt, setAttempt] = useState<Attempt | null>(null);
   const [order, setOrder] = useState<PendingOrder | null>(null);
+  useEffect(() => {
+    const report = () => { if (order?.bookingStatus === "confirmed") trackBookingEvent('purchase', order.orderId, order.total, order.currency); };
+    report();
+    window.addEventListener('ss-analytics-ready', report);
+    return () => window.removeEventListener('ss-analytics-ready', report);
+  }, [order]);
   const [customer, setCustomer] = useState({ name: "", email: "", phone: "" });
   const [review, setReview] = useState(false);
   const [submitted, setSubmitted] = useState<typeof customer | null>(null);

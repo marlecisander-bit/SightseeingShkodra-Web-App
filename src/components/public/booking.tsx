@@ -1,4 +1,5 @@
 "use client";
+import { analyticsSessionIdentity, trackBookingEvent } from "@/modules/analytics/browser";
 import type {MeetingPoint} from "@/modules/booking/meeting-point";
 import {MeetingPointSummary} from "./meeting-point-summary";
 import { lowestQuotedFare } from "./booking-presentation";
@@ -84,6 +85,7 @@ export function BookingProvider({ children, content = initialWebsiteContent, pre
         open: () => {
           if (!dialog.current || dialog.current.open) return;
           dialog.current.showModal();
+          trackBookingEvent('begin_checkout', 'checkout:' + analyticsSessionIdentity());
           setOpened(true);
         },
         close: () => dialog.current?.close(),
@@ -255,7 +257,7 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
   const pathname = usePathname();
   const inBooking = pathname === "/book" || pathname.startsWith("/booking/");
   const [heroVisible, setHeroVisible] = useState(true);
-  const [heroCtaVisible, setHeroCtaVisible] = useState(true);
+  const { open } = useBooking();
   const [hash, setHash] = useState("");
   const headerRef = useRef<HTMLElement>(null);
   const scrolled = pathname !== "/" || !heroVisible;
@@ -270,7 +272,7 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     navigation.current?.querySelector<HTMLAnchorElement>("a")?.focus();
-    const desktop = window.matchMedia("(min-width:901px)");
+    const desktop = window.matchMedia("(min-width:1101px)");
     const closeOnDesktop = () => { if (desktop.matches) setMenu(false); };
     desktop.addEventListener("change", closeOnDesktop);
     return () => {
@@ -289,7 +291,7 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
     const updateHash = () => setHash(window.location.hash);
     updateHash();window.addEventListener('hashchange',updateHash);window.addEventListener('popstate',updateHash);
     const hero = pathname === '/' ? document.getElementById('home-hero') : null;
-    const heroCta = hero?.querySelector('.p-button-booking');
+
     let observer: IntersectionObserver | undefined;
     let headerResize: ResizeObserver | undefined;
     if(pathname === '/' && hero){
@@ -302,11 +304,11 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
         observer=new IntersectionObserver(entries=>{
           for(const entry of entries){
             if(entry.target===hero)setHeroVisible(entry.isIntersecting && entry.intersectionRatio > 0.2);
-            if(entry.target===heroCta)setHeroCtaVisible(entry.isIntersecting && entry.intersectionRatio > 0);
+
           }
         },{rootMargin:'-'+headerHeight+'px 0px 0px 0px',threshold:[0,0.2]});
         observer.observe(hero);
-        if(heroCta)observer.observe(heroCta);
+
       };
       observeHero();
       // Breakpoints and safe areas can change the fixed header's actual height.
@@ -315,11 +317,19 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
     }
     return ()=>{observer?.disconnect();headerResize?.disconnect();window.removeEventListener('hashchange',updateHash);window.removeEventListener('popstate',updateHash);};
   }, [pathname]);
+  const bookFromHeader = () => {
+    setMenu(false);
+    const ticket = pathname === "/" ? document.querySelector<HTMLElement>('#home-hero [aria-label="Daily ticket availability"]') : null;
+    if (!ticket) { open(); return; }
+    requestAnimationFrame(() => {
+      const offset = (headerRef.current?.getBoundingClientRect().height ?? 76) + 16;
+      window.scrollTo({ top: Math.max(0, ticket.getBoundingClientRect().top + window.scrollY - offset), behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+      ticket.querySelector<HTMLInputElement>('input[type="date"]')?.focus({ preventScroll: true });
+    });
+  };
   return (
     <>
       <header ref={headerRef}
-        data-mobile-book={!inBooking && !menu && (pathname !== "/" || !homepageVisible(c, "hero") || !heroCtaVisible)}
-        data-mobile-solid={pathname !== "/" || !homepageVisible(c, "hero") || !heroCtaVisible || menu}
         className={`p-header ${pathname === "/" ? "p-header-home" : ""} ${pathname !== "/" || !homepageVisible(c, "hero") || scrolled || menu ? "p-header-solid" : ""}`}
         onKeyDown={(event) => {
           if (event.key === "Tab" && menu) {
@@ -334,6 +344,7 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
           }
         }}
       >
+        <div className="p-header-inner">
         <Link className="p-wordmark" href="/" scroll aria-label="Go to Sightseeing Shkodra homepage" onClick={(event) => {
           if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
           setMenu(false);
@@ -354,12 +365,10 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
           aria-label="Main navigation"
         >
           {links.map((href,i)=>visibleWebsiteLink(href,c) ? <PublicBookingLink key={i} href={href} aria-current={active===i ? (href.includes("#") ? "location" : "page") : undefined} onClick={()=>{if(menu)menuToggle.current?.focus();setMenu(false);setHash(href.includes("#")?"#"+href.split("#")[1]:"");}}><span className="p-nav-label">{items[i].label}</span></PublicBookingLink> : null)}
-          {inBooking ? <Link className="p-menu-back" href="/" onClick={() => setMenu(false)}>Back to website</Link> : <BookButton className="p-menu-book" onClick={() => { menuToggle.current?.focus(); setMenu(false); }}>{c["nav.book"]}</BookButton>}
-          <span className="p-language" title="More languages coming soon">
-            EN
-          </span>
+          {inBooking ? <Link className="p-menu-back" href="/" onClick={() => setMenu(false)}>Back to website</Link> : <Button type="button" size="lg" className="p-button p-button-booking p-menu-book" onClick={bookFromHeader}>{c["nav.book"]}</Button>}
         </nav>
-        {inBooking ? <Link className="p-header-back" href="/">Back to website</Link> : <BookButton className="p-header-book" ariaLabel={c["nav.book"]} onClick={() => setMenu(false)}><span className="p-header-book-full">{c["nav.book"]}</span><span className="p-header-book-compact" aria-hidden="true">Book</span></BookButton>}
+        <span className="p-language" title="More languages coming soon" aria-label="English; more languages coming soon">EN</span>
+        {inBooking ? <Link className="p-header-back" href="/">Back to website</Link> : <Button type="button" size="lg" className="p-button p-button-booking p-header-book" aria-label={c["nav.book"]} onClick={bookFromHeader}><span className="p-header-book-full">{c["nav.book"]}</span><span className="p-header-book-compact" aria-hidden="true">Book</span></Button>}
         <button
           ref={menuToggle}
           className="p-menu-toggle"
@@ -370,6 +379,7 @@ export function Header({ content: c = initialWebsiteContent }: { content?: Websi
         >
           <span aria-hidden="true">{menu ? "×" : "☰"}</span>
         </button>
+        </div>
       </header>
       {menu && <button type="button" className="p-menu-backdrop" tabIndex={-1} aria-label="Close navigation backdrop" onClick={() => { setMenu(false); menuToggle.current?.focus(); }} />}
     </>

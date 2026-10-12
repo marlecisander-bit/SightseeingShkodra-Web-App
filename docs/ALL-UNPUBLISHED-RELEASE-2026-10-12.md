@@ -1,0 +1,7 @@
+# Remaining unpublished changes release — 12 October 2026
+
+User explicitly authorized all remaining unpublished changes. Compared actual working files, including untracked files, against production main9af85cd. Most dirty paths already match production. Release contains shared header standardization, shared mobile native date sizing, previously local consent-gated analytics code and accumulated release reports. Preserves richer production publication-history entries and portable sitemap-test tmpdir path instead of copying stale local versions. No production secrets or temporary fixtures included.
+
+Clean candidate check (lint/type/build), full391 existing tests and production dependency audit (zero vulnerabilities) pass. Header/date local browser evidence is in SHARED-HEADER-2026-10-12.md and MOBILE-DATE-FIELD-2026-10-12.md. Analytics consent/privacy/deduplication component tests pass. No new dependencies, backend/CMS/schema/map change, communications change, Google account change or Vercel environment change. Analytics activation remains behind the existing production GA4_ENABLED flag and visitor consent; account-side Enhanced Measurement/privacy-notice acceptance and GA delivery are not claimed. Previous analytics report is historical; Tour is removed and sitemap already repaired by prior releases.
+
+Release uses existing GitHub PR/CI/Vercel Preview/main production flow. Hosted checks pending. Previous Ready production CH3L9V3q17mphmt6QP9Ku83thg66 retained as rollback.

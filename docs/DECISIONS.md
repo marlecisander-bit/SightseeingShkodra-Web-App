@@ -150,3 +150,6 @@ User authorized local safety/documentation review and CI/reconciliation/acceptan
 The user explicitly requested complete local removal of `/tour`, including page/view/styles, links, SEO and exclusive CMS controls, with a permanent HTTP 301 to `/route`. Keep a redirect-only Route Handler; drop obsolete query parameters. Shared product data, homepage inclusions and dedicated FAQ fields retain their existing stored keys and appropriate editors. Preserve records/media and historical validation compatibility; no migration, production change or deployment authorized. This supersedes roadmap requirements for a dedicated Tour presentation. See TOUR-REMOVAL-2026-10-11.md. The original roadmap is unchanged.
 
 11 October follow-up: user explicitly authorized publication. Release excludes unrelated analytics/timeline work; no database or configuration changes.
+
+
+12 October 2026 - User explicitly authorized publication of all remaining unpublished changes: shared header, mobile native date containment, consent-gated analytics implementation and accumulated release evidence. Existing Vercel settings, analytics activation gate, backend/CMS/map and delivery configuration remain unchanged. Portable sitemap test tempdir implementation retained. Release validation pending.

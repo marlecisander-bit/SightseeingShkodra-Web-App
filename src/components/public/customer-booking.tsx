@@ -1,4 +1,5 @@
-﻿"use client";
+"use client";
+import { trackBookingEvent } from "@/modules/analytics/browser";
 import { BookingSummary, BookingDateSelector, PassengerSelector, DepartureSelector, CancelBookingDialog } from "./booking-controls";
 import { PublicBookingLink, useBooking } from "./booking";
 import Link from "next/link";
@@ -28,7 +29,7 @@ export function CustomerBooking(){
  const selected=current?.departures.find(d=>d.id===departure&&d.available);
  const price=selected?.passengerQuote;
  const committing=useRef(false);
- async function commit(action:'modify'|'cancel'){if(!booking||committing.current)return;committing.current=true;setBusy(true);setError('');try{const result=await call(action==='cancel'?{action}:{action,version:booking.version,departureId:departure,counts,total:price?.total,requestId:request.current});setBooking(result);setUpdated(action==='modify');setMode('view');setQuote(undefined);setDeparture('');setDate('');setCounts({adult:1,child:0,infant:0});request.current='';}catch(e){setError(safeBookingFeedback(e,messages));}finally{committing.current=false;setBusy(false);}}
+ async function commit(action:'modify'|'cancel'){if(!booking||committing.current)return;committing.current=true;setBusy(true);setError('');try{const result=await call(action==='cancel'?{action}:{action,version:booking.version,departureId:departure,counts,total:price?.total,requestId:request.current});if(action==='cancel'&&result.status==='cancelled')trackBookingEvent('booking_cancelled',booking.reference+':cancel');if(action==='modify'&&result.version>booking.version)trackBookingEvent('booking_modified',booking.reference+':'+result.version);setBooking(result);setUpdated(action==='modify');setMode('view');setQuote(undefined);setDeparture('');setDate('');setCounts({adult:1,child:0,infant:0});request.current='';}catch(e){setError(safeBookingFeedback(e,messages));}finally{committing.current=false;setBusy(false);}}
  function edit(){if(!booking)return;setDate(booking.date);setCounts(booking.counts);setDeparture(booking.departureId);setQuote(undefined);setError('');setUpdated(false);setMode('modify');}
  return <section className={styles.card} aria-busy={busy}>
   <h1 ref={heading} tabIndex={-1}>Manage your booking</h1>
