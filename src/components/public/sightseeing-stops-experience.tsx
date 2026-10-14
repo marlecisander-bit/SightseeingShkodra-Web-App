@@ -5,7 +5,7 @@ import {sightseeingStops,sightseeingStatus,type StopPlace} from '@/modules/conte
 import type {JourneySnapshot} from '@/modules/tracking/journey-contract';
 import styles from './sightseeing-stops.module.css';
 function VanIcon(){return <svg aria-hidden="true" width="24" height="18" viewBox="0 0 32 24" fill="none"><path d="M3 4h18l7 7v8H3V4Z" fill="currentColor"/><path d="M6 7h6v5H6zm9 0h5l5 5H15Z" fill="white"/><circle cx="9" cy="19" r="4" fill="currentColor" stroke="white" strokeWidth="2"/><circle cx="23" cy="19" r="4" fill="currentColor" stroke="white" strokeWidth="2"/></svg>;}
-export function SightseeingStopsExperience({mode,stops,places,journey,stale=false,onMap,learnLabel='Learn more',mapLabel='View on map'}:{mode:'live'|'discover';stops:readonly {id:string;label:string}[];places:readonly StopPlace[];journey?:JourneySnapshot|null;stale?:boolean;onMap?:(id:string)=>void;learnLabel?:string;mapLabel?:string}){
+export function SightseeingStopsExperience({mode,layout='timeline',stops,places,journey,stale=false,onMap,learnLabel='Learn more',mapLabel='View on map'}:{mode:'live'|'discover';layout?:'timeline'|'cards';stops:readonly {id:string;label:string}[];places:readonly StopPlace[];journey?:JourneySnapshot|null;stale?:boolean;onMap?:(id:string)=>void;learnLabel?:string;mapLabel?:string}){
  const [selected,setSelected]=useState('');const [active,setActive]=useState(0);const list=useRef<HTMLOListElement>(null);const detailId=useId();const trigger=useRef<HTMLButtonElement|null>(null);const close=()=>{setSelected('');trigger.current?.focus();};
  const items=sightseeingStops(stops,places,mode==='live'&&!stale?journey:null);const chosen=items.find(s=>s.id===selected);const parked=items.some(s=>s.state==='current');
  // Center once for each authoritative target transition; a heartbeat never resets a swipe.
@@ -20,7 +20,7 @@ export function SightseeingStopsExperience({mode,stops,places,journey,stale=fals
   if(rail&&node&&rail.scrollWidth>rail.clientWidth&&(node.offsetLeft<rail.scrollLeft||node.offsetLeft+node.offsetWidth>rail.scrollLeft+rail.clientWidth))rail.scrollTo({left:node.offsetLeft-(rail.clientWidth-node.offsetWidth)/2,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
  },[target]);
  const go=(index:number)=>{const node=list.current?.children[index];if(node instanceof HTMLElement){node.scrollIntoView({block:'nearest',inline:'center',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});setActive(index);}};
- return <div className={styles.experience} data-mode={mode} data-floating-obstacle>
+ return <div className={styles.experience} data-mode={mode} data-layout={layout} data-floating-obstacle>
   {mode==='live'&&<p className={styles.status} role="status"><span><VanIcon/></span>{sightseeingStatus(items,journey,stale)}</p>}
   {!items.length&&<p>Published stops are temporarily unavailable.</p>}
   <ol ref={list} className={styles.stops} onScroll={event=>{if(mode!=='discover')return;const el=event.currentTarget;const children=Array.from(el.children) as HTMLElement[];const nearest=children.reduce((best,node,i)=>Math.abs(node.offsetLeft-el.offsetLeft-el.scrollLeft)<Math.abs(children[best].offsetLeft-el.offsetLeft-el.scrollLeft)?i:best,0);setActive(nearest);}}>{items.map(s=><li key={s.id} data-state={s.state} data-stop-id={s.id}>

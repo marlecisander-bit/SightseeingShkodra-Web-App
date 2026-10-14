@@ -62,7 +62,7 @@ test('unavailable publication never restores visible defaults, and optional anch
  assert.equal(sectionVisible({...initialWebsiteContent,'final.showOnHomepage':'false'},'final'),false);
 });
 
-test('unified journey shares visibility flags while preserving one map and booking entry',async()=>{
+test('unified journey shares visibility flags while prioritizing one map without a promotional booking card',async()=>{
  const {RouteJourney}=await import('../../src/components/public/route-journey.tsx');
  const initial={date:'2026-09-30',title:'Today',times:[],fares:[],stops:[{id:'stop-1',label:'Stop 1 - Start'}]};
  for(const visible of [true,false,true]){
@@ -71,7 +71,9 @@ test('unified journey shares visibility flags while preserving one map and booki
  assert.equal((html.match(/<iframe/g)||[]).length,1);
  assert.equal(html.includes('id="journey-title"'),visible);
  assert.equal(html.includes('id="journey-departures"'),visible);
- assert.ok(html.includes('Book your day'));
+ assert.equal(html.includes('Book your day'),false);
+ assert.equal(html.includes('journey-ticket'),false);
+ if(visible)assert.ok(html.indexOf('id="journey-map"')<html.indexOf('id="journey-title"'));
  }
 });
 

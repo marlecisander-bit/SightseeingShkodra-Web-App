@@ -32,10 +32,6 @@
 .passengers[open]{grid-column:auto;}
 .purchase>div:first-child{min-height:84px;display:flex;flex-direction:column;justify-content:flex-end;}
 .purchase{padding-top:16px;border-top:1px solid var(--ss-border);margin-top:16px;gap:16px;}
-:global(.public-site) .purchase button{background:var(--ss-primary);border-color:var(--ss-primary);color:var(--ss-white);box-shadow:none;}
-:global(.public-site) .purchase button:hover{background:var(--ss-primary-hover);border-color:var(--ss-primary-hover);}
-:global(.public-site) .purchase button:active{background:var(--ss-primary-active);border-color:var(--ss-primary-active);}
-:global(.public-site) .purchase button:disabled{background:var(--ss-primary);border-color:var(--ss-primary);opacity:.55;}
 .shortcuts{padding-top:0;}
 .about{margin-top:0;}
 @media(max-width:599px){:global(.public-site) .eyebrow{display:none;}.visual{gap:132px;}:global(.public-site) .card h2{font-size:16px;margin-bottom:18px;}}

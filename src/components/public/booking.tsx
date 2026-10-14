@@ -130,7 +130,7 @@ function BookingDialogContent({content,preview=false}: {content: WebsiteContent;
 export function PublicBookingLink({ href, onClick, ...props }: ComponentProps<typeof Link>) {
   const { open } = useBooking();
   const booking = href === "/book";
-  return <Link {...props} href={href} aria-haspopup={booking ? "dialog" : props["aria-haspopup"]} onClick={event => {
+  return <Link {...props} className={`${props.className ?? ""}${booking && props.className?.includes("p-button") ? " p-button-booking" : ""}`} href={href} aria-haspopup={booking ? "dialog" : props["aria-haspopup"]} onClick={event => {
     onClick?.(event);
     if (!booking || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || (props.target && props.target !== "_self") || props.download) return;
     event.preventDefault();

@@ -344,7 +344,7 @@ export function CheckoutFlow() {
               </Field>
               </div>}
               {review && <div className="p-review-contact"><h3>Contact details</h3><p>{customer.name}<br/>{customer.email}{customer.phone && <><br/>{customer.phone}</>}</p><Button type="button" className="p-text-button" disabled={busy || Boolean(submitted)} onClick={()=>setReview(false)}>Edit contact details</Button><p>Pay at the meeting point. Online changes and cancellation close 15 minutes before departure.</p></div>}
-              <BookingAction total={attempt.total} currency={attempt.hold.passengerSnapshot?.currency??availability.quote?.currency??"EUR"}><Button className={`p-button ${review ? "p-booking-confirm" : "p-button-booking"} p-transaction-action`} disabled={busy || !active}>
+              <BookingAction total={attempt.total} currency={attempt.hold.passengerSnapshot?.currency??availability.quote?.currency??"EUR"}><Button className={`p-button p-button-booking p-transaction-action`} disabled={busy || !active}>
                 {busy
                   ? review ? "Confirming booking…" : "Saving…"
                   : submitted
