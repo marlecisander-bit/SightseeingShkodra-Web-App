@@ -2,6 +2,7 @@
 :root {
  --ss-primary:#B91546; --ss-primary-hover:#9D103A; --ss-primary-active:#800D30;
  --ss-primary-soft:#FBEAF0; --ss-primary-border:#E4AEC0;
+ --color-booking-primary:var(--ss-yellow); --color-booking-hover:var(--ss-yellow-hover); --color-booking-active:var(--ss-yellow-active);
  --ss-yellow:#F6C928; --ss-yellow-hover:#E4B718; --ss-yellow-active:#CEA410;
  --ss-turquoise:#18AFC1; --ss-turquoise-ink:#076978;
  --ss-green:#78B82A; --ss-green-ink:#365D13; --ss-purple:#7351A3;

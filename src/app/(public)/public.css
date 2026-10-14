@@ -1626,3 +1626,10 @@ body:has(.p-booking-dialog[open]) {
  .public-site .p-header.p-header-home:not(.p-header-solid){background:linear-gradient(180deg,rgba(18,25,28,.42),transparent);}
  .public-site .p-menu-backdrop{display:block;position:fixed;inset:0;z-index:29;background:rgba(0,0,0,.12);border:0;}
 }
+
+/* Public primary booking actions share the header's brand yellow. */
+.public-site .p-button.p-button-booking{background:var(--color-booking-primary);color:var(--ss-charcoal);border:0;border-radius:var(--ss-radius-control);min-height:44px;display:inline-flex;align-items:center;justify-content:center;text-align:center;font-weight:700;}
+.public-site .p-button.p-button-booking:hover:not(:disabled){background:var(--color-booking-hover);}
+.public-site .p-button.p-button-booking:active:not(:disabled){background:var(--color-booking-active);}
+.public-site .p-button.p-button-booking:focus-visible{outline:3px solid var(--ss-charcoal);outline-offset:3px;}
+.public-site .p-button.p-button-booking:disabled{opacity:.55;cursor:not-allowed;}
