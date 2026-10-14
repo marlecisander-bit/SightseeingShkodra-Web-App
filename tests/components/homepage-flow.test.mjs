@@ -45,7 +45,7 @@ test('visibility removes all new consumers of the same section while preserving 
 
 test('Admin homepage order has one owner per section and matches the public progression',async()=>{
  const {websiteEditorGroups,editableWebsiteSections}=await import('../../src/modules/content/website-schema.ts');
- assert.deepEqual(websiteEditorGroups.homepage.map(s=>s.id),['hero','homeRoute','route','live','departures','intro','notebook','reviews','final']);
+ assert.deepEqual(websiteEditorGroups.homepage.map(s=>s.id),['hero','heroAmenities','homeRoute','route','live','departures','intro','notebook','reviews','final']);
  assert.equal(editableWebsiteSections.filter(s=>s.id==='how').length,0);
  assert.equal(new Set(editableWebsiteSections.flatMap(s=>s.fields.map(f=>f.key))).size,editableWebsiteSections.flatMap(s=>s.fields).length);
 });

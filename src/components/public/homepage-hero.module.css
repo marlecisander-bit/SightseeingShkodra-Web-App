@@ -22,8 +22,9 @@
 :global(.public-site) .intro h1{font-size:clamp(32px,8.5vw,38px);line-height:1.04;letter-spacing:-.035em;color:var(--ss-white);margin-bottom:14px;max-width:250px;}
 .intro h1 em{display:block;color:var(--ss-white);font-style:normal;}
 :global(.public-site) .subtitle{font-size:14px;line-height:1.5;margin-bottom:0;}
-.benefits{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px;max-width:400px;}
-.benefits li{font-size:11px;font-weight:600;gap:8px;line-height:1.35;}
+.benefits{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;width:100%;max-width:none;align-items:start;}
+.benefits li{flex-direction:column;align-items:center;text-align:center;font-size:clamp(9px,2.6vw,11px);font-weight:600;gap:5px;line-height:1.25;}
+.benefits li span{max-width:100%;overflow-wrap:anywhere;}
 .benefits svg{background:var(--ss-primary);color:var(--ss-white);width:28px;height:28px;padding:6px;border-radius:50%;}
 .content{padding:0 16px;gap:12px;}
 .card{position:relative;margin-top:-48px;padding:20px;box-shadow:0 8px 28px #25232A14;}
@@ -43,8 +44,8 @@
  .visual::after{background:linear-gradient(90deg,rgba(18,25,28,.76),rgba(18,25,28,.3) 35%,transparent 72%),linear-gradient(180deg,rgba(18,25,28,.2),transparent 25%),linear-gradient(0deg,rgba(18,25,28,.4),transparent 25%);}
  :global(.public-site) .subtitle{max-width:260px;}
  :global(.public-site) .intro h1{font-size:44px;max-width:320px;}
- .benefits{display:flex;flex-wrap:wrap;max-width:none;gap:12px 20px;}
- .benefits li{font-size:12px;}
+ .benefits{display:flex;flex-wrap:nowrap;max-width:none;gap:clamp(12px,2vw,20px);width:fit-content;}
+ .benefits li{flex-direction:row;text-align:left;font-size:12px;gap:8px;}
  .content{padding-inline:32px;}
  .card{margin-top:-56px;padding:24px;}
  .fields{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;}
@@ -59,7 +60,7 @@
  :global(.public-site) .intro h1{font-size:clamp(48px,3.8vw,60px);max-width:560px;}
  :global(.public-site) .subtitle{font-size:16px;max-width:410px;}
  .visual .media img{object-position:var(--hero-desktop-position);}
- .benefits{max-width:560px;gap:12px 20px;}
+ .benefits{max-width:100%;gap:20px;}
  .content{padding-inline:var(--ss-gutter);grid-template-columns:minmax(0,1fr) auto;gap:12px 32px;}
  .card{grid-column:1/-1;margin-top:-64px;padding:24px;}
  :global(.public-site) .card h2{margin-bottom:18px;}
@@ -71,7 +72,7 @@
  .about{justify-self:end;}
  :global(.public-site:has(#home-hero) .p-header-home:not(.p-header-solid)){background:linear-gradient(180deg,rgba(18,25,28,.42),transparent);}
 }
-@media(min-width:901px) and (max-width:1200px){.visual .intro{max-width:440px;}.benefits{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-width:420px;}}
+@media(min-width:901px) and (max-width:1200px){.visual .intro{max-width:440px;}}
 @media(max-width:900px) and (orientation:landscape){.visual{min-height:520px;gap:100px;padding-bottom:84px;}.visual .media img{object-position:var(--hero-desktop-position);}}
 
 /* Wide panoramic crop: retain the CMS horizontal focus and explicit top/bottom choices. */

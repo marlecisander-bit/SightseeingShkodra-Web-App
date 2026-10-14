@@ -13,3 +13,13 @@ export function parseAmenities(value:string):HeroAmenity[]{
 }
 export const focalPositions=['left top','center top','right top','left center','center center','right center','left bottom','center bottom','right bottom'] as const;
 export function publishedAmenities(value:string){return parseAmenities(value).filter(a=>a.published).sort((a,b)=>a.display_order-b.display_order||a.created_at.localeCompare(b.created_at)||a.id.localeCompare(b.id));}
+
+/** Saved CMS rows own their order and visibility; empty configuration uses service defaults. */
+export function heroBenefits(value:string,{stopCount,productTitle,live,track}:{stopCount?:number;productTitle?:string;live:boolean;track:string}):Pick<HeroAmenity,'id'|'icon'|'title'>[]{
+ if(parseAmenities(value).length)return publishedAmenities(value);
+ return [
+  ...(stopCount?[{id:'stops',icon:'stop' as const,title:`${stopCount} ${stopCount===1?'Stop':'Stops'}`}]:[]),
+  ...(productTitle?[{id:'day',icon:'clock' as const,title:'All Day'},{id:'boarding',icon:'van' as const,title:'Hop On/Off'},{id:'audio',icon:'headphones' as const,title:'Audio Guide'}]:[]),
+  ...(live?[{id:'tracking',icon:'map' as const,title:track}]:[]),
+ ];
+}
