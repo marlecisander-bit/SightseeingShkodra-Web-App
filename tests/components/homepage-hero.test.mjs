@@ -15,7 +15,7 @@ test('hero retains saved CMS identity, photographs, focal points and action labe
 });
 test('one hero widget presents canonical dated fare and the existing passenger controls',()=>{
  const html=render();assert.ok(html.includes('23.75'));assert.ok(html.includes('2030-07-01'));assert.equal((html.match(/type="date"/g)||[]).length,1);
- assert.equal((html.match(/type="submit"/g)||[]).length,1);assert.ok(html.includes('All Day'));assert.ok(html.includes('Hop On / Hop Off'));assert.ok(html.includes('5 Stops'));
+ assert.equal((html.match(/type="submit"/g)||[]).length,1);assert.ok(html.includes('All Day'));assert.ok(html.includes('Hop On/Off'));assert.ok(html.includes('5 Stops'));
  for(const label of ['Add one adult','Add one child','Add one infant','No seat required'])assert.ok(html.includes(label));assert.ok(!html.includes('<iframe'));
 });
 test('unpublished product and missing fare never fabricate ticket offers or prices',()=>{
@@ -26,6 +26,19 @@ test('hero benefits use published CMS amenities, preserving order and suppressin
  const item=(id,title,icon,display_order,published=true)=>({id:`00000000-0000-4000-8000-${id.padStart(12,'0')}`,title,icon,description:'Saved detail',display_order,published,created_at:'2026-01-01T00:00:00Z',updated_at:'2026-01-01T00:00:00Z'});
  const html=render({'hero.amenities':JSON.stringify([item('1','Draft Wi-Fi','wifi',0,false),item('2','Saved tracking','map',2),item('3','Saved iconic stops','stop',1)])});
  assert.ok(html.includes('Saved iconic stops'));assert.ok(html.includes('Saved tracking'));assert.ok(!html.includes('Draft Wi-Fi'));
- assert.ok(html.indexOf('Saved iconic stops')<html.indexOf('Saved tracking'));assert.ok(!html.includes('Hop On / Hop Off'));
+ assert.ok(html.indexOf('Saved iconic stops')<html.indexOf('Saved tracking'));assert.ok(!html.includes('Hop On/Off'));
  const fallback=render();assert.ok(!fallback.includes('Free Wi-Fi'));assert.ok(fallback.includes('5 Stops'));
+});
+
+test('default hero benefits include Audio Guide in the requested five-item order',()=>{
+ const html=render();const row=html.slice(html.indexOf('<ul'),html.indexOf('</ul>'));
+ assert.equal((row.match(/<li/g)||[]).length,5);
+ const labels=['5 Stops','All Day','Hop On/Off','Audio Guide',initialWebsiteContent['hero.track']];
+ for(let i=1;i<labels.length;i++)assert.ok(row.indexOf(labels[i-1])<row.indexOf(labels[i]));
+});
+
+test('hiding every saved amenity does not restore default marketing claims',()=>{
+ const hidden={id:'00000000-0000-4000-8000-000000000001',title:'Audio Guide',icon:'headphones',description:'',display_order:1,published:false,created_at:'2026-01-01T00:00:00Z',updated_at:'2026-01-01T00:00:00Z'};
+ const html=render({'hero.amenities':JSON.stringify([hidden])});const row=html.slice(html.indexOf('<ul'),html.indexOf('</ul>'));
+ assert.equal((row.match(/<li/g)||[]).length,0);
 });
