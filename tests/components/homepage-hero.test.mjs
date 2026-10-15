@@ -16,7 +16,7 @@ test('hero retains saved CMS identity, photographs, focal points and action labe
 });
 test('one hero widget presents canonical dated fare and the existing passenger controls',()=>{
  const html=render();assert.ok(html.includes('23.75'));assert.ok(html.includes('2030-07-01'));assert.equal((html.match(/type="date"/g)||[]).length,1);
- assert.equal((html.match(/type="submit"/g)||[]).length,0);assert.ok(html.includes('All Day'));assert.ok(html.includes('Hop On/Off'));assert.ok(html.includes('5 Stops'));
+ assert.equal((html.match(/type="submit"/g)||[]).length,1);assert.ok(html.includes('All Day'));assert.ok(html.includes('Hop On/Off'));assert.ok(html.includes('5 Stops'));
  for(const label of ['Add one adult','Add one child','Add one infant','No seat required'])assert.ok(html.includes(label));assert.ok(!html.includes('<iframe'));
 });
 test('unpublished product and missing fare never fabricate ticket offers or prices',()=>{

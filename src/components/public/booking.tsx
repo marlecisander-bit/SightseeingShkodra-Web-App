@@ -261,7 +261,8 @@ export function Header({ content: c = initialWebsiteContent, previewPathname }: 
   const { open, setSelection } = useBooking();
   const [hash, setHash] = useState("");
   const headerRef = useRef<HTMLElement>(null);
-  const scrolled = pathname !== "/" || !heroVisible;
+  const [mobileHeadlineCovered,setMobileHeadlineCovered]=useState(false);
+  const scrolled = pathname !== "/" || !heroVisible || mobileHeadlineCovered;
   const items = publicNavigation(c);
   const links = items.map(item=>item.href);
   const active = activeNavigation(pathname,hash,links);
@@ -318,6 +319,26 @@ export function Header({ content: c = initialWebsiteContent, previewPathname }: 
     }
     return ()=>{observer?.disconnect();headerResize?.disconnect();window.removeEventListener('hashchange',updateHash);window.removeEventListener('popstate',updateHash);};
   }, [pathname]);
+  useEffect(() => {
+    const hero = pathname === '/' ? document.getElementById('home-hero') : null;
+    const header = headerRef.current;
+    if (!hero || !header) return;
+    let frame = 0;
+    const measure = () => {
+      frame = 0;
+      const height = header.getBoundingClientRect().height;
+      hero.style.setProperty('--hero-header-offset', `${height}px`);
+      const heading = hero.querySelector('h1');
+      setMobileHeadlineCovered(window.matchMedia('(max-width:900px)').matches && !!heading && heading.getBoundingClientRect().top < height);
+    };
+    const queue = () => { if (!frame) frame = requestAnimationFrame(measure); };
+    const resize = new ResizeObserver(queue);
+    resize.observe(header);
+    window.addEventListener('scroll',queue,{passive:true});
+    window.addEventListener('resize',queue);
+    measure();
+    return () => { resize.disconnect();cancelAnimationFrame(frame);window.removeEventListener('scroll',queue);window.removeEventListener('resize',queue); };
+  },[pathname]);
   const bookFromHeader = () => {
     setMenu(false);
     const date = pathname === "/" ? document.querySelector<HTMLInputElement>('#home-hero [aria-label="Daily ticket availability"] input[type="date"]')?.value : undefined;
