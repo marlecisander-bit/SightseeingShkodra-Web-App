@@ -120,3 +120,11 @@ One existing Footer continues to serve all public routes. Website Global > Foote
 ## Tour removal amendment — 11 October 2026
 
 The historical matrix above describes earlier implementation. `/tour` now has only a 301 redirect to `/route`; TourView and its private preview are removed. Public pages no longer includes a Tour section. Retained `tourPage.includedTitle` has one logical owner under Homepage > A day with possibilities; `tourPage.faqTitle` and `faq.items` remain owned by the dedicated FAQ editor. Legacy FAQ question fields remain migration/read fallback values. `tourPage.eyebrow`, `how.*`, `labels.tour` and historical Tour navigation values remain stored, without Tour-only controls or a public Tour consumer. Historic route/field inventory and migration files are evidence, not current navigation. Optional record/media cleanup needs a separate decision. See TOUR-REMOVAL-2026-10-11.md.
+
+## Our Partners amendment — 15 October 2026 (local only)
+
+Homepage → Our Partners exclusively owns the seven `partners.*` heading/visibility/optional-CTA fields in the existing website document. Dedicated `/admin/[operatorId]/partners` owns editorial partner name/logo/website/description/order/active records in new operator-scoped `public.partners`; it does not duplicate operational catalog suppliers. Public homepage and private saved-draft preview consume that collection. The section follows the final booking invitation and precedes the global footer. No independent settings or media system. See OUR-PARTNERS-IMPLEMENTATION-2026-10-15.md for the field/route addendum, prepared migration, RLS and verification limits; historical inventory JSON remains unchanged as an audit snapshot.
+
+## Homepage ticket promotion removal — 15 October 2026 (local only)
+
+The entire `#home-ticket` promotion is removed from homepage rendering, superseding the earlier Homepage intro/inclusions ownership note. Homepage → A day with possibilities controls and its unused inclusion-heading control are retired. Stored `intro.*`, `intro.showOnHomepage` and `tourPage.includedTitle` remain compatibility data; no active homepage consumer can revive them. Product descriptions/inclusions/prices and shared labels retain their existing sources for other pages. No migration or hosted content deletion. See HOMEPAGE-PROMOTION-REMOVAL-2026-10-15.md.

@@ -10,7 +10,7 @@ import { navigationFor } from '@/modules/identity/admin-navigation';
 import type { StaffRole } from '@/modules/identity/roles';
 import { signOut } from '../auth/actions';
 import styles from './admin.module.css';
-const groups = [{label:'Home',slugs:['overview']},{label:'Website',slugs:['content','reviews']},{label:'Tour operations',slugs:['departures']},{label:'Sales',slugs:['catalog','bookings']},{label:'Communication',slugs:['notifications','email']}];
+const groups = [{label:'Home',slugs:['overview']},{label:'Website',slugs:['content','partners','reviews']},{label:'Tour operations',slugs:['departures']},{label:'Sales',slugs:['catalog','bookings']},{label:'Communication',slugs:['notifications','email']}];
 export function AdminShell({operatorId,operatorName,role,section,children,userId}:{operatorId:string;operatorName:string;role:StaffRole;section:string;children:ReactNode;userId:string}) {
  const navigation=navigationFor(role);
  const menu = <nav className={styles.nav} aria-label="Admin navigation">{groups.map(group=>{

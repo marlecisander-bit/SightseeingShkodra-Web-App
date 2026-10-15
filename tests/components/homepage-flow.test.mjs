@@ -13,11 +13,11 @@ const home={...emptyHomepage('ready'),product:{id:'product',slug:'ticket',title:
 const planner={date:plannerClock().date,title:home.product.title,times:[],fares:[],stops:[{id:'operational-1',label:'Actual boarding point'}]};
 const c={...initialWebsiteContent,'how.0.title':'Published step','intro.title':'Published story','route.title':'Published highlights','notebook.showOnHomepage':'false'};
 const render=(content=c,data=home,plan=planner)=>renderToStaticMarkup(React.createElement(BookingProvider,null,React.createElement(HomepageView,{home:data,content,planner:plan,places:[]})));
-test('homepage guides visitors through operational stops, service and compact product',()=>{
+test('homepage guides visitors through operational stops and service without the retired ticket promotion',()=>{
  const html=render();
- const markers=['id="home-hero"','id="route"','aria-label="Live service"','id="home-ticket"'];
+ const markers=['id="home-hero"','id="route"','aria-label="Live service"'];
  for(let i=1;i<markers.length;i++)assert.ok(html.indexOf(markers[i])>html.indexOf(markers[i-1]),markers[i]);
- for(const value of ['Actual boarding point','Published story','Only the configured inclusion','17.50'])assert.ok(html.includes(value),value);
+ for(const value of ['Actual boarding point','17.50'])assert.ok(html.includes(value),value);
  assert.ok(!html.includes('Published step'));assert.ok(!html.includes('Published highlights'));assert.ok(!html.includes('home-intro'));
  assert.ok(html.includes('1 stop around Shkodra'));
  assert.ok(html.includes('No service today'));
@@ -40,12 +40,12 @@ test('visibility removes all new consumers of the same section while preserving 
  assert.equal(noSchedule.includes('No service today'),false);
  assert.ok(noSchedule.includes('Show live map here'));
  assert.equal(noSchedule.includes('<iframe'),false,'external map is not mounted before interaction');
- assert.ok(noSchedule.includes('id="home-ticket"'));
+ assert.ok(!noSchedule.includes('id="home-ticket"'));
 });
 
 test('Admin homepage order has one owner per section and matches the public progression',async()=>{
  const {websiteEditorGroups,editableWebsiteSections}=await import('../../src/modules/content/website-schema.ts');
- assert.deepEqual(websiteEditorGroups.homepage.map(s=>s.id),['hero','heroAmenities','homeRoute','route','live','departures','intro','notebook','reviews','final']);
+ assert.deepEqual(websiteEditorGroups.homepage.map(s=>s.id),['hero','heroAmenities','homeRoute','route','live','departures','notebook','reviews','final','partners']);
  assert.equal(editableWebsiteSections.filter(s=>s.id==='how').length,0);
  assert.equal(new Set(editableWebsiteSections.flatMap(s=>s.fields.map(f=>f.key))).size,editableWebsiteSections.flatMap(s=>s.fields).length);
 });
@@ -54,4 +54,12 @@ test('hiding the hero retains exactly one page heading without revealing hidden 
  const html=render({...c,'hero.showOnHomepage':'false','hero.title':'Hidden hero text'});
  assert.equal((html.match(/<h1[ >]/g)??[]).length,1);
  assert.equal(html.includes('Hidden hero text'),false);
+});
+
+test('stale CMS promotion flags cannot restore the section or its spacing wrapper',()=>{
+ for(const flag of ['true','false']) {
+ const html=render({...c,'intro.showOnHomepage':flag});
+ for(const value of ['id="home-ticket"','p-daily-ticket','home-ticket-service','Published story','Published product description','Only the configured inclusion'])assert.equal(html.includes(value),false,value);
+ assert.ok(html.includes('id="home-hero"'));assert.ok(html.includes('type="submit"'));assert.ok(html.includes('Book your day'));
+ }
 });

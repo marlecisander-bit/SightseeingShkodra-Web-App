@@ -1,0 +1,2 @@
+export function safeSocialUrl(value:string){if(!value)return true;try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&!/[\\\s<>]/.test(value);}catch{return false;}}
+export function safeWebsiteLink(value:string){return /^\/(?:$|#(?:route|booking|destinations)$|(?:tour|route|live|explore|book|credits|admin|faq|privacy-policy|terms-and-conditions)(?:#(?:faq|timetable|centre|castle|lake|bridge))?$|explore\/[a-z0-9]+(?:-[a-z0-9]+)*$)/.test(value);}
