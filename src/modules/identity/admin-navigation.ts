@@ -6,6 +6,7 @@ export const adminSections: { slug: string; label: string; permission: Permissio
   { slug: 'catalog', label: 'Products & suppliers', permission: 'catalog.manage', description: 'Manage your experiences and business partners.' },
   { slug: 'departures', label: 'Calendar & Pricing', permission: 'departures.manage', description: 'Manage dates, departure times, passenger capacity and category prices.' },
   { slug: 'bookings', label: 'Bookings', permission: 'bookings.read', description: 'Find bookings, check guests in and record meeting-point payments.' },
+  { slug: 'partners', label: 'Partners', permission: 'content.manage', description: 'Manage homepage partner logos, websites and display order.' },
   { slug: 'reviews', label: 'Guest Reviews', permission: 'content.manage', description: 'Curate genuine guest reviews and homepage display settings.' },
   { slug: 'content', label: 'Website content', permission: 'content.manage', description: 'Choose what visitors see, edit images and preview your changes.' },
 ];

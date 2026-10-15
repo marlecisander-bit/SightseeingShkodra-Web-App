@@ -12,10 +12,10 @@ const extraIcons = {
 } as const;
 type Icon = AmenityIconName | keyof typeof extraIcons;
 export const sectionCardMetadata: Record<string, {icon:Icon; description:string; scope?:string}> = {
+  partners:{icon:'star',description:'Partner logos, section introduction and optional link',scope:'Homepage above footer'},
   whatsapp:{icon:'info',description:'Business contact number, message and device visibility',scope:'Global public contact'},
   hero:{icon:"camera",description:"Headline, desktop/mobile photographs and booking links"},
   heroAmenities:{icon:"headphones",description:"Hero feature labels, icons, order and visibility",scope:"Homepage hero"},
-  intro:{icon:"ticket",description:"Tour introduction and day-planning labels"},
   route:{icon:"pin",description:"Heading and introduction above shared destinations"},
   live:{icon:"van",description:"Live Map introduction and van-finding link"},
   departures:{icon:"clock",description:"Timetable heading and departure-information link"},

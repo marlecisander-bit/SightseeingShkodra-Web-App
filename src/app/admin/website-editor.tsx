@@ -42,9 +42,9 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
     });
   }}>
     <p>Used on: {sectionConsumers[sectionId] ?? "Shared public content"}.</p>
+    {sectionId === "partners" && <p><a href={`/admin/${operatorId}/partners`}>Manage partners, logos and display order</a>. Only active partners with logos appear. The section stays hidden when empty.</p>}
     {sectionId === "reviews" && <p><a href={`/admin/${operatorId}/reviews`}>Manage guest reviews and ordering</a>. This section is hidden until a review is published.</p>}
     {sectionId==='footer'&&<p>Leave a social link empty to hide it. Manage your Google Reviews link below.</p>}
-    {sectionId==='intro'&&<p>The homepage visibility switch hides the complete optional ticket summary. These headings are also shared with the Route ticket presentation. Product details and pricing retain their existing owners.</p>}
     {sectionId==='route'&&<p>This copy introduces Tour destination stories. The homepage and Route stop overviews use published Live Map stops. The shared visibility switch controls these presentations.</p>}
     {sectionId==='departures'&&<p>On the homepage, this copy appears in the Live Service summary. Scheduled times still come from Calendar &amp; Pricing.</p>}
     {sectionId==='whatsapp'&&<p>Use your WhatsApp Business number with its country code. Save Draft keeps changes private; Publish updates the website. Leave the button label empty to show only the icon.</p>}
@@ -52,7 +52,7 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
     {sectionId.startsWith('legal')&&<p>Plain text only. Add your approved legal wording, set Published, then publish. Unpublished pages show a neutral availability notice.</p>}
     <p>Save your changes as a draft or publish them when you’re ready.</p>
     {sectionId === "faq" && <p>Save a draft to preview; publish to update the public FAQ. Questions below appear on the dedicated FAQ page. <a href={`/admin/${operatorId}/website-preview?page=faq`}>Preview saved FAQ draft</a></p>}
-    {["intro","departures"].includes(sectionId) && <p><a href={`/admin/${operatorId}/catalog`}>Products & suppliers</a> | <a href={`/admin/${operatorId}/departures`}>Calendar & Pricing</a>. Stops and live vehicle information are managed from Live Map.</p>}
+    {sectionId === "departures" && <p><a href={`/admin/${operatorId}/catalog`}>Products & suppliers</a> | <a href={`/admin/${operatorId}/departures`}>Calendar & Pricing</a>. Stops and live vehicle information are managed from Live Map.</p>}
     <input type="hidden" name="updated_at" value={stamp} />
     <fieldset disabled={pending}>
       {section.fields.filter(f=>f.kind==="visibility").map(f=><input key={f.key} type="hidden" name={f.key} value={values[f.key]}/>)}

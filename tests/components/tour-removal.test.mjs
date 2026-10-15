@@ -33,18 +33,19 @@ test('historical navigation removes the Tour entry and preserves Route, FAQ and 
  const html=renderToStaticMarkup(h(PathnameContext.Provider,{value:'/'},h(BookingProvider,{content:c,preview:true},h(Header,{content:c}),h(Footer,{content:c,previewPathname:'/'}))));
  assert.ok(!html.includes('href="/tour'));assert.ok(!html.includes('>Tour<'));assert.ok(html.includes('/book'));
 });
-test('Tour editor is removed while shared inclusion heading and FAQ keep exactly one owner',()=>{
+test('Tour and retired homepage promotion controls are absent while FAQ retains its owner',()=>{
  assert.ok(!websiteEditorGroups.pages.some(s=>s.id==='tourPage'||s.id==='how'));
  const fields=editableWebsiteSections.flatMap(s=>s.fields);
  for(const key of ['tourPage.eyebrow','labels.tour','how.title'])assert.ok(!fields.some(f=>f.key===key));
- assert.equal(fields.filter(f=>f.key==='tourPage.includedTitle').length,1);
- assert.ok(websiteEditorGroups.homepage.find(s=>s.id==='intro').fields.some(f=>f.key==='tourPage.includedTitle'));
+ assert.equal(fields.filter(f=>f.key==='tourPage.includedTitle').length,0);
+ assert.ok('tourPage.includedTitle' in initialWebsiteContent);
+ assert.ok(!websiteEditorGroups.homepage.some(s=>s.id==='intro'));
  assert.ok(websiteEditorGroups.pages.find(s=>s.id==='faq').fields.some(f=>f.key==='tourPage.faqTitle'));
  assert.ok('tourPage.eyebrow' in initialWebsiteContent);assert.ok('how.title' in initialWebsiteContent);
 });
-test('homepage retains ticket inclusions and uses active timetable and booking destinations',()=>{
+test('homepage omits retired ticket inclusions and retains timetable and booking destinations',()=>{
  const home={...emptyHomepage('ready'),product:{id:'fixture',slug:'fixture',title:'Synthetic ticket',description:'Shared product description',inclusions:'Shared inclusions',stops:[]}};
  const c={...initialWebsiteContent,'tourPage.includedTitle':'Saved inclusion heading','notebook.showOnHomepage':'false'};
  const html=renderToStaticMarkup(h(BookingProvider,{preview:true},h(HomepageView,{home,content:c,places:[],planner:{date:'2030-01-01',times:[],fares:[],stops:[]}})));
- assert.ok(!html.includes('href="/tour'));assert.ok(html.includes('href="/route#journey-departures"'));assert.ok(html.includes('href="/book"'));assert.ok(html.includes('Saved inclusion heading'));assert.ok(html.includes('Shared inclusions'));
+ assert.ok(!html.includes('href="/tour'));assert.ok(html.includes('href="/route#journey-departures"'));assert.ok(html.includes('href="/book"'));assert.equal(html.includes('Saved inclusion heading'),false);assert.equal(html.includes('Shared inclusions'),false);
 });

@@ -1,3 +1,6 @@
+import { partnerDefaults, safePartnerDestination } from './partner-settings';
+import { safeSocialUrl, safeWebsiteLink } from './website-links';
+export { safeSocialUrl, safeWebsiteLink } from './website-links';
 import {editorialSections,editorialDefaults} from './editorial-fields';
 import {legacyFaq,parseFaq} from './faq';
 import {whatsappDefaults,validateWhatsApp} from './whatsapp';
@@ -6,10 +9,10 @@ import { pageSections } from "./page-sections";
 import { destinations } from "../public-preview/contracts";
 
 export type WebsiteContent = Record<string, string>;
-export type WebsiteField = { key: string; label: string; initial: string; kind: "text" | "image" | "link" | "position" | "amenities" | "visibility" | "external" | "legal" | "publication" | "toggle" | "phone" | "faq"; max: number; optional?: boolean };
+export type WebsiteField = { key: string; label: string; initial: string; kind: "text" | "image" | "link" | "position" | "amenities" | "visibility" | "external" | "legal" | "publication" | "toggle" | "phone" | "faq" | "destination"; max: number; optional?: boolean };
 const field = (key: string, label: string, initial: string, kind: WebsiteField["kind"] = "text"): WebsiteField => ({ key, label, initial, kind, max: kind === "text" ? 700 : 2000 });
 const f = field;
-export const homepageVisibilitySections = ["hero", "intro", "route", "live", "departures", "reviews", "notebook", "final"] as const;
+export const homepageVisibilitySections = ["hero", "intro", "route", "live", "departures", "reviews", "notebook", "final", "partners"] as const;
 // Retain persisted keys; shared sections use this state across all consumers.
 export function sectionVisible(content: WebsiteContent, section: string) { return content[`${section}.showOnHomepage`] !== "false"; }
 export const homepageVisible = sectionVisible;
@@ -31,9 +34,15 @@ export const footerFields: WebsiteField[] = [
 ];
 export const legalSections: {id:string;title:string;fields:WebsiteField[]}[] = [['privacy','Privacy Policy'],['terms','Terms & Conditions']].map(([id,title])=>({id:'legal'+id,title,fields:[{key:'legal.'+id+'.text',label:title+' text',initial:'',kind:'legal' as const,max:60000,optional:true},{key:'legal.'+id+'.status',label:'Publication status',initial:'unpublished',kind:'publication' as const,max:11}]}));
 export const footerDefaults=Object.fromEntries([...footerFields,...legalSections.flatMap(s=>s.fields)].map(f=>[f.key,f.initial]));
-export function safeSocialUrl(value:string){if(!value)return true;try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&!/[\\\s<>]/.test(value);}catch{return false;}}
+
 
 export const websiteSections: {id:string;title:string;fields:WebsiteField[]}[] = [
+ {id:'partners',title:'Our Partners',fields:[
+ f('partners.eyebrow','Eyebrow',partnerDefaults['partners.eyebrow']),f('partners.title','Title',partnerDefaults['partners.title']),f('partners.description','Description',partnerDefaults['partners.description']),
+ {key:'partners.ctaEnabled',label:'Show partner section button',initial:'false',kind:'toggle',max:5},
+ f('partners.ctaLabel','Partner section button label',partnerDefaults['partners.ctaLabel']),
+ {key:'partners.ctaUrl',label:'Partner section button destination',initial:'',kind:'destination',max:2000,optional:true},
+ ]},
  {id:'whatsapp',title:'WhatsApp contact',fields:[
  {key:'whatsapp.enabled',label:'Enable WhatsApp button',initial:whatsappDefaults['whatsapp.enabled'],kind:'toggle',max:5},
  {key:'whatsapp.number',label:'WhatsApp Business number (international, with country code)',initial:'',kind:'phone',max:40,optional:true},
@@ -104,8 +113,8 @@ for (const section of websiteSections) {
   if (homepageVisibilitySections.some(id => id === section.id)) section.fields.push(f(`${section.id}.showOnHomepage`, `Show ${visibilityScope(section.id)}`, "true", "visibility"));
 }
 // Retain the stored schema and historical showcase headings without offering obsolete controls.
-const homepageEditorOrder = ["hero","heroAmenities","homeRoute","route","live","departures","intro","notebook","reviews","final"];
-export const homepageEditorSections = websiteSections.filter(s => !["how","faq","whatsapp","destinations","navigation","footer","seo",...legalSections.map(s=>s.id),...pageSections.map(p=>p.id),...editorialSections.filter(p=>p.id!=="homeRoute").map(p=>p.id)].includes(s.id)).map(s => s.id === "intro" ? {...s,fields:[...s.fields.filter(f=>!["intro.text","intro.link","intro.linkLabel"].includes(f.key)),pageSections.find(p=>p.id==="tourPage")!.fields.find(f=>f.key==="tourPage.includedTitle")!]} : s.id === "reviews" ? {...s,title:"Guest Reviews",fields:s.fields.filter(f => f.key !== "reviews.second")} : s.id === "notebook" ? {...s,fields:s.fields.filter(f=>!/^notebook\.[0-9]+\./.test(f.key)||f.key==="notebook.0.linkLabel").map(f=>f.key==="notebook.0.linkLabel"?{...f,label:"Destination card link label"}:f)} : s.id === "how" ? {...s,title:"How it works"} : s).sort((a,b)=>homepageEditorOrder.indexOf(a.id)-homepageEditorOrder.indexOf(b.id));
+const homepageEditorOrder = ["hero","heroAmenities","homeRoute","route","live","departures","notebook","reviews","final","partners"];
+export const homepageEditorSections = websiteSections.filter(s => !["intro","how","faq","whatsapp","destinations","navigation","footer","seo",...legalSections.map(s=>s.id),...pageSections.map(p=>p.id),...editorialSections.filter(p=>p.id!=="homeRoute").map(p=>p.id)].includes(s.id)).map(s => s.id === "reviews" ? {...s,title:"Guest Reviews",fields:s.fields.filter(f => f.key !== "reviews.second")} : s.id === "notebook" ? {...s,fields:s.fields.filter(f=>!/^notebook\.[0-9]+\./.test(f.key)||f.key==="notebook.0.linkLabel").map(f=>f.key==="notebook.0.linkLabel"?{...f,label:"Destination card link label"}:f)} : s.id === "how" ? {...s,title:"How it works"} : s).sort((a,b)=>homepageEditorOrder.indexOf(a.id)-homepageEditorOrder.indexOf(b.id));
 export const destinationEditorSections = websiteSections.filter(s => s.id === "destinations").map(s => ({ ...s, title: "Destination content", fields: s.fields.filter(f => f.key.startsWith("place.")) }));
 export const globalEditorSections = websiteSections.filter(s=>["whatsapp","navigation","footer","seo",...legalSections.map(s=>s.id)].includes(s.id)).map(s=>s.id==="footer"?{...s,fields:footerFields}:s.id==="navigation"?{...s,fields:s.fields.filter(f=>!["nav.mobileBook","nav.mobileMap"].includes(f.key))}:s);
 export const publicPageEditorSections = [...editorialSections.filter(s=>s.id!=="homeRoute").map(s=>s.id==="editorialLabels"?{...s,fields:s.fields.filter(f=>f.key!=="labels.tour")}:s),...pageSections.filter(s=>s.id!=="tourPage"),websiteSections.find(s=>s.id==="faq")!];
@@ -114,14 +123,14 @@ export const websiteEditorGroups = {homepage:homepageEditorSections,destinations
 export const websiteFields = [...new Map(websiteSections.flatMap(section => section.fields).map(f=>[f.key,f])).values()];
 export const initialWebsiteContent: WebsiteContent = Object.fromEntries(websiteFields.map(field => [field.key, field.initial]));
 // Historical /tour values stay valid for full-document saves; consumers resolve them to active routes.
-export function safeWebsiteLink(value:string){return /^\/(?:$|#(?:route|booking|destinations)$|(?:tour|route|live|explore|book|credits|admin|faq|privacy-policy|terms-and-conditions)(?:#(?:faq|timetable|centre|castle|lake|bridge))?$|explore\/[a-z0-9]+(?:-[a-z0-9]+)*$)/.test(value);}
+
 export function safeWebsiteImage(value: string) {
   if (/^\/images\/[a-zA-Z0-9/_-]+\.(?:webp|png|jpg|jpeg|avif)$/.test(value)) return true;
   try { const url = new URL(value); return url.protocol === "https:" && !url.username && !url.password && !url.hash && !url.search && url.hostname.endsWith(".supabase.co") && /^\/storage\/v1\/object\/public\/website-media\/[a-f0-9-]+\/[a-f0-9-]+\.(?:webp|png|jpg|avif)$/.test(url.pathname); } catch { return false; }
 }
 export function validateWebsiteContent(value: unknown): WebsiteContent {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw Error("Invalid homepage content");
-  const record = { ...editorialDefaults, "faq.items":JSON.stringify(legacyFaq(value as WebsiteContent)), ...whatsappDefaults, ...footerDefaults, ...Object.fromEntries(homepageVisibilitySections.map(id => [`${id}.showOnHomepage`, "true"])), ...value } as WebsiteContent;
+  const record = { ...partnerDefaults, ...editorialDefaults, "faq.items":JSON.stringify(legacyFaq(value as WebsiteContent)), ...whatsappDefaults, ...footerDefaults, ...Object.fromEntries(homepageVisibilitySections.map(id => [`${id}.showOnHomepage`, "true"])), ...value } as WebsiteContent;
   if (Object.keys(record).length !== websiteFields.length) throw Error("Invalid homepage fields");
   for (const field of websiteFields) {
     const v = record[field.key];
@@ -131,11 +140,14 @@ export function validateWebsiteContent(value: unknown): WebsiteContent {
     if (field.kind === "position" && !focalPositions.includes(v as typeof focalPositions[number])) throw Error("Invalid focal position");
     if (field.kind === "amenities") parseAmenities(v);
     if (field.kind === "faq") parseFaq(v);
+    if (field.kind === "destination" && v && !safePartnerDestination(v)) throw Error("Use an existing internal page or HTTPS URL");
+    if (field.kind === "toggle" && field.key.startsWith("partners.") && !["true","false"].includes(v)) throw Error("Invalid toggle");
     if (typeof v !== "string" || (!field.optional && !v.trim()) || v.length > field.max || (field.kind === "link" && !safeWebsiteLink(v)) || (field.kind === "image" && !safeWebsiteImage(v))) throw Error(`Check ${field.label}`);
   }
   for(const id of ['privacy','terms'])if(record['legal.'+id+'.status']==='published'&&!record['legal.'+id+'.text'].trim())throw Error('Add legal text before publishing');
   if(!/^\d{4}$/.test(record['footer.year']))throw Error('Use a four-digit copyright year');
   if (record["homeRoute.title"].replaceAll("{count}","").match(/[{}0-9]/) || record["homeRoute.title"].split("{count}").length > 2) throw Error("Use {count} once for the live count; do not enter a manual number");
+  if(record["partners.ctaEnabled"]==="true" && (!record["partners.ctaLabel"].trim() || !safePartnerDestination(record["partners.ctaUrl"]))) throw Error("Configure the partner button label and destination before enabling it");
   validateWhatsApp(record);
   return { ...record };
 }

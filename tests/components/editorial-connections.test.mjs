@@ -20,8 +20,8 @@ const place={id:'new-place',slug:'new-place',name:'Synthetic place',text:'Story'
 test('real public components consume edited route presentation, labels and canonical product copy',()=>{
  const reviews={reviews:[{id:'review',author:'Synthetic',rating:5,body:'Isolated review',source:'Test',original_url:'https://example.invalid/review'}],settings:{display_limit:3,google_reviews_url:'https://example.invalid/reviews',leave_review_url:'https://example.invalid/write'}};
  const html=render(HomepageView,{home,content:c,planner,places:[],reviews});
- for(const key of ['homeRoute.eyebrow','homeRoute.text','homeRoute.action','labels.ticket','labels.faq','labels.originalReview','labels.reviews','labels.leaveReview'])assert.ok(html.includes(c[key]),key);
- assert.ok(html.includes('Visit 1 stop'));assert.ok(html.includes(home.product.description));
+ for(const key of ['homeRoute.eyebrow','homeRoute.text','homeRoute.action','labels.originalReview','labels.reviews','labels.leaveReview'])assert.ok(html.includes(c[key]),key);
+ assert.ok(html.includes('Visit 1 stop'));assert.equal(html.includes(home.product.description),false);
  const route=render(RouteJourney,{content:c,initial:planner,places:[place]});for(const key of ['routePage.eyebrow','routePage.title','routePage.text','routePage.departures','routePage.stops'])assert.ok(route.includes(c[key]),key);
  assert.ok(render(ExploreView,{c,places:[place]}).includes(c['labels.guide']));
  const hidden=render(HomepageView,{home,content:{...c,'intro.showOnHomepage':'false'},planner,places:[],reviews});
@@ -31,7 +31,7 @@ test('all four page SEO owners supply title, description and social image withou
  for(const prefix of ['bookPage','routePage','faqPage','explorePage']){const data={...initial,[prefix+'.seoTitle']:'Edited title',[prefix+'.seoDescription']:'Edited description',[prefix+'.seoImage']:'/images/castle.webp',[prefix+'.seoAlt']:'Edited alt'};const meta=editorialMetadata('/test',prefix,data,false);assert.equal(meta.title,'Edited title');assert.equal(meta.description,'Edited description');assert.deepEqual(meta.openGraph.images,[{url:'/images/castle.webp',alt:'Edited alt'}]);assert.equal(meta.robots.index,false);}
 });
 test('obsolete intro controls stay stored but are not editable; email renders the saved meeting commitment safely',()=>{
- const keys=editableWebsiteSections.flatMap(s=>s.fields.map(f=>f.key));for(const key of ['intro.text','intro.link','intro.linkLabel','how.title','nav.mobileMap','nav.mobileBook','footer.line1']){assert.ok(key in initial);assert.equal(keys.includes(key),false,key);}
+ const keys=editableWebsiteSections.flatMap(s=>s.fields.map(f=>f.key));for(const key of ['intro.eyebrow','intro.title','intro.showOnHomepage','tourPage.includedTitle','intro.text','intro.link','intro.linkLabel','how.title','nav.mobileMap','nav.mobileBook','footer.line1']){assert.ok(key in initial);assert.equal(keys.includes(key),false,key);}
  assert.ok(keys.includes('hero.amenities'));
  const b={reference:'TEST',status:'confirmed',name:'Synthetic',createdAt:'2030-01-01',currency:'EUR',total:1000,paymentStatuses:[],items:[],meetingPoint:{name:'Saved <meeting>',directions:'Bring <ticket>',url:'https://maps.app.goo.gl/Test123',label:'Open meeting point in Google Maps',stopId:null}};
  const email=bookingEmailTemplate('BOOKING_CREATED','customer',b,{version:2,from:'test@example.invalid',replyTo:'test@example.invalid',owner:'test@example.invalid',siteUrl:'https://example.invalid',testRecipient:null},'operator','booking');
