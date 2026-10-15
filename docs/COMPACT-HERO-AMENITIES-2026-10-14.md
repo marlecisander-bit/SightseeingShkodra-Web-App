@@ -24,3 +24,13 @@ Validation: lint, typecheck and production build passed; 47 component tests pass
 Evidence: /private/tmp/compact-hero-amenities/hero-320.png, hero-1440.png and measurements.json. Preview uses the existing bundled default lake photograph and synthetic product title; it does not validate the production CMS van photograph. Actual public CMS unavailable in local configuration, so the development-only preview renders the same hero component for layout acceptance.
 
 No deployment, push, commit, migration, environment or production CMS changes. Existing workspace modifications preserved.
+
+## Production release — 14 October 2026
+
+User authorized publication. Isolated release from production e760655; PR #15 https://github.com/marlecisander-bit/SightseeingShkodra-Web-App/pull/15 merged as 9018e71c88b41f2925a6de854d35dd17e1231882. Final release b8e5d54 includes the corrected integration expectation for the restored existing amenity editor. All 393 tests pass: 229 component/identity/domain, 140 integration, 24 disposable local Postgres. Lint/types/build and GitHub CI pass. Preview BUSHssz8jSgEk6mv8JdrH5oF9HoY Ready; CMS-unconfigured shell only. Production 9wQB6tgQMeKi6WGn9XD2ps2ciHED Ready, source 9018e71. Existing Git integration used; no provider/environment/database/tracking changes. Previous production AFG419JsqpnZZtwnUVvgh1ogYroQ retained. Original dirty workspace untouched by release checkout.
+
+Live homepage now has a saved custom CMS list: Free Wifi, 5 Stops, 7 Langueges Audioguide. It overrides the default five-feature list, as required by CMS ownership. The pre-release read showed four defaults; this discrepancy is recorded without overwriting current saved content or inferring who changed it. Five default features were verified locally; production currently renders three custom items in the five-column layout. To show the originally requested five features on production, the saved amenity configuration needs to be reconciled through Website > Homepage > Hero amenities. No production CMS writes were performed.
+
+Live checks at 320/375/390/430/768/1440: current three items remain on one row with no page overflow. Mobile long custom label wraps within its own column, row height 57–67px; desktop row 28px. Current published van photograph is visible; image rendering/focal/headline code untouched. Homepage header booking action focuses existing date input, matching the established homepage behavior (not a modal while the hero widget exists). No reservations submitted.
+
+After screenshots visually inspected: /private/tmp/compact-hero-live/after-320.png and after-1440.png; measurements in widths.json. Browser stalled once and verification completed after reconnecting.

@@ -1609,7 +1609,7 @@ body:has(.p-booking-dialog[open]) {
 .public-site .p-header .p-header-book{display:inline-flex;visibility:visible;pointer-events:auto;height:44px;min-height:44px;padding:8px 18px;width:auto;white-space:nowrap;border-radius:11px;text-shadow:none;}
 .public-site .p-header-book-full{display:inline;}.public-site .p-header-book-compact{display:none;}
 .public-site .p-navigation a[aria-current] .p-nav-label::after{height:2px;}
-.public-site .p-header-home:not(.p-header-solid){background:linear-gradient(180deg,rgba(18,25,28,.42),transparent);}
+.public-site .p-header-home:not(.p-header-solid){background:linear-gradient(180deg,rgba(18,25,28,.42),transparent) no-repeat;}
 @media(min-width:1101px){.public-site .p-header .p-menu-toggle{display:none;}.public-site .p-header .p-navigation .p-menu-book,.public-site .p-header .p-navigation .p-menu-back{display:none;}}
 @media(max-width:1100px){
  .public-site .p-header{--p-header-height:68px;height:calc(68px + env(safe-area-inset-top));}
@@ -1623,7 +1623,7 @@ body:has(.p-booking-dialog[open]) {
  .public-site .p-header .p-navigation a{min-height:44px;padding-block:10px;}
  .public-site .p-header .p-navigation .p-menu-book{display:inline-flex;width:100%;min-height:44px;margin-block:12px 0;border-radius:11px;}
  .public-site .p-header .p-navigation .p-menu-back{display:block;}
- .public-site .p-header.p-header-home:not(.p-header-solid){background:linear-gradient(180deg,rgba(18,25,28,.42),transparent);}
+ .public-site .p-header.p-header-home:not(.p-header-solid){background:linear-gradient(180deg,rgba(18,25,28,.42),transparent) no-repeat;}
  .public-site .p-menu-backdrop{display:block;position:fixed;inset:0;z-index:29;background:rgba(0,0,0,.12);border:0;}
 }
 
@@ -1633,3 +1633,8 @@ body:has(.p-booking-dialog[open]) {
 .public-site .p-button.p-button-booking:active:not(:disabled){background:var(--color-booking-active);}
 .public-site .p-button.p-button-booking:focus-visible{outline:3px solid var(--ss-charcoal);outline-offset:3px;}
 .public-site .p-button.p-button-booking:disabled{opacity:.55;cursor:not-allowed;}
+
+/* A transparent border lets the padding-box gradient tile into a one-pixel seam. */
+.public-site .p-header.p-header-home{border-bottom:0;background-repeat:no-repeat;}
+/* Homepage mobile booking belongs to the navigation drawer, not a second banner action. */
+@media(max-width:1100px){.public-site .p-header.p-header-home .p-header-book{display:none;}}

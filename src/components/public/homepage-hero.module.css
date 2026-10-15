@@ -70,10 +70,13 @@
  .feedback{grid-column:1/-1;}
  .shortcuts{justify-content:flex-start;gap:24px;}
  .about{justify-self:end;}
- :global(.public-site:has(#home-hero) .p-header-home:not(.p-header-solid)){background:linear-gradient(180deg,rgba(18,25,28,.42),transparent);}
+ :global(.public-site:has(#home-hero) .p-header-home:not(.p-header-solid)){background:linear-gradient(180deg,rgba(18,25,28,.42),transparent) no-repeat;}
 }
 @media(min-width:901px) and (max-width:1200px){.visual .intro{max-width:440px;}}
 @media(max-width:900px) and (orientation:landscape){.visual{min-height:520px;gap:100px;padding-bottom:84px;}.visual .media img{object-position:var(--hero-desktop-position);}}
 
 /* Wide panoramic crop: retain the CMS horizontal focus and explicit top/bottom choices. */
 @media(min-width:1600px){.visual{padding-inline:var(--ss-gutter);}.visual .media img{object-position:var(--hero-wide-position);}}
+
+/* Navigation continues booking; the hero retains only selection and dated fare. */
+.purchase{grid-template-columns:minmax(0,1fr);}
