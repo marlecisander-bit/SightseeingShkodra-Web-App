@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { BookingDateSelector, BookingPriceIndicator } from './booking-controls';
 import { QuantityStepper, useBooking } from './booking';
 import { lowestQuotedFare, passengerCaption } from './booking-presentation';
@@ -16,11 +17,12 @@ export function HeroBookingWidget({fare,productTitle}:{fare?:HeroFare;productTit
  // Use supplied adult unit prices, never recalculate seasonal/category/capacity rules.
  const quoted=quote?.departures.filter(d=>d.available).flatMap(d=>d.passengerQuote?.lines.filter(l=>l.category==='adult'&&l.quantity>0).map(l=>l.unitPrice)??[])??[];
  const amount=availability.error?undefined:selection.date?lowestQuotedFare(quoted):date?fare?.amount:undefined;
+ const canBook=Boolean(date)&&!availability.loading&&!availability.error&&(!quote||quote.departures.some(d=>d.available));
  const caption=passengerKeys.filter(k=>counts[k]>0).map(k=>passengerCaption(k,counts[k])).join(', ')||'Choose passengers';
- return <div className={styles.card} aria-label="Daily ticket availability">{productTitle?<><p className={styles.ticket}>Daily Ticket</p><h2>{productTitle}</h2>
-  <form onSubmit={event=>{event.preventDefault();if(!date)return;setSelection(current=>({...current,date,departureId:current.date===date?current.departureId:''}));open();}}>
+ return <div className={styles.card} data-floating-obstacle aria-label="Daily ticket availability">{productTitle?<><p className={styles.ticket}>Daily Ticket</p><h2>{productTitle}</h2>
+  <form onSubmit={event=>{event.preventDefault();if(!canBook)return;setSelection(current=>({...current,date,departureId:current.date===date?current.departureId:''}));open();}}>
    <div className={styles.fields}><BookingDateSelector value={date} onChange={value=>{setDateEdited(true);setSelection(current=>({...current,date:value,departureId:''}));}}/><details className={styles.passengers}><summary><span>Passengers</span><strong>{caption}</strong><span aria-hidden="true">⌄</span></summary><div><QuantityStepper/></div></details></div>
-   <div className={styles.purchase}><div aria-live="polite" aria-busy={availability.loading}><BookingPriceIndicator amount={amount} date={date} currency={quote?.currency??fare?.currency}/>{availability.loading&&<small>Checking your date…</small>}</div></div>
+   <div className={styles.purchase}><div aria-live="polite" aria-busy={availability.loading}><BookingPriceIndicator amount={amount} date={date} currency={quote?.currency??fare?.currency}/>{availability.loading&&<small>Checking your date…</small>}</div><Button type="submit" size="lg" className="p-button p-button-booking" aria-haspopup="dialog" disabled={!canBook}>Book your day</Button></div>
    {availability.error&&<p className={styles.feedback} role="status">{availability.error}</p>}{!date&&<p className={styles.feedback}>Choose a date to check availability.</p>}
   </form></>:<><BookingPriceIndicator/><p>Ticket availability is temporarily unavailable.</p></>}</div>;
 }
