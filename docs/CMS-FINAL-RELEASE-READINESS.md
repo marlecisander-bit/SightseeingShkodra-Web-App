@@ -1,5 +1,7 @@
 # Final CMS production release readiness
 
+> Later authorized read-only hosted checks are documented in [CMS-FINAL-HOSTED-READONLY-RESULT.md](CMS-FINAL-HOSTED-READONLY-RESULT.md). Daily backup entries, scoped schema and current Vercel settings are now observed; recovery-risk acceptance and Preview/push handling remain open. The preparation checkpoint below is retained as historical evidence.
+
 16 October 2026, Europe/Tirane. **GO for local candidate review. NO-GO for production execution until the pending backup/recovery, hosted preflight and release-authorization gates below are satisfied.** Only local commits were authorized. No push, PR, Preview, merge, Vercel deployment, hosted migration, production data write or cloud configuration change was performed. GitHub main was checked read-only as requested; no hosted Supabase or Vercel operation was performed.
 
 ## Exact candidate and baseline

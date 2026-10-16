@@ -15,8 +15,8 @@
     "src/modules/content/catalog-fields.ts": "7e8deb76ae0000e1acdcc1613adc7865ab0ca8f0d3f8f9c673ce68eae7ce1c28",
     "supabase/migrations/20261016000100_catalog_presentation_retirement.sql": "942835f1fb73e87ec0d0026c17c89ce27a3fd0143c856e61f1563e3b5179d808"
   },
-  "generatedAt": "2026-10-16T09:17:18.748Z",
-  "baseline": "8f71e2743bff64cc04018fb433f4c51066394b23",
+  "generatedAt": "2026-10-16T09:57:50.437Z",
+  "baseline": "5fb987b83f3a575a65d1fb77a96acc6731c97468",
   "schemaFingerprint": "75ce0634e6f9a2b26c54db2537b33919ecad11aee3a159f177c8571c37b7b237",
   "safety": {
     "database": "disposable in-memory PGlite with existing migrations",
