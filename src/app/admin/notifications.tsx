@@ -2,7 +2,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import Link from 'next/link';
-import { AmenityIcon } from '@/components/ui/amenity-icon';
+import {AdminIcon} from './admin-icon';
 import { bookingTarget, notificationLabels, type Device, type Inbox, type InboxItem, type Preference } from '@/modules/notifications/contracts';
 import styles from './notifications.module.css';
 type Context={operator:string;inbox:Inbox;error:string;connection:string;version:number;refresh:()=>Promise<void>;mutate:(action:unknown)=>Promise<unknown>;request:(query?:string,action?:unknown)=>Promise<unknown>};
@@ -34,7 +34,7 @@ function relative(time:string){const minutes=Math.max(0,Math.floor((Date.now()-D
 function Item({item,onNavigate}:{item:InboxItem;onNavigate?:()=>void}){
  const {operator,mutate}=useNotifications();const [error,setError]=useState(''),[busy,setBusy]=useState(false);const n=item.notification;
  return <li className={`${styles.item} ${!item.read_at?styles.unread:''}`}>
-  <AmenityIcon name={n.type==='email_delivery_failed'?'info':n.type==='booking_modified'?'clock':'ticket'}/>
+  <AdminIcon name={n.type==='email_delivery_failed'?'info':n.type==='booking_modified'?'clock-3':'ticket'}/>
   <div><strong>{n.title}</strong><p>{n.message}</p><time dateTime={n.event_at} title={new Date(n.event_at).toLocaleString()}>{relative(n.event_at)}</time> <span>{item.read_at?'Read':'Unread'}</span>
    <div className={styles.actions}><Link href={bookingTarget(operator,n.booking_id)} onClick={()=>{void mutate({kind:'read',id:item.id,read:true}).catch(()=>{});onNavigate?.();}}>View booking</Link><button type="button" disabled={busy} onClick={async()=>{setBusy(true);try{await mutate({kind:'read',id:item.id,read:!item.read_at});setError('');}catch{setError('Unable to update read status.');}finally{setBusy(false);}}}>{item.read_at?'Mark unread':'Mark read'}</button></div>{error&&<p role="alert">{error}</p>}
   </div>
@@ -44,7 +44,7 @@ export function NotificationBell(){
  const {operator,inbox,error,connection,refresh,request}=useNotifications();const [open,setOpen]=useState(false),[setup,setSetup]=useState('Checking notification setup...');
  useEffect(()=>{if(!open)return;let active=true;void request('&settings=1').then(data=>{const s=data as Settings;if(active)setSetup(!s.workerEnabled?'Booking notifications are paused.':!s.pushEnabled?'Push setup is incomplete. Open device setup below.':'Push server is enabled. Check this device permission and subscription in setup.');}).catch(()=>{if(active)setSetup('Notification setup could not be checked.');});return()=>{active=false;};},[open,request]);const root=useRef<HTMLDivElement>(null),button=useRef<HTMLButtonElement>(null);
  useEffect(()=>{if(!open)return;const close=(e:PointerEvent)=>{if(!root.current?.contains(e.target as Node))setOpen(false);};const key=(e:KeyboardEvent)=>{if(e.key==='Escape'){setOpen(false);button.current?.focus();}};document.addEventListener('pointerdown',close);document.addEventListener('keydown',key);return()=>{document.removeEventListener('pointerdown',close);document.removeEventListener('keydown',key);};},[open]);
- return <div className={styles.bell} ref={root}><button type="button" ref={button} aria-label={`Notifications, ${inbox.unread} unread`} aria-expanded={open} aria-controls="admin-notification-panel" onClick={()=>setOpen(v=>!v)}><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M5 17h14l-2-3V9a5 5 0 0 0-10 0v5l-2 3Zm5 3h4"/></svg>{inbox.unread>0&&<span className={styles.badge}>{inbox.unread>99?'99+':inbox.unread}</span>}</button>
+ return <div className={styles.bell} ref={root}><button type="button" ref={button} aria-label={`Notifications, ${inbox.unread} unread`} aria-expanded={open} aria-controls="admin-notification-panel" onClick={()=>setOpen(v=>!v)}><AdminIcon name="bell"/>{inbox.unread>0&&<span className={styles.badge}>{inbox.unread>99?'99+':inbox.unread}</span>}</button>
  {open&&<section id="admin-notification-panel" className={styles.dropdown} aria-label="Recent notifications"><div className={styles.actions}><h2>Notifications</h2><button type="button" onClick={()=>setOpen(false)}>Close</button></div><p>{connection}</p><p>{setup}</p>{error?<p role="alert">{error} <button onClick={()=>void refresh()}>Retry</button></p>:!inbox.items.length?<p>No notifications yet.</p>:<ul className={styles.list}>{inbox.items.slice(0,5).map(item=><Item key={item.id} item={item} onNavigate={()=>setOpen(false)}/>)}</ul>}<Link href={`/admin/${operator}/notifications`} onClick={()=>setOpen(false)}>View all notifications and device setup</Link></section>}
  <span className={styles.sr} role="status" aria-live="polite">{inbox.unread} unread notifications</span></div>;
 }

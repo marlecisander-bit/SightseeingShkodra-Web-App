@@ -178,3 +178,23 @@
 .faqList .faqToggle{display:flex;align-items:center;gap:10px;min-height:44px;}
 .cms .field .faqToggle input,.faqList .faqToggle input{width:20px;height:20px;min-height:20px;margin:0;flex:none;}
 .faqItem select{max-width:100%;min-height:44px;}
+
+/* Warm Minimal presentation. Existing editor state and public preview styling stay intact. */
+.cms .toolbar,.cms .sideCard,.cms .card,.cms .editorActions {box-shadow:none;}
+.cms .breadcrumb {letter-spacing:0;text-transform:none;}
+.cms .toolbar h1 {font-size:clamp(24px,2.2vw,28px);font-weight:650;}
+.cms .toolbar h2,.cms .sideCard h2 {font-size:18px;font-weight:600;}
+.cms .tipsCard,.cms .imageField,.cms .sectionIcon {background:var(--admin-background);}
+.cms .sectionIcon {color:var(--admin-text-muted);border-radius:9px;}
+.cms .secondary,.cms .replaceButton {color:var(--admin-text);border-color:var(--admin-control-border);}
+.cms .secondary:hover,.cms .replaceButton:hover {background:var(--admin-hover);color:var(--admin-text);}
+.cms .sideCard button {min-height:44px;}
+.cms .notice {border-left:0;border:1px solid var(--admin-border);border-radius:9px;background:var(--admin-background);color:var(--admin-text);}
+.cms .badge {background:var(--admin-success-soft);color:var(--admin-success-text);border-radius:6px;}
+.cms .draftBadge {background:var(--admin-warning-soft);color:var(--admin-warning-text);border-radius:6px;}
+.cms .hiddenBadge {background:var(--admin-neutral-soft);color:var(--admin-muted-on-soft);border-radius:6px;}
+.cms .fieldGroup legend,.cms .faqItem legend {font-weight:600;}
+.cms .sectionHeading .editLabel {color:var(--admin-text);font-weight:500;}
+.cms .sectionHeading .editLabel:hover {color:var(--admin-primary);background:var(--admin-primary-soft);}
+.cms .editorActions button[value=draft] {background:var(--admin-surface);color:var(--admin-text);border-color:var(--admin-control-border);}
+@media(max-width:1023px){.cms .editorActions{bottom:calc(76px + env(safe-area-inset-bottom));}}

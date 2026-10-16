@@ -1,6 +1,6 @@
 'use client';
 import {useEffect,useRef,useState,type ReactNode} from 'react';
-import {AmenityIcon} from '@/components/ui/amenity-icon';
+import {AdminIcon,adminPrimaryIcons} from './admin-icon';
 import {activeAdminItem,adminContext,type AdminNavGroup} from '@/modules/identity/admin-navigation-layout';
 import styles from './admin.module.css';
 
@@ -47,7 +47,7 @@ export function AdminNavigation({groups,section,account}:{groups:AdminNavGroup[]
    event.preventDefault();window.addEventListener('popstate',()=>window.location.assign(url.href),{once:true});close();
   }else close();
  }
- function items(group:AdminNavGroup){return <ul className={styles.taskItems}>{group.items.map(item=><li key={item.id}><a href={item.href} onClick={navigate} target={item.external?'_blank':undefined} rel={item.external?'noopener noreferrer':undefined} aria-current={active?.id===item.id?'page':undefined}><span>{item.label}{item.external&&<span aria-label=" (opens in a new tab)"> ↗</span>}</span>{item.note&&<small>{item.note}</small>}</a></li>)}</ul>;}
+ function items(group:AdminNavGroup){return <ul className={styles.taskItems}>{group.items.map(item=><li key={item.id}><a href={item.href} onClick={navigate} target={item.external?'_blank':undefined} rel={item.external?'noopener noreferrer':undefined} aria-current={active?.id===item.id?'page':undefined}><span>{item.label}{item.external&&<span aria-label=" (opens in a new tab)" className={styles.externalIcon}><AdminIcon name="external-link" size={16}/></span>}</span>{item.note&&<small>{item.note}</small>}</a></li>)}</ul>;}
  useEffect(()=>{
   if(!context)return;
   const target=document.querySelector<HTMLElement>(`[data-admin-context="${context}"]`);
@@ -60,20 +60,20 @@ export function AdminNavigation({groups,section,account}:{groups:AdminNavGroup[]
  return <>
   <aside className={styles.desktopNavigation}>
    <nav aria-label="Admin navigation" className={styles.taskNavigation}>{groups.map(group=><details className={styles.taskGroup} key={group.id+':'+(area===group.id)} open={area===group.id}>
-    <summary><AmenityIcon name={group.icon}/><span>{group.label}</span><span className={styles.chevron} aria-hidden="true">⌄</span></summary>{items(group)}
+    <summary><AdminIcon name={adminPrimaryIcons[group.id]}/><span>{group.label}</span><span className={styles.chevron}><AdminIcon name="chevron-down" size={16}/></span></summary>{items(group)}
    </details>)}</nav>
    <details className={styles.accountMenu}><summary>Account</summary>{account}</details>
   </aside>
   <nav className={styles.bottomNavigation} aria-label="Primary admin navigation">
-   <a href={groups.find(g=>g.id==='overview')!.items[0].href} aria-current={area==='overview'?'page':undefined}><AmenityIcon name="info"/><span>Home</span></a>
-   {groups.some(g=>g.id==='bookings')?<button type="button" aria-current={area==='bookings'?'page':undefined} aria-expanded={drawer==='bookings'} aria-controls="admin-task-menu" onClick={e=>open('bookings',e.currentTarget)}><AmenityIcon name="ticket"/><span>Bookings</span></button>:<button type="button" disabled title="Bookings are not available to your role"><AmenityIcon name="ticket"/><span>Bookings</span></button>}
-   <button type="button" aria-current={area==='tours'?'page':undefined} aria-expanded={drawer==='tours'} aria-controls="admin-task-menu" onClick={e=>open('tours',e.currentTarget)}><AmenityIcon name="van"/><span>Tours</span></button>
-   <button type="button" aria-current={area==='website'||area==='settings'?'page':undefined} aria-expanded={drawer==='more'} aria-controls="admin-task-menu" onClick={e=>open('more',e.currentTarget)}><AmenityIcon name="people"/><span>More</span></button>
+   <a href={groups.find(g=>g.id==='overview')!.items[0].href} aria-current={area==='overview'?'page':undefined}><AdminIcon name="layout-dashboard"/><span>Home</span></a>
+   {groups.some(g=>g.id==='bookings')?<button type="button" aria-current={area==='bookings'?'page':undefined} aria-expanded={drawer==='bookings'} aria-controls="admin-task-menu" onClick={e=>open('bookings',e.currentTarget)}><AdminIcon name="calendar-check"/><span>Bookings</span></button>:<button type="button" disabled title="Bookings are not available to your role"><AdminIcon name="calendar-check"/><span>Bookings</span></button>}
+   <button type="button" aria-current={area==='tours'?'page':undefined} aria-expanded={drawer==='tours'} aria-controls="admin-task-menu" onClick={e=>open('tours',e.currentTarget)}><AdminIcon name="bus-front"/><span>Tours</span></button>
+   <button type="button" aria-current={area==='website'||area==='settings'?'page':undefined} aria-expanded={drawer==='more'} aria-controls="admin-task-menu" onClick={e=>open('more',e.currentTarget)}><AdminIcon name="users"/><span>More</span></button>
   </nav>
   <dialog ref={dialog} id="admin-task-menu" className={styles.mobileDrawer} aria-labelledby="admin-menu-title" onClick={e=>{if(e.target===e.currentTarget)close();}} onClose={()=>{
    if(window.history.state?.adminTaskMenu)window.history.back();setDrawer(null);trigger.current?.focus();
   }}>
-   <div className={styles.drawerBody}><header className={styles.drawerHeading}><h2 id="admin-menu-title">{drawer==='more'?'More':drawer==='tours'?'Tours':'Bookings'}</h2><button type="button" onClick={close} aria-label="Close task menu">Close</button></header>
+   <div className={styles.drawerBody}><header className={styles.drawerHeading}><h2 id="admin-menu-title">{drawer==='more'?'More':drawer==='tours'?'Tours':'Bookings'}</h2><button type="button" onClick={close} aria-label="Close task menu"><AdminIcon name="x" size={18}/><span>Close</span></button></header>
    <nav aria-label="Admin task menu">{taskGroups.map(group=><section className={styles.mobileTaskGroup} key={group.id}><h3>{group.label}</h3>{items(group)}</section>)}</nav>
    {drawer==='more'&&<section className={styles.mobileTaskGroup}><h3>Account</h3>{account}</section>}</div>
   </dialog>

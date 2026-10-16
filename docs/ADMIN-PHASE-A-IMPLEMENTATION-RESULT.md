@@ -238,7 +238,13 @@ The sole existing GitHub workflow runs on main PRs/main pushes/manual dispatch: 
 
 ## 16. Draft PR and remote outcome
 
-At initial report preparation: no remote action had occurred for this branch. The local candidate passed validation and the inspected GitHub/Vercel suppression gate supports a scoped non-main push and draft PR. Final candidate SHA, draft URL and actual checks will be recorded after that action, without claiming merge/deployment authorization. If the gate changes or the head/main drifts, stop rather than bypass protections.
+Implementation commit: **`8ce96c0d1acc301a2c83be4df3990895fabcfa43`**. Scoped branch pushed normally; main remains `c3020c566f167af4d0ef87e9aa33d4d0adb0d367`. Remote feature head equals the reviewed commit.
+
+[Draft PR #22](https://github.com/marlecisander-bit/SightseeingShkodra-Web-App/pull/22), base main, one commit / 11 files. It remains Draft; no ready-for-review or merge action was selected. GitHub displays one skipped Vercel deployment and no deployed branch. Provider record `dpl_FupQz4bVygc8L7o5nvydag3gyHMK` is Canceled / Build Canceled, explicitly skipped by Ignored Build Step, source `8ce96c0`. Assigned URL strings are not a runnable Preview or an isolated test environment. Production remains on `c3020c5`. [Project CI run 38900056914](https://github.com/marlecisander-bit/SightseeingShkodra-Web-App/actions/runs/38900056914), job `116969787005`, **succeeded in 2m28s** on the reviewed candidate. Install, lint/types/build, complete regression suite and production dependency audit passed; the audit reported zero vulnerabilities. Vercel status is successful with “Canceled by Ignored Build Step”; Preview Comments also passed.
+
+Automatic approval review initially rejected the draft-form submission because it did not recognize clear authorization in the attached brief. No workaround was used. The user then directly approved creating this exact draft PR in chat, and submission succeeded. The branch push had already completed under the conditional authorization.
+
+This section and the final PR/checkpoint outcome are local post-PR documentation updates, not another pushed source commit. The committed report preserves its initial local checkpoint. No extra push is made solely to publish post-PR evidence.
 
 ## 17. Known limitations
 
@@ -276,5 +282,5 @@ If later merged/released under separate authorization, revert the actual scoped 
 | Live Map unchanged | PASS — existing links retained; no external operation |
 | Tests | PASS — 447; scope/physical-device limits above |
 | Production deployment | NOT AUTHORIZED |
-| Draft PR | NOT CREATED at initial local-report checkpoint; see Section 16 for subsequent result |
+| Draft PR | CREATED — #22, remains Draft |
 | Ready for owner review | GO |
