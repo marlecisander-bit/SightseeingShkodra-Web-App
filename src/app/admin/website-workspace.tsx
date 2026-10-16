@@ -1,9 +1,10 @@
 "use client";
 import {sectionConsumers} from "@/modules/content/editorial-fields";
 
+import {adminContext,websiteNavigationContext} from '@/modules/identity/admin-navigation-layout';
 import { ownerFieldLabel } from "./presentation";
 import { Button, ButtonContent } from "@/components/ui/button";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import Image from "next/image";
 import { SectionCardHeader } from "./website-section-card";
@@ -35,6 +36,38 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
     if (unsaved || pending) { setNotice('Save or discard your changes before returning to sections.'); return false; }
     return true;
   });
+  const appliedNavigation = useRef(false);
+  const previousNavigationView = useRef<{scope:typeof scope;section:string|null}|null>(null);
+  // Navigation context changes only the visible editor. No content or publication mutation.
+  useEffect(() => {
+    function apply() {
+      const hash = window.location.hash;
+      if (!hash.startsWith('#admin-nav=')) {
+        if (!hash && previousNavigationView.current && !unsaved && !pending) {
+          setScope(previousNavigationView.current.scope); setActive(previousNavigationView.current.section);
+        }
+        return;
+      }
+      if (unsaved || pending) { setNotice('Save or discard your changes before switching editors.'); return; }
+      const target = websiteNavigationContext(adminContext(hash));
+      setScope(target.scope); setActive(target.section);
+    }
+    function guard(event: Event) {
+      if (unsaved || pending) { event.preventDefault(); setNotice('Save or discard your changes before switching editors.'); }
+      else if (!window.location.hash.startsWith('#admin-nav=')) previousNavigationView.current = {scope,section:active};
+    }
+    if (!appliedNavigation.current) { apply(); appliedNavigation.current = true; }
+    window.addEventListener('admin:context-changed', apply);
+    window.addEventListener('hashchange', apply);
+    window.addEventListener('popstate', apply);
+    window.addEventListener('admin:navigate-context', guard);
+    return () => {
+      window.removeEventListener('admin:context-changed', apply);
+      window.removeEventListener('hashchange', apply);
+      window.removeEventListener('popstate', apply);
+      window.removeEventListener('admin:navigate-context', guard);
+    };
+  }, [unsaved, pending, scope, active]);
   const selected = websiteSections.find(s => s.id === active) ?? websiteSections[0];
   const image = selected.fields.find(f => f.kind === "image");
   const preview = `/admin/${operatorId}/website-preview?page=${({routePage:"route",homeRoute:"home",bookSeo:"book",faqSeo:"faq",exploreSeo:"explore",legalprivacy:"privacy-policy",legalterms:"terms-and-conditions",faq:"faq",explorePage:"explore",bookPage:"book",dayPage:"your-day"} as Record<string,string>)[selected.id]??"home"}`;

@@ -1,46 +1,93 @@
-﻿"use client";
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { usePathname } from "next/navigation";
-import styles from "./admin.module.css";
+'use client';
+import {useEffect,useRef,useState,type ReactNode} from 'react';
+import {AmenityIcon} from '@/components/ui/amenity-icon';
+import {activeAdminItem,adminContext,type AdminNavGroup} from '@/modules/identity/admin-navigation-layout';
+import styles from './admin.module.css';
 
-/** Native modal supplies focus containment, Escape and an inert page behind the drawer. */
-export function AdminNavigation({ children }: { children: ReactNode }) {
-  const dialog = useRef<HTMLDialogElement>(null);
-  const button = useRef<HTMLButtonElement>(null);
-  const [open, setOpen] = useState(false);
-  const pathname = usePathname();
-  function close() { dialog.current?.close(); }
-  useEffect(() => { dialog.current?.close(); }, [pathname]);
-  useEffect(() => {
-    const desktop = window.matchMedia('(min-width: 1024px)');
-    const resize = () => { if (desktop.matches) dialog.current?.close(); };
-    desktop.addEventListener('change', resize);
-    return () => desktop.removeEventListener('change', resize);
-  }, []);
-  useEffect(() => {
-    if (!open) return;
-    const prior = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = prior; };
-  }, [open]);
-  return <>
-    <button ref={button} className={styles.mobileMenuButton} type="button" aria-label="Open Admin menu" aria-expanded={open} aria-controls="admin-menu" onClick={() => { dialog.current?.showModal(); setOpen(true); }}>
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-    </button>
-    <dialog ref={dialog} id="admin-menu" className={styles.mobileDrawer} aria-labelledby="admin-menu-title" onClose={() => { setOpen(false); button.current?.focus(); }} onClick={event => { if (event.target === event.currentTarget) close(); }}>
-      <div className={styles.drawerBody}>
-        <div className={styles.drawerHeading}><strong id="admin-menu-title">Admin menu</strong><button type="button" onClick={close} aria-label="Close Admin menu">Close</button></div>
-        <div onClick={event => { if ((event.target as HTMLElement).closest('a')) close(); }}>{children}</div>
-      </div>
-    </dialog>
-  </>;
+export function AdminNavigation({groups,section,account}:{groups:AdminNavGroup[];section:string;account:ReactNode}){
+ const [context,setContext]=useState('');
+ const [drawer,setDrawer]=useState<'bookings'|'tours'|'more'|null>(null);
+ const dialog=useRef<HTMLDialogElement>(null), trigger=useRef<HTMLElement|null>(null);
+ const active=activeAdminItem(groups,section,context);
+ const area=groups.find(g=>g.items.some(i=>i.id===active?.id))?.id;
+ function close(){dialog.current?.close();}
+ useEffect(()=>{
+  const sync=()=>{setContext(adminContext(window.location.hash));};
+  sync();window.addEventListener('hashchange',sync);window.addEventListener('popstate',sync);window.addEventListener('admin:context-changed',sync);
+  return()=>{window.removeEventListener('hashchange',sync);window.removeEventListener('popstate',sync);window.removeEventListener('admin:context-changed',sync);};
+ },[]);
+ useEffect(()=>{
+  const desktop=window.matchMedia('(min-width:1024px)'),resize=()=>{if(desktop.matches)dialog.current?.close();};
+  desktop.addEventListener('change',resize);return()=>desktop.removeEventListener('change',resize);
+ },[]);
+ useEffect(()=>{
+  if(!drawer)return;
+  const prior=document.body.style.overflow;document.body.style.overflow='hidden';
+  // UI-only history entry: Back dismisses the task menu without leaving the page.
+  const oldState=window.history.state;
+  window.history.pushState({...oldState,adminTaskMenu:true},'');
+  const pop=()=>{dialog.current?.close();};window.addEventListener('popstate',pop);
+  return()=>{document.body.style.overflow=prior;window.removeEventListener('popstate',pop);};
+ },[drawer]);
+ function open(value:'bookings'|'tours'|'more',button:HTMLElement){
+  trigger.current=button;setDrawer(value);dialog.current?.showModal();
+ }
+ function navigate(event:React.MouseEvent<HTMLAnchorElement>){
+  const anchor=event.currentTarget;
+  if(event.defaultPrevented||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||event.button!==0||anchor.target==='_blank')return;
+  const url=new URL(anchor.href);
+  if(url.pathname===window.location.pathname&&url.hash.startsWith('#admin-nav=')){
+   const change=new CustomEvent('admin:navigate-context',{cancelable:true,detail:adminContext(url.hash)});
+   if(!window.dispatchEvent(change)){event.preventDefault();return;}
+   event.preventDefault();const next=new URL(window.location.href);next.hash=url.hash;
+   // Dismiss the temporary menu entry first, then navigate after popstate.
+   const apply=()=>{window.history.pushState(window.history.state,'',next);window.dispatchEvent(new Event('admin:context-changed'));};
+   if(window.history.state?.adminTaskMenu){window.addEventListener('popstate',apply,{once:true});close();}else apply();
+  }else if(window.history.state?.adminTaskMenu&&anchor.target!=='_blank'){
+   event.preventDefault();window.addEventListener('popstate',()=>window.location.assign(url.href),{once:true});close();
+  }else close();
+ }
+ function items(group:AdminNavGroup){return <ul className={styles.taskItems}>{group.items.map(item=><li key={item.id}><a href={item.href} onClick={navigate} target={item.external?'_blank':undefined} rel={item.external?'noopener noreferrer':undefined} aria-current={active?.id===item.id?'page':undefined}><span>{item.label}{item.external&&<span aria-label=" (opens in a new tab)"> ↗</span>}</span>{item.note&&<small>{item.note}</small>}</a></li>)}</ul>;}
+ useEffect(()=>{
+  if(!context)return;
+  const target=document.querySelector<HTMLElement>(`[data-admin-context="${context}"]`);
+  if(!target)return;
+  if(target instanceof HTMLDetailsElement)target.open=true;
+  let parent=target.parentElement;while(parent){if(parent instanceof HTMLDetailsElement)parent.open=true;parent=parent.parentElement;}
+  target.scrollIntoView({block:'start'});target.querySelector<HTMLElement>('summary')?.focus();
+ },[context]);
+ const taskGroups=groups.filter(g=>drawer==='more'?['website','settings'].includes(g.id):g.id===drawer);
+ return <>
+  <aside className={styles.desktopNavigation}>
+   <nav aria-label="Admin navigation" className={styles.taskNavigation}>{groups.map(group=><details className={styles.taskGroup} key={group.id+':'+(area===group.id)} open={area===group.id}>
+    <summary><AmenityIcon name={group.icon}/><span>{group.label}</span><span className={styles.chevron} aria-hidden="true">⌄</span></summary>{items(group)}
+   </details>)}</nav>
+   <details className={styles.accountMenu}><summary>Account</summary>{account}</details>
+  </aside>
+  <nav className={styles.bottomNavigation} aria-label="Primary admin navigation">
+   <a href={groups.find(g=>g.id==='overview')!.items[0].href} aria-current={area==='overview'?'page':undefined}><AmenityIcon name="info"/><span>Home</span></a>
+   {groups.some(g=>g.id==='bookings')?<button type="button" aria-current={area==='bookings'?'page':undefined} aria-expanded={drawer==='bookings'} aria-controls="admin-task-menu" onClick={e=>open('bookings',e.currentTarget)}><AmenityIcon name="ticket"/><span>Bookings</span></button>:<button type="button" disabled title="Bookings are not available to your role"><AmenityIcon name="ticket"/><span>Bookings</span></button>}
+   <button type="button" aria-current={area==='tours'?'page':undefined} aria-expanded={drawer==='tours'} aria-controls="admin-task-menu" onClick={e=>open('tours',e.currentTarget)}><AmenityIcon name="van"/><span>Tours</span></button>
+   <button type="button" aria-current={area==='website'||area==='settings'?'page':undefined} aria-expanded={drawer==='more'} aria-controls="admin-task-menu" onClick={e=>open('more',e.currentTarget)}><AmenityIcon name="people"/><span>More</span></button>
+  </nav>
+  <dialog ref={dialog} id="admin-task-menu" className={styles.mobileDrawer} aria-labelledby="admin-menu-title" onClick={e=>{if(e.target===e.currentTarget)close();}} onClose={()=>{
+   if(window.history.state?.adminTaskMenu)window.history.back();setDrawer(null);trigger.current?.focus();
+  }}>
+   <div className={styles.drawerBody}><header className={styles.drawerHeading}><h2 id="admin-menu-title">{drawer==='more'?'More':drawer==='tours'?'Tours':'Bookings'}</h2><button type="button" onClick={close} aria-label="Close task menu">Close</button></header>
+   <nav aria-label="Admin task menu">{taskGroups.map(group=><section className={styles.mobileTaskGroup} key={group.id}><h3>{group.label}</h3>{items(group)}</section>)}</nav>
+   {drawer==='more'&&<section className={styles.mobileTaskGroup}><h3>Account</h3>{account}</section>}</div>
+  </dialog>
+ </>;
 }
-export function AdminConnectionStatus() {
-  const [offline, setOffline] = useState(false);
-  useEffect(() => {
-    const update = () => setOffline(!navigator.onLine);
-    update(); window.addEventListener('online', update); window.addEventListener('offline', update);
-    return () => { window.removeEventListener('online', update); window.removeEventListener('offline', update); };
-  }, []);
-  return offline ? <p className={styles.connectionNotice} role="alert">Connection lost. Some information may be out of date. Reconnect before saving.</p> : null;
+export function AdminConnectionStatus(){
+ const [offline,setOffline]=useState(false);
+ useEffect(()=>{const update=()=>setOffline(!navigator.onLine);update();window.addEventListener('online',update);window.addEventListener('offline',update);return()=>{window.removeEventListener('online',update);window.removeEventListener('offline',update);};},[]);
+ return offline?<p className={styles.connectionNotice} role="alert">Connection lost. Some information may be out of date. Reconnect before saving.</p>:null;
+}
+
+export function AdminPageTrail({groups,section}:{groups:AdminNavGroup[];section:string}){
+ const [context,setContext]=useState('');
+ useEffect(()=>{const sync=()=>setContext(adminContext(window.location.hash));sync();window.addEventListener('hashchange',sync);window.addEventListener('popstate',sync);window.addEventListener('admin:context-changed',sync);return()=>{window.removeEventListener('hashchange',sync);window.removeEventListener('popstate',sync);window.removeEventListener('admin:context-changed',sync);};},[]);
+ const item=activeAdminItem(groups,section,context),group=groups.find(g=>g.items.some(i=>i.id===item?.id));
+ return <p className={styles.pageTrail} aria-label="Current location">{group?.label}{item&&<> / {item.label}</>}</p>;
 }
