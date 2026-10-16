@@ -9,7 +9,7 @@ export function adultHeroFare(quote: AvailabilityQuote): HeroFare | undefined {
     const q = d.passengerQuote;
     const line = q?.lines.find(l => l.category === "adult" && l.quantity === 1);
     return q?.counts.adult === 1 && q.counts.child === 0 && q.counts.infant === 0 &&
-      q.currency === quote.currency && line && Number.isSafeInteger(line.total) && line.total > 0
+      q.currency === quote.currency && line && Number.isSafeInteger(line.total) && line.total >= 0
       ? [line.total] : [];
   });
   if (amounts.length) return { amount: Math.min(...amounts), currency: quote.currency, date: quote.date };

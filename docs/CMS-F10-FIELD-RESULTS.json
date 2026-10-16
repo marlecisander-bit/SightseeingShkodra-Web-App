@@ -1,17 +1,23 @@
 {
   "toolingHashes": {
     "scripts/verify-cms-fields.mjs": "932660d298ee867ee8dbdde6ace6c47f3ba6707e7e1a042c44baec6e2def6cbf",
-    "scripts/cms-verification/verify.mjs": "142c04bdd2082d368ebffbce6ac9fad310562a6f3c0ecf3dce5cd56e9e8bb4db",
-    "scripts/cms-verification/assertions.mjs": "229bf87e38ff1655a2935644808cecc5874e7c54de1cbb383950f23bca1b9ee9",
+    "scripts/cms-verification/verify.mjs": "6a27ee8d18c4a60d9c9e39786a1d0961f744ab5862eb62cdb06934af9603d145",
+    "scripts/cms-verification/assertions.mjs": "52d4563ce9d2d92a46e1a1e360ca984f28d9e6245f7a815abf3b66c964abea9f",
     "scripts/cms-verification/render.mjs": "fc7496bb26e7c252ee8722034619fc3a41976f9a50c8250b6626384dbfb862a9",
     "scripts/cms-verification/fixtures.mjs": "d9c872fe9905d55969f4925d75da5830e02707de5123c4c47aa7216b2c4b6f69",
-    "scripts/cms-verification/entities.mjs": "30d667848d7fa0072243c01deb0dec841da980b8eab2ceab03b179377c3cc708",
+    "scripts/cms-verification/entities.mjs": "78b848b6b7512b82e9ea882c844df6e9f8ea25a0ba0e9a5d1d639f921de4e7f7",
     "scripts/cms-verification/safety.mjs": "25f438039d8e50a79f3e1777eda95df9ae606f41452b0c45872a9e6a15a87565",
-    "scripts/cms-verification/cases.json": "90d37d43d02fc082d33e33eb8aa35db60f24ce23cde18a4d04bc0a76b3055e30"
+    "scripts/cms-verification/cases.json": "90d37d43d02fc082d33e33eb8aa35db60f24ce23cde18a4d04bc0a76b3055e30",
+    "scripts/cms-verification/client.mjs": "c5f5b38f6ec56c64d8f2a2f15f138e8f9efee0c1939add89c9194289925386da",
+    "scripts/cms-verification/request-route.mjs": "5a47e1fa2c369868c22592b2ceca262403896113c8eaffd349cf2f6be9497814",
+    "scripts/cms-verification/request-website.mjs": "7d3804f98f8abce54289af6ce6f076f20b3f51e349bfacc3672189b5ed2150ff",
+    "scripts/cms-verification/request-destinations.mjs": "c59466c7353db1a887093128b73466d6e7f3542fc1a6410dd10fb5c33896fb56",
+    "src/modules/content/catalog-fields.ts": "7e8deb76ae0000e1acdcc1613adc7865ab0ca8f0d3f8f9c673ce68eae7ce1c28",
+    "supabase/migrations/20261016000100_catalog_presentation_retirement.sql": "942835f1fb73e87ec0d0026c17c89ce27a3fd0143c856e61f1563e3b5179d808"
   },
-  "generatedAt": "2026-10-16T07:25:25.799Z",
-  "baseline": "a890a6a944886fce5b5adcdf893fe6e4f4666d00",
-  "schemaFingerprint": "d202160824f610d9ba403b936d1f85b38406eedf4b6f4a9e5e30d19b21a56c3a",
+  "generatedAt": "2026-10-16T09:17:18.748Z",
+  "baseline": "8f71e2743bff64cc04018fb433f4c51066394b23",
+  "schemaFingerprint": "75ce0634e6f9a2b26c54db2537b33919ecad11aee3a159f177c8571c37b7b237",
   "safety": {
     "database": "disposable in-memory PGlite with existing migrations",
     "network": "fetch denied",
@@ -21,18 +27,23 @@
     "active": 126,
     "retained": 84,
     "codeControlled": 41,
+    "catalogCompatibility": {
+      "PASS": 4,
+      "FAIL": 0,
+      "UNTESTED": 0
+    },
     "fields": {
-      "PASS": 126,
-      "FAIL": 4,
-      "UNTESTED": 5
+      "PASS": 131,
+      "FAIL": 0,
+      "UNTESTED": 0
     },
     "activeFields": {
-      "PASS": 121,
+      "PASS": 126,
       "FAIL": 0,
-      "UNTESTED": 5
+      "UNTESTED": 0
     },
     "checks": {
-      "PASS": 20,
+      "PASS": 21,
       "FAIL": 0,
       "UNTESTED": 0
     }
@@ -702,29 +713,27 @@
       "classification": "active structured control",
       "connectivity": "Connected",
       "structuralEvidence": "current schema + explicit real-component/metadata probe",
-      "status": "UNTESTED",
-      "method": "disposable SQL lifecycle + isolated server-rendered public consumer",
+      "status": "PASS",
+      "method": "disposable SQL lifecycle + actual YourDay request composition with synthetic loaders",
       "lifecycle": {
         "initializeBaseline": "PASS",
         "draftSave": "PASS",
         "freshRead": "PASS",
         "publicBeforePublication": "PASS",
-        "savedDraftPreview": "UNTESTED",
+        "savedDraftPreview": "PASS",
         "publish": "PASS",
         "repeatedRead": "PASS",
-        "publicAfterPublication": "UNTESTED"
+        "publicAfterPublication": "PASS"
       },
       "evidence": "scripts/cms-verification/verify.mjs + render.mjs",
-      "limitations": [
-        "Your-day server page composition requires request-bound loaders; no artificial replacement used."
-      ],
+      "limitations": [],
       "fixture": {
         "id": "field:route.eyebrow",
         "value": "VERIFY_route_eyebrow"
       },
       "publicProperty": "rendered text or explicit conditional DOM",
-      "consumer": "HomepageView",
-      "route": "/",
+      "consumer": "actual YourDay route, synthetic request-loader context",
+      "route": "/your-day",
       "roles": {
         "draft": "content_editor",
         "publisher": "admin"
@@ -738,29 +747,27 @@
       "classification": "active structured control",
       "connectivity": "Connected",
       "structuralEvidence": "current schema + explicit real-component/metadata probe",
-      "status": "UNTESTED",
-      "method": "disposable SQL lifecycle + isolated server-rendered public consumer",
+      "status": "PASS",
+      "method": "disposable SQL lifecycle + actual YourDay request composition with synthetic loaders",
       "lifecycle": {
         "initializeBaseline": "PASS",
         "draftSave": "PASS",
         "freshRead": "PASS",
         "publicBeforePublication": "PASS",
-        "savedDraftPreview": "UNTESTED",
+        "savedDraftPreview": "PASS",
         "publish": "PASS",
         "repeatedRead": "PASS",
-        "publicAfterPublication": "UNTESTED"
+        "publicAfterPublication": "PASS"
       },
       "evidence": "scripts/cms-verification/verify.mjs + render.mjs",
-      "limitations": [
-        "Your-day server page composition requires request-bound loaders; no artificial replacement used."
-      ],
+      "limitations": [],
       "fixture": {
         "id": "field:route.title",
         "value": "VERIFY_route_title"
       },
       "publicProperty": "rendered text or explicit conditional DOM",
-      "consumer": "HomepageView",
-      "route": "/",
+      "consumer": "actual YourDay route, synthetic request-loader context",
+      "route": "/your-day",
       "roles": {
         "draft": "content_editor",
         "publisher": "admin"
@@ -3260,28 +3267,26 @@
       "classification": "active structured control",
       "connectivity": "Connected",
       "structuralEvidence": "current schema + explicit real-component/metadata probe",
-      "status": "UNTESTED",
-      "method": "disposable SQL lifecycle + isolated server-rendered public consumer",
+      "status": "PASS",
+      "method": "disposable SQL lifecycle + actual client open/close DOM interaction",
       "lifecycle": {
         "initializeBaseline": "PASS",
         "draftSave": "PASS",
         "freshRead": "PASS",
         "publicBeforePublication": "PASS",
-        "savedDraftPreview": "UNTESTED",
+        "savedDraftPreview": "PASS",
         "publish": "PASS",
         "repeatedRead": "PASS",
-        "publicAfterPublication": "UNTESTED"
+        "publicAfterPublication": "PASS"
       },
       "evidence": "scripts/cms-verification/verify.mjs + render.mjs",
-      "limitations": [
-        "Only rendered after opening a client stop dialog; SSR cannot establish interactive state."
-      ],
+      "limitations": [],
       "fixture": {
         "id": "field:routePage.mapAction",
         "value": "VERIFY_routePage_mapAction"
       },
       "publicProperty": "rendered text or explicit conditional DOM",
-      "consumer": "RouteJourney",
+      "consumer": "actual React client component, opened/closed in isolated jsdom",
       "route": "/route",
       "roles": {
         "draft": "content_editor",
@@ -3604,29 +3609,27 @@
       "classification": "active structured control",
       "connectivity": "Connected",
       "structuralEvidence": "current schema + explicit real-component/metadata probe",
-      "status": "UNTESTED",
-      "method": "disposable SQL lifecycle + isolated server-rendered public consumer",
+      "status": "PASS",
+      "method": "disposable SQL lifecycle + actual client open/close DOM interaction",
       "lifecycle": {
         "initializeBaseline": "PASS",
         "draftSave": "PASS",
         "freshRead": "PASS",
         "publicBeforePublication": "PASS",
-        "savedDraftPreview": "UNTESTED",
+        "savedDraftPreview": "PASS",
         "publish": "PASS",
         "repeatedRead": "PASS",
-        "publicAfterPublication": "UNTESTED"
+        "publicAfterPublication": "PASS"
       },
       "evidence": "scripts/cms-verification/verify.mjs + render.mjs",
-      "limitations": [
-        "Booking dialog opens on client interaction; not included in SSR."
-      ],
+      "limitations": [],
       "fixture": {
         "id": "field:bookingDialog.title",
         "value": "VERIFY_bookingDialog_title"
       },
       "publicProperty": "rendered text or explicit conditional DOM",
-      "consumer": "HomepageView",
-      "route": "/",
+      "consumer": "actual React client component, opened/closed in isolated jsdom",
+      "route": "shared booking dialog",
       "roles": {
         "draft": "content_editor",
         "publisher": "admin"
@@ -3640,29 +3643,27 @@
       "classification": "active structured control",
       "connectivity": "Connected",
       "structuralEvidence": "current schema + explicit real-component/metadata probe",
-      "status": "UNTESTED",
-      "method": "disposable SQL lifecycle + isolated server-rendered public consumer",
+      "status": "PASS",
+      "method": "disposable SQL lifecycle + actual client open/close DOM interaction",
       "lifecycle": {
         "initializeBaseline": "PASS",
         "draftSave": "PASS",
         "freshRead": "PASS",
         "publicBeforePublication": "PASS",
-        "savedDraftPreview": "UNTESTED",
+        "savedDraftPreview": "PASS",
         "publish": "PASS",
         "repeatedRead": "PASS",
-        "publicAfterPublication": "UNTESTED"
+        "publicAfterPublication": "PASS"
       },
       "evidence": "scripts/cms-verification/verify.mjs + render.mjs",
-      "limitations": [
-        "Booking dialog opens on client interaction; not included in SSR."
-      ],
+      "limitations": [],
       "fixture": {
         "id": "field:bookingDialog.text",
         "value": "VERIFY_bookingDialog_text"
       },
       "publicProperty": "rendered text or explicit conditional DOM",
-      "consumer": "HomepageView",
-      "route": "/",
+      "consumer": "actual React client component, opened/closed in isolated jsdom",
+      "route": "shared booking dialog",
       "roles": {
         "draft": "content_editor",
         "publisher": "admin"
@@ -4425,78 +4426,6 @@
       "evidence": "entities.reviews.publication_soft_delete",
       "limitations": [
         "Local synthetic SQL and public projection; not hosted UI authentication."
-      ]
-    },
-    {
-      "field": "catalog.product.meta_title",
-      "owner": "Products & suppliers",
-      "classification": "entity field",
-      "consumer": "websiteMetadata (Website authority)",
-      "connectivity": "Disconnected",
-      "status": "FAIL",
-      "method": "catalog RPC → fresh SQL read → real Website metadata; marker absent",
-      "evidence": "entities.catalog.persistence_and_owned_inclusions",
-      "lifecycle": {
-        "save": "PASS",
-        "freshRead": "PASS",
-        "publicRendering": "FAIL"
-      },
-      "limitations": [
-        "Known F04: catalog SEO/image fields persist but public SEO uses Website/Destination entities. No application fix included."
-      ]
-    },
-    {
-      "field": "catalog.product.meta_description",
-      "owner": "Products & suppliers",
-      "classification": "entity field",
-      "consumer": "websiteMetadata (Website authority)",
-      "connectivity": "Disconnected",
-      "status": "FAIL",
-      "method": "catalog RPC → fresh SQL read → real Website metadata; marker absent",
-      "evidence": "entities.catalog.persistence_and_owned_inclusions",
-      "lifecycle": {
-        "save": "PASS",
-        "freshRead": "PASS",
-        "publicRendering": "FAIL"
-      },
-      "limitations": [
-        "Known F04: catalog SEO/image fields persist but public SEO uses Website/Destination entities. No application fix included."
-      ]
-    },
-    {
-      "field": "catalog.product.og_image",
-      "owner": "Products & suppliers",
-      "classification": "entity field",
-      "consumer": "websiteMetadata (Website authority)",
-      "connectivity": "Disconnected",
-      "status": "FAIL",
-      "method": "catalog RPC → fresh SQL read → real Website metadata; marker absent",
-      "evidence": "entities.catalog.persistence_and_owned_inclusions",
-      "lifecycle": {
-        "save": "PASS",
-        "freshRead": "PASS",
-        "publicRendering": "FAIL"
-      },
-      "limitations": [
-        "Known F04: catalog SEO/image fields persist but public SEO uses Website/Destination entities. No application fix included."
-      ]
-    },
-    {
-      "field": "catalog.product.og_image_alt",
-      "owner": "Products & suppliers",
-      "classification": "entity field",
-      "consumer": "websiteMetadata (Website authority)",
-      "connectivity": "Disconnected",
-      "status": "FAIL",
-      "method": "catalog RPC → fresh SQL read → real Website metadata; marker absent",
-      "evidence": "entities.catalog.persistence_and_owned_inclusions",
-      "lifecycle": {
-        "save": "PASS",
-        "freshRead": "PASS",
-        "publicRendering": "FAIL"
-      },
-      "limitations": [
-        "Known F04: catalog SEO/image fields persist but public SEO uses Website/Destination entities. No application fix included."
       ]
     },
     {
@@ -5620,6 +5549,88 @@
       ]
     }
   ],
+  "catalogCompatibility": [
+    {
+      "field": "catalog.product.meta_title",
+      "owner": "Historical Catalog data",
+      "classification": "Retired Catalog compatibility",
+      "connectivity": "Retained; absent from active editor",
+      "status": "PASS",
+      "consumer": "No active public presentation owner",
+      "method": "old-client save → current-form omission → fresh SQL read; new publication without retired fields; active inventory absence",
+      "evidence": "entities.catalog.retirement_compatibility",
+      "lifecycle": {
+        "historicalSave": "PASS",
+        "currentSavePreserves": "PASS",
+        "publicationWithoutLegacy": "PASS",
+        "activeEditorAbsence": "PASS",
+        "publicSEOOwnership": "PASS"
+      },
+      "limitations": [
+        "Compatibility PASS only; not a claim that retired Catalog properties render as public SEO."
+      ]
+    },
+    {
+      "field": "catalog.product.meta_description",
+      "owner": "Historical Catalog data",
+      "classification": "Retired Catalog compatibility",
+      "connectivity": "Retained; absent from active editor",
+      "status": "PASS",
+      "consumer": "Existing historical email description consumer retained",
+      "method": "old-client save → current-form omission → fresh SQL read; new publication without retired fields; active inventory absence",
+      "evidence": "entities.catalog.retirement_compatibility",
+      "lifecycle": {
+        "historicalSave": "PASS",
+        "currentSavePreserves": "PASS",
+        "publicationWithoutLegacy": "PASS",
+        "activeEditorAbsence": "PASS",
+        "publicSEOOwnership": "PASS"
+      },
+      "limitations": [
+        "Compatibility PASS only; not a claim that retired Catalog properties render as public SEO."
+      ]
+    },
+    {
+      "field": "catalog.product.og_image",
+      "owner": "Historical Catalog data",
+      "classification": "Retired Catalog compatibility",
+      "connectivity": "Retained; absent from active editor",
+      "status": "PASS",
+      "consumer": "No active public presentation owner",
+      "method": "old-client save → current-form omission → fresh SQL read; new publication without retired fields; active inventory absence",
+      "evidence": "entities.catalog.retirement_compatibility",
+      "lifecycle": {
+        "historicalSave": "PASS",
+        "currentSavePreserves": "PASS",
+        "publicationWithoutLegacy": "PASS",
+        "activeEditorAbsence": "PASS",
+        "publicSEOOwnership": "PASS"
+      },
+      "limitations": [
+        "Compatibility PASS only; not a claim that retired Catalog properties render as public SEO."
+      ]
+    },
+    {
+      "field": "catalog.product.og_image_alt",
+      "owner": "Historical Catalog data",
+      "classification": "Retired Catalog compatibility",
+      "connectivity": "Retained; absent from active editor",
+      "status": "PASS",
+      "consumer": "No active public presentation owner",
+      "method": "old-client save → current-form omission → fresh SQL read; new publication without retired fields; active inventory absence",
+      "evidence": "entities.catalog.retirement_compatibility",
+      "lifecycle": {
+        "historicalSave": "PASS",
+        "currentSavePreserves": "PASS",
+        "publicationWithoutLegacy": "PASS",
+        "activeEditorAbsence": "PASS",
+        "publicSEOOwnership": "PASS"
+      },
+      "limitations": [
+        "Compatibility PASS only; not a claim that retired Catalog properties render as public SEO."
+      ]
+    }
+  ],
   "codeControlled": [
     {
       "field": "brand.logo",
@@ -6247,6 +6258,11 @@
       "method": "real catalog RPC / canonical FAQ component"
     },
     {
+      "name": "entities.catalog.retirement_compatibility",
+      "status": "PASS",
+      "method": "active editor inventory + real old/current RPC saves + Website SEO"
+    },
+    {
       "name": "entities.calendar_pricing.permission_boundary",
       "status": "PASS",
       "method": "real SQL persistence + existing pricing RPC authorization"
@@ -6258,8 +6274,8 @@
     }
   ],
   "limitations": [
-    "Server component SSR/projection verification, not authenticated hosted browser edit/save testing.",
+    "Server SSR plus isolated client DOM interactions and synthetic request loaders; not authenticated hosted browser edit/save testing.",
     "Direct entity saves use existing service database model; server-action permissions additionally covered by existing identity/integration regressions.",
-    "Known catalog presentation disconnections are FAIL findings; no application fix is authorized."
+    "Four Catalog presentation controls are retired; their compatibility evidence is separate from active public rendering."
   ]
 }

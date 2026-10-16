@@ -24,8 +24,27 @@ test('script/hidden markers and image links cannot masquerade as rendered conten
 test('complete disposable verification has no unexpected failures and reports known gaps honestly',async()=>{
  const r=await verifyCms();assert.equal(r.counts.active,active.length);assert.equal(r.counts.retained,websiteFields.length-active.length);
  assert.deepEqual(r.checks.filter(c=>c.status!=='PASS'),[]);
- assert.deepEqual(r.fields.filter(f=>f.status==='FAIL').map(f=>f.field).sort(),['meta_title','meta_description','og_image','og_image_alt'].map(k=>'catalog.product.'+k).sort());
- assert.deepEqual(r.fields.filter(f=>f.status==='UNTESTED').map(f=>f.field).sort(),['route.eyebrow','route.title','routePage.mapAction','bookingDialog.title','bookingDialog.text'].sort());
+ assert.deepEqual(r.fields.filter(f=>f.status==='FAIL'),[]);
+ assert.deepEqual(r.catalogCompatibility.map(f=>f.field).sort(),['meta_title','meta_description','og_image','og_image_alt'].map(k=>'catalog.product.'+k).sort());assert.ok(r.catalogCompatibility.every(f=>f.status==='PASS'&&f.classification==='Retired Catalog compatibility'));
+ assert.deepEqual(r.fields.filter(f=>f.status==='UNTESTED').map(f=>f.field).sort(),[]);
  for(const row of r.fields.filter(f=>f.classification==='active structured control')){assert.equal(row.lifecycle.draftSave,'PASS',row.field);assert.equal(row.lifecycle.freshRead,'PASS',row.field);assert.equal(row.lifecycle.publicBeforePublication,'PASS',row.field);assert.equal(row.lifecycle.publish,'PASS',row.field);assert.equal(row.lifecycle.repeatedRead,'PASS',row.field);if(row.status==='PASS')assert.equal(row.lifecycle.savedDraftPreview,'PASS');}
  assert.ok(r.compatibility.every(f=>f.status==='PASS'));assert.ok(r.codeControlled.every(f=>f.status==='UNTESTED'));
+});
+
+test('new request/client proofs reject stale or disconnected copy',async()=>{
+ const {renderYourDay}=await import('../../scripts/cms-verification/request-route.mjs');
+ const {renderClientProbe}=await import('../../scripts/cms-verification/client.mjs');
+ for(const key of ['route.eyebrow','route.title','routePage.mapAction','bookingDialog.title','bookingDialog.text']){
+  const field=active.find(f=>f.key===key),value=fixtureValue(field),base=preparedContent(key);
+  const probe=key.startsWith('route.')?renderYourDay:c=>renderClientProbe(key,c);
+  assert.equal(checkField(field,value,await probe({...base,[key]:value})).status,'PASS',key);
+  assert.equal(checkField(field,value,await probe(base)).status,'FAIL',key);
+  if(key.startsWith('route.')){const hidden=await probe({...base,[key]:value,'route.showOnHomepage':'false'});assert.equal(checkField(field,value,hidden).status,'FAIL');assert.ok(hidden.html.includes('iframe'));}
+ }
+});
+
+test('retirement proof fails if a legacy control reappears in active Catalog inventory',async()=>{
+ const {assertCatalogRetirement}=await import('../../scripts/cms-verification/entities.mjs');
+ const {catalogFields}=await import('../../src/modules/content/catalog-fields.ts');
+ assert.doesNotThrow(()=>assertCatalogRetirement());assert.throws(()=>assertCatalogRetirement([...catalogFields.product,{key:'meta_title'}]),/Catalog active inventory changed/);
 });

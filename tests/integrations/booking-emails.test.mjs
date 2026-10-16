@@ -236,3 +236,18 @@ test('production rejects Resend sandbox sender and Vercel diagnostics reflect th
  const env={NODE_ENV:'production',APP_ENV:'production',VERCEL_ENV:'production',EMAIL_ENABLED:'true',RESEND_API_KEY:'fake',RESEND_FROM_EMAIL:'Sightseeing Shkodra <onboarding@resend.dev>',BOOKING_OWNER_EMAIL:config.owner,BOOKING_REPLY_TO_EMAIL:config.replyTo,PUBLIC_OPERATOR_ID:op,EMAIL_START_AT:config.since,NEXT_PUBLIC_SITE_URL:config.siteUrl};
  assert.throws(()=>bookingEmailConfig(env),/configuration/);assert.equal(emailAdminStatus(op,{...env,RESEND_FROM_EMAIL:config.from}).enabled,false);
 });
+
+test('Catalog retirement preserves historical email copy and frozen prepared messages',async()=>{
+ await run(); // Drain pending synthetic jobs through the existing mocked transport.
+ const description='Retained <Catalog email copy>';await db.query('update products set meta_description=$2 where id=$1',[product,description]);
+ const b=await create();await store.enqueue(op,config.since);const job=await store.claim(op);assert.equal(job.booking_id,b.id);
+ const prepared=await store.prepare(job,{version:2,from:config.from,owner:config.owner,replyTo:config.replyTo,siteUrl:config.siteUrl,testRecipient:config.testRecipient});
+ assert.equal(prepared.send_snapshot.items[0].description,description);
+ const before=bookingEmailTemplate(prepared.event_type,prepared.recipient_type,prepared.send_snapshot,prepared.envelope,op,b.id);
+ const row=(await db.query('select * from products where id=$1',[product])).rows[0];
+ const currentForm=Object.fromEntries(['title','slug','type','status','inclusions','supplier_id'].map(k=>[k,row[k]]));
+ await db.query("select save_catalog_v1($1,$2,'product',$3,$4,false)",[op,staff,product,currentForm]);
+ assert.equal((await db.query('select meta_description from products where id=$1',[product])).rows[0].meta_description,description);
+ const frozen=(await db.query('select send_snapshot,envelope from notification_deliveries where id=$1',[job.id])).rows[0];assert.deepEqual(frozen.send_snapshot,prepared.send_snapshot);
+ const after=bookingEmailTemplate(prepared.event_type,prepared.recipient_type,frozen.send_snapshot,frozen.envelope,op,b.id);assert.equal(after.html,before.html);assert.ok(after.html.includes('Retained &lt;Catalog email copy&gt;'));
+});

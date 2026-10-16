@@ -1,4 +1,5 @@
 "use server";
+import { retainedCatalogPresentationKeys } from "@/modules/content/catalog-fields";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { withOperatorService } from "../../modules/identity/operator-service";
@@ -24,10 +25,7 @@ export async function saveCatalog(
           "status",
           "supplier_id",
           "inclusions",
-          "meta_title",
-          "meta_description",
-          "og_image",
-          "og_image_alt",
+          ...retainedCatalogPresentationKeys,
         ]) {
           const value = form.get(key);
           if (typeof value === "string") data[key] = value;
@@ -58,7 +56,7 @@ export async function saveCatalog(
   if (failed)
     return {
       error:
-        "Your changes could not be saved. Check the page address, search listing, image description and supplier. Confirm before removing an item; a supplier used by a product cannot be deleted. Your edits are still here.",
+        "Your changes could not be saved. Check the product name, page address, publication, inclusions and supplier. Confirm before removing an item; a supplier used by a product cannot be deleted. Your edits are still here.",
     };
   const path = `/admin/${encodeURIComponent(operatorId)}/catalog`;
   revalidatePath(path);

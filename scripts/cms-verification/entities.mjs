@@ -3,8 +3,13 @@ import {preparedContent} from './fixtures.mjs';
 import {entityRender,syntheticDestination,renderConsumer,homeData,planner} from './render.mjs';
 import {destinationPlace} from '../../src/modules/content/destinations.ts';
 import {sightseeingStops} from '../../src/modules/content/sightseeing-stops.ts';
+import {catalogFields,retainedCatalogPresentationKeys} from '../../src/modules/content/catalog-fields.ts';
 import {meetingPoint} from '../../src/modules/booking/meeting-point.ts';
-export async function verifyEntities({db,actors,fields,check}){
+export function assertCatalogRetirement(inventory=catalogFields.product){
+ assert.deepEqual(inventory.map(f=>f.key).sort(),['title','slug','type','status','inclusions'].sort(),'Catalog active inventory changed; review explicit probes');
+ for(const key of retainedCatalogPresentationKeys)assert.ok(!inventory.some(f=>f.key===key),'Retired Catalog control became active: '+key);
+}
+export async function verifyEntities({db,actors,fields,check,catalogCompatibility}){
  const op='10000000-0000-4000-8000-000000000001',c=preparedContent();
  const tracked=async(name,consumer,fn)=>{let error;await check('entities.'+name,'real SQL persistence + '+consumer,async()=>{try{await fn();}catch(e){error=e;throw e;}});fields.push({field:name,classification:'entity lifecycle',owner:name.split('.')[0],consumer,connectivity:'Explicit consumer/boundary probe',status:error?'FAIL':'PASS',error:error?.message,method:'See named independent check',evidence:'entities.'+name,limitations:['Local synthetic SQL and public projection; not hosted UI authentication.']});};
  await tracked('destinations.draft_publish_association','GuideView + sightseeingStops',async()=>{
@@ -41,10 +46,19 @@ export async function verifyEntities({db,actors,fields,check}){
  const saved=(await db.query('select * from products where id=$1',[id])).rows[0];assert.equal(saved.title,data.title);assert.equal(saved.inclusions,data.inclusions);
  const faq={...c,'faq.items':JSON.stringify([{id:'90000000-0000-4000-8000-000000000098',question:'VERIFY inclusions?',answer:'UNUSED',answerSource:'product-inclusions',active:true}])};
  assert.ok(renderConsumer('faq.items',faq,{inclusions:saved.inclusions}).html.includes(saved.inclusions));
- for(const key of ['meta_title','meta_description','og_image','og_image_alt']){
-  assert.equal(saved[key],data[key]);const publicProjection=renderConsumer('seo.title',c,{home:{...homeData(),product:saved}});const consumed=JSON.stringify(publicProjection).includes(data[key]);
-  fields.push({field:'catalog.product.'+key,owner:'Products & suppliers',classification:'entity field',consumer:'websiteMetadata (Website authority)',connectivity:'Disconnected',status:consumed?'PASS':'FAIL',method:'catalog RPC → fresh SQL read → real Website metadata; marker absent',evidence:'entities.catalog.persistence_and_owned_inclusions',lifecycle:{save:'PASS',freshRead:'PASS',publicRendering:consumed?'PASS':'FAIL'},limitations:['Known F04: catalog SEO/image fields persist but public SEO uses Website/Destination entities. No application fix included.']});
- }
+ });
+ await check('entities.catalog.retirement_compatibility','active editor inventory + real old/current RPC saves + Website SEO',async()=>{
+  assertCatalogRetirement();
+  const base={title:'Legacy catalog',slug:'verify-legacy-retirement',type:'van_tour',status:'published',inclusions:'Retained inclusions'};
+  const old={meta_title:'VERIFY old title',meta_description:'VERIFY old email copy',og_image:'https://example.invalid/old.webp',og_image_alt:'VERIFY old alt'};
+  const save=async(data,id=null)=>(await db.query("select save_catalog_v1($1,$2,'product',$3,$4,false) id",[op,actors.owner,id,data])).rows[0].id;
+  const id=await save({...base,...old});await save({...base,title:'Current editor title'},id);
+  const saved=(await db.query('select * from products where id=$1',[id])).rows[0];
+  for(const key of retainedCatalogPresentationKeys)assert.equal(saved[key],old[key],key);
+  const fresh=await save({...base,slug:'verify-without-legacy'});const next=(await db.query('select * from products where id=$1',[fresh])).rows[0];assert.equal(next.status,'published');for(const key of retainedCatalogPresentationKeys)assert.equal(next[key],null);
+  const metadata=renderConsumer('bookPage.seoTitle',c,{home:{...homeData(),product:saved}});assert.equal(metadata.metadata.title,c['bookPage.seoTitle']);for(const value of Object.values(old))assert.ok(!JSON.stringify(metadata).includes(value));
+  for(const role of ['content_editor','operations'])await assert.rejects(db.query("select save_catalog_v1($1,$2,'product',$3,$4,false)",[op,actors[role],id,base]),e=>e.code==='42501');
+  for(const key of retainedCatalogPresentationKeys)catalogCompatibility.push({field:'catalog.product.'+key,owner:'Historical Catalog data',classification:'Retired Catalog compatibility',connectivity:'Retained; absent from active editor',status:'PASS',consumer:key==='meta_description'?'Existing historical email description consumer retained':'No active public presentation owner',method:'old-client save → current-form omission → fresh SQL read; new publication without retired fields; active inventory absence',evidence:'entities.catalog.retirement_compatibility',lifecycle:{historicalSave:'PASS',currentSavePreserves:'PASS',publicationWithoutLegacy:'PASS',activeEditorAbsence:'PASS',publicSEOOwnership:'PASS'},limitations:['Compatibility PASS only; not a claim that retired Catalog properties render as public SEO.']});
  });
  await tracked('calendar_pricing.permission_boundary','existing pricing RPC authorization',async()=>{
  const product='10000000-0000-4000-8000-000000000020';for(const role of ['operations','content_editor'])await assert.rejects(db.query('select save_passenger_pricing_v1($1,$2,$3,$4,now())',[op,actors[role],product,{}]),e=>e.code==='42501');

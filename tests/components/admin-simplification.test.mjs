@@ -42,7 +42,7 @@ test('hero uses readable position labels without changing stored CSS values or i
   for(const position of focalPositions)assert.ok(html.includes(`value="${position}"`));
   assert.match(html,/value="center center"[^>]*>Center<\/option>/);
   assert.match(html,/type="hidden" name="hero.desktop" value="\/images\/lake.webp"/);
-  assert.doesNotMatch(html,/Loading dimensions|Desktop crop|No original file-size|Advanced: image address/);
+  assert.doesNotMatch(html,/Loading dimensions|No original file-size|Advanced: image address/);
   assert.match(html,/<img[^>]+src="\/images\/lake.webp"/);
 });
 

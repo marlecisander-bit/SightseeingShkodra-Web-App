@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { editableWebsiteSections, resolveWebsiteLink, type WebsiteContent } from "@/modules/content/website-schema";
 import { saveWebsiteSection, uploadWebsiteImage } from "./website-actions";
 import styles from "./website-editor.module.css";
+import { NavigationPreview } from "./navigation-preview";
 import { prepareWebsiteImage } from "@/modules/content/image-upload";
 
 export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, values, setValues, onStateChange, onFeedback, canPublish = false, destinationLinks = [] }: { canPublish?:boolean; destinationLinks?:{value:string;label:string}[]; operatorId: string; sectionId: string; content: WebsiteContent; stamp: string; values: WebsiteContent; setValues: Dispatch<SetStateAction<WebsiteContent>>; onStateChange?: (id: string, dirty: boolean, pending: boolean) => void; onFeedback?: (id: string, message: string) => void }) {
@@ -47,13 +48,15 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
     {sectionId==='footer'&&<p>Leave a social link empty to hide it. Manage your Google Reviews link below.</p>}
     {sectionId==='route'&&<p>This copy introduces Tour destination stories. The homepage and Route stop overviews use published Live Map stops. The shared visibility switch controls these presentations.</p>}
     {sectionId==='departures'&&<p>On the homepage, this copy appears in the Live Service summary. Scheduled times still come from Calendar &amp; Pricing.</p>}
-    {sectionId==='whatsapp'&&<p>Use your WhatsApp Business number with its country code. Save Draft keeps changes private; Publish updates the website. Leave the button label empty to show only the icon.</p>}
+    {sectionId==='whatsapp'&&<p>Use your WhatsApp Business number with its country code. Save draft keeps changes private; Publish updates the website. Leave the button label empty to show only the icon.</p>}
     {sectionId==='navigation'&&<p>Desktop and mobile share these links. Route and Live map lead to the combined Route &amp; Live Map page. If several links lead to the same page, the first link supplies its label. Edit that first label to customize it; the original Route and Live map labels use the combined page name.</p>}
     {sectionId.startsWith('legal')&&<p>Plain text only. Add your approved legal wording, set Published, then publish. Unpublished pages show a neutral availability notice.</p>}
     <p>Save your changes as a draft or publish them when you’re ready.</p>
     {sectionId === "faq" && <p>Save a draft to preview; publish to update the public FAQ. Questions below appear on the dedicated FAQ page. <a href={`/admin/${operatorId}/website-preview?page=faq`}>Preview saved FAQ draft</a></p>}
     {sectionId === "departures" && <p><a href={`/admin/${operatorId}/catalog`}>Products & suppliers</a> | <a href={`/admin/${operatorId}/departures`}>Calendar & Pricing</a>. Stops and live vehicle information are managed from Live Map.</p>}
     <input type="hidden" name="updated_at" value={stamp} />
+    {sectionId === "navigation" && <NavigationPreview content={values}/>}
+    {sectionId === "hero" && <p>Desktop crop: at widths of 1600px and above, a centered vertical position is displayed from the bottom. Other desktop positions and the mobile setting are preserved. The editor image does not reproduce every screen crop.</p>}
     <fieldset disabled={pending}>
       {section.fields.filter(f=>f.kind==="visibility").map(f=><input key={f.key} type="hidden" name={f.key} value={values[f.key]}/>)}
       {groups.filter(group=>group.fields.length).map(group=><fieldset className={styles.fieldGroup} key={group.title}><legend>{group.title}</legend><div className={styles.fieldGrid}>{group.fields.map(field => {
@@ -96,8 +99,8 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
       <div className={styles.editorActions}>
         <span className={styles.helper}>{dirty ? "Unsaved changes" : "Saved content"}</span>
         <Button className={styles.textButton} type="button" disabled={!dirty} onClick={() => {setValues(current => ({...current, ...Object.fromEntries(section.fields.map(f => [f.key, content[f.key]]))})); setMessage("Unsaved changes discarded.");}}>Discard</Button>
-        <Button className={styles.secondary} name="operation" value="draft">{pending ? "Saving…" : "Save Draft"}</Button>
-        <Button className={styles.primary} name="operation" value="publish" disabled={!canPublish}>Publish</Button>
+        <Button className={styles.secondary} name="operation" value="draft">{pending ? "Saving…" : "Save draft"}</Button>
+        <Button className={styles.primary} name="operation" value="publish" disabled={!canPublish}>Publish website changes</Button>
       </div>
       <p className={styles.helper}>Publish applies this section and all previously saved website drafts.</p>
     </fieldset>

@@ -16,7 +16,7 @@ export function bookingCutoff(value:string) {
 export function lowestQuotedFare(amounts:readonly number[]) {
  const valid=amounts.filter(value=>Number.isFinite(value)&&value>=0);
  const minimum=valid.length?Math.min(...valid):undefined;
- return minimum!==undefined&&minimum>0?minimum:undefined;
+ return minimum;
 }
 
 export function bookingDate(value:string) {

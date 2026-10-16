@@ -3,16 +3,8 @@ export const escapeHtml=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt
 export function cleanHtml(html){return html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'').replace(/<input\b[^>]*>/gi,'');}
 export function attribute(html,tag,name,value){return [...html.matchAll(new RegExp('<'+tag+'\\b[^>]*>','g'))].some(m=>m[0].includes(name+'="'+escapeHtml(value)+'"'));}
 function text(html,value){return cleanHtml(html).replace(/<[^>]*>/g,'').includes(escapeHtml(value));}
-export const deferred={
- 'route.eyebrow':'Your-day server page composition requires request-bound loaders; no artificial replacement used.',
- 'route.title':'Your-day server page composition requires request-bound loaders; no artificial replacement used.',
- 'routePage.mapAction':'Only rendered after opening a client stop dialog; SSR cannot establish interactive state.',
- 'bookingDialog.title':'Booking dialog opens on client interaction; not included in SSR.',
- 'bookingDialog.text':'Booking dialog opens on client interaction; not included in SSR.',
-};
 export function checkField(field,value,projection){
  const {key,kind}=field,html=projection.html??'';
- if(deferred[key])return {status:'UNTESTED',limitation:deferred[key]};
  let ok;
  if(projection.metadata){const m=projection.metadata;ok=key.endsWith('.image')||key.endsWith('.seoImage')?m.openGraph.images[0].url===value:key.endsWith('.alt')||key.endsWith('.seoAlt')?m.openGraph.images[0].alt===value:key.endsWith('.title')||key.endsWith('.seoTitle')?m.title===value:m.description===value;}
  else if(key.endsWith('.showOnHomepage')){
