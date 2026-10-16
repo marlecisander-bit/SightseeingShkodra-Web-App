@@ -16,7 +16,9 @@ export const homepageVisibilitySections = ["hero", "intro", "route", "live", "de
 // Retain persisted keys; shared sections use this state across all consumers.
 export function sectionVisible(content: WebsiteContent, section: string) { return content[`${section}.showOnHomepage`] !== "false"; }
 export const homepageVisible = sectionVisible;
-export function visibilityScope(section: string) { return ["route", "live", "departures", "reviews", "final"].includes(section) ? "across public pages" : "on homepage"; }
+export function visibilityScope(section: string) {
+ return ({hero:'on Homepage',route:'on Homepage, Route stop overview and Your day sample; Route map stays available',live:'on Homepage live introduction; Route map stays available',departures:'on Homepage timetable, Route departures and Your day boarding link; booking availability stays available',reviews:'on Homepage Guest Reviews',notebook:'on Homepage destination cards; Explore guides stay available',final:'on Homepage and in other public footers except FAQ, Book and booking-management pages',partners:'on Homepage partner section'} as Record<string,string>)[section] ?? 'on Homepage';
+}
 export function visibleWebsiteLink(link: string, content: WebsiteContent) {
   const resolved = resolveWebsiteLink(link);
   return !(resolved === "/#route" && !sectionVisible(content, "route") || (link === "/tour#timetable" || resolved === "/route#journey-departures") && !sectionVisible(content, "departures"));

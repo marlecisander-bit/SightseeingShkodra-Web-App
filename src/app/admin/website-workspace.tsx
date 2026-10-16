@@ -55,8 +55,8 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
       <div className={styles.toolbarActions}>
         <a className={`${styles.textButton} ss-button`} href="/" target="_blank" rel="noopener noreferrer"><ButtonContent>View Website</ButtonContent></a>
         <a className={`${styles.secondary} ss-button`} href={preview} target="_blank" rel="noopener noreferrer"><ButtonContent>Preview saved draft</ButtonContent></a>
-        {unsaved && <Button className={styles.secondary} form={`cms-form-${dirtySection?.id ?? active ?? websiteSections[0].id}`} name="operation" value="draft" disabled={pending}>Save Draft</Button>}
-        <Button className={styles.primary} form={`cms-form-${dirtySection?.id ?? active ?? websiteSections[0].id}`} name="operation" value="publish" disabled={pending || !canPublish}>{pending ? "Saving…" : "Publish"}</Button>
+        {unsaved && <Button className={styles.secondary} form={`cms-form-${dirtySection?.id ?? active ?? websiteSections[0].id}`} name="operation" value="draft" disabled={pending}>Save draft</Button>}
+        <Button className={styles.primary} form={`cms-form-${dirtySection?.id ?? active ?? websiteSections[0].id}`} name="operation" value="publish" disabled={pending || !canPublish}>{pending ? "Saving…" : "Publish website changes"}</Button>
       </div>
       <div className={styles.toolbarStatus} role="status"><span className={changed || unsaved ? styles.draftBadge : styles.badge}>{unsaved ? "Unsaved changes" : changed ? "Draft changes" : "Published"}</span><span>Last published {record.published_at ? new Date(record.published_at).toISOString().replace("T", " · ").slice(0, 18) + " UTC" : "—"}</span></div>
     </header>
@@ -74,9 +74,9 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
               section.fields.some(f => f.kind === "visibility") && <span className={styles.visibilityRow} onClick={event => event.stopPropagation()} onKeyDown={event => event.stopPropagation()}>
 
                 <label><input type="checkbox" role="switch" aria-label={`Show ${section.title} ${visibilityScope(section.id)}`} checked={homepageVisible(values, section.id)} disabled={pending || (!!dirtySection && dirtySection.id !== section.id)} onChange={event => { setActive(null); setValues(current => ({...current, [`${section.id}.showOnHomepage`]: String(event.target.checked)})); }} /><span className={styles.visibilityCopy}><strong>{homepageVisible(values, section.id) ? "Visible" : "Hidden"}</strong><span>{visibilityScope(section.id)}</span></span></label>
-                {dirtySection?.id === section.id && active !== section.id && <span className={styles.visibilityActions}><Button form={`cms-form-${section.id}`} name="operation" value="draft" disabled={pending}>Save Draft</Button><Button type="button" disabled={pending} onClick={() => setValues(current => ({...current, ...Object.fromEntries(section.fields.map(f => [f.key, content[f.key]]))}))}>Discard</Button></span>}
+                {dirtySection?.id === section.id && active !== section.id && <span className={styles.visibilityActions}><Button form={`cms-form-${section.id}`} name="operation" value="draft" disabled={pending}>Save draft</Button><Button type="button" disabled={pending} onClick={() => setValues(current => ({...current, ...Object.fromEntries(section.fields.map(f => [f.key, content[f.key]]))}))}>Discard</Button></span>}
               </span>} />
-              {dirtySection?.id === section.id && section.fields.some(f => f.kind === "visibility" && values[f.key] !== content[f.key]) && <small className={styles.helper}>Unsaved visibility. Last saved: {homepageVisible(content, section.id) ? "Visible" : "Hidden"}. Save Draft keeps changes private until you publish.</small>}
+              {dirtySection?.id === section.id && section.fields.some(f => f.kind === "visibility" && values[f.key] !== content[f.key]) && <small className={styles.helper}>Unsaved visibility. Last saved: {homepageVisible(content, section.id) ? "Visible" : "Hidden"}. Save draft keeps changes private until you publish.</small>}
               {section.id === "heroAmenities" && <small className={styles.helper}>Hero labels, icons, order and visibility. Keep five short labels for the compact row.</small>}
               {active !== section.id && feedback[section.id] && <span className={styles.notice} role="status">{feedback[section.id]}</span>}
             </summary>

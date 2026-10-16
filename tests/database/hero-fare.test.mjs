@@ -34,11 +34,16 @@ test('seasonal and departure offer prices remain canonical adult quotes',async()
  const booking=await quote(request('2026-10-07'));assert.equal(adultHeroFare(booking).amount,1200);
  assert.deepEqual(booking.departures.map(d=>d.passengerQuote.total),[1500,1200]);
 });
-test('closed and sold-out dates are skipped; no zero or child price is advertised',async()=>{
+test('closed and sold-out dates are skipped; verified zero is shown and child-only quotes stay excluded',async()=>{
  await override('2026-09-24','2026-09-24',{closed:true});
  const q=await quote(request('2026-09-25'));
  for(const d of q.departures)await db.query('select create_passenger_hold_v1($1,$2,$3,gen_random_uuid(),8,$4)',[op,d.id,'hero-price-test-session-123456789012345',JSON.stringify({adult:8,child:0,infant:0})]);
  assert.equal((await fare('2026-09-23')).date,'2026-09-26');
  assert.equal(adultHeroFare({...q,departures:q.departures.map(d=>({...d,passengerQuote:{...d.passengerQuote,counts:{adult:0,child:1,infant:0}}}))}),undefined);
- assert.equal(adultHeroFare({...q,departures:q.departures.map(d=>({...d,passengerQuote:{...d.passengerQuote,lines:[{category:'adult',quantity:1,total:0}]}}))}),undefined);
+ assert.equal(adultHeroFare({...q,departures:q.departures.map(d=>({...d,passengerQuote:{...d.passengerQuote,lines:[{category:'adult',quantity:1,total:0}]}}))}).amount,0);
+});
+
+test('a configured zero-price adult quote stays on its quoted date and matches booking',async()=>{
+ await db.query('select save_passenger_pricing_v1($1,$2,$3,$4,$5)',[op,actor,product,JSON.stringify({...config,adult:{...config.adult,price:0}}),await stamp('products',product)]);
+ const q=await quote(request('2026-09-27'));assert.equal(q.departures[0].passengerQuote.total,0);assert.deepEqual(await fare('2026-09-27'),{date:'2026-09-27',currency:'EUR',amount:0});
 });

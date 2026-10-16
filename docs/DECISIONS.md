@@ -153,3 +153,13 @@ The user explicitly requested complete local removal of `/tour`, including page/
 
 
 12 October 2026 - User explicitly authorized publication of all remaining unpublished changes: shared header, mobile native date containment, consent-gated analytics implementation and accumulated release evidence. Existing Vercel settings, analytics activation gate, backend/CMS/map and delivery configuration remain unchanged. Portable sitemap test tempdir implementation retained. Release validation pending.
+
+
+## 2026-10-16 — Local CMS completion decisions
+
+The user authorized isolated local CMS completion after F10 production merge 8f71e2743bff64cc04018fb433f4c51066394b23, without push/PR/Preview/merge/deploy or production mutation. For F04 the user chose to keep the booking-email description editable and plan retirement of unused Catalog presentation controls through a separately reviewed compatible migration; no such migration is authorized by this local plan. For F08 the user explicitly chose to show an authoritative zero-price adult quote as €0 with existing fare wording, preserving all pricing calculations. See CMS-FINAL-COMPLETION-TRACKER.md.
+
+
+## 2026-10-16 - F04 four-control retirement, local authorization
+
+The latest explicit user authorization supersedes the earlier keep-description-control plan: retire Catalog meta_title, meta_description, og_image and og_image_alt from the active editor, including their publication requirements. Retain all columns/omitted stored values and existing historical email consumers. A narrow backwards-compatible save_catalog_v1 replacement was implemented and tested only in disposable local databases. This authorizes no push, hosted migration or deployment. A future rollout must apply the compatible SQL migration before the metadata-free editor. See CMS-F04-IMPLEMENTATION-RESULT.md.

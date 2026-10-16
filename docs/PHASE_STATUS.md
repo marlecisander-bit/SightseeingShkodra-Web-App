@@ -563,3 +563,13 @@ User explicitly approved publication. Scoped candidate from main d6f3c5b removes
 
 
 12 October 2026 - User explicitly authorized publication of all remaining unpublished changes: shared header, mobile native date containment, consent-gated analytics implementation and accumulated release evidence. Existing Vercel settings, analytics activation gate, backend/CMS/map and delivery configuration remain unchanged. Portable sitemap test tempdir implementation retained. Release validation pending.
+
+
+## 2026-10-16 - CMS completion, local candidate only
+
+Isolated candidate at production baseline 8f71e2743bff64cc04018fb433f4c51066394b23. Local F03/F07/F08/F11/F13/F14 changes and F10 missing-context proofs implemented; F04 truthful wording implemented with migration deferred; F09 first-stop association identified and remains content-dependent. 427 automated tests pass, lint/typecheck/build pass. F10 active Website controls: 126 PASS, zero FAIL/UNTESTED; four separate Catalog public-presentation FAILs remain; retained keys 84 compatibility PASS; historical protected entries 41 UNTESTED. No complete CMS acceptance or hosted persistence claim. Full dependency audit has an unchanged development-only ESLint chain advisory; production-only audit is clean. No release action/cloud mutation taken. See CMS-FINAL-ACCEPTANCE-REPORT.md and CMS-FINAL-COMPLETION-TRACKER.md.
+
+
+## 2026-10-16 - F04 implementation completed locally
+
+Latest explicit authorization retires all four Catalog presentation controls, superseding the earlier three-control plan. New compatible local save_catalog_v1 migration preserves omitted stored values and historic email copy; no columns/records deleted. 438 regression tests pass; lint, TypeScript, production build and strict F10 verification pass. F10 active Website controls remain 126 PASS; four retired Catalog fields now have separate compatibility PASS evidence, not public-rendering PASS. Prior FAIL evidence is archived. No push, hosted migration, deployment or production mutation. Migration-first release is mandatory and requires separate approval. F09 approved editorial content and broader manual/device/dependency limits remain. See CMS-F04-IMPLEMENTATION-RESULT.md.

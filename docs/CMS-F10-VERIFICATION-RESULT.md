@@ -1,10 +1,10 @@
 # F10 CMS verification result
 
-Generated 2026-10-16T07:25:25.799Z. Baseline `a890a6a944886fce5b5adcdf893fe6e4f4666d00`. Local disposable data only.
+Generated 2026-10-16T09:57:50.437Z. Baseline `5fb987b83f3a575a65d1fb77a96acc6731c97468`. Local disposable data only.
 
 Active controls: 126; retained keys: 84; historical protected code entries: 41. Structural connectivity is separate from behavioral status.
 
-Behavioral fields/entities: {"PASS":126,"FAIL":4,"UNTESTED":5}. Active-control behavior: {"PASS":121,"FAIL":0,"UNTESTED":5}. Independent safety/role/entity checks: {"PASS":20,"FAIL":0,"UNTESTED":0}.
+Behavioral fields/entities: {"PASS":131,"FAIL":0,"UNTESTED":0}. Active-control behavior: {"PASS":126,"FAIL":0,"UNTESTED":0}. Independent safety/role/entity checks: {"PASS":21,"FAIL":0,"UNTESTED":0}.
 
 | Field | Owner | Consumer | Connectivity | Status | Limits / failure |
 |---|---|---|---|---|---|
@@ -27,8 +27,8 @@ Behavioral fields/entities: {"PASS":126,"FAIL":4,"UNTESTED":5}. Active-control b
 | homeRoute.title | Homepage stop overview | HomepageView | Connected | PASS |  |
 | homeRoute.text | Homepage stop overview | HomepageView | Connected | PASS |  |
 | homeRoute.action | Homepage stop overview | HomepageView | Connected | PASS |  |
-| route.eyebrow | The places between | HomepageView | Connected | UNTESTED | Your-day server page composition requires request-bound loaders; no artificial replacement used. |
-| route.title | The places between | HomepageView | Connected | UNTESTED | Your-day server page composition requires request-bound loaders; no artificial replacement used. |
+| route.eyebrow | The places between | actual YourDay route, synthetic request-loader context | Connected | PASS |  |
+| route.title | The places between | actual YourDay route, synthetic request-loader context | Connected | PASS |  |
 | route.showOnHomepage | The places between | HomepageView | Connected | PASS | Conditional DOM/projection proof; not physical-device CSS or interaction proof. |
 | live.eyebrow | Your day, without the guesswork | HomepageView | Connected | PASS |  |
 | live.title | Your day, without the guesswork | HomepageView | Connected | PASS |  |
@@ -101,7 +101,7 @@ Behavioral fields/entities: {"PASS":126,"FAIL":4,"UNTESTED":5}. Active-control b
 | routePage.text | Route & Live Map presentation | RouteJourney | Connected | PASS |  |
 | routePage.departures | Route & Live Map presentation | RouteJourney | Connected | PASS |  |
 | routePage.stops | Route & Live Map presentation | RouteJourney | Connected | PASS |  |
-| routePage.mapAction | Route & Live Map presentation | RouteJourney | Connected | UNTESTED | Only rendered after opening a client stop dialog; SSR cannot establish interactive state. |
+| routePage.mapAction | Route & Live Map presentation | actual React client component, opened/closed in isolated jsdom | Connected | PASS |  |
 | routePage.seoTitle | Route & Live Map presentation | editorialMetadata | Connected | PASS |  |
 | routePage.seoDescription | Route & Live Map presentation | editorialMetadata | Connected | PASS |  |
 | routePage.seoImage | Route & Live Map presentation | editorialMetadata | Connected | PASS | Image URL binding only; no remote fetch, visual crop or binary upload proof. |
@@ -111,8 +111,8 @@ Behavioral fields/entities: {"PASS":126,"FAIL":4,"UNTESTED":5}. Active-control b
 | labels.reviews | Shared visitor action labels | HomepageView | Connected | PASS |  |
 | labels.leaveReview | Shared visitor action labels | HomepageView | Connected | PASS |  |
 | labels.originalReview | Shared visitor action labels | HomepageView | Connected | PASS |  |
-| bookingDialog.title | Shared visitor action labels | HomepageView | Connected | UNTESTED | Booking dialog opens on client interaction; not included in SSR. |
-| bookingDialog.text | Shared visitor action labels | HomepageView | Connected | UNTESTED | Booking dialog opens on client interaction; not included in SSR. |
+| bookingDialog.title | Shared visitor action labels | actual React client component, opened/closed in isolated jsdom | Connected | PASS |  |
+| bookingDialog.text | Shared visitor action labels | actual React client component, opened/closed in isolated jsdom | Connected | PASS |  |
 | bookPage.seoTitle | Booking search & social preview | editorialMetadata | Connected | PASS |  |
 | bookPage.seoDescription | Booking search & social preview | editorialMetadata | Connected | PASS |  |
 | bookPage.seoImage | Booking search & social preview | editorialMetadata | Connected | PASS | Image URL binding only; no remote fetch, visual crop or binary upload proof. |
@@ -137,12 +137,15 @@ Behavioral fields/entities: {"PASS":126,"FAIL":4,"UNTESTED":5}. Active-control b
 | destinations.draft_publish_association | destinations | GuideView + sightseeingStops | Explicit consumer/boundary probe | PASS | Local synthetic SQL and public projection; not hosted UI authentication. |
 | partners.immediate_active_publication | partners | PartnersSection + anonymous RLS | Explicit consumer/boundary probe | PASS | Local synthetic SQL and public projection; not hosted UI authentication. |
 | reviews.publication_soft_delete | reviews | GuestReviews with published selection | Explicit consumer/boundary probe | PASS | Local synthetic SQL and public projection; not hosted UI authentication. |
-| catalog.product.meta_title | Products & suppliers | websiteMetadata (Website authority) | Disconnected | FAIL | Known F04: catalog SEO/image fields persist but public SEO uses Website/Destination entities. No application fix included. |
-| catalog.product.meta_description | Products & suppliers | websiteMetadata (Website authority) | Disconnected | FAIL | Known F04: catalog SEO/image fields persist but public SEO uses Website/Destination entities. No application fix included. |
-| catalog.product.og_image | Products & suppliers | websiteMetadata (Website authority) | Disconnected | FAIL | Known F04: catalog SEO/image fields persist but public SEO uses Website/Destination entities. No application fix included. |
-| catalog.product.og_image_alt | Products & suppliers | websiteMetadata (Website authority) | Disconnected | FAIL | Known F04: catalog SEO/image fields persist but public SEO uses Website/Destination entities. No application fix included. |
 | calendar_pricing.permission_boundary | calendar_pricing | existing pricing RPC authorization | Explicit consumer/boundary probe | PASS | Local synthetic SQL and public projection; not hosted UI authentication. |
 | meeting_point.append_only_owner_versions | meeting_point | meeting_point_versions SQL | Explicit consumer/boundary probe | PASS | Local synthetic SQL and public projection; not hosted UI authentication. |
+
+## Retired Catalog compatibility (not public rendering)
+
+- PASS: catalog.product.meta_title — Compatibility PASS only; not a claim that retired Catalog properties render as public SEO.
+- PASS: catalog.product.meta_description — Compatibility PASS only; not a claim that retired Catalog properties render as public SEO.
+- PASS: catalog.product.og_image — Compatibility PASS only; not a claim that retired Catalog properties render as public SEO.
+- PASS: catalog.product.og_image_alt — Compatibility PASS only; not a claim that retired Catalog properties render as public SEO.
 
 ## Independent checks
 
@@ -164,9 +167,10 @@ Behavioral fields/entities: {"PASS":126,"FAIL":4,"UNTESTED":5}. Active-control b
 - PASS: entities.partners.immediate_active_publication — real SQL persistence + PartnersSection + anonymous RLS
 - PASS: entities.reviews.publication_soft_delete — real SQL persistence + GuestReviews with published selection
 - PASS: entities.catalog.persistence_and_owned_inclusions — real catalog RPC / canonical FAQ component
+- PASS: entities.catalog.retirement_compatibility — active editor inventory + real old/current RPC saves + Website SEO
 - PASS: entities.calendar_pricing.permission_boundary — real SQL persistence + existing pricing RPC authorization
 - PASS: entities.meeting_point.append_only_owner_versions — real SQL persistence + meeting_point_versions SQL
 
 ## Interpretation
 
-FAIL is a detected connection/assertion failure, including pre-existing catalog gaps; UNTESTED is never counted as PASS. See machine-readable lifecycle stages and evidence per row. Compatibility PASS means stored data survived, not that dormant keys have public consumers. Code-controlled entries remain behaviorally UNTESTED. The 126 active Website controls are not a count of every Destination/Partner/Review/Calendar subfield; entity cases are representative lifecycle and boundary probes, not exhaustive per-property certification. No external map, provider, hosted API, credentials or public browser route was used. SSR does not establish physical visibility, client interaction, actual authenticated sessions or hosted persistence. Historical 134-field artifacts remain untouched.
+FAIL is a detected connection/assertion failure; UNTESTED is never counted as PASS. See machine-readable lifecycle stages and evidence per row. Compatibility PASS means stored data survived, not that dormant keys have public consumers. Code-controlled entries remain behaviorally UNTESTED. The 126 active Website controls are not a count of every Destination/Partner/Review/Calendar subfield; entity cases are representative lifecycle and boundary probes, not exhaustive per-property certification. No external map, provider, hosted API, credentials or public browser route was used. Client probes open and close actual dialogs in a simulated DOM; request probes render the actual Your Day page with synthetic loaders. Neither establishes physical-device visibility, actual authenticated sessions or hosted persistence. Historical 134-field artifacts remain untouched.

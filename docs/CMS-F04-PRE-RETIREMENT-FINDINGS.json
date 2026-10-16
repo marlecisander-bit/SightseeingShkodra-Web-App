@@ -1,0 +1,80 @@
+{
+  "historicalOnly": true,
+  "generatedAt": "2026-10-16T08:15:08.140Z",
+  "baseline": "8f71e2743bff64cc04018fb433f4c51066394b23",
+  "note": "Pre-retirement FAIL evidence retained; not current active-control inventory. Retirement requires editor absence and SQL compatibility proof.",
+  "findings": [
+    {
+      "field": "catalog.product.meta_title",
+      "owner": "Products & suppliers",
+      "classification": "entity field",
+      "consumer": "websiteMetadata (Website authority)",
+      "connectivity": "Disconnected",
+      "status": "FAIL",
+      "method": "catalog RPC \u2192 fresh SQL read \u2192 real Website metadata; marker absent",
+      "evidence": "entities.catalog.persistence_and_owned_inclusions",
+      "lifecycle": {
+        "save": "PASS",
+        "freshRead": "PASS",
+        "publicRendering": "FAIL"
+      },
+      "limitations": [
+        "Known F04: catalog SEO/image fields persist but public SEO uses Website/Destination entities. No application fix included."
+      ]
+    },
+    {
+      "field": "catalog.product.meta_description",
+      "owner": "Products & suppliers",
+      "classification": "entity field",
+      "consumer": "websiteMetadata (Website authority)",
+      "connectivity": "Disconnected",
+      "status": "FAIL",
+      "method": "catalog RPC \u2192 fresh SQL read \u2192 real Website metadata; marker absent",
+      "evidence": "entities.catalog.persistence_and_owned_inclusions",
+      "lifecycle": {
+        "save": "PASS",
+        "freshRead": "PASS",
+        "publicRendering": "FAIL"
+      },
+      "limitations": [
+        "Known F04: catalog SEO/image fields persist but public SEO uses Website/Destination entities. No application fix included."
+      ]
+    },
+    {
+      "field": "catalog.product.og_image",
+      "owner": "Products & suppliers",
+      "classification": "entity field",
+      "consumer": "websiteMetadata (Website authority)",
+      "connectivity": "Disconnected",
+      "status": "FAIL",
+      "method": "catalog RPC \u2192 fresh SQL read \u2192 real Website metadata; marker absent",
+      "evidence": "entities.catalog.persistence_and_owned_inclusions",
+      "lifecycle": {
+        "save": "PASS",
+        "freshRead": "PASS",
+        "publicRendering": "FAIL"
+      },
+      "limitations": [
+        "Known F04: catalog SEO/image fields persist but public SEO uses Website/Destination entities. No application fix included."
+      ]
+    },
+    {
+      "field": "catalog.product.og_image_alt",
+      "owner": "Products & suppliers",
+      "classification": "entity field",
+      "consumer": "websiteMetadata (Website authority)",
+      "connectivity": "Disconnected",
+      "status": "FAIL",
+      "method": "catalog RPC \u2192 fresh SQL read \u2192 real Website metadata; marker absent",
+      "evidence": "entities.catalog.persistence_and_owned_inclusions",
+      "lifecycle": {
+        "save": "PASS",
+        "freshRead": "PASS",
+        "publicRendering": "FAIL"
+      },
+      "limitations": [
+        "Known F04: catalog SEO/image fields persist but public SEO uses Website/Destination entities. No application fix included."
+      ]
+    }
+  ]
+}

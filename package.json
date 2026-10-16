@@ -22,7 +22,8 @@
     "test:postgres": "node --test tests/postgres/*.test.mjs",
     "emails:preview": "node --import tsx scripts/preview-booking-emails.mjs",
     "verify:cms": "node --import tsx scripts/verify-cms-fields.mjs",
-    "test:cms-verification": "node --import tsx --test tests/verification/*.test.mjs"
+    "test:cms-verification": "node --import tsx --test tests/verification/*.test.mjs",
+    "report:media": "node scripts/report-media-usage.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
@@ -47,6 +48,7 @@
     "embedded-postgres": "17.10.0-beta.17",
     "eslint": "9.39.5",
     "eslint-config-next": "16.3.8",
+    "jsdom": "30.1.3",
     "jsqr": "^1.4.0",
     "pg": "8.23.0",
     "pngjs": "^7.0.0",

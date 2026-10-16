@@ -4,48 +4,12 @@ import { saveCatalog } from "./catalog-actions";
 import { SubmitButton } from "./submit-button";
 import { MutationForm } from "./mutation-form";
 import { ProductNameFields } from "./product-name-fields";
-import { SavedImageField } from "./image-field";
+import { catalogFields } from "@/modules/content/catalog-fields";
 import { CatalogCreate } from "./catalog-create";
 import styles from "./catalog.module.css";
 
 type Row = Record<string, string | number | null>;
-const fields: Record<
-  string,
-  {
-    key: string;
-    label: string;
-    type?: string;
-    required?: boolean;
-    options?: string[];
-  }[]
-> = {
-  product: [
-    { key: "title", label: "Product name", required: true },
-    { key: "slug", label: "Page address", required: true },
-    {
-      key: "type",
-      label: "Experience type",
-      options: ["van_tour", "boat_trip", "attraction_ticket"],
-    },
-    {
-      key: "status",
-      label: "Publication",
-      options: ["draft", "published", "archived"],
-    },
-    { key: "meta_title", label: "Search result title (required to publish)" },
-    { key: "meta_description", label: "Tour description and search summary (shared; required to publish)" },
-    { key: "inclusions", label: "Ticket inclusions and admission information" },
-    { key: "og_image", label: "Social sharing image address", type: "url" },
-    {
-      key: "og_image_alt",
-      label: "Image description (required with an image)",
-    },
-  ],
-  supplier: [
-    { key: "name", label: "Supplier name", required: true },
-    { key: "type", label: "Supplier type", options: ["owned", "partner"] },
-  ],
-};
+
 export function CatalogRecordEditor({
   entity,
   row,
@@ -63,10 +27,11 @@ export function CatalogRecordEditor({
       className="catalog-form"
     >
       <input type="hidden" name="id" value={row.id ?? ""} />
+      {entity === "product" && <p>Product name, status and inclusions remain managed here. Public page search titles and social images are managed in Website; actual passenger prices are managed in Calendar &amp; Pricing. Existing descriptions remain available to booking emails. Historical presentation values are retained and no longer edited here.</p>}
       {entity === "product" && !row.id && <ProductNameFields />}
       {entity === "product" && row.id && <p>Page address and operational type are developer-controlled bindings.</p>}
-      {fields[entity].filter(field => !(entity === "product" && row.id && ["slug","type"].includes(field.key))).filter(field => !(entity === "product" && !row.id &&
-        (field.key === "title" || field.key === "slug"))).map((field) => field.key === "og_image" ? <SavedImageField key={field.key} operatorId={operatorId} name={field.key} label="Tour hero and social sharing image (shared)" initial={String(row[field.key] ?? "")}/> : field.key === "slug" ? <details key={field.key}><summary>Advanced: page address</summary><label>Page address<input name="slug" required maxLength={200} defaultValue={row.slug ?? ""}/></label><p>Changing this address can affect existing links.</p></details> : (
+      {catalogFields[entity].filter(field => !(entity === "product" && row.id && ["slug","type"].includes(field.key))).filter(field => !(entity === "product" && !row.id &&
+        (field.key === "title" || field.key === "slug"))).map((field) => field.key === "slug" ? <details key={field.key}><summary>Advanced: page address</summary><label>Page address<input name="slug" required maxLength={200} defaultValue={row.slug ?? ""}/></label><p>Changing this address can affect existing links.</p></details> : (
         <label key={field.key}>
           {field.label}
           {field.options ? (
@@ -94,11 +59,7 @@ export function CatalogRecordEditor({
               maxLength={
                 field.type === "number"
                   ? undefined
-                  : field.key === "inclusions" ? 700 : field.key === "meta_description"
-                    ? 500
-                    : field.key === "og_image"
-                      ? 2000
-                      : 200
+                  : field.key === "inclusions" ? 700 : 200
               }
             />
           )}
@@ -153,7 +114,7 @@ export async function CatalogPanel({
     client
       .from("products")
       .select(
-        "id,title,slug,type,status,inclusions,supplier_id,meta_title,meta_description,og_image,og_image_alt,pricing_rules,updated_at",
+        "id,title,slug,type,status,inclusions,supplier_id,pricing_rules,updated_at",
       )
       .eq("operator_id", operatorId)
       .order("title")
@@ -188,7 +149,7 @@ export async function CatalogPanel({
         </p>
       )}
       <p>
-        Add your search title and description before publishing. Manage schedules, seats and passenger prices under Calendar & Pricing. Existing bookings keep their agreed total.
+        Product publication does not require legacy search titles, descriptions or images. Public SEO is managed in Website. Manage schedules, seats and passenger prices under Calendar & Pricing. Existing bookings keep their agreed total.
       </p>
       <p>Stops and live vehicle information are managed from Live Map.</p>
       {(["product", "supplier"] as const).map((entity) => (

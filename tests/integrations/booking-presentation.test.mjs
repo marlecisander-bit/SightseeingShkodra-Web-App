@@ -13,8 +13,9 @@ test('date-scoped discovery reads supplied standard, varied and discount quotes 
  const fares=[1200,800,1000];assert.equal(lowestQuotedFare(fares),800);assert.deepEqual(fares,[1200,800,1000]);
  assert.equal(lowestQuotedFare([1000,1000]),1000);assert.equal(lowestQuotedFare([1250]),1250);
 });
-test('missing, corrupt or zero minimum uses availability fallback, never a misleading paid minimum',()=>{
- for(const values of [[],[NaN,Infinity,-1],[0],[0,1000]])assert.equal(lowestQuotedFare(values),undefined);
+test('missing or corrupt fares use fallback; a verified zero remains zero',()=>{
+ for(const values of [[],[NaN,Infinity,-1]])assert.equal(lowestQuotedFare(values),undefined);
+ assert.equal(lowestQuotedFare([0]),0);assert.equal(lowestQuotedFare([0,1000]),0);
 });
 test('scarcity uses returned capacity and availability without changing bookability',()=>{
  assert.equal(availabilityLabel({remaining:8,available:true}),'Available');

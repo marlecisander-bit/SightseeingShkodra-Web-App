@@ -13,11 +13,11 @@ after(async()=>{await db.close();});
 async function save(entity,id,data,remove=false,operator=op) {
   return (await db.query('select save_catalog_v1($1,$2,$3,$4,$5,$6) as id',[operator,actor,entity,id,JSON.stringify(data),remove])).rows[0].id;
 }
-test('catalog creates, edits and archives content with SEO validation and audit',async()=>{
+test('catalog creates, edits and archives content with retained-field validation and audit',async()=>{
   const supplier=await save('supplier',null,{name:'Local supplier',type:'partner'});
   const data={title:'Test tour',slug:'test-tour',type:'van_tour',status:'draft',supplier_id:supplier};
   const product=await save('product',null,data);
-  await assert.rejects(save('product',product,{...data,status:'published'}),e=>e.code==='22023');
+  await save('product',product,{...data,status:'published'});
   await assert.rejects(save('product',product,{...data,og_image:'https://example.com/image.jpg'}),e=>e.code==='22023');
   await save('product',product,{...data,status:'published',meta_title:'Tour',meta_description:'Tour description'});
   const stop=await save('stop',null,{name:'Stop',product_id:product,lat:42,lng:19,sort_order:0});
@@ -26,7 +26,7 @@ test('catalog creates, edits and archives content with SEO validation and audit'
   await save('stop',stop,{},true);
   await save('product',product,{},true);
   assert.equal((await db.query('select status from products where id=$1',[product])).rows[0].status,'archived');
-  assert.equal((await db.query("select count(*)::int as n from audit_logs where entity_id=$1 and action='catalog.changed'",[product])).rows[0].n,3);
+  assert.equal((await db.query("select count(*)::int as n from audit_logs where entity_id=$1 and action='catalog.changed'",[product])).rows[0].n,4);
 });
 test('foreign operators, forged staff roles and cross-tenant parents are rejected',async()=>{
   await assert.rejects(save('supplier',null,{name:'Wrong',type:'partner'},false,other),e=>e.code==='42501');
