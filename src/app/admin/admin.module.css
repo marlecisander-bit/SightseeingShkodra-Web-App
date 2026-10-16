@@ -203,3 +203,156 @@
 .bookingContact { margin-top:12px; }
 
 @media(max-width:1023px) { .shell :is(input:not([type=checkbox]):not([type=hidden]),select,textarea) { font-size:16px; } .bookingCard > .bookingSummary { padding:8px; } }
+
+/* Phase A: task navigation only; existing editor and operation styles remain authoritative. */
+.taskNavigation {display:grid;gap:6px;}
+.shell .taskGroup {border:0;padding:0;min-width:0;}
+.shell .taskGroup > summary {display:flex;align-items:center;gap:10px;min-height:48px;padding:10px 12px;list-style:none;border-radius:8px;font-size:14px;}
+.taskGroup > summary::-webkit-details-marker {display:none;}
+.taskGroup > summary svg {width:20px;height:20px;flex:none;}
+.taskGroup[open] > summary {background:var(--brand-red-soft);color:var(--brand-text);}
+.chevron {margin-left:auto;}
+.taskGroup[open] .chevron {transform:rotate(180deg);}
+.taskItems {list-style:none;padding:0;margin:4px 0 12px;display:grid;gap:3px;}
+.taskItems a {display:grid;align-content:center;gap:4px;min-height:44px;padding:10px 12px;border-left:3px solid transparent;text-decoration:none;color:var(--ss-charcoal);border-radius:6px;overflow-wrap:anywhere;}
+.taskItems a small {font-size:12px;line-height:1.45;color:var(--ss-muted);font-weight:400;}
+.taskItems a:hover {background:var(--brand-red-soft);}
+.taskItems a[aria-current=page] {border-left-color:var(--brand-red);background:var(--brand-red-soft);color:var(--brand-text);font-weight:700;}
+.shell .accountMenu {margin-top:16px;border-top:1px solid var(--ss-border);padding:12px 0;}
+.accountActions {display:grid;gap:8px;font-size:13px;}
+.accountActions p {overflow-wrap:anywhere;}
+.accountActions a {display:flex;align-items:center;min-height:44px;padding:8px 12px;}
+.accountActions button {width:100%;}
+.bottomNavigation {position:fixed;inset:auto 0 0;z-index:25;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;padding:6px max(8px,env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));border-top:1px solid var(--ss-border);background:var(--ss-white);}
+.shell .bottomNavigation :is(a,button) {display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0;min-height:52px;margin:0;padding:5px 2px;border:0;border-radius:8px;background:transparent;color:var(--ss-charcoal);font-size:12px;line-height:1.3;text-decoration:none;}
+.shell .bottomNavigation [aria-current=page] {background:var(--brand-red-soft);color:var(--brand-text);font-weight:700;}
+.shell .bottomNavigation button:disabled {opacity:.6;cursor:default;}
+.bottomNavigation svg {width:21px;height:21px;}
+.shell[data-admin-phase] .workspace {padding-bottom:calc(100px + env(safe-area-inset-bottom));}
+.shell[data-admin-phase] .mobileDrawer {inset:auto 0 0;margin:0;width:100%;max-width:100%;height:auto;max-height:90dvh;border-radius:16px 16px 0 0;background:var(--ss-white);}
+.mobileTaskGroup {border-top:1px solid var(--ss-border);padding-top:8px;}
+.drawerHeading h2 {margin:0;font-size:20px;}
+.shell[data-admin-phase] .drawerHeading {background:var(--ss-white);}
+.shell[data-admin-phase] .drawerBody {padding-bottom:calc(24px + env(safe-area-inset-bottom));}
+.shell[data-admin-phase] :is(button,a,summary):focus-visible {outline:3px solid var(--ss-focus);outline-offset:2px;}
+@media(min-width:1024px){
+ .bottomNavigation {display:none;}
+ .shell[data-admin-phase] .workspace {padding-bottom:32px;}
+ .shell[data-admin-phase] .desktopNavigation {max-height:calc(100dvh - 48px);overflow:auto;scrollbar-gutter:stable;padding:8px;background:var(--ss-white);border:1px solid var(--ss-border);border-radius:12px;}
+}
+@media(max-width:1023px){
+ .shell[data-admin-phase] {scroll-padding-bottom:100px;}
+ .shell[data-admin-phase] :is(input,textarea,select,button) {scroll-margin-bottom:100px;}
+}
+
+.pageTrail {font-size:12px;color:var(--ss-muted);margin:0 0 16px;overflow-wrap:anywhere;}
+.shell[data-admin-phase] .mobileTaskGroup {padding:12px 0;margin:0;display:block;}
+
+/* Phase A.1 — Warm Minimal. Palette and aliases live only on admin shells.
+   Private public-page previews do not use .shell and retain the public theme. */
+.shell {
+ --admin-primary:#C62832; --admin-primary-hover:#A91F29; --admin-primary-soft:#FBEDEF;
+ --admin-background:#FAFAF8; --admin-surface:#FFFFFF; --admin-text:#20252B;
+ --admin-text-muted:#68737D; --admin-border:#E7E9EC;
+ --admin-success:#238365; --admin-warning:#B76A18; --admin-danger:#C62832;
+ /* Stronger functional borders and semantic text pairs meet control/text contrast. */
+ --admin-control-border:#858E96; --admin-hover:#F2F3F2; --admin-focus:#A91F29;
+ --admin-success-text:#1A7055; --admin-muted-on-soft:#5E6872; --admin-success-soft:#EDF7F2; --admin-warning-soft:#FFF4E5; --admin-warning-text:#855013;
+ --admin-danger-soft:#FBEDEF; --admin-neutral-soft:#F2F3F5;
+ --ss-primary:var(--admin-primary); --ss-primary-hover:var(--admin-primary-hover); --ss-primary-active:var(--admin-primary-hover);
+ --ss-primary-soft:var(--admin-primary-soft); --ss-primary-border:var(--admin-control-border);
+ --brand-red:var(--admin-primary); --brand-red-hover:var(--admin-primary-hover); --brand-red-active:var(--admin-primary-hover);
+ --brand-text:var(--admin-primary); --brand-red-soft:var(--admin-primary-soft); --brand-red-border:var(--admin-border); --brand-on-red:#FFFFFF;
+ --ss-charcoal:var(--admin-text); --ss-ink:var(--admin-text); --ink:var(--admin-text);
+ --ss-muted:var(--admin-text-muted); --ss-border:var(--admin-border); --ss-input-border:var(--admin-control-border);
+ --ss-white:var(--admin-surface); --ss-cream:var(--admin-background); --ss-sand:var(--admin-neutral-soft);
+ --ss-focus:var(--admin-focus); --ss-radius:12px; --ss-radius-control:9px; --ss-shadow:none;
+ --ss-green-ink:var(--admin-success-text); --ss-success-soft:var(--admin-success-soft);
+ --ss-warning-ink:var(--admin-warning-text); --ss-warning-soft:var(--admin-warning-soft); --admin-positive:var(--admin-success);
+ --admin-accent:var(--admin-primary); --admin-accent-soft:var(--admin-primary-soft);
+ background:var(--admin-background);color:var(--admin-text);font-size:14px;line-height:1.55;
+}
+.shell .header {background:var(--admin-surface);color:var(--admin-text);border-bottom:1px solid var(--admin-border);box-shadow:none;}
+.shell .header a,.shell .header button {color:var(--admin-text);}
+.shell .header :is(a,button):focus-visible {outline-color:var(--admin-focus);}
+.shell .workspaceIdentity {border-color:var(--admin-border);}
+.shell .adminBrand img {width:136px;}
+.shell h1 {font-size:clamp(24px,2.2vw,28px);font-weight:650;line-height:1.25;letter-spacing:-.025em;}
+.shell h2 {font-size:20px;font-weight:600;line-height:1.35;}
+.shell h3 {font-size:16px;font-weight:600;line-height:1.4;}
+.shell p {line-height:1.55;}
+.shell :is(time,input[type=date],input[type=time],input[type=number],td,[data-admin-status]) {font-variant-numeric:tabular-nums;}
+.shell .panel {background:var(--admin-surface);border:1px solid var(--admin-border);border-radius:12px;box-shadow:none;}
+.shell .cmsPanel {background:transparent;border:0;}
+.shell label {font-size:14px;font-weight:500;}
+.shell :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]),select,textarea) {border:1px solid var(--admin-control-border);border-radius:9px;background:var(--admin-surface);color:var(--admin-text);font:inherit;min-height:44px;padding:10px 12px;}
+.shell input::placeholder,.shell textarea::placeholder {color:var(--admin-text-muted);opacity:1;}
+.shell :is(input,select,textarea):disabled {background:var(--admin-neutral-soft);color:var(--admin-text-muted);opacity:1;cursor:not-allowed;}
+.shell :is(input[type=checkbox],input[type=radio]) {accent-color:var(--admin-primary);}
+.shell :is(button,:global(.ss-button)) {min-height:44px;border:1px solid transparent;border-radius:9px;padding:10px 16px;font-size:14px;font-weight:500;line-height:1.4;background:var(--admin-primary);color:#fff;box-shadow:none;}
+.shell :is(button,:global(.ss-button)):not(:disabled):hover {background:var(--admin-primary-hover);color:#fff;}
+.shell :is(button[type=button],button[value=draft],.secondary,:global(.ss-button--outline)) {background:var(--admin-surface);color:var(--admin-text);border-color:var(--admin-control-border);}
+.shell :is(button[type=button],button[value=draft],.secondary,:global(.ss-button--outline)):not(:disabled):hover {background:var(--admin-hover);color:var(--admin-text);}
+.shell button:disabled {opacity:.6;cursor:not-allowed;}
+.shell button[aria-busy=true],.shell [aria-busy=true] button {cursor:wait;}
+.shell button[name=operation]:is([value=delete],[value=remove]) {background:var(--admin-surface);color:var(--admin-danger);border-color:var(--admin-danger);}
+.shell button[name=operation]:is([value=delete],[value=remove]):not(:disabled):hover {background:var(--admin-danger-soft);color:var(--admin-danger);}
+.shell :is(a,button,input,select,textarea,summary,[tabindex]):focus-visible {outline:3px solid var(--admin-focus);outline-offset:3px;}
+.shell :global(.ss-button-label) {display:inline-flex;align-items:center;justify-content:center;gap:8px;}
+.shell [data-admin-icon] {flex:none;vertical-align:middle;}
+.shell .toolCard {border:1px solid var(--admin-border);background:var(--admin-surface);border-radius:12px;box-shadow:none;}
+.shell .todayActions a {background:var(--admin-surface);color:var(--admin-text);border-color:var(--admin-control-border);}
+.shell .todayActions a:hover {background:var(--admin-hover);}
+.shell form[method=get] {background:var(--admin-background);border-color:var(--admin-border);}
+.shell .connectionNotice {background:var(--admin-warning-soft);color:var(--admin-warning-text);}
+.shell .bookingCard,.shell .bookingContact {box-shadow:none;border-color:var(--admin-border);}
+.shell table {border-collapse:collapse;font-size:14px;}
+.shell :is(th,td) {padding:12px;text-align:left;border-bottom:1px solid var(--admin-border);background:var(--admin-surface);}
+.shell th {color:var(--admin-text-muted);font-size:13px;font-weight:600;}
+.shell [data-admin-status] {display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:6px;font-size:12px;font-weight:500;line-height:1.5;max-width:100%;overflow-wrap:anywhere;}
+.shell [data-admin-status=success] {background:var(--admin-success-soft);color:var(--admin-success-text);}
+.shell [data-admin-status=warning] {background:var(--admin-warning-soft);color:var(--admin-warning-text);}
+.shell [data-admin-status=danger] {background:var(--admin-danger-soft);color:var(--admin-danger);}
+.shell [data-admin-status=neutral] {background:var(--admin-neutral-soft);color:var(--admin-muted-on-soft);}
+.shell .taskGroup > summary {font-weight:500;color:var(--admin-text);border-radius:9px;}
+.shell .taskGroup > summary svg {color:var(--admin-text-muted);}
+.shell .taskGroup > summary:hover {background:var(--admin-hover);}
+.shell .taskGroup[open] > summary {background:var(--admin-primary-soft);color:var(--admin-primary);}
+.shell .taskGroup[open] > summary svg {color:var(--admin-primary);}
+.shell .taskItems a {border-left:0;padding-left:38px;border-radius:9px;color:var(--admin-text);}
+.shell .taskItems a:hover {background:var(--admin-hover);}
+.shell .taskItems a[aria-current=page] {border-left:0;background:var(--admin-primary-soft);color:var(--admin-primary);font-weight:500;}
+.shell .taskItems a > span {display:flex;align-items:center;gap:6px;}
+.externalIcon {display:inline-flex;flex:none;color:var(--admin-text-muted);}
+.shell .accountMenu {margin-top:auto;}
+.shell .accountActions a {gap:8px;}
+.shell .bottomNavigation {background:var(--admin-surface);border-color:var(--admin-border);}
+.shell .bottomNavigation :is(a,button) {background:transparent;border:0;color:var(--admin-text-muted);font-size:12px;font-weight:500;padding:5px 2px;}
+.shell .bottomNavigation [aria-current=page] {background:var(--admin-primary-soft);color:var(--admin-primary);}
+.shell .bottomNavigation :is(a,button):not(:disabled):hover {background:var(--admin-hover);color:var(--admin-primary);}
+.shell .drawerHeading button {display:inline-flex;gap:6px;align-items:center;background:var(--admin-surface);color:var(--admin-text);border-color:var(--admin-control-border);}
+.shell .drawerHeading h2 {font-size:20px;}
+.shell .mobileTaskGroup h3 {font-size:14px;font-weight:600;color:var(--admin-text-muted);}
+.shell .mobileTaskGroup .taskItems a {padding-left:12px;}
+@media(min-width:1024px){
+ .shell[data-admin-phase] .desktopNavigation {width:248px;max-width:100%;display:flex;flex-direction:column;gap:20px;min-height:calc(100dvh - 150px);padding:10px 12px;border:0;border-right:1px solid var(--admin-border);border-radius:0;background:var(--admin-surface);}
+ .shell .taskNavigation {width:100%;}
+ .shell .header {padding-block:12px;}
+}
+@media(max-width:1023px){
+ .shell :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]),select,textarea) {font-size:16px;}
+ .shell .adminBrand img {width:116px;}
+ .shell[data-admin-phase] .taskNavigation {padding:0;}
+}
+@media(prefers-reduced-motion:reduce){
+ .shell,.shell *,.shell *::before,.shell *::after {scroll-behavior:auto!important;animation:none!important;transition:none!important;}
+}
+
+.shell .panel h1 {font-size:clamp(24px,2.2vw,28px);font-weight:650;line-height:1.25;}
+.shell .accountActions button {background:var(--admin-surface);color:var(--admin-text);border-color:var(--admin-control-border);}
+.shell .accountActions button:hover {background:var(--admin-hover);color:var(--admin-text);}
+
+.shell button[data-admin-action=secondary] {background:var(--admin-surface);color:var(--admin-text);border-color:var(--admin-control-border);}
+.shell button[data-admin-action=secondary]:not(:disabled):hover {background:var(--admin-hover);color:var(--admin-text);}
+.shell button[data-admin-action=primary] {background:var(--admin-primary);color:#fff;border-color:transparent;}
+.shell button[data-admin-action=primary]:not(:disabled):hover {background:var(--admin-primary-hover);color:#fff;}

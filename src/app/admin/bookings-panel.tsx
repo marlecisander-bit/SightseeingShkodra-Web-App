@@ -1,3 +1,4 @@
+import {AdminStatus} from './admin-status';
 import styles from './admin.module.css';
 import { BookingCard } from './booking-card';
 import { ownerStatus, ownerEmailStatus, ownerEmailEvent } from "./presentation";
@@ -258,7 +259,7 @@ export async function BookingsPanel({
               <strong>{booking?.booking_reference ?? "Pending reservation"}</strong>
               <span>{person?.name ?? "Customer"}</span>
               <span className={styles.bookingFacts}>{items.data.filter(i=>i.order_id===order.id).map((i,index)=>{const d=itemDepartures.data.find(d=>d.id===i.departure_id);return <span key={index}>{d?.service_date} {d?.start_time?.slice(0,5)} / {i.quantity} guests</span>;})}</span>
-              <span className={styles.bookingFacts}><span>{order.currency} {(order.total/100).toFixed(2)}</span><strong>{ownerStatus(order.status)}</strong></span>
+              <span className={styles.bookingFacts}><span>{order.currency} {(order.total/100).toFixed(2)}</span><AdminStatus status={order.status}>{ownerStatus(order.status)}</AdminStatus></span>
               <span className={styles.bookingView}>View booking</span>
             </>}>
             <div className={styles.bookingContact}><h3>Tour &amp; guests</h3>            <ul>
@@ -279,7 +280,7 @@ export async function BookingsPanel({
             <h3>Payment</h3><p>
               Total: {order.currency} {(order.total / 100).toFixed(2)}
             </p>
-            <p>Booking: {booking ? ownerStatus(booking.status) : "Not prepared"}</p>
+            <p>Booking: {booking ? <AdminStatus status={booking.status}>{ownerStatus(booking.status)}</AdminStatus> : "Not prepared"}</p>
             <p>QR status: {booking?.qr_token ? (booking.status==='cancelled'?'Retained - booking cancelled':'Issued'):'Not issued'}. Check-in: {booking?.checked_in_at ? new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeStyle:'short',timeZone:'Europe/Tirane'}).format(new Date(booking.checked_in_at)) : 'Not checked in'}.</p>
             {booking?.qr_token && <BookingQr token={booking.qr_token}/>}
             {deliveries.error ? (
