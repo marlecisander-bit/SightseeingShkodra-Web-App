@@ -47,6 +47,10 @@ test('dynamic published destinations and aliases are allowed; drafting cannot re
  await db.query("select save_destination_v1($1,$2,$3,$4,'draft',0,$5)",[op,actors.content_editor,id,{...dest,text:'Draft-only story'},await stamp()]);
  assert.equal((await db.query('select destination_order n from content_pages where id=$1',[id])).rows[0].n,4);
  await assert.rejects(db.query("select save_destination_v1($1,$2,$3,$4,'publish',4,$5)",[op,actors.content_editor,id,dest,await stamp()]),e=>e.code==='42501');
+ for(const action of ['earlier','later']){
+  await assert.rejects(db.query('select save_destination_v1($1,$2,$3,$4,$5,4,$6)',[op,actors.content_editor,id,dest,action,await stamp()]),e=>e.code==='42501');
+  for(const role of ['owner','admin'])await db.query('select save_destination_v1($1,$2,$3,$4,$5,4,$6)',[op,actors[role],id,dest,action,await stamp()]);
+ }
  await db.query("select save_destination_v1($1,$2,$3,$4,'publish',4,$5)",[op,actors.owner,id,{...dest,slug:'renamed-public-guide'},await stamp()]);
  for(const slug of ['new-public-guide','renamed-public-guide'])await save({...initialWebsiteContent,'nav.0.link':'/explore/'+slug},'draft','owner',(await read()).stamp);
  await save(initialWebsiteContent,'publish','owner',(await read()).stamp);
@@ -86,4 +90,14 @@ test('effective meeting point freezes at confirmation and survives setting and b
  await assert.rejects(db.query('update bookings set meeting_point_snapshot=$1 where order_id=$2',[next,old.orderId]),e=>e.code==='42501');
  for(const b of [old,before,newer])await db.query('select cancel_customer_booking_v1($1)',[b.managementToken]);
  for(const role of ['anon','authenticated'])assert.equal((await db.query("select has_table_privilege($1,'meeting_point_versions','insert') ok",[role])).rows[0].ok,false);
+});
+
+test('Package 1 keeps historical copy and amenity descriptions through draft and publish',async()=>{
+ const amenity={id:'10000000-0000-4000-8000-000000000099',icon:'headphones',title:'Saved audio',description:'Retained historical description',published:true,display_order:1,created_at:'2026-01-01T00:00:00Z',updated_at:'2026-01-01T00:00:00Z'};
+ const saved={...initialWebsiteContent,'route.text':'Historical route copy','labels.ticket':'Historical ticket','labels.faq':'Historical FAQ','hero.amenities':JSON.stringify([amenity]),'hero.book':'Reserve this day'};
+ await save(saved,'draft','content_editor',(await read()).stamp);
+ assert.deepEqual((await read()).body.content,saved);
+ await save(saved,'publish','admin',(await read()).stamp);
+ assert.deepEqual((await read()).published_body.content,saved);
+ await save(initialWebsiteContent,'publish','owner',(await read()).stamp);
 });
