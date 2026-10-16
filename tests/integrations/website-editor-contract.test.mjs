@@ -14,3 +14,10 @@ test("hero amenities retain their existing editable field while obsolete mobile 
   assert.equal(editable.has("nav.book"), true);
   assert.equal(editable.has("hero.title"), true);
 });
+
+ test("retired Package 1 controls remain compatible stored keys", () => {
+ const editable=new Set(editableWebsiteSections.flatMap(s=>s.fields.map(f=>f.key)));
+ const saved={...initialWebsiteContent,"route.text":"Historical route copy","labels.ticket":"Historical ticket label","labels.faq":"Historical FAQ label"};
+ for(const key of ["route.text","labels.ticket","labels.faq"]){assert.equal(editable.has(key),false);assert.equal(validateWebsiteContent(saved)[key],saved[key]);}
+ assert.equal(Object.keys(validateWebsiteContent(saved)).length,210);
+ });

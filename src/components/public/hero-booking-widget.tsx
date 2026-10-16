@@ -8,7 +8,7 @@ import { passengerKeys } from '@/modules/booking/passengers';
 import type { HeroFare } from '@/modules/content/hero-fare';
 import styles from './homepage-hero.module.css';
 /** Presentation of the existing booking context: no second quote request or checkout. */
-export function HeroBookingWidget({fare,productTitle}:{fare?:HeroFare;productTitle?:string}) {
+export function HeroBookingWidget({fare,productTitle,bookingLabel}:{fare?:HeroFare;productTitle?:string;bookingLabel:string}) {
  const {selection,setSelection,availability,open}=useBooking();
  const counts=selection.passengers??{adult:selection.guests,child:0,infant:0};
  const [dateEdited,setDateEdited]=useState(false);
@@ -22,7 +22,7 @@ export function HeroBookingWidget({fare,productTitle}:{fare?:HeroFare;productTit
  return <div className={styles.card} data-floating-obstacle aria-label="Daily ticket availability">{productTitle?<><p className={styles.ticket}>Daily Ticket</p><h2>{productTitle}</h2>
   <form onSubmit={event=>{event.preventDefault();if(!canBook)return;setSelection(current=>({...current,date,departureId:current.date===date?current.departureId:''}));open();}}>
    <div className={styles.fields}><BookingDateSelector value={date} onChange={value=>{setDateEdited(true);setSelection(current=>({...current,date:value,departureId:''}));}}/><details className={styles.passengers}><summary><span>Passengers</span><strong>{caption}</strong><span aria-hidden="true">⌄</span></summary><div><QuantityStepper/></div></details></div>
-   <div className={styles.purchase}><div aria-live="polite" aria-busy={availability.loading}><BookingPriceIndicator amount={amount} date={date} currency={quote?.currency??fare?.currency}/>{availability.loading&&<small>Checking your date…</small>}</div><Button type="submit" size="lg" className="p-button p-button-booking" aria-haspopup="dialog" disabled={!canBook}>Book your day</Button></div>
+   <div className={styles.purchase}><div aria-live="polite" aria-busy={availability.loading}><BookingPriceIndicator amount={amount} date={date} currency={quote?.currency??fare?.currency}/>{availability.loading&&<small>Checking your date…</small>}</div><Button type="submit" size="lg" className="p-button p-button-booking" aria-haspopup="dialog" disabled={!canBook}>{bookingLabel}</Button></div>
    {availability.error&&<p className={styles.feedback} role="status">{availability.error}</p>}{!date&&<p className={styles.feedback}>Choose a date to check availability.</p>}
   </form></>:<><BookingPriceIndicator/><p>Ticket availability is temporarily unavailable.</p></>}</div>;
 }

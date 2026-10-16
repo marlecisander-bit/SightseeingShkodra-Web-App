@@ -11,7 +11,7 @@ const render=(overrides={},props={})=>renderToStaticMarkup(React.createElement(B
 test('hero retains saved CMS identity, photographs, focal points and action labels',()=>{
  const html=render({'hero.title':'Saved heading','hero.emphasis':'Saved emphasis','hero.subtitle':'Saved subtitle','hero.description':'Saved long copy','hero.desktop':'/images/castle.webp','hero.mobile':'/images/centre.webp','hero.desktopPosition':'right bottom','hero.mobilePosition':'left top','hero.book':'Saved booking action','hero.track':'Saved live action'});
  for(const text of ['Saved heading','Saved emphasis','Saved subtitle','Saved long copy','Saved live action','right bottom','left top','castle.webp','centre.webp'])assert.ok(html.includes(text),text);
- assert.equal(html.includes('Saved booking action'),false);
+ assert.equal(html.includes('Saved booking action'),true);
  assert.equal((html.match(/<h1[ >]/g)||[]).length,1);assert.equal((html.match(/<picture>/g)||[]).length,1);assert.ok(html.includes('href="/route"'));
 });
 test('one hero widget presents canonical dated fare and the existing passenger controls',()=>{
