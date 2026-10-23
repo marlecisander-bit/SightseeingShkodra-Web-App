@@ -1,0 +1,30 @@
+[
+  {
+    "bottom": 24,
+    "parent": "BODY",
+    "right": 24,
+    "scrollY": 0,
+    "visible": true
+  },
+  {
+    "bottom": 24,
+    "parent": "BODY",
+    "right": 24,
+    "scrollY": 630,
+    "visible": true
+  },
+  {
+    "bottom": 24,
+    "parent": "BODY",
+    "right": 24,
+    "scrollY": 630,
+    "visible": true
+  },
+  {
+    "bottom": 24,
+    "parent": "BODY",
+    "right": 24,
+    "scrollY": 1260,
+    "visible": true
+  }
+]

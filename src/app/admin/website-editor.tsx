@@ -46,6 +46,7 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
     {sectionId === "partners" && <p><a href={`/admin/${operatorId}/partners`}>Manage partners, logos and display order</a>. Only active partners with logos appear. The section stays hidden when empty.</p>}
     {sectionId === "reviews" && <p><a href={`/admin/${operatorId}/reviews`}>Manage guest reviews and ordering</a>. This section is hidden until a review is published.</p>}
     {sectionId==='footer'&&<p>Leave a social link empty to hide it. Manage your Google Reviews link below.</p>}
+    {sectionId==='routePage'&&<p><a href={`/admin/${operatorId}/route-stops`}>Edit stop names and images in Route stops</a>. Live Map continues to supply positions and journey status.</p>}
     {sectionId==='route'&&<p>This copy introduces Tour destination stories. The homepage and Route stop overviews use published Live Map stops. The shared visibility switch controls these presentations.</p>}
     {sectionId==='departures'&&<p>On the homepage, this copy appears in the Live Service summary. Scheduled times still come from Calendar &amp; Pricing.</p>}
     {sectionId==='whatsapp'&&<p>Use your WhatsApp Business number with its country code. Save draft keeps changes private; Publish updates the website. Leave the button label empty to show only the icon.</p>}

@@ -1,3 +1,4 @@
+import {RouteStopsPanel} from '../../route-stops-panel';
 import {PartnersPanel} from '../../partners-panel';
 import { NotificationCenter } from '../../notifications';
 import { safeAdminReturn } from '@/modules/notifications/contracts';
@@ -35,6 +36,6 @@ export default async function Workspace({ params, searchParams }: { params: Prom
   const { data: operator } = await client.from('operators').select('name').eq('id', context.operatorId).single();
   return <AdminShell userId={context.userId} operatorId={context.operatorId} operatorName={operator?.name ?? 'Operator workspace'} role={context.role} section={section}>
     {section !== 'content' && <h1>{selected.label}</h1>}
-    {section==='partners'?<PartnersPanel operatorId={context.operatorId}/>:section==='notifications'?<NotificationCenter/>:section==='email'?<EmailPanel operatorId={context.operatorId} {...await searchParams}/>:section==='reviews'?<ReviewsPanel operatorId={context.operatorId}/>:section==='catalog'?<CatalogPanel operatorId={context.operatorId} result={(await searchParams).result}/>:section==='departures'?<CalendarPanel operatorId={context.operatorId} {...await searchParams}/>:section==='content'?<ContentPanel operatorId={context.operatorId} result={(await searchParams).result}/>:section==='bookings'?<BookingsPanel operatorId={context.operatorId} {...await searchParams}/>:<OverviewPanel operatorId={context.operatorId} role={context.role}/>}
+    {section==='route-stops'?<RouteStopsPanel operatorId={context.operatorId}/>:section==='partners'?<PartnersPanel operatorId={context.operatorId}/>:section==='notifications'?<NotificationCenter/>:section==='email'?<EmailPanel operatorId={context.operatorId} {...await searchParams}/>:section==='reviews'?<ReviewsPanel operatorId={context.operatorId}/>:section==='catalog'?<CatalogPanel operatorId={context.operatorId} result={(await searchParams).result}/>:section==='departures'?<CalendarPanel operatorId={context.operatorId} {...await searchParams}/>:section==='content'?<ContentPanel operatorId={context.operatorId} result={(await searchParams).result}/>:section==='bookings'?<BookingsPanel operatorId={context.operatorId} {...await searchParams}/>:<OverviewPanel operatorId={context.operatorId} role={context.role}/>}
   </AdminShell>;
 }

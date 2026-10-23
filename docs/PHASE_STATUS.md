@@ -1,3 +1,7 @@
+23 October 2026 release candidate validated: all 461 tests, lint/typecheck/build and zero-vulnerability production audit pass. Candidate retains remote main 5041261 CMS/admin enhancements. Production unchanged; publication is awaiting approval to include the necessary Next.js/eslint-config-next 16.4.2 security update beyond the UI scope. See RELEASE-CANDIDATE-2026-10-23.md.
+
+23 October 2026 release preparation: user authorized publication of this session’s Route tracker, original transparent tracking van, Route stops admin editor and fixed WhatsApp button. Prepared from remote main 5041261 in an isolated release checkout. Newer CMS completion and admin navigation preserved; only the new Route stops item added to the current Website task menu. No database, configuration, GPS/map or messaging-delivery change. Release validation and hosted results pending.
+
 # Phase status
 
 LATEST USER TASK (15 October 2026, local only): Shared photographic timeline visual cleanup scopes legacy cream discover-card rules away from timeline, uses transparent items/equal dimensions, wrapping smaller links and aligned photos/names. Seven requested widths no clipping/page overflow; contained swipe, details/Escape and parked live-state fixture verified. Lint/typecheck/build and 47 component tests passed. CSS-only application change; data/CMS/GPS/booking untouched. No deployment. See STOPS-VISUAL-CLEANUP-2026-10-15.md.

@@ -22,7 +22,7 @@ export function adminNavigationGroups(operatorId:string,role:StaffRole):AdminNav
    {id:'live',label:'Live Tracking: public map',href:'/live',external:true},
    ...(['owner','admin','operations'].includes(role)?[{id:'map-admin',label:'Operational stops & GPS',href:'https://sightseeingshkodralivetrackingapp.netlify.app/',external:true,note:'Independent Live Map · separate sign-in.'}]:[])]},
   {id:'website',label:'Website',icon:'camera',items:[
-   link('content','Page Editor','content'),link('media','Images & Media','content','media','Images are edited inside their existing page sections.'),
+   link('content','Page Editor','content'),link('route-stops','Route stops: names & images','route-stops'),link('media','Images & Media','content','media','Images are edited inside their existing page sections.'),
    link('reviews','Reviews & Partners: reviews','reviews'),link('partners','Reviews & Partners: partners','partners'),
    link('faq','FAQ & Policies','content','faq',hasPermission(role,'content.sensitive')?'FAQ, Privacy and Terms in their canonical editors.':'FAQ editor; legal policies remain owner-only.'),
    link('seo','SEO & Visibility','content','seo','Existing Website metadata and section visibility; no indexing settings.')]},
