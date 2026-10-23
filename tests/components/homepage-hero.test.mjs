@@ -43,3 +43,12 @@ test('hiding every saved amenity does not restore default marketing claims',()=>
  const html=render({'hero.amenities':JSON.stringify([hidden])});const row=html.slice(html.indexOf('<ul'),html.indexOf('</ul>'));
  assert.equal((row.match(/<li/g)||[]).length,0);
 });
+
+test('typographic destination split preserves all saved headline words and one semantic H1',()=>{
+ const html=render({'hero.title':'Discover Shkodra.','hero.emphasis':'Your way.'});
+ const title=html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)[1].replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
+ assert.equal(title,'Discover Shkodra. Your way.');assert.equal((html.match(/<h1[ >]/g)||[]).length,1);
+ for(const heading of ['Découvrez cette ville magnifique à votre rythme','探索这座城市的每一条街道','اكتشف المدينة بطريقتك']){
+  const translated=render({'hero.title':heading,'hero.emphasis':'Saved translated ending'});assert(translated.includes(heading));assert(translated.includes('Saved translated ending'));
+ }
+});

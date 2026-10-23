@@ -50,7 +50,7 @@ const jobs=async(b)=>(await db.query('select * from notification_deliveries wher
 test('successful committed booking sends exactly one customer and one owner email; repeat worker does not resend',async()=>{
  const b=await create();const n=sent.length;await run();await run();
  assert.equal(sent.length-n,2);const j=await jobs(b);assert.equal(j.length,2);assert.deepEqual(j.map(x=>x.recipient_type).sort(),['customer','owner']);assert.ok(j.every(x=>x.status==='accepted'));
- assert.ok(sent.slice(n).every(x=>x.to[0]==='qa@example.invalid'&&x.text.includes('09:00 (Europe/Tirane)')&&x.text.includes('EUR 12.50')));
+ assert.ok(sent.slice(n).every(x=>x.to[0]==='qa@example.invalid'&&x.text.includes('09:00 (Europe/Tirane)')));assert.ok(sent.slice(n).some(x=>x.text.includes('EUR 12.50')));assert.equal((await jobs(b)).find(x=>x.recipient_type==='customer').envelope.customerConfirmationDesign,3);
  assert.ok(sent.slice(n).some(x=>x.text.includes('?booking='+b.id)));
  assert.ok(!JSON.stringify(logs).includes('@example.invalid'));
 });
@@ -58,7 +58,7 @@ test('meaningful repeated modifications send pairs; no-op retry emits no duplica
  const b=await create();await run();const n=sent.length;
  await db.query("update customers set name='Updated Guest' where id=$1",[b.customer_id]);await run();
  await db.query("update customers set name='Updated Guest' where id=$1",[b.customer_id]);await run();
- assert.equal(sent.length-n,2);assert.ok(sent.slice(n).every(x=>x.text.includes('Updated Guest')));
+ assert.equal(sent.length-n,2);assert.ok(sent.slice(n).some(x=>x.text.includes('Updated Guest')));assert.ok((await jobs(b)).filter(x=>x.event_type==='BOOKING_MODIFIED').every(x=>x.send_snapshot.name==='Updated Guest'));
  await db.exec('begin');await db.query("update customers set name='Second Guest' where id=$1",[b.customer_id]);await db.query("update customers set phone='+355123' where id=$1",[b.customer_id]);await db.exec('commit');
  await run();assert.equal(sent.length-n,4);
  assert.equal((await jobs(b)).filter(j=>j.event_type==='BOOKING_MODIFIED').length,4);
@@ -187,7 +187,7 @@ test('v2 ticket lifecycle uses canonical passenger seats and QR, reliable before
  let n=sent.length;await run();const pair=sent.slice(n);assert.equal(pair.length,2);
  const customer=pair.find(m=>m.attachments);assert(customer);const png=PNG.sync.read(Buffer.from(customer.attachments[0].content,'base64'));
  assert.equal(jsQR(new Uint8ClampedArray(png.data),png.width,png.height)?.data,b.qr_token);
- assert(customer.text.includes('Total passengers: 4'));assert(customer.text.includes('Seats occupied: 3'));assert(customer.text.includes('Infants: 1'));assert(customer.text.includes('EUR 25.00'));assert(customer.text.includes('Selected service day'));
+ assert(customer.text.includes('4 passengers (2 adults, 1 child, 1 infant)'));assert(!customer.text.includes('Selected service day'));assert(!customer.text.includes('EUR 25.00'));const owner=pair.find(m=>!m.attachments);assert(owner.text.includes('EUR 25.00'));assert(owner.text.includes('Seats occupied: 3'));assert(owner.text.includes('Selected service day'));
  assert(customer.html.includes('cid:booking-qr'));assert(customer.text.includes('/booking/manage#token='+b.management_token));
  assert(!pair.find(m=>!m.attachments).text.includes(b.management_token));
  const user=(await db.query('select auth_user_id from staff_profiles where id=$1',[staff])).rows[0].auth_user_id;
@@ -250,3 +250,10 @@ test('Catalog retirement preserves historical email copy and frozen prepared mes
  const frozen=(await db.query('select send_snapshot,envelope from notification_deliveries where id=$1',[job.id])).rows[0];assert.deepEqual(frozen.send_snapshot,prepared.send_snapshot);
  const after=bookingEmailTemplate(prepared.event_type,prepared.recipient_type,frozen.send_snapshot,frozen.envelope,op,b.id);assert.equal(after.html,before.html);assert.ok(after.html.includes('Retained &lt;Catalog email copy&gt;'));
 });
+
+ test('saved version-two confirmation retries remain byte-identical after compact design activation',async()=>{
+ await run();const b=await create();await store.enqueue(op,config.since);const j=await store.claim(op);const prepared=await store.prepare(j,{version:2,from:config.from,owner:config.owner,replyTo:config.replyTo,siteUrl:config.siteUrl,testRecipient:config.testRecipient});
+ const before=bookingEmailTemplate(prepared.event_type,prepared.recipient_type,prepared.send_snapshot,prepared.envelope,op,b.id);
+ await store.finish(prepared,'retry','resend_http_500');await db.query('update notification_deliveries set next_attempt_at=clock_timestamp() where id=$1',[j.id]);
+ const n=sent.length;await run();const retried=sent.slice(n).find(m=>m.key==='booking-email/'+j.id);assert.equal(retried.html,before.html);assert.equal(retried.text,before.text);assert.equal((await jobs(b)).find(x=>x.id===j.id).envelope.customerConfirmationDesign,undefined);
+ });
