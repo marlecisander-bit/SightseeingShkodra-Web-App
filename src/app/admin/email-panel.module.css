@@ -22,3 +22,13 @@
 @media(min-width:1200px) { .events { grid-template-columns:repeat(3,minmax(0,1fr)); } }
 
 .layout details.card { padding:20px; align-self:start; }
+
+.activity { grid-template-columns:minmax(0,1fr); }
+.activity>li { border:1px solid var(--ss-border,#ddd); border-radius:14px; padding:18px; background:var(--ss-cream,#fff8ee); min-width:0; }
+.activity>li>a { display:block; font-weight:700; margin-bottom:12px; overflow-wrap:anywhere; }
+.activity li>dl { margin:0; gap:8px 12px; }
+.activity details { border-top:1px solid var(--ss-border,#ddd); margin-top:14px; }
+.activity details ul { padding-left:20px; }
+.activity details li { padding:6px 0; border:0; font-size:13px; }
+.activity form { border-top:1px solid var(--ss-border,#ddd); padding-top:14px; }
+@media(min-width:1100px){.activity{grid-template-columns:repeat(2,minmax(0,1fr));}}

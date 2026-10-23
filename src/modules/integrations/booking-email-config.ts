@@ -10,7 +10,7 @@ export function validEmail(value: unknown): value is string {
     && domain.split(".").every(label => /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$/.test(label));
 }
 export type EmailConfig = { enabled: false } | {
-  enabled: true; apiKey: string; from: string; owner: string; replyTo: string;
+  enabled: true; apiKey: string; statusApiKey?:string; from: string; owner: string; replyTo: string;
   siteUrl: string; operatorId: string; since: string; testRecipient: string | null;
 };
 export function bookingEmailConfig(env: NodeJS.ProcessEnv = process.env): EmailConfig {
@@ -31,5 +31,5 @@ export function bookingEmailConfig(env: NodeJS.ProcessEnv = process.env): EmailC
     || !/^\d{4}-\d{2}-\d{2}T.*(?:Z|[+-]\d{2}:\d{2})$/.test(since) || !Number.isFinite(Date.parse(since))
     || !["http:","https:"].includes(site.protocol) || site.username || site.password
     || (production && (site.protocol !== "https:" || fromAddress.toLowerCase().endsWith("@resend.dev")))) throw Error("email_configuration_invalid");
-  return { enabled: true, apiKey: env.RESEND_API_KEY, from, owner, replyTo, testRecipient, operatorId, since, siteUrl: site.origin };
+  return { enabled: true, apiKey: env.RESEND_API_KEY, statusApiKey: env.RESEND_STATUS_API_KEY, from, owner, replyTo, testRecipient, operatorId, since, siteUrl: site.origin };
 }

@@ -1,7 +1,8 @@
+import {emailOutcomeLabel} from '@/modules/integrations/email-delivery-status';
 import {AdminStatus} from './admin-status';
 import styles from './admin.module.css';
 import { BookingCard } from './booking-card';
-import { ownerStatus, ownerEmailStatus, ownerEmailEvent } from "./presentation";
+import { ownerStatus, ownerEmailEvent } from "./presentation";
 import { passengerLabels } from "@/modules/booking/passengers";
 import { StaffPassengers } from "./staff-passengers";
 import { withOperatorService } from "@/modules/identity/operator-service";
@@ -16,7 +17,6 @@ import {
   manualBooking,
   cancelBooking,
   collectPayment,
-  resendConfirmation,
 } from "./booking-actions";
 import { SubmitButton } from "./submit-button";
 import Link from "next/link";
@@ -162,7 +162,7 @@ export async function BookingsPanel({
   if(itemDepartures.error) return <p role="alert">Departure details are temporarily unavailable.</p>;
   const deliveries = await client
     .from("notification_deliveries")
-    .select("id,booking_id,status,channel,attempt_count,last_error_code,recipient_type,event_type,manual,created_at")
+    .select("id,booking_id,status,channel,attempt_count,last_error_code,provider_status,provider_updated_at,provider_reason,provider_reference,recipient_type,event_type,manual,created_at")
     .eq("operator_id", operatorId)
     .in(
       "booking_id",
@@ -290,16 +290,12 @@ export async function BookingsPanel({
                 <h3>Booking emails</h3>
                 {!deliveries.data.some(d => d.booking_id === booking?.id) && <p>No emails sent yet. Check Email &amp; Notifications for sending status.</p>}
                 <ul>{deliveries.data.filter(d => d.booking_id === booking?.id).slice(0, 10).map(d => <li key={d.id}>
-                  {d.recipient_type === 'owner' ? 'Owner' : 'Customer'} · {ownerEmailEvent(d.event_type)}{d.manual ? " (manual resend)" : ""}: {ownerEmailStatus(d.status)}<details><summary>Technical details</summary>{d.attempt_count} attempt(s){d.last_error_code ? ` · ${d.last_error_code}` : ""}</details>
+                  {d.recipient_type === 'owner' ? 'Owner' : 'Customer'} · {ownerEmailEvent(d.event_type)}{d.manual ? " (manual resend)" : ""}: {emailOutcomeLabel(d)}<details><summary>Technical details</summary>{d.attempt_count} attempt(s){d.last_error_code ? ` · ${d.last_error_code}` : ""}</details>
                 </li>)}</ul>
                 <small>Up to ten most recent notifications. Sent does not confirm arrival in the inbox.</small>
               </div>
             )}
-            {booking?.status === "confirmed" && hasPermission(context.role, "bookings.create") && <MutationForm action={resendConfirmation.bind(null, operatorId, booking.id)}>
-              <input type="hidden" name="request_id" value={randomUUID()} />
-              <label><input type="checkbox" name="confirm" value="yes" required /> Confirm sending the current booking confirmation to the customer and owner</label>
-              <SubmitButton>Resend confirmation email</SubmitButton>
-            </MutationForm>}
+            {booking && hasPermission(context.role,'integrations.manage') && <p><Link href={`/admin/${operatorId}/email?booking=${booking.booking_reference}`}>Inspect customer and owner delivery outcomes</Link>. Unresolved accepted messages cannot be resent.</p>}
             {holds.data
               .filter((h) => h.order_id === order.id && h.status !== "consumed")
               .map((h, index) => (

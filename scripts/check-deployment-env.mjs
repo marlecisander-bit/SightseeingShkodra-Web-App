@@ -3,7 +3,8 @@ export function missingProductionEnvironment(env) {
   if (env.VERCEL_ENV !== 'production') return [];
   return ['NEXT_PUBLIC_SUPABASE_URL','NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY',
     'SUPABASE_SECRET_KEY','PUBLIC_OPERATOR_ID','PUBLIC_HOMEPAGE_PRODUCT_SLUG',
-    'CHECKOUT_SESSION_SECRET','NEXT_PUBLIC_SITE_URL','APP_ENV'].filter(key => !env[key]?.trim());
+    'CHECKOUT_SESSION_SECRET','NEXT_PUBLIC_SITE_URL','APP_ENV',
+    ...(env.EMAIL_ENABLED==='true'&&env.BACKGROUND_DELIVERY_ENABLED==='true'?['RESEND_WEBHOOK_SECRET','RESEND_STATUS_API_KEY']:[])].filter(key => !env[key]?.trim());
 }
 const missing = missingProductionEnvironment(process.env);
 export function previewConfigurationErrors(env) {

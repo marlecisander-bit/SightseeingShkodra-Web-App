@@ -74,13 +74,10 @@ test('rolled-back mutation emits no event and no email',async()=>{
  const b=await create();await run();const n=sent.length;
  await db.exec('begin');await db.query("update customers set name='Rolled back' where id=$1",[b.customer_id]);await db.exec('rollback');await run();assert.equal(sent.length,n);
 });
-test('manual resend is idempotent, labelled, rate limited and operator scoped',async()=>{
- const b=await create();await run();const req=randomUUID(),n=sent.length;
- const args=[op,staff,b.id,req];
- await db.query('select request_booking_email_v2($1,$2,$3,$4)',args);await db.query('select request_booking_email_v2($1,$2,$3,$4)',args);
- await assert.rejects(db.query('select request_booking_email_v2($1,$2,$3,$4)',[op,staff,b.id,randomUUID()]),/five minutes/);
- await assert.rejects(db.query('select request_booking_email_v2($1,$2,$3,$4)',[other,staff,b.id,randomUUID()]),/Permission/);
- await run();assert.equal(sent.length-n,2);assert.equal((await jobs(b)).filter(x=>x.manual).length,2);
+test('booking-wide resend is disabled and cannot duplicate unresolved acceptance',async()=>{
+ const b=await create();await run();const n=sent.length;
+ await assert.rejects(db.query('select request_booking_email_v2($1,$2,$3,$4)',[op,staff,b.id,randomUUID()]),/recipient-specific/);
+ await run();assert.equal(sent.length,n);
 });
 test('provider failure preserves reservation, retry payload and key are identical after booking data changes',async()=>{
  const b=await create();const attempts=new Map();
@@ -214,13 +211,15 @@ test('v2 ticket lifecycle uses canonical passenger seats and QR, reliable before
 
 test('selected-recipient resend preserves event, does not fan out, is idempotent and supports cancellations',async()=>{
  const b=await create();await run();await db.query('select cancel_order_v1($1,$2,$3,$4)',[op,b.order_id,staff,'Test cancellation']);await run();
- const source=(await jobs(b)).find(j=>j.event_type==='BOOKING_CANCELLED'&&j.recipient_type==='owner');const req=randomUUID(),n=sent.length;
+ const source=(await jobs(b)).find(j=>j.event_type==='BOOKING_CANCELLED'&&j.recipient_type==='owner');
+ await db.query("select record_email_provider_event_v1($1,$2,$3,'failed',clock_timestamp(),'provider_failed')",[op,randomUUID(),source.provider_reference]);
+ const req=randomUUID(),n=sent.length;
  for(let i=0;i<2;i++)await db.query('select request_booking_email_recipient_v1($1,$2,$3,$4)',[op,staff,source.id,req]);
  await assert.rejects(db.query('select request_booking_email_recipient_v1($1,$2,$3,$4)',[op,staff,source.id,randomUUID()]),/five minutes/);
  await assert.rejects(db.query('select request_booking_email_recipient_v1($1,$2,$3,$4)',[other,staff,source.id,randomUUID()]),/Permission/);
  await run();await run();assert.equal(sent.length-n,1);assert.match(sent[n].subject,/BOOKING CANCELLED/);
  assert.equal((await jobs(b)).filter(j=>j.manual).length,1);
- const stale=(await jobs(b)).find(j=>j.event_type==='BOOKING_CREATED');await assert.rejects(db.query('select request_booking_email_recipient_v1($1,$2,$3,$4)',[op,staff,stale.id,randomUUID()]),/current booking/);
+ const stale=(await jobs(b)).find(j=>j.event_type==='BOOKING_CREATED');await db.query("select record_email_provider_event_v1($1,$2,$3,'failed',clock_timestamp(),'provider_failed')",[op,randomUUID(),stale.provider_reference]);await assert.rejects(db.query('select request_booking_email_recipient_v1($1,$2,$3,$4)',[op,staff,stale.id,randomUUID()]),/current booking/);
  for(const role of ['anon','authenticated']){await db.exec('set role '+role);try{await assert.rejects(db.query('select request_booking_email_recipient_v1($1,$2,$3,$4)',[op,staff,source.id,randomUUID()]),e=>e.code==='42501');}finally{await db.exec('reset role');}}
 });
 

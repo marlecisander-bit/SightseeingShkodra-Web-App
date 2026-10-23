@@ -1,9 +1,9 @@
+import {emailDeliveryState,emailOutcomeLabel,canRetryEmail} from '@/modules/integrations/email-delivery-status';
 import {AdminStatus} from './admin-status';
 import { randomUUID } from 'node:crypto';
 import Link from 'next/link';
 import { getEmailAdmin } from '@/modules/integrations/email-admin-server';
 import { emailEvents } from '@/modules/integrations/email-admin-status';
-import { ownerEmailStatus } from './presentation';
 import { bookingEmailPreview } from '@/modules/integrations/booking-email-preview';
 import { workerHealth } from '@/modules/integrations/email-worker-heartbeat';
 import { resendRecipientEmail } from './email-actions';
@@ -14,14 +14,14 @@ import { Button } from '@/components/ui/button';
 import styles from './email-panel.module.css';
 
 const date = (value:string|null) => value ? new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeStyle:'short',timeZone:'Europe/Tirane'}).format(new Date(value)) : 'No recorded activity';
-export async function EmailPanel({operatorId,delivery,recipient}:{operatorId:string;delivery?:string;recipient?:string}) {
+export async function EmailPanel({operatorId,delivery,recipient,booking}:{operatorId:string;delivery?:string;recipient?:string;booking?:string}) {
   let data;
-  try { data=await getEmailAdmin(operatorId,delivery,recipient); }
+  try { data=await getEmailAdmin(operatorId,delivery,recipient,undefined,booking); }
   catch { return <section className={styles.card}><h2>Email activity unavailable</h2><p>Please refresh or contact your administrator. Delivery status is temporarily unavailable.</p></section>; }
-  return <EmailPanelView operatorId={operatorId} data={data} delivery={delivery} recipient={recipient}/>;
+  return <EmailPanelView operatorId={operatorId} data={data} delivery={delivery} recipient={recipient} booking={booking}/>;
 }
 
-export function EmailPanelView({operatorId,data,delivery,recipient}:{operatorId:string;data:Awaited<ReturnType<typeof getEmailAdmin>>;delivery?:string;recipient?:string}) {
+export function EmailPanelView({operatorId,data,delivery,recipient,booking}:{operatorId:string;data:Awaited<ReturnType<typeof getEmailAdmin>>;delivery?:string;recipient?:string;booking?:string}) {
   const c=data.config, enabled=c.enabled&&c.ready;
   return <div className={styles.layout}>
     {!c.enabled&&<section className={`${styles.card} ${styles.warning}`} role="status"><strong>Automatic booking emails are currently disabled.</strong><p>Bookings remain valid. Email setup needs attention before automatic messages can be sent.</p></section>}
@@ -29,7 +29,7 @@ export function EmailPanelView({operatorId,data,delivery,recipient}:{operatorId:
     <div className={styles.grid}>
       <section className={styles.card}><h2>Email service</h2><dl>
         <dt>Email notifications</dt><dd>{enabled?'On':'Off'}</dd>
-        <dt>Last email sent</dt><dd>{date(data.lastAccepted)} (arrival not confirmed)</dd>
+        <dt>Last provider acceptance</dt><dd>{date(data.lastAccepted)} (arrival not confirmed)</dd>
         <dt>Last email needing attention</dt><dd>{date(data.lastFailed)}</dd>
       </dl><p>Sent does not confirm arrival in the recipient’s inbox. Times are local to Shkodra.</p></section>
       <details className={styles.card}><summary>Advanced email configuration</summary><dl><dt>Provider</dt><dd>Resend</dd><dt>Configuration</dt><dd>{c.ready?'Ready':'Incomplete'}</dd><dt>Sender domain</dt><dd>{c.senderDomain||'Not configured'}</dd><dt>Automatic sending setup</dt><dd>{c.ready&&c.cronConfigured?'Ready':'Needs configuration'}</dd>
@@ -49,19 +49,20 @@ export function EmailPanelView({operatorId,data,delivery,recipient}:{operatorId:
       <dt>Sender name</dt><dd>{c.senderName||'Not configured'}</dd><dt>Sender email</dt><dd>{c.senderEmail||'Not configured'}</dd>
       <dt>Reply-to email</dt><dd>{c.replyTo||'Not configured'}</dd><dt>Owner notification email</dt><dd>{c.ownerEmail||'Not configured'}</dd>
     </dl><p><strong>Sender:</strong> the address customers see. <strong>Reply-to:</strong> where customer replies go. <strong>Owner notification:</strong> where your business receives booking notifications.</p></section>
+    <section className={styles.card}><h2>Delivery health</h2><dl><dt>Webhook signing configuration</dt><dd>{c.webhookConfigured?'Configured — registration still requires verification':'Missing — provider updates cannot be verified'}</dd><dt>Read-only status lookup credential</dt><dd>{c.statusKeyConfigured?'Configured':'Missing'}</dd><dt>Provider failures / suppressions / complaints</dt><dd>{data.health?.providerFailures??'Unavailable'}</dd><dt>Delayed messages</dt><dd>{data.health?.delayed??'Unavailable'}</dd><dt>Acceptance without final outcome after 15 minutes</dt><dd>{data.health?.missingOutcome??'Unavailable'}</dd><dt>Oldest queued job</dt><dd>{date(data.health?.oldestPending??null)}</dd><dt>Last authenticated provider update</dt><dd>{date(data.health?.lastProviderEvent??null)}</dd></dl><p role="status">{!c.webhookConfigured?'Webhook setup needs attention. ':''}{(data.health?.providerFailures??0)>0?'Provider delivery failures need review. ':''}{(data.health?.missingOutcome??0)>0?'Some accepted messages lack final provider evidence. ':''}Missing evidence does not mean the email should be sent again. Inspect verification_failed and persistence_failed email_webhook logs in Vercel for receiver failures.</p></section>
     <div className={`${styles.grid} ${styles.events}`}>{data.events.map(event=><section className={styles.card} key={event.type}><h2>{event.label}</h2><dl>
       <dt>Customer email</dt><dd>{enabled?'On':'Off'}</dd><dt>Owner email</dt><dd>{enabled?'On':'Off'}</dd>
-    </dl><p>{event.sent} sent · {event.failed} needing attention · {event.pending} pending</p><p>These messages follow the shared email sending setting.</p></section>)}</div>
-    <section className={styles.card}><h2>Recent messages</h2><p>Booking messages for guests and the owner. Sent means accepted by the email service; inbox delivery is not verified.</p>
-      <form className={styles.filters} method="get"><label>Status<select name="delivery" defaultValue={delivery??''}><option value="">All</option><option value="pending">Pending</option><option value="sent">Sent</option><option value="failed">Failed</option></select></label><label>Recipient<select name="recipient" defaultValue={recipient??''}><option value="">All recipients</option><option value="customer">Customer</option><option value="owner">Owner</option></select></label><Button type="submit">Apply filters</Button></form>
+    </dl><p>{event.sent} accepted · {event.failed} needing attention · {event.pending} pending</p><p>These messages follow the shared email sending setting.</p></section>)}</div>
+    <section className={styles.card}><h2>Customer and owner messages</h2><p>Booking messages for guests and the owner. Accepted means Resend received the request. Delivered means the receiving server accepted it; neither proves inbox placement. Unresolved acceptance, complaints and suppression cannot be resent here.</p>
+      <form className={styles.filters} method="get"><label>Booking reference<input name="booking" defaultValue={booking??''} placeholder="SS-…" maxLength={39}/></label><label>Status<select name="delivery" defaultValue={delivery??''}><option value="">All</option><option value="pending">Pending</option><option value="accepted">Accepted by Resend</option><option value="processing">Processing</option><option value="delivered">Delivered</option><option value="delivery_delayed">Delayed</option><option value="bounced">Bounced</option><option value="suppressed">Suppressed</option><option value="complained">Complained</option><option value="failed">Failed</option><option value="uncertain">Uncertain</option></select></label><label>Recipient<select name="recipient" defaultValue={recipient??''}><option value="">All recipients</option><option value="customer">Customer</option><option value="owner">Owner</option></select></label><Button type="submit">Apply filters</Button></form>
       {data.rows.length===0?<p>No matching email deliveries.</p>:<ul className={styles.activity}>{data.rows.map(row=><li key={row.id}>
         <Link href={`/admin/${operatorId}/bookings?booking=${row.booking_id}#booking-${row.booking_id}`}>{row.booking_reference??'Open booking'}</Link>
-        <dl><dt>Date</dt><dd>{date(row.created_at)}</dd><dt>Event</dt><dd>{emailEvents.find(e=>e.type===row.event_type)?.label??'Booking update'}</dd><dt>Recipient</dt><dd>{row.recipient_type==='owner'?'Owner':'Customer'}{row.recipient_email ? " - " + row.recipient_email : ""}</dd><dt>Status</dt><dd><AdminStatus status={row.status}>{ownerEmailStatus(row.status)}</AdminStatus></dd></dl><details><summary>Technical details</summary><p>Sending attempts: {row.attempt_count}</p><p>Provider: {row.provider??'Not attempted'}</p><p>Provider message: {row.provider_reference??'None'}</p><p>Sent: {date(row.sent_at??null)}</p><p>Failure: {row.last_error_code??'None'}</p></details>
-        {enabled&&['accepted','failed','uncertain'].includes(row.status)&&<MutationForm action={resendRecipientEmail.bind(null,operatorId,row.id)}>
-          <input type="hidden" name="request_id" value={randomUUID()}/><label><span><input style={{width:'auto',minHeight:24}} type="checkbox" name="confirm" value="yes" required/> I checked whether the email arrived and want to send this recipient another email.</span></label>
+        <dl><dt>Date</dt><dd>{date(row.created_at)}</dd><dt>Event</dt><dd>{emailEvents.find(e=>e.type===row.event_type)?.label??'Booking update'}</dd><dt>Recipient</dt><dd>{row.recipient_type==='owner'?'Owner':'Customer'}{row.recipient_email ? " - " + row.recipient_email : ""}</dd><dt>Status</dt><dd><AdminStatus status={emailDeliveryState(row)}>{emailOutcomeLabel(row)}</AdminStatus></dd><dt>Last provider update</dt><dd>{date(row.provider_updated_at??null)}</dd><dt>Outcome reason</dt><dd>{row.provider_reason?.replaceAll('_',' ')??row.last_error_code??'None recorded'}</dd></dl><details><summary>Technical details</summary><p>Sending attempts: {row.attempt_count}</p><p>Provider: {row.provider??'Not attempted'}</p><p>Provider message: {row.provider_reference??'None'}</p><p>Accepted: {date(row.sent_at??null)}</p><p>Provider lookups: {row.provider_check_count??0} / 4 · Last lookup: {date(row.provider_checked_at??null)}</p><h3>Provider event history</h3><ul>{(data.providerEvents??[]).filter(e=>e.delivery_id===row.id).map((e,i)=><li key={i}>{e.kind.replaceAll('_',' ')} {e.source==='reconciliation'?'(observed by provider lookup)':''} · {date(e.event_at)}{e.reason?` · ${e.reason.replaceAll('_',' ')}`:''}</li>)}</ul><p>Failure: {row.last_error_code??'None'}</p></details>
+        {enabled&&canRetryEmail(row)&&<MutationForm action={resendRecipientEmail.bind(null,operatorId,row.id)}>
+          <input type="hidden" name="request_id" value={randomUUID()}/><label><span><input style={{width:'auto',minHeight:24}} type="checkbox" name="confirm" value="yes" required/> I resolved the failure, verified this recipient and want to send the current booking information again.</span></label>
           <p>This sends only the selected recipient the current booking information for this event. Wait five minutes between resend requests.</p><SubmitButton>{row.recipient_type==='customer'?'Resend customer email':'Resend owner notification'}</SubmitButton>
         </MutationForm>}
-      </li>)}</ul>}<p>Showing up to 100 recent matching messages. Skipped messages appear under All.</p></section>
+      </li>)}</ul>}<p>Showing up to 100 recent matching messages and 500 recent provider events. Skipped messages appear under All.</p></section>
     <div className={styles.grid}>
       <details className={styles.card}><summary>Advanced: send a test email</summary><EmailTestForm operatorId={operatorId} recipient={c.testRecipient} ready={c.ready&&Boolean(c.testRecipient)}/><p>Synthetic test sends are not booking-delivery records. Check the result here and the provider dashboard.</p></details>
       <details className={styles.card}><summary>Advanced: automatic sending status</summary><dl><dt>Email worker</dt><dd>{workerHealth(data.heartbeat,enabled)}</dd><dt>Last run started</dt><dd>{date(data.heartbeat?.started_at??null)}</dd><dt>Last run completed</dt><dd>{date(data.heartbeat?.finished_at??null)}</dd><dt>Last successful run</dt><dd>{date(data.heartbeat?.last_success_at??null)}</dd><dt>Pending queue</dt><dd>{data.pending}</dd><dt>Failed / uncertain</dt><dd>{data.events.reduce((sum,e)=>sum+e.failed,0)}</dd></dl>

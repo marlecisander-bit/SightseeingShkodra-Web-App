@@ -8,7 +8,7 @@ import { authorizeStaff } from '../../src/modules/identity/authorization.ts';
 
 const db = new PGlite();
 const id = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
-const tables = ['partners','meeting_point_versions','operators', 'staff_profiles', 'suppliers', 'products', 'stops',
+const tables = ['email_provider_events','partners','meeting_point_versions','operators', 'staff_profiles', 'suppliers', 'products', 'stops',
   'departures', 'customers', 'orders', 'booking_items', 'bookings', 'payments',
   'payment_events', 'refunds', 'vehicles', 'vehicle_positions', 'reviews', 'review_settings',
   'content_pages', 'redirects', 'api_keys', 'domain_events', 'audit_logs', 'inventory_holds', 'notification_deliveries', 'service_schedules', 'schedule_exceptions', 'email_worker_status','admin_notifications','admin_notification_receipts','admin_notification_preferences','admin_push_subscriptions','admin_push_deliveries','admin_notification_sources'];
