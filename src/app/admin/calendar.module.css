@@ -6,10 +6,10 @@
 .monthActions{display:flex;justify-content:center;margin:4px 0 12px}
 .monthActions button{min-height:44px;padding:6px 16px}
 .calendarViewport{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;padding:4px 0 8px}
-.grid{min-width:326px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
 .weekday{text-align:center;font-size:12px;padding:6px 0;color:var(--ss-muted)}
 .weekday abbr{text-decoration:none}
-.day{position:relative;display:flex!important;align-items:center!important;justify-content:center!important;min-width:44px!important;min-height:48px!important;padding:4px!important;border:1px solid var(--ss-border)!important;border-radius:6px;background:var(--ss-white)!important;color:var(--ss-charcoal,#25232A)!important;font-size:14px!important}
+.day{position:relative;display:flex!important;align-items:center!important;justify-content:center!important;min-width:0!important;min-height:48px!important;padding:4px!important;border:1px solid var(--ss-border)!important;border-radius:6px;background:var(--ss-white)!important;color:var(--ss-charcoal,#25232A)!important;font-size:14px!important}
 .day[aria-pressed=true]{background:var(--brand-red-soft)!important;border:2px solid var(--brand-red)!important;color:var(--admin-primary)!important}
 .day[aria-current=date] strong{text-decoration:underline;text-decoration-color:var(--brand-red);text-decoration-thickness:2px;text-underline-offset:5px}
 .day[data-state="No service"],.day[data-state="Closed"]{color:var(--ss-muted)!important;background:var(--ss-cream,#FFF8EE)!important}
@@ -34,3 +34,44 @@
 
 .day strong {font-weight:600;font-variant-numeric:tabular-nums;}
 .dayMarker {color:var(--admin-text-muted);}
+
+/* Calendar availability redesign: all colors communicate the read-only projection. */
+.monthPicker{max-width:none;min-width:0;padding:16px;border:1px solid var(--ss-border);border-radius:14px;background:var(--ss-white)}
+.monthNavigation h2{font-size:clamp(16px,2vw,22px)}
+.grid{gap:6px}
+.day{flex-direction:column;gap:5px;min-height:76px!important;border-radius:9px;transition:box-shadow .15s,filter .15s}
+.day[data-state=available]{background:#DDF5E3!important;color:#166534!important}
+.day[data-state=limited]{background:#FFF0C8!important;color:#92400E!important}
+.day[data-state=full],.day[data-state=closed],.day[data-state=unavailable]{background:#FBE2E3!important;color:#B91C1C!important}
+.day[data-state=neutral]{background:#F8FAFC!important;color:#475569!important}
+.day[data-state=past]{background:#F1F3F5!important;color:#9CA3AF!important}
+.day[aria-pressed=true]{outline:2px solid var(--brand-red);outline-offset:2px}
+.day[aria-current=date]{border:2px solid #2563EB!important}
+.day[aria-current=date] strong{text-decoration:none}
+.day:hover:not([data-state=past]){filter:brightness(.97);box-shadow:0 2px 5px #00000012}
+.day:focus-visible{outline:3px solid #2563EB;outline-offset:2px}
+.dayLabel{font-size:10px;line-height:1.15;text-align:center;overflow-wrap:anywhere;font-weight:500}
+.todayLabel{color:#1D4ED8;font-size:9px;line-height:1}
+.legend{gap:8px 12px;margin:12px 0 16px;font-size:11px}
+.legend span{display:inline-flex;gap:5px;align-items:center}
+.legend i{width:10px;height:10px;border:1px solid #CBD5E1;border-radius:3px;background:#F8FAFC}
+.legend i[data-state=past]{background:#F1F3F5}.legend i[data-state=available]{background:#DDF5E3}.legend i[data-state=limited]{background:#FFF0C8}.legend i[data-state=full],.legend i[data-state=closed]{background:#FBE2E3}.legend i[data-state=today]{border:2px solid #2563EB}
+.editor{margin-top:16px;background:var(--ss-white);border-color:var(--ss-border);border-radius:14px;align-self:start}
+.editor>fieldset{border:0;padding:0;margin:0}.editor>h3{font-size:19px;line-height:1.4}
+.dailyOverview{padding-bottom:12px;border-bottom:1px solid var(--ss-border)}
+.availability{font-weight:600;color:#166534}.availability[data-state=full],.availability[data-state=closed],.availability[data-state=unavailable]{color:#B91C1C}.availability[data-state=limited]{color:#92400E}.availability[data-state=past],.availability[data-state=neutral]{color:#64748B}
+.summaryCards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:12px 0}
+.summaryCards>div{padding:10px 7px;border:1px solid var(--ss-border);border-radius:8px;background:#F8FAFC;display:flex;flex-direction:column;gap:5px}
+.summaryCards span{font-size:11px;line-height:1.35;color:#64748B}.summaryCards strong{font-size:24px}
+.calendarNote{font-size:12px;line-height:1.5;color:var(--ss-muted);margin:12px 0 0}
+.occupancyRow{padding:12px 0;border-bottom:1px solid var(--ss-border)}
+.occupancyRow>div{display:flex;justify-content:space-between;gap:8px;font-size:13px}.occupancyRow p{font-size:12px;color:var(--ss-muted);margin:6px 0}
+.occupancyRow meter{display:block;appearance:none;width:100%;height:7px;border:0;border-radius:10px;overflow:hidden;background:#E2E8F0}
+.occupancyRow meter::-webkit-meter-bar{background:#E2E8F0;border:0;border-radius:10px}.occupancyRow meter::-webkit-meter-optimum-value{background:#16803D}.occupancyRow meter[data-state=limited]::-webkit-meter-optimum-value{background:#D97706}.occupancyRow meter[data-state=full]::-webkit-meter-optimum-value{background:#B91C1C}
+.occupancyRow meter::-moz-meter-bar{background:#16803D}.occupancyRow meter[data-state=limited]::-moz-meter-bar{background:#D97706}.occupancyRow meter[data-state=full]::-moz-meter-bar{background:#B91C1C}
+@media(min-width:1100px){.workspace{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(340px,1fr);gap:16px;align-items:start}.monthPicker{grid-column:1;grid-row:1}.editor{grid-column:2;grid-row:1 / span 5;margin-top:0}.workspace>p[role=status]{grid-column:1}.rangeActions,.savedOverrides{grid-column:1;margin:0}.editor .prices{grid-template-columns:1fr}.editor .departureCard summary{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.monthPicker{padding:10px}.grid{gap:4px}.day{min-height:62px!important;padding:3px!important}.dayLabel{font-size:8px}.editor{padding:12px}.legend{gap:7px 10px}.weekday{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.day{transition:none}}
+.day[data-state=past] strong,.day[data-state=past] .dayLabel{color:#64748B}
+.workspace,.service{width:100%;max-width:none}
+.dailyOverview{max-width:none;margin:0;padding:0 0 12px}

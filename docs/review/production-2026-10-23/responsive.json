@@ -1,0 +1,184 @@
+[
+  {
+    "overflow": false,
+    "stopCount": 5,
+    "vanWrappers": [
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      },
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      },
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      }
+    ],
+    "whatsappBottom": 16,
+    "whatsappCount": 1,
+    "whatsappFixed": "fixed",
+    "whatsappRight": 16,
+    "width": 320
+  },
+  {
+    "overflow": false,
+    "stopCount": 5,
+    "vanWrappers": [
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      },
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      },
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      }
+    ],
+    "whatsappBottom": 16,
+    "whatsappCount": 1,
+    "whatsappFixed": "fixed",
+    "whatsappRight": 16,
+    "width": 375
+  },
+  {
+    "overflow": false,
+    "stopCount": 5,
+    "vanWrappers": [
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      },
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      },
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      }
+    ],
+    "whatsappBottom": 16,
+    "whatsappCount": 1,
+    "whatsappFixed": "fixed",
+    "whatsappRight": 16,
+    "width": 390
+  },
+  {
+    "overflow": false,
+    "stopCount": 5,
+    "vanWrappers": [
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      },
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      },
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      }
+    ],
+    "whatsappBottom": 16,
+    "whatsappCount": 1,
+    "whatsappFixed": "fixed",
+    "whatsappRight": 16,
+    "width": 430
+  },
+  {
+    "overflow": false,
+    "stopCount": 5,
+    "vanWrappers": [
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      },
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      },
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      }
+    ],
+    "whatsappBottom": 24,
+    "whatsappCount": 1,
+    "whatsappFixed": "fixed",
+    "whatsappRight": 24,
+    "width": 768
+  },
+  {
+    "overflow": false,
+    "stopCount": 5,
+    "vanWrappers": [
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      },
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      },
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      }
+    ],
+    "whatsappBottom": 24,
+    "whatsappCount": 1,
+    "whatsappFixed": "fixed",
+    "whatsappRight": 24,
+    "width": 1024
+  },
+  {
+    "overflow": false,
+    "stopCount": 5,
+    "vanWrappers": [
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      },
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      },
+      {
+        "background": "rgba(0, 0, 0, 0)",
+        "border": "0px",
+        "loaded": true
+      }
+    ],
+    "whatsappBottom": 24,
+    "whatsappCount": 1,
+    "whatsappFixed": "fixed",
+    "whatsappRight": 24,
+    "width": 1440
+  }
+]

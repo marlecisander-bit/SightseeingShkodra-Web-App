@@ -37,8 +37,8 @@ test('status presentation preserves existing labels and treats unknown statuses 
   assert.equal(dom.window.document.querySelector('span').textContent,status);assert.equal(dom.window.document.querySelector('span').dataset.adminStatus,tone);dom.window.close();
  }
 });
-test('calendar touch targets pan within a named focusable region without changing date actions',()=>{
+test('calendar fits seven columns without horizontal panning and keeps keyboard date actions',()=>{
  const css=read('src/app/admin/calendar.module.css'),component=read('src/app/admin/operations-calendar.tsx');
- assert.match(css,/\.calendarViewport\{[^}]*overflow-x:auto/);assert.match(css,/\.grid\{min-width:326px/);assert.match(css,/min-width:44px!important;min-height:48px/);
- assert.ok(component.includes('role="region" aria-label="Monthly dates" tabIndex={0}'));assert.ok(component.includes('onClick={()=>open(day)}'));
+ assert.match(css,/grid-template-columns:repeat\(7,minmax\(0,1fr\)\)/);assert.doesNotMatch(css,/\.grid\{min-width:326px/);assert.match(css,/min-height:62px!important/);
+ assert.ok(component.includes('aria-label="Monthly availability"'));assert.ok(component.includes('onClick={()=>open(day)}'));assert.ok(component.includes('ArrowDown:7'));
 });

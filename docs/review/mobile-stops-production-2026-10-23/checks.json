@@ -1,0 +1,22 @@
+{
+  "home": {
+    "number": "rgb(255, 255, 255)",
+    "page": "home",
+    "pageOverflow": false,
+    "ring": "5px",
+    "scrollable": true,
+    "text": "rgb(255, 255, 255)",
+    "width": 390
+  },
+  "route": {
+    "number": "rgb(255, 255, 255)",
+    "page": "route",
+    "pageOverflow": false,
+    "photos": false,
+    "ring": "5px",
+    "sameRow": true,
+    "scrollable": true,
+    "text": "rgb(255, 255, 255)",
+    "width": 390
+  }
+}
