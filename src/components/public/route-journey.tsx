@@ -1,6 +1,6 @@
 'use client';
 import {useCallback,useEffect,useState} from 'react';
-import {SightseeingStopsExperience} from './sightseeing-stops-experience';
+import {LiveJourneyTracker} from './live-journey-tracker';
 import {LiveMapEmbed} from './live-map-embed';
 import {plannerClock,plannerSummary,type DayPlannerData} from '@/modules/content/day-planner';
 import {sectionVisible,type WebsiteContent} from '@/modules/content/website-schema';
@@ -27,7 +27,7 @@ export function RouteJourney({content,initial,places}:{content:WebsiteContent;in
  return <main id="main-content" className={`p-container ${styles.page}`}>
   <header className={styles.intro}><p className="p-eyebrow">{content['routePage.eyebrow']}</p><h1>{content['routePage.title']}</h1><p>{content['routePage.text']}</p><p className={styles.metadata}>{stops.length?`${stops.length} stops · `:''}Hop on &amp; off · Live van tracking</p></header>
   <div id="journey-map" className={styles.map}><LiveMapEmbed priority presentation="full" onJourney={receiveJourney} selectedStopId={selected}/></div>
-  {sectionVisible(content,'route')&&<section aria-labelledby="journey-title"><h2 className={content['routePage.stops']===content['routePage.title']?'p-screen-reader-only':undefined} id="journey-title">{content['routePage.stops']}</h2><SightseeingStopsExperience mode="live" layout="timeline" stops={stops} places={places.filter(p=>p.showOnPage!==false)} journey={journey} stale={stale} onMap={selectStop} learnLabel={content['labels.destination']} mapLabel={content['routePage.mapAction']}/></section>}
+  {sectionVisible(content,'route')&&<section aria-labelledby="journey-title"><h2 className={content['routePage.stops']===content['routePage.title']?'p-screen-reader-only':undefined} id="journey-title">{content['routePage.stops']}</h2><LiveJourneyTracker stops={stops} places={places.filter(p=>p.showOnPage!==false)} journey={journey} stale={stale} onMap={selectStop} learnLabel={content['labels.destination']} mapLabel={content['routePage.mapAction']}/></section>}
   {sectionVisible(content,'departures')&&<section className={styles.section} aria-labelledby="journey-departures"><p className="p-eyebrow">Today · Local Shkodra time</p><h2 id="journey-departures">{content['routePage.departures']}</h2><p>{scheduleCurrent?summary?.status:'Schedule temporarily unavailable. Check availability when booking.'}</p>{scheduleCurrent&&data.times&&<ul className={styles.times}>{data.times.map(time=><li key={time} data-state={time<=plannerClock(now).time?"past":time===summary?.upcoming?.[0]?"next":"upcoming"}><time>{time}</time><small>{time<=plannerClock(now).time?'Scheduled earlier':time===summary?.upcoming?.[0]?'Next scheduled':'Upcoming'}</small></li>)}</ul>}<p className={styles.note}>Scheduled times are not a seat guarantee. Booking checks current availability and the advance-booking cutoff.</p></section>}
  </main>;
 }

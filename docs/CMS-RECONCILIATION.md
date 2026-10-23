@@ -128,3 +128,10 @@ Homepage → Our Partners exclusively owns the seven `partners.*` heading/visibi
 ## Homepage ticket promotion removal — 15 October 2026 (local only)
 
 The entire `#home-ticket` promotion is removed from homepage rendering, superseding the earlier Homepage intro/inclusions ownership note. Homepage → A day with possibilities controls and its unused inclusion-heading control are retired. Stored `intro.*`, `intro.showOnHomepage` and `tourPage.includedTitle` remain compatibility data; no active homepage consumer can revive them. Product descriptions/inclusions/prices and shared labels retain their existing sources for other pages. No migration or hosted content deletion. See HOMEPAGE-PROMOTION-REMOVAL-2026-10-15.md.
+
+
+## Route stop presentation panel — 23 October 2026 (local only)
+
+`/admin/[operatorId]/route-stops` is a dedicated, stop-ordered entry point to the existing shared destination editor. It edits the same `content_pages` destination `body`/`published_body` name, image and alt fields used by Website → Destinations. It reuses ImageField, saveDestination, content.draft/content.publish authorization, stale-save protection and revalidation; no separate stop-content collection or duplicate field ownership is introduced. More destination details remain available through that same editor. Website consumers continue joining published destination `stopId` to the independent map’s stable IDs.
+
+Live Map owns operational stop order, coordinates, vehicle position, recognition, live status and ETA. This panel reads the existing published-stop reference source and cannot edit those operational values or iframe labels. Unlinked stops offer reuse of an unassigned destination or creation through the existing canonical destination workflow. Ambiguous/draft-reassigned links require review in the full destination editor. Source failure preserves links and offers the existing editor rather than inventing stops. Existing section/destination visibility remains authoritative. See ROUTE-STOPS-ADMIN-2026-10-23.md for validation and limits.

@@ -1,0 +1,58 @@
+[
+  {
+    "state": "stale",
+    "heading": [
+      "Your route today",
+      "Live updates are stale. Check the map for the latest information."
+    ],
+    "states": [
+      "upcoming",
+      "upcoming",
+      "upcoming",
+      "upcoming",
+      "upcoming"
+    ]
+  },
+  {
+    "state": "unavailable",
+    "heading": [
+      "Your route today",
+      "Live updates temporarily unavailable."
+    ],
+    "states": [
+      "upcoming",
+      "upcoming",
+      "upcoming",
+      "upcoming",
+      "upcoming"
+    ]
+  },
+  {
+    "state": "loop",
+    "heading": [
+      "Your route today",
+      "Van at Start Stop — Rozafa Hotel"
+    ],
+    "states": [
+      "current",
+      "next",
+      "upcoming",
+      "upcoming",
+      "upcoming"
+    ]
+  },
+  {
+    "state": "late",
+    "heading": [
+      "Your route today",
+      "Next destination: Mesi Bridge"
+    ],
+    "states": [
+      "departed",
+      "upcoming",
+      "upcoming",
+      "upcoming",
+      "next"
+    ]
+  }
+]

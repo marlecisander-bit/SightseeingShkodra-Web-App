@@ -41,3 +41,22 @@ test('operator and browser permissions protect mutations',async()=>{
  await db.exec('set role anon');await assert.rejects(save(r,r.body),/permission/);await db.exec('reset role');
 });
 test('new destination lifecycle supports unpublished drafts, publish and withdrawal without a stop',async()=>{const original=await row('lake'),body={...original.body,slug:'test-independent-destination',name:'Independent destination',stopId:null};const id=(await db.query('select save_destination_v1($1,$2,null,$3,$4,9,null) id',[op,actor,JSON.stringify(body),'draft'])).rows[0].id;let fresh=await row(body.slug);assert.equal(fresh.id,id);assert.equal(fresh.status,'draft');assert.equal(fresh.published_body,null);await save(fresh,body,'publish');fresh=await row(body.slug);assert.equal(fresh.status,'published');assert.equal(fresh.published_body.stopId,null);await save(fresh,body,'unpublish');fresh=await row(body.slug);assert.equal(fresh.status,'draft');assert.equal(fresh.published_body.name,body.name);});
+
+test('stop presentation edits publish through the existing destination without changing operational data',async()=>{
+ const {sightseeingStops}=await import('../../src/modules/content/sightseeing-stops.ts');
+ const {destinationPlace}=await import('../../src/modules/content/destinations.ts');
+ const before=(await db.query('select * from stops order by id')).rows;
+ let r=await row('lake');
+ const originalPublished={...r.published_body};
+ const edited={...r.body,name:'Updated route lake',image:'/images/castle.webp',alt:'Updated route photograph',stopId:'external-stable-lake'};
+ await save(r,edited,'draft');r=await row('lake');
+ assert.deepEqual(r.published_body,originalPublished,'draft stays private');
+ await save(r,r.body,'publish');r=await row('lake');
+ const operational=[{id:'external-stable-lake',label:'Original operational map label'}];
+ const snapshot={type:'shkodra:journey',version:1,unavailable:false,stops:[{id:operational[0].id,label:'Original operational map label',state:'next',eta:'12 min'}]};
+ const projected=sightseeingStops(operational,[destinationPlace(r)],snapshot)[0];
+ assert.equal(projected.name,'Updated route lake');assert.equal(projected.place.image,'/images/castle.webp');
+ assert.equal(projected.id,'external-stable-lake');assert.equal(projected.state,'next');assert.equal(projected.eta,'12 min');
+ assert.equal(r.body.slug,edited.slug);assert.equal(r.body.story,edited.story);assert.equal(r.body.lat,edited.lat);assert.equal(r.body.lng,edited.lng);
+ assert.deepEqual((await db.query('select * from stops order by id')).rows,before,'editorial publication leaves operational stops untouched');
+});
