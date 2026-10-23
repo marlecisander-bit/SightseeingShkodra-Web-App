@@ -1,6 +1,6 @@
 # Booking email reliability release result
 
-Date: 23 October 2026. Status: release preparation complete; controlled production cutover pending. This file will record final production evidence before handoff.
+Date: 23 October 2026. Status: **Published and verified**. PR #27 merged; production Vercel deployment is Ready/Current. Final provider diagnostics observed on 23 October 2026 at approximately 18:47 UTC / 20:47 Europe/Tirane.
 
 ## Scope and authorization
 
@@ -23,7 +23,7 @@ Separate approvals cover the monitoring-only DMARC record, removal of the verifi
 
 ## Migration and compatibility
 
-Migration: `supabase/migrations/20261023000100_email_provider_outcomes.sql`. Application status: not yet applied to production.
+Migration: `supabase/migrations/20261023000100_email_provider_outcomes.sql`. Applied and recorded in production as version `20261023000100`, name `email_provider_outcomes`. Source SHA-256: `4b5087b2ebdeac014bdddd2e1d846cede695f42f127b3a08ed01cf21f4f66bbc`. The guarded transaction used a 5-second lock timeout and 30-second statement timeout, verified normalized function baselines, then recorded source SQL in migration history atomically. Post-commit history MD5 `3f2db72fa5c632f22d7300af6da53604` matches the exact file; RLS/service-only grants verified; 29 bookings and 18 notifications retained. PostgREST schema metadata was refreshed.
 
 The upgrade is transactional and additive to notification data. It adds provider evidence fields, a unique partial Resend message index, scoped `email_provider_events`, service-only persistence/reconciliation/health RPCs, owner read RLS, early-event linking and bounded cleanup of unmatched metadata. Retry RPC wrappers retain owner/current-booking/cooldown/idempotency checks while refusing unsafe retries. Browser roles cannot write or call service-only functions; private legacy RPCs have execute revoked.
 
@@ -43,7 +43,7 @@ Customer QR PNGs are generated locally from the canonical credential, included i
 
 Sender remains **Sightseeing Shkodra <tickets@sightseeingshkodra.app>**, with `.app` Verified in Resend. A `.com` booking origin does not require a `.com` sending domain while From remains `.app`. Reply-to and owner addresses are preserved and omitted here.
 
-New webhook: `5fe27366-640b-4079-a088-8f4bb104e603`, endpoint `https://sightseeingshkodra.app/api/webhooks/resend`. Exactly seven email events are configured: sent, delivered, bounced, delivery_delayed, complained, failed and suppressed. It is **paused during preparation**, pending the Ready receiver. No historical provider event replay or test-send was invoked.
+New webhook: `5fe27366-640b-4079-a088-8f4bb104e603`, endpoint `https://sightseeingshkodra.app/api/webhooks/resend`. Exactly seven email events are configured: sent, delivered, bounced, delivery_delayed, complained, failed and suppressed. It was paused during preparation, then **enabled after the correct production receiver was Ready**. Enabled status was verified in the authenticated Resend endpoint page. No historical provider event replay or test-send was invoked.
 
 `RESEND_WEBHOOK_SECRET` and `RESEND_STATUS_API_KEY` were saved as **Production-only Vercel Secret variables**, with values transferred privately and never written into Git/reports. The separate status key has owner-approved Full access because the original Sending-access key cannot retrieve outcomes. Application use is limited to GET `/emails/{id}`. The existing `RESEND_API_KEY` was left unchanged. One unused newly created setup key was revoked before its replacement was created; only one new status key is retained.
 
@@ -79,11 +79,11 @@ Local log evidence is under `/private/tmp/email-reliability-final-tests.log`, `/
 
 ## Release gates and deployment record
 
-Vercel dashboard confirms current production **Ready**, deployment `nGp6XuKzVVTpANeKdq1JMEqDcRAb`, source **8d06627611e058e853538e66bc82a94e536796e9**. This is the validated recovery application. Direct deployment URL requires Vercel SSO; an anonymous 302 is not an app failure. Main pushes/merges trigger production. The exact current Ignored Build Step skips nonproduction builds; safe staging/Preview is not assumed. GitHub Project CI has communications disabled and disposable database tests.
+Before cutover, the Vercel dashboard confirmed the prior production deployment **Ready**, `nGp6XuKzVVTpANeKdq1JMEqDcRAb`, source **8d06627611e058e853538e66bc82a94e536796e9**. This remains the validated recovery application. Direct deployment URL requires Vercel SSO; an anonymous 302 is not an app failure. Main pushes/merges trigger production. The exact current Ignored Build Step skips nonproduction builds; safe staging/Preview is not assumed. GitHub Project CI has communications disabled and disposable database tests.
 
-Current preparation: code checks pass; compatibility reviewed; mailbox/suppression and DNS prerequisites resolved; webhook registration and Production secret names confirmed; recovery procedure documented/tested locally. Production schema application, feature PR/CI, final merge/deployment and bounded non-mutating production smoke checks are pending. **No publication success or inbox delivery is claimed yet.**
+All mandatory pre-publication gates passed: local/CI checks, migration compatibility and recovery rehearsal, signature/tenant security tests, exact main-push behavior, verified webhook registration/secrets, approved mailbox/suppression and DNS prerequisites, and a known Ready recovery application. The migration was applied and verified before merge. [PR #27](https://github.com/marlecisander-bit/SightseeingShkodra-Web-App/pull/27) passed CI and merged. Vercel is Ready/Current and bounded non-mutating production checks passed. Both candidate and post-merge GitHub Verify project checks succeeded. Inbox delivery is not claimed.
 
-Implementation commit: to be recorded. Production release commit: unchanged baseline until verified cutover.
+Implementation commit: `379d2c8d8ec78a01bc8ff68b3825bb47d50e8abb`. Squash merge / production release commit: `b47933b0ef1cb36ec0b4d850488f5a0d1329c365`. Vercel deployment: `FYLxWyj7cLvpmrt7YRygwasHTtCC`, **Ready / Production / Current**, built in 32 seconds. Deployment URL: `https://sightseeing-shkodra-web-8j4tnsyin-aleksander-marleci.vercel.app`. GitHub Verify project passed install, lint/types/build, all disposable tests and production dependency audit for the exact candidate. Feature Vercel status was “Canceled by Ignored Build Step,” as preflight predicted.
 
 ## Changed files
 
@@ -93,8 +93,31 @@ Schema/configuration: the migration above; `.env.example`; `scripts/check-deploy
 
 Verification/documentation: development-only synthetic preview; new event/domain/recovery integration tests; updated email/admin/deployment/schema/PostgreSQL regression tests; release runbook/preflight; phase status and this report. No destination photographs, CMS records, pricing, booking lifecycle, public presentation or tracking functionality was modified.
 
-## Remaining acceptance evidence
+## Production acceptance evidence and exact customer cause
 
-After release, observe the existing worker and bounded status reads rather than creating a booking or sending mail. Confirm actual historical suppression appears separately from acceptance in the new admin. Future genuine provider events will establish end-to-end webhook receipt without synthetic production writes. Lack of a provider event during a bounded observation period must be reported honestly, not replaced by an inbox-delivery claim. The earlier customer's exact downstream non-arrival cause remains unproven unless new provider diagnostics establish it.
+Bounded production checks were completed without creating bookings, sending emails, invoking workers, replaying events or resending historical notifications:
+
+| Production check | Observed result |
+|---|---|
+| `.app` and `www..com` homepage / booking-page GETs | 200 on both hosts |
+| Webhook GET on both hosts | 405, matching the POST-only receiver |
+| One unsigned `{}` POST per webhook host | 401; authentication rejects before persistence; no synthetic provider event is created |
+| Registered Resend endpoint | Enabled, correct `.app` endpoint and seven selected events; no provider events yet at observation |
+| Authenticated production Email & Notifications | New cards, booking filter, provider outcome/history, credential-presence indicators and health visible |
+| Existing automatic worker | Operational; last start/completion/success 23 October 20:44 Europe/Tirane, pending queue 0 |
+| Existing customer message | **Delivery delayed**, provider ID `01a169cf-15c1-7dc0-a0a7-5b4f32aadc7f`; one sending attempt; one read lookup at 20:43 local |
+| Existing owner message | **Suppressed**, provider ID `01a169cf-194e-76f3-a360-510e512d311d`; one sending attempt; one read lookup at 20:44 local |
+| Event source | Both new admin history entries explicitly say “observed by provider lookup”; they are not misrepresented as webhook or SMTP timestamps |
+| Health snapshot | One provider failure/suppression, one delay, sixteen older accepted messages without final evidence; these are historical outcomes, not queued sends |
+
+These automatic status reads prove the separate key, deployed reconciliation, new service RPC, provider-ID association and admin projections operate together on existing records. The original acceptance time remains 19:29 local rather than being overwritten by a later provider update. Historical owner suppression remains correctly visible even after the address is unsuppressed for future sends. No duplicate job or second sending attempt was created for the audited pair.
+
+**New decisive customer evidence:** the authenticated Resend customer-message detail now shows **Delivery delayed → Mailbox Full**, status **4.2.2**, SMTP **452-4.2.2**, with a Gmail out-of-storage diagnostic. This establishes the receiving mailbox's quota as the observed temporary rejection cause for this exact customer message. Resend says it will retry delivery. The recipient must free mailbox storage or otherwise resolve the quota; do not create a duplicate application send while the accepted message remains under provider retry. This updates the earlier read-only audit, which had observed only Sent and could not yet establish the cause. The original audit file is preserved unchanged.
+
+The new signed webhook is configured and security-tested, but no genuine provider event reached that new registration during this bounded observation window. Its live end-to-end receipt is therefore not claimed. No synthetic production event was inserted to manufacture that evidence. Continue to observe natural provider events and existing bounded reconciliation; investigate fixed verification/persistence failure logs if events fail. Real receiving-server delivery and actual inbox placement remain distinct outcomes.
+
+**Remaining external action:** the affected customer mailbox owner must clear storage. Owner address suppression is removed, DNS/configuration are complete, and no further release-blocking configuration action remains. Actual arrival of future legitimate customer/owner messages must be assessed from provider outcomes and recipient evidence. Sixteen historical accepted messages will be examined gradually by the existing bounded reader; unknown evidence is never permission to resend.
+
+The final report is updated after deployment in the workspace; the report committed with the release remains the pre-cutover evidence snapshot. No extra production deployment was triggered solely to rewrite documentation.
 
 Official references: [Resend retrieval API](https://resend.com/docs/api-reference/emails/retrieve-email), [Resend webhook setup](https://resend.com/docs/webhooks/introduction), [Supabase status](https://status.supabase.com/). The platform status page reported a management-API incident under monitoring; this audit does not assume that every project operation is affected. Successful project reads are recorded above; any failed migration/configuration operation must stop cutover.

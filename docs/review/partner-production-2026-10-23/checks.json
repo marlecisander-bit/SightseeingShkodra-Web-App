@@ -1,0 +1,22 @@
+[
+  {
+    "cardHeight": 168,
+    "cardWidth": 160,
+    "horizontalCenterError": 0,
+    "logoLoaded": true,
+    "name": "Berisha Ferries",
+    "overflow": false,
+    "verticalCenterError": 0,
+    "width": 390
+  },
+  {
+    "cardHeight": 184,
+    "cardWidth": 200,
+    "horizontalCenterError": 0,
+    "logoLoaded": true,
+    "name": "Berisha Ferries",
+    "overflow": false,
+    "verticalCenterError": 0,
+    "width": 1440
+  }
+]

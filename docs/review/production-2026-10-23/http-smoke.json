@@ -1,0 +1,57 @@
+[
+  {
+    "path": "/",
+    "status": 200,
+    "finalUrl": "https://sightseeingshkodra.app/"
+  },
+  {
+    "path": "/route",
+    "status": 200,
+    "finalUrl": "https://sightseeingshkodra.app/route",
+    "newTracker": true,
+    "fiveStops": true
+  },
+  {
+    "path": "/explore",
+    "status": 200,
+    "finalUrl": "https://sightseeingshkodra.app/explore"
+  },
+  {
+    "path": "/book",
+    "status": 200,
+    "finalUrl": "https://sightseeingshkodra.app/book"
+  },
+  {
+    "path": "/faq",
+    "status": 200,
+    "finalUrl": "https://sightseeingshkodra.app/faq"
+  },
+  {
+    "path": "/your-day",
+    "status": 200,
+    "finalUrl": "https://sightseeingshkodra.app/your-day"
+  },
+  {
+    "path": "/privacy-policy",
+    "status": 200,
+    "finalUrl": "https://sightseeingshkodra.app/privacy-policy"
+  },
+  {
+    "path": "/terms-and-conditions",
+    "status": 200,
+    "finalUrl": "https://sightseeingshkodra.app/terms-and-conditions"
+  },
+  {
+    "path": "/brand/sightseeing-van.svg",
+    "status": 200,
+    "finalUrl": "https://sightseeingshkodra.app/brand/sightseeing-van.svg",
+    "sha256": "888f450c3f4360fa93112770e4d36e174d7942e0de1d501e57016eb6be525dd2"
+  },
+  {
+    "path": "/admin/10000000-0000-4000-8000-000000000001/route-stops",
+    "status": 200,
+    "finalUrl": "https://sightseeingshkodra.app/admin/10000000-0000-4000-8000-000000000001/route-stops",
+    "protected": true,
+    "protectionEvidence": "Unauthenticated streamed NEXT_REDIRECT to sign-in; meta refresh present; stop editor absent."
+  }
+]
