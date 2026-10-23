@@ -18,3 +18,15 @@
 
 .progress i img{display:block;width:36px;height:auto;}
 .here img{display:block;width:36px;height:auto;border-radius:0;object-fit:contain;}
+
+/* Destination identity is editorial; live state stays in the status/progression badges. */
+.timeline{grid-template-columns:1fr;gap:28px 24px;padding:16px 10px;}
+.timeline li:not(:last-child):after{display:none;}
+.stop{gap:8px;padding:12px;}
+.copy{width:100%;gap:8px;}
+.description{font-size:14px;line-height:1.6;-webkit-line-clamp:3;}
+.here{top:50%;right:-10px;bottom:auto;left:auto;transform:none;}
+@media(max-width:700px){.timeline{display:grid;}.timeline li{padding-bottom:0;}.stop{flex-direction:column;text-align:center;gap:8px;padding:12px;}.copy{gap:8px;}.description{font-size:14px;}.here{width:40px;}}
+@media(min-width:480px){.timeline{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(min-width:760px){.timeline{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media(min-width:1100px){.timeline{grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;}.stop{padding:10px 6px;}}

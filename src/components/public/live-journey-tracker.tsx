@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import {StopPortrait} from './stop-portrait';
 import {useId, useRef, useState} from 'react';
 import {sightseeingStops, sightseeingStatus, type StopPlace} from '@/modules/content/sightseeing-stops';
 import type {JourneySnapshot} from '@/modules/tracking/journey-contract';
@@ -41,8 +42,8 @@ export function LiveJourneyTracker({stops, places, journey, stale=false, onMap, 
   {!items.length&&<p>Published stops are temporarily unavailable.</p>}
   <ol className={styles.timeline} aria-label="Choose a destination">{items.map(s=><li key={s.id} data-state={s.state}>
    <button ref={node=>{if(node)triggers.current.set(s.id,node);else triggers.current.delete(s.id);}} type="button" className={styles.stop} aria-expanded={selected===s.id} aria-controls={detailId} onClick={()=>setSelected(selected===s.id?null:s.id)}>
-    <span className={styles.photo}>{s.place?.image?<Image src={s.place.image} alt={s.place.alt||s.name} width={160} height={160} sizes="(max-width: 700px) 76px, 112px"/>:<span className={styles.noPhoto}>Stop {s.number}</span>}<span className={styles.number}>{s.state==='departed'?'✓':s.number}</span>{s.state==='current'&&<span className={styles.here}><TrackingVanIcon/></span>}</span>
-    <span className={styles.copy}><strong>{s.name}</strong>{s.place?.tag&&<span className={styles.subtitle}>{s.place.tag}</span>}{s.place?.text&&<span className={styles.description}>{s.place.text}</span>}<span className={styles.badge}>{label(s.state)}</span></span>
+    <StopPortrait number={s.number} name={s.name} image={s.place?.image} alt={s.place?.alt}>{s.state==='current'&&<span className={styles.here}><TrackingVanIcon/></span>}</StopPortrait>
+    <span className={styles.copy}>{s.place?.tag&&<span className={styles.subtitle}>{s.place.tag}</span>}{s.place?.text&&<span className={styles.description}>{s.place.text}</span>}<span className={styles.badge}>{label(s.state)}</span></span>
    </button>
   </li>)}</ol>
   <div id={detailId}>{chosen&&<section className={styles.detail} aria-label={`${chosen.name} details`} onKeyDown={event=>{if(event.key==='Escape')close();}}>

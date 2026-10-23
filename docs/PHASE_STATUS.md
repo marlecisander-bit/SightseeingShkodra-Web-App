@@ -1,3 +1,5 @@
+APPROVED FOR PUBLICATION (23 October 2026): Circular Stops presentation shared by homepage and route tracker. Existing CMS assets/content, IDs/order and live/map actions preserved. Local lint/typecheck/build and 11 focused tests passed; desktop/mobile layouts verified. Release lint/typecheck/build, all 461 tests and production dependency audit passed on Next.js 16.4.2. GitHub CI and production verification pending. See CIRCULAR-STOPS-REDESIGN-2026-10-23.md.
+
 23 October 2026 publication approval: owner explicitly approved publishing the prepared UI release including Next.js/eslint-config-next 16.4.2. Release checks pass; GitHub/Vercel publication and hosted verification in progress. No migration or cloud configuration change authorized or included.
 
 23 October 2026 release candidate validated: all 461 tests, lint/typecheck/build and zero-vulnerability production audit pass. Candidate retains remote main 5041261 CMS/admin enhancements. Production unchanged; publication is awaiting approval to include the necessary Next.js/eslint-config-next 16.4.2 security update beyond the UI scope. See RELEASE-CANDIDATE-2026-10-23.md.
