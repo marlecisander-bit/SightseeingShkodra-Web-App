@@ -168,3 +168,7 @@ Ready for **owner review of the local changes**. A production release needs expl
 Use the isolated checkout above for source review; the original IDE source is intentionally still stale/dirty. A portable patch is retained in the original workspace at `docs/review/PERFORMANCE-2026-10-23.patch`, targeting clean cd17d90-compatible source. Do not apply it blindly to the old dirty IDE source.
 
 Run `npm run check`, `npm test`, then `node scripts/performance-bundles.mjs`. For local-only browser comparison, `npm run dev -- --port 3108` exposes `/dev/performance-navigation/before/overview`, `/dev/performance-navigation/after/overview`, and `/dev/performance-explore?before=true` versus `/dev/performance-explore`. Use Lighthouse 13.5.0 with the same mobile/desktop preset and fresh isolated profiles; do not mix development figures with production baselines. No Supabase credentials are needed for these fixtures.
+
+## Authorized release additions
+
+The owner authorized publication on 23 October 2026. The release also includes 8px spacing for CMS Quick navigation and shared admin task links, plus homepage Open Graph/Twitter images sourced from the desktop hero. Historical seo.image/seo.alt values remain validated and stored for compatibility, with their conflicting editor controls retired; title/description controls remain available. A regression test covers hero sharing and stored-value compatibility. Release PR #30; hosted verification pending.
