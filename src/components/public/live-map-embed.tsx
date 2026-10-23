@@ -63,9 +63,3 @@ export function LiveMapEmbed({ priority = false, presentation = "compact", colla
 
   </div>;
 }
-
-/** Do not create the external map document until the visitor requests it. */
-export function HomepageMapDisclosure() {
-  const [open, setOpen] = useState(false);
-  return <details className="p-home-inline-map" onToggle={event=>setOpen(event.currentTarget.open)}><summary>Show live map here</summary>{open && <LiveMapEmbed collapseRecovery/>}</details>;
-}

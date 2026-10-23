@@ -213,7 +213,7 @@
 .taskGroup[open] > summary {background:var(--brand-red-soft);color:var(--brand-text);}
 .chevron {margin-left:auto;}
 .taskGroup[open] .chevron {transform:rotate(180deg);}
-.taskItems {list-style:none;padding:0;margin:4px 0 12px;display:grid;gap:3px;}
+.taskItems {list-style:none;padding:0;margin:4px 0 12px;display:grid;gap:8px;}
 .taskItems a {display:grid;align-content:center;gap:4px;min-height:44px;padding:10px 12px;border-left:3px solid transparent;text-decoration:none;color:var(--ss-charcoal);border-radius:6px;overflow-wrap:anywhere;}
 .taskItems a small {font-size:12px;line-height:1.45;color:var(--ss-muted);font-weight:400;}
 .taskItems a:hover {background:var(--brand-red-soft);}
@@ -356,3 +356,9 @@
 .shell button[data-admin-action=secondary]:not(:disabled):hover {background:var(--admin-hover);color:var(--admin-text);}
 .shell button[data-admin-action=primary] {background:var(--admin-primary);color:#fff;border-color:transparent;}
 .shell button[data-admin-action=primary]:not(:disabled):hover {background:var(--admin-primary-hover);color:#fff;}
+
+.shell :is(.taskItems,.bottomNavigation) a{position:relative}
+.shell .navigationHint{position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 2px var(--admin-primary);opacity:0;transition:opacity 120ms ease;}
+.shell .navigationHint[data-pending=true]{opacity:1}
+.panelLoading{min-height:320px;padding:16px 0}.panelLoading>div{height:48px;max-width:680px;margin:16px 0;background:#f1f1ee;border-radius:10px}.panelLoading>div:last-child{max-width:460px}
+@media(prefers-reduced-motion:reduce){.shell .navigationHint{transition:none}}
