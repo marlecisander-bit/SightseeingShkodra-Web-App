@@ -1,5 +1,6 @@
 'use client';
 import Image from 'next/image';
+import {StopPortrait} from './stop-portrait';
 import {useEffect,useId,useRef,useState} from 'react';
 import {sightseeingStops,sightseeingStatus,type StopPlace} from '@/modules/content/sightseeing-stops';
 import type {JourneySnapshot} from '@/modules/tracking/journey-contract';
@@ -25,8 +26,8 @@ export function SightseeingStopsExperience({mode,layout='timeline',stops,places,
   {!items.length&&<p>Published stops are temporarily unavailable.</p>}
   <ol ref={list} className={styles.stops} onScroll={event=>{if(mode!=='discover')return;const el=event.currentTarget;const children=Array.from(el.children) as HTMLElement[];const nearest=children.reduce((best,node,i)=>Math.abs(node.offsetLeft-el.offsetLeft-el.scrollLeft)<Math.abs(children[best].offsetLeft-el.offsetLeft-el.scrollLeft)?i:best,0);setActive(nearest);}}>{items.map(s=><li key={s.id} data-state={s.state} data-stop-id={s.id}>
    <button className={styles.card} type="button" aria-label={mode==='live'?`Stop ${s.number}: ${s.name}. ${s.state==='current'?'Van here':s.state==='next'?'Next stop':s.state==='departed'?'Departure confirmed':'Upcoming'}. Show details`:undefined} aria-expanded={selected===s.id} aria-controls={detailId} onClick={event=>{trigger.current=event.currentTarget;setSelected(selected===s.id?'':s.id);}}>
-    <span className={styles.photo}>{s.place?.image?<Image src={s.place.image} alt={s.place.alt||s.name} width={180} height={180} unoptimized={mode!=='live'} sizes="(min-width: 1024px) 104px, 80px"/>:<span className={styles.placeholder}>Photo coming soon</span>}<span className={styles.number}>{s.number}</span>{s.state==='current'&&<span className={styles.van}><VanIcon/><span className={styles.indicatorText}>Van here</span></span>}{mode==='live'&&s.state==='departed'&&<span className={styles.check} aria-hidden="true">✓</span>}</span>
-    <span className={styles.copy}><strong>{s.name}</strong><span className={styles.description}>{s.place?.text||'Discover this stop on the route.'}</span>{mode==='live'&&s.state!=='upcoming'&&<small className={styles.badge}>{s.state==='current'?'Van here':s.state==='next'?`Next stop${!parked&&s.eta?` · ${s.eta}`:''}`:s.state==='departed'?'Departure confirmed':'Stop '+s.number}</small>}</span>
+    <StopPortrait number={s.number} name={s.name} image={s.place?.image} alt={s.place?.alt} unoptimized={mode!=='live'}>{s.state==='current'&&<span className={styles.van}><VanIcon/><span className={styles.indicatorText}>Van here</span></span>}</StopPortrait>
+    <span className={styles.copy}>{s.place?.text&&<span className={styles.description}>{s.place.text}</span>}{mode==='live'&&s.state!=='upcoming'&&<small className={styles.badge}>{s.state==='current'?'Van here':s.state==='next'?`Next stop${!parked&&s.eta?` · ${s.eta}`:''}`:s.state==='departed'?'Departure confirmed':'Stop '+s.number}</small>}</span>
    </button>{mode==='discover'&&s.place&&<a className={styles.learn} href={s.place.link}>{learnLabel} →</a>}
   </li>)}</ol>
   {mode==='discover'&&items.length>1&&<div className={styles.controls} aria-label="Choose a stop"><button type="button" aria-label="Previous stop" disabled={active===0} onClick={()=>go(active-1)}>←</button>{items.map((s,i)=><button key={s.id} type="button" aria-label={`Show stop ${s.number}: ${s.name}`} aria-current={active===i?'true':undefined} onClick={()=>go(i)}><span/></button>)}<button type="button" aria-label="Next stop" disabled={active===items.length-1} onClick={()=>go(active+1)}>→</button></div>}
