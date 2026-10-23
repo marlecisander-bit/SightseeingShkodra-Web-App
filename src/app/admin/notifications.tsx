@@ -1,11 +1,13 @@
 'use client';
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState, useId, type ReactNode } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import Link from 'next/link';
+import {useRouter} from 'next/navigation';
+import {recentNotifications,notificationSummary,notificationTime} from './notification-presentation';
 import {AdminIcon} from './admin-icon';
 import { bookingTarget, notificationLabels, type Device, type Inbox, type InboxItem, type Preference } from '@/modules/notifications/contracts';
 import styles from './notifications.module.css';
-type Context={operator:string;inbox:Inbox;error:string;connection:string;version:number;refresh:()=>Promise<void>;mutate:(action:unknown)=>Promise<unknown>;request:(query?:string,action?:unknown)=>Promise<unknown>};
+type Context={loading?:boolean;operator:string;inbox:Inbox;error:string;connection:string;version:number;refresh:()=>Promise<void>;mutate:(action:unknown)=>Promise<unknown>;request:(query?:string,action?:unknown)=>Promise<unknown>};
 export const NotificationContext=createContext<Context|null>(null);
 const empty:Inbox={items:[],unread:0,next:null};
 export async function notificationRequest(operator:string,query='',action?:unknown){
@@ -14,10 +16,11 @@ export async function notificationRequest(operator:string,query='',action?:unkno
 }
 export function NotificationProvider({operator,userId,children}:{operator:string;userId:string;children:ReactNode}){
  const [inbox,setInbox]=useState<Inbox>(empty),[error,setError]=useState(''),[connection,setConnection]=useState('Connecting'),[version,setVersion]=useState(0);
+ const [loading,setLoading]=useState(true);
  const generation=useRef(0);
  const invalidate=useCallback(()=>{generation.current++;},[]);
  const request=useCallback((query='',action?:unknown)=>notificationRequest(operator,query,action),[operator]);
- const refresh=useCallback(async()=>{const g=++generation.current;try{const data=await notificationRequest(operator);if(g===generation.current){setInbox(data);setError('');setVersion(v=>v+1);}}catch{if(g===generation.current)setError('Notifications unavailable. Retry when connected.');}},[operator]);
+ const refresh=useCallback(async()=>{const g=++generation.current;try{const data=await notificationRequest(operator);if(g===generation.current){setInbox(data);setError('');setVersion(v=>v+1);}}catch{if(g===generation.current)setError('Notifications unavailable. Retry when connected.');}finally{if(g===generation.current)setLoading(false);}},[operator]);
  useEffect(()=>{
   let timer:ReturnType<typeof setTimeout>|undefined;const queue=()=>{clearTimeout(timer);timer=setTimeout(()=>void refresh(),250);};
   const client=createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!);
@@ -27,25 +30,33 @@ export function NotificationProvider({operator,userId,children}:{operator:string
   return()=>{invalidate();clearTimeout(timer);auth.data.subscription.unsubscribe();void client.removeChannel(channel);document.removeEventListener('visibilitychange',visible);window.removeEventListener('online',queue);};
  },[operator,userId,refresh,invalidate]);
  const mutate=async(action:unknown)=>{const result=await notificationRequest(operator,'',action);await refresh();return result;};
- return <NotificationContext.Provider value={{operator,inbox,error,connection,version,refresh,mutate,request}}>{children}</NotificationContext.Provider>;
+ return <NotificationContext.Provider value={{loading,operator,inbox,error,connection,version,refresh,mutate,request}}>{children}</NotificationContext.Provider>;
 }
 function useNotifications(){const c=useContext(NotificationContext);if(!c)throw Error('Notification workspace unavailable');return c;}
-function relative(time:string){const minutes=Math.max(0,Math.floor((Date.now()-Date.parse(time))/60000));return minutes<1?'Just now':minutes<60?`${minutes} min ago`:minutes<1440?`${Math.floor(minutes/60)} hr ago`:`${Math.floor(minutes/1440)} days ago`;}
-function Item({item,onNavigate}:{item:InboxItem;onNavigate?:()=>void}){
- const {operator,mutate}=useNotifications();const [error,setError]=useState(''),[busy,setBusy]=useState(false);const n=item.notification;
- return <li className={`${styles.item} ${!item.read_at?styles.unread:''}`}>
-  <AdminIcon name={n.type==='email_delivery_failed'?'info':n.type==='booking_modified'?'clock-3':'ticket'}/>
-  <div><strong>{n.title}</strong><p>{n.message}</p><time dateTime={n.event_at} title={new Date(n.event_at).toLocaleString()}>{relative(n.event_at)}</time> <span>{item.read_at?'Read':'Unread'}</span>
-   <div className={styles.actions}><Link href={bookingTarget(operator,n.booking_id)} onClick={()=>{void mutate({kind:'read',id:item.id,read:true}).catch(()=>{});onNavigate?.();}}>View booking</Link><button type="button" disabled={busy} onClick={async()=>{setBusy(true);try{await mutate({kind:'read',id:item.id,read:!item.read_at});setError('');}catch{setError('Unable to update read status.');}finally{setBusy(false);}}}>{item.read_at?'Mark unread':'Mark read'}</button></div>{error&&<p role="alert">{error}</p>}
-  </div>
+function NotificationTypeIcon({type}:{type:InboxItem['notification']['type']}){
+ if(type==='booking_created')return <AdminIcon name="calendar-check"/>;
+ if(type!=='booking_modified'&&type!=='booking_cancelled')return <AdminIcon name={type==='email_delivery_failed'?'mail':'info'}/>;
+ return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><path d="M8 2v3M16 2v3M3 9h18"/><rect x="3" y="3" width="18" height="18" rx="2"/>{type==='booking_cancelled'?<path d="m10 13 4 4m0-4-4 4"/>:<><circle cx="12" cy="15" r="3.5"/><path d="M12 13v2l1.5 1"/></>}</svg>;
+}
+function Item({item,onNavigate,compact=false}:{item:InboxItem;onNavigate?:()=>void;compact?:boolean}){
+ const {operator,mutate}=useNotifications();const router=useRouter();const [error,setError]=useState(''),[busy,setBusy]=useState(false);const n=item.notification,view=notificationSummary(item);
+ let target:string|null=null;try{target=bookingTarget(operator,n.booking_id);}catch{/* Missing destination remains a safe non-link. */}
+ const content=<><span className={styles.itemIcon}><NotificationTypeIcon type={n.type}/>{!item.read_at&&<i aria-hidden="true"/>}</span><span className={styles.itemCopy}><strong>{n.title}</strong><span className={styles.summary}>{view.summary}</span>{view.reference&&<span className={styles.reference} title={view.reference}>{view.reference}{view.amount&&` · ${view.amount}`}</span>}<time dateTime={n.event_at} title={new Date(n.event_at).toLocaleString('en-GB',{timeZone:'Europe/Tirane'})}>{notificationTime(n.event_at)}</time><span className={styles.sr}>{item.read_at?'Read':'Unread'} notification</span></span><AdminIcon name="chevron-right" size={16}/></>;
+ return <li className={`${styles.item} ${!item.read_at?styles.unread:''}`} aria-busy={busy}>
+ {target?<Link className={styles.itemLink} href={target} onClick={async event=>{if(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;event.preventDefault();if(busy)return;setBusy(true);setError('');try{if(!item.read_at)await mutate({kind:'read',id:item.id,read:true});onNavigate?.();router.push(target!);}catch{setError('Unable to mark this notification read. Please try again.');}finally{setBusy(false);}}}>{content}</Link>:<div className={styles.itemLink}>{content}<span role="status">Booking destination unavailable.</span></div>}
+ {!compact&&<button type="button" disabled={busy} onClick={async()=>{setBusy(true);try{await mutate({kind:'read',id:item.id,read:!item.read_at});setError('');}catch{setError('Unable to update read status.');}finally{setBusy(false);}}}>{item.read_at?'Mark unread':'Mark read'}</button>}{error&&<p className={styles.itemError} role="alert">{error}</p>}
  </li>;
 }
 export function NotificationBell(){
- const {operator,inbox,error,connection,refresh,request}=useNotifications();const [open,setOpen]=useState(false),[setup,setSetup]=useState('Checking notification setup...');
- useEffect(()=>{if(!open)return;let active=true;void request('&settings=1').then(data=>{const s=data as Settings;if(active)setSetup(!s.workerEnabled?'Booking notifications are paused.':!s.pushEnabled?'Push setup is incomplete. Open device setup below.':'Push server is enabled. Check this device permission and subscription in setup.');}).catch(()=>{if(active)setSetup('Notification setup could not be checked.');});return()=>{active=false;};},[open,request]);const root=useRef<HTMLDivElement>(null),button=useRef<HTMLButtonElement>(null);
- useEffect(()=>{if(!open)return;const close=(e:PointerEvent)=>{if(!root.current?.contains(e.target as Node))setOpen(false);};const key=(e:KeyboardEvent)=>{if(e.key==='Escape'){setOpen(false);button.current?.focus();}};document.addEventListener('pointerdown',close);document.addEventListener('keydown',key);return()=>{document.removeEventListener('pointerdown',close);document.removeEventListener('keydown',key);};},[open]);
- return <div className={styles.bell} ref={root}><button type="button" ref={button} aria-label={`Notifications, ${inbox.unread} unread`} aria-expanded={open} aria-controls="admin-notification-panel" onClick={()=>setOpen(v=>!v)}><AdminIcon name="bell"/>{inbox.unread>0&&<span className={styles.badge}>{inbox.unread>99?'99+':inbox.unread}</span>}</button>
- {open&&<section id="admin-notification-panel" className={styles.dropdown} aria-label="Recent notifications"><div className={styles.actions}><h2>Notifications</h2><button type="button" onClick={()=>setOpen(false)}>Close</button></div><p>{connection}</p><p>{setup}</p>{error?<p role="alert">{error} <button onClick={()=>void refresh()}>Retry</button></p>:!inbox.items.length?<p>No notifications yet.</p>:<ul className={styles.list}>{inbox.items.slice(0,5).map(item=><Item key={item.id} item={item} onNavigate={()=>setOpen(false)}/>)}</ul>}<Link href={`/admin/${operator}/notifications`} onClick={()=>setOpen(false)}>View all notifications and device setup</Link></section>}
+ const {operator,inbox,error,connection,refresh,mutate,loading}=useNotifications();const [open,setOpen]=useState(false),[busy,setBusy]=useState(false),[actionError,setActionError]=useState('');
+ const root=useRef<HTMLDivElement>(null),button=useRef<HTMLButtonElement>(null),panel=useRef<HTMLElement>(null),id=useId();
+ const close=()=>{setOpen(false);button.current?.focus();};
+ useEffect(()=>{if(!open)return;panel.current?.focus();const outside=(event:PointerEvent)=>{if(!root.current?.contains(event.target as Node))setOpen(false);};const key=(event:KeyboardEvent)=>{if(event.key==='Escape'){event.preventDefault();setOpen(false);button.current?.focus();}};document.addEventListener('pointerdown',outside);document.addEventListener('keydown',key);return()=>{document.removeEventListener('pointerdown',outside);document.removeEventListener('keydown',key);};},[open]);
+ const items=recentNotifications(inbox.items);
+ return <div className={styles.bell} ref={root}><button className={styles.bellButton} data-unread={inbox.unread>0} type="button" ref={button} aria-label={`Notifications, ${inbox.unread} unread`} aria-haspopup="dialog" aria-expanded={open} aria-controls={id} onClick={()=>setOpen(v=>!v)}><AdminIcon name="bell"/>{inbox.unread>0&&<span className={styles.badge} aria-hidden="true">{inbox.unread>9?'9+':inbox.unread}</span>}</button>
+ {open&&<section ref={panel} tabIndex={-1} role="dialog" aria-modal="false" aria-busy={busy||loading} id={id} className={styles.dropdown} aria-labelledby={id+'-title'} onKeyDown={event=>{if(!['ArrowDown','ArrowUp','Home','End'].includes(event.key))return;const controls=Array.from(panel.current?.querySelectorAll<HTMLElement>('a,button:not(:disabled)')??[]);if(!controls.length)return;event.preventDefault();const index=controls.indexOf(document.activeElement as HTMLElement);const next=event.key==='Home'?0:event.key==='End'?controls.length-1:event.key==='ArrowDown'?(index+1)%controls.length:(index-1+controls.length)%controls.length;controls[next]?.focus();}}><header className={styles.panelHeader}><h2 id={id+'-title'}>Notifications</h2><button className={styles.markAll} type="button" disabled={!inbox.unread||busy} onClick={async()=>{setBusy(true);setActionError('');try{await mutate({kind:'read',id:'all',read:true});}catch{setActionError('Unable to mark notifications read. Please try again.');}finally{setBusy(false);}}}>{busy?'Updating…':'Mark all as read'}</button><button className={styles.closeButton} type="button" aria-label="Close notifications" onClick={close}><AdminIcon name="x" size={18}/></button></header>
+ {(error||actionError)&&<p className={styles.panelError} role="alert">{actionError||error}{error&&<button type="button" onClick={()=>void refresh()}>Retry</button>}</p>}{loading&&!items.length?<p className={styles.empty} role="status">Loading notifications…</p>:!error&&!items.length?<div className={styles.empty}><AdminIcon name="bell"/><p>You&apos;re all caught up!</p></div>:<ul className={styles.list}>{items.map(item=><Item compact key={item.id} item={item} onNavigate={()=>setOpen(false)}/>)}</ul>}
+ {connection==='Reconnecting'&&<p className={styles.connection} role="status">Reconnecting. Notifications may be delayed.</p>}{items.length>0&&<Link className={styles.viewAll} href={`/admin/${operator}/notifications`} onClick={()=>setOpen(false)}>View all notifications <AdminIcon name="chevron-right" size={16}/></Link>}</section>}
  <span className={styles.sr} role="status" aria-live="polite">{inbox.unread} unread notifications</span></div>;
 }
 export function NotificationCenter(){

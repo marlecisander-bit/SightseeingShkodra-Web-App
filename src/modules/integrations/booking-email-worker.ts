@@ -51,7 +51,7 @@ export async function processBookingEmails(store: EmailStore, config: EmailConfi
   for (; processed < 4 && Date.now() < startDeadline; processed++) {
     const claimed = await store.claim(config.operatorId, config.since);
     if (!claimed) break;
-    const job = await store.prepare(claimed, { version: 2, from: config.from, owner: config.owner, replyTo: config.replyTo, siteUrl: config.siteUrl, testRecipient: config.testRecipient });
+    const job = await store.prepare(claimed, { version: 2, ...(claimed.event_type === "BOOKING_CREATED" && claimed.recipient_type === "customer" ? {customerConfirmationDesign: 3 as const} : {}), from: config.from, owner: config.owner, replyTo: config.replyTo, siteUrl: config.siteUrl, testRecipient: config.testRecipient });
     const audit = { event: job.event_type, reference: job.booking_reference, recipient: job.recipient_type, manual: job.manual };
     if (job.status === "skipped") { log({ ...audit, status: "skipped" }); continue; }
     // A saved production job must never escape into live delivery on a development host.
