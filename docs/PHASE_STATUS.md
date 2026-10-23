@@ -1,3 +1,5 @@
+23 October 2026 publication approval: owner explicitly approved publishing the prepared UI release including Next.js/eslint-config-next 16.4.2. Release checks pass; GitHub/Vercel publication and hosted verification in progress. No migration or cloud configuration change authorized or included.
+
 23 October 2026 release candidate validated: all 461 tests, lint/typecheck/build and zero-vulnerability production audit pass. Candidate retains remote main 5041261 CMS/admin enhancements. Production unchanged; publication is awaiting approval to include the necessary Next.js/eslint-config-next 16.4.2 security update beyond the UI scope. See RELEASE-CANDIDATE-2026-10-23.md.
 
 23 October 2026 release preparation: user authorized publication of this session’s Route tracker, original transparent tracking van, Route stops admin editor and fixed WhatsApp button. Prepared from remote main 5041261 in an isolated release checkout. Newer CMS completion and admin navigation preserved; only the new Route stops item added to the current Website task menu. No database, configuration, GPS/map or messaging-delivery change. Release validation and hosted results pending.
