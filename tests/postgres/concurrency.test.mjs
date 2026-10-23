@@ -576,3 +576,30 @@ test('cancellation racing a new reservation serializes seat release without over
  try{if(cancelFirst)await cancel(first);else await book(first,4);pending=(cancelFirst?book(second,8):cancel(second)).then(result=>({result}),error=>({error}));await waitForLock();await first.query('commit');assert.ifError((await pending).error);await cancel(observer);assert.equal((await observer.query("select sum(occupied_seats)::int n from booking_items where departure_id=$1 and status='confirmed'",[d])).rows[0].n,cancelFirst?8:4);}finally{await first.query('rollback');if(pending)await pending;}
  }
 });
+
+test('provider receipt before acceptance publication recovers without lost outcome or duplicate send',async()=>{
+ const op='10000000-0000-4000-8000-000000000001';
+ const customer=(await observer.query("insert into customers(operator_id,name,email) values($1,'Provider fixture','synthetic@example.invalid') returning id",[op])).rows[0].id;
+ const order=(await observer.query("insert into orders(operator_id,customer_id,currency,subtotal,total) values($1,$2,'EUR',100,100) returning id",[op,customer])).rows[0].id;
+ const booking=(await observer.query("insert into bookings(operator_id,order_id,booking_reference) values($1,$2,'SS-'||gen_random_uuid()) returning id",[op,order])).rows[0].id;
+ const event=(await observer.query("insert into domain_events(operator_id,aggregate_type,aggregate_id,event_type,payload) values($1,'booking',$2,'booking.confirmed','{}') returning id",[op,booking])).rows[0].id;
+ const delivery=(await observer.query("insert into notification_deliveries(operator_id,event_id,booking_id,recipient_type,event_type,status,provider) values($1,$2,$3,'customer','BOOKING_CREATED','accepted','resend') returning id",[op,event,booking])).rows[0].id;
+ const message='concurrency-provider-'+randomBytes(8).toString('hex'),id='concurrency-webhook-'+randomBytes(8).toString('hex');
+ await first.query('begin');
+ try{
+  await first.query("select record_email_provider_event_v1($1,$2,$3,'delivered',clock_timestamp(),null)",[op,id,message]);
+  await second.query('update notification_deliveries set provider_reference=$2 where id=$1',[delivery,message]);
+  await first.query('commit');
+ }finally{await first.query('rollback');}
+ await observer.query('select link_pending_email_provider_events_v1($1)',[op]);
+ assert.equal((await observer.query('select provider_status,status from notification_deliveries where id=$1',[delivery])).rows[0].provider_status,'delivered');
+ const at=new Date().toISOString(),same='duplicate-'+randomBytes(8).toString('hex');
+ await first.query('begin');let pending;
+ try{
+  await first.query("select record_email_provider_event_v1($1,$2,$3,'bounced',$4,'hard_bounce')",[op,same,message,at]);
+  pending=second.query("select record_email_provider_event_v1($1,$2,$3,'bounced',$4,'hard_bounce') result",[op,same,message,at]).then(result=>({result}),error=>({error}));
+  await waitForLock();await first.query('commit');const duplicate=await pending;assert.ifError(duplicate.error);assert.equal(duplicate.result.rows[0].result,'duplicate');
+ }finally{await first.query('rollback');if(pending)await pending;}
+ assert.equal((await observer.query('select count(*)::int n from email_provider_events where delivery_id=$1',[delivery])).rows[0].n,2);
+ assert.equal((await observer.query('select provider_status from notification_deliveries where id=$1',[delivery])).rows[0].provider_status,'bounced');
+});

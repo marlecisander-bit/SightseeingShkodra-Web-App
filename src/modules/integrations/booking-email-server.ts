@@ -1,4 +1,5 @@
 import "server-only";
+import {reconcileEmailOutcome} from "./email-provider-reconciliation";
 import { createClient } from "@supabase/supabase-js";
 import { timingSafeEqual } from "node:crypto";
 import { withOperatorService } from "../identity/operator-service";
@@ -19,7 +20,7 @@ export async function runBookingEmailWorker() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL, key = process.env.SUPABASE_SECRET_KEY;
   if (!url || !key) throw Error("email_configuration_invalid");
   const client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false }, global: { fetch: (input, init) => fetch(input, { ...init, cache: "no-store", signal: AbortSignal.timeout(5_000) }) } });
-  return withEmailHeartbeat(client, config.operatorId, () => processBookingEmails(bookingEmailStore(client), config));
+  return withEmailHeartbeat(client, config.operatorId, async () => {const result=await processBookingEmails(bookingEmailStore(client),config);await reconcileEmailOutcome(client,config);return result;});
 }
 export async function requestBookingEmail(operatorId: string, bookingId: string, requestId: string) {
   return withOperatorService(operatorId, "bookings.create", async (client, context) => {

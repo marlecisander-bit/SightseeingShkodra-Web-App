@@ -1,3 +1,5 @@
+CONDITIONAL EMAIL RELIABILITY RELEASE (23 October 2026): Owner-authorized isolated implementation adds authenticated provider outcomes, bounded read reconciliation, scoped history/admin health and safe recipient retries. Full 475-test synthetic suite, lint/types/build and zero-vulnerability production audit pass; live aggregate compatibility reviewed. Owner suppression removed and approved monitoring-only DMARC published; separate status/signing secrets configured, webhook paused pending cutover. Main unchanged; migration/PR/release pending. See BOOKING-EMAIL-RELIABILITY-RELEASE-RESULT.md and docs/releases/BOOKING-EMAIL-RECOVERY.md.
+
 APPROVED FOR PUBLICATION (23 October 2026): Partner card proportions and centered identity. Presentation CSS only; release checks and production verification pending. See PARTNER-CARD-PROPORTIONS-2026-10-23.md.
 
 APPROVED FOR PUBLICATION (23 October 2026): Mobile horizontal stop rails, white marker text/numbers and thinner 5px rings. Presentation only. Local validation passed; release CI and production verification pending. See MOBILE-HORIZONTAL-STOPS-2026-10-23.md.

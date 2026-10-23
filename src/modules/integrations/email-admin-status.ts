@@ -15,6 +15,8 @@ export function emailAdminStatus(operatorId: string, env: NodeJS.ProcessEnv = pr
     try { ready = bookingEmailConfig({ ...env, EMAIL_ENABLED: 'true' }).enabled; } catch { /* Missing/invalid configuration. */ }
   }
   return {
+    statusKeyConfigured: bound && Boolean(env.RESEND_STATUS_API_KEY),
+    webhookConfigured: bound && Boolean(env.RESEND_WEBHOOK_SECRET?.startsWith('whsec_')),
     bound, enabled: bound && env.EMAIL_ENABLED === 'true' && !backgroundDeliveryPaused(env), ready, siteConfigured,
     apiKeyConfigured: bound && Boolean(env.RESEND_API_KEY),
     cronConfigured: bound && (env.CRON_SECRET?.length ?? 0) >= 32,
