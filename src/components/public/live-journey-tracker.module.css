@@ -30,3 +30,10 @@
 @media(min-width:480px){.timeline{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(min-width:760px){.timeline{grid-template-columns:repeat(3,minmax(0,1fr));}}
 @media(min-width:1100px){.timeline{grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;}.stop{padding:10px 6px;}}
+
+/* Mobile keeps the destination sequence in a swipeable horizontal row. */
+@media(max-width:759px){
+ .timeline{display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:82%;gap:16px;max-width:100%;box-sizing:border-box;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scroll-padding-inline:12px;scrollbar-width:thin;padding:20px 12px;}
+ .timeline>li{scroll-snap-align:start;min-width:0;}
+ .timeline:focus-visible{outline:3px solid var(--ss-focus);outline-offset:2px;}
+}

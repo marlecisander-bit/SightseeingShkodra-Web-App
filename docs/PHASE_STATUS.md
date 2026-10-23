@@ -1,3 +1,5 @@
+APPROVED FOR PUBLICATION (23 October 2026): Mobile horizontal stop rails, white marker text/numbers and thinner 5px rings. Presentation only. Local validation passed; release CI and production verification pending. See MOBILE-HORIZONTAL-STOPS-2026-10-23.md.
+
 APPROVED FOR PUBLICATION (23 October 2026): Circular Stops presentation shared by homepage and route tracker. Existing CMS assets/content, IDs/order and live/map actions preserved. Local lint/typecheck/build and 11 focused tests passed; desktop/mobile layouts verified. Release lint/typecheck/build, all 461 tests and production dependency audit passed on Next.js 16.4.2. GitHub CI and production verification pending. See CIRCULAR-STOPS-REDESIGN-2026-10-23.md.
 
 23 October 2026 publication approval: owner explicitly approved publishing the prepared UI release including Next.js/eslint-config-next 16.4.2. Release checks pass; GitHub/Vercel publication and hosted verification in progress. No migration or cloud configuration change authorized or included.
