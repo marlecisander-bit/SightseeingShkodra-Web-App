@@ -1,9 +1,10 @@
 import "server-only";
+import {cache} from "react";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { getSupabaseConfig } from "./supabase-config";
 
-export async function createSessionClient() {
+export const createSessionClient = cache(async () => {
   // Resolve request cookies before configuration: authenticated pages are request-time only.
   const cookieStore = await cookies();
   const { url, key } = getSupabaseConfig();
@@ -20,4 +21,4 @@ export async function createSessionClient() {
     },
     global: { fetch: (input, init) => fetch(input, { ...init, cache: "no-store" }) },
   });
-}
+});

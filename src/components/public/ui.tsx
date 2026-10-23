@@ -41,6 +41,7 @@ export function Media({
   src,
   alt,
   hero = false,
+  priority = false,
   className = "",
   mobileSrc,
   sizes,
@@ -48,6 +49,7 @@ export function Media({
   src: string;
   alt: string;
   hero?: boolean;
+  priority?: boolean;
   className?: string;
   mobileSrc?: string;
   sizes?: string;
@@ -67,6 +69,8 @@ export function Media({
         fill
         sizes={sizes ?? (hero ? "100vw" : "(max-width: 700px) 100vw, 50vw")}
         preload={hero}
+        fetchPriority={priority?"high":undefined}
+        loading={priority?"eager":undefined}
         unoptimized={src.startsWith("https://") && !/^https:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\/website-media\/[^?]+$/.test(src)}
         style={{ objectFit: "cover" }}
       />

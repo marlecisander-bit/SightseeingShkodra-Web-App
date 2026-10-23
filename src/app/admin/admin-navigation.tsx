@@ -1,10 +1,13 @@
 'use client';
+import Link,{useLinkStatus} from 'next/link';
+import {useRouter} from 'next/navigation';
 import {useEffect,useRef,useState,type ReactNode} from 'react';
 import {AdminIcon,adminPrimaryIcons} from './admin-icon';
 import {activeAdminItem,adminContext,type AdminNavGroup} from '@/modules/identity/admin-navigation-layout';
 import styles from './admin.module.css';
 
 export function AdminNavigation({groups,section,account}:{groups:AdminNavGroup[];section:string;account:ReactNode}){
+ const router=useRouter();
  const [context,setContext]=useState('');
  const [drawer,setDrawer]=useState<'bookings'|'tours'|'more'|null>(null);
  const dialog=useRef<HTMLDialogElement>(null), trigger=useRef<HTMLElement|null>(null);
@@ -15,7 +18,7 @@ export function AdminNavigation({groups,section,account}:{groups:AdminNavGroup[]
   const sync=()=>{setContext(adminContext(window.location.hash));};
   sync();window.addEventListener('hashchange',sync);window.addEventListener('popstate',sync);window.addEventListener('admin:context-changed',sync);
   return()=>{window.removeEventListener('hashchange',sync);window.removeEventListener('popstate',sync);window.removeEventListener('admin:context-changed',sync);};
- },[]);
+ },[section]);
  useEffect(()=>{
   const desktop=window.matchMedia('(min-width:1024px)'),resize=()=>{if(desktop.matches)dialog.current?.close();};
   desktop.addEventListener('change',resize);return()=>desktop.removeEventListener('change',resize);
@@ -44,18 +47,10 @@ export function AdminNavigation({groups,section,account}:{groups:AdminNavGroup[]
    const apply=()=>{window.history.pushState(window.history.state,'',next);window.dispatchEvent(new Event('admin:context-changed'));};
    if(window.history.state?.adminTaskMenu){window.addEventListener('popstate',apply,{once:true});close();}else apply();
   }else if(window.history.state?.adminTaskMenu&&anchor.target!=='_blank'){
-   event.preventDefault();window.addEventListener('popstate',()=>window.location.assign(url.href),{once:true});close();
+   event.preventDefault();window.addEventListener('popstate',()=>router.push(url.pathname+url.search+url.hash),{once:true});close();
   }else close();
  }
- function items(group:AdminNavGroup){return <ul className={styles.taskItems}>{group.items.map(item=><li key={item.id}><a href={item.href} onClick={navigate} target={item.external?'_blank':undefined} rel={item.external?'noopener noreferrer':undefined} aria-current={active?.id===item.id?'page':undefined}><span>{item.label}{item.external&&<span aria-label=" (opens in a new tab)" className={styles.externalIcon}><AdminIcon name="external-link" size={16}/></span>}</span>{item.note&&<small>{item.note}</small>}</a></li>)}</ul>;}
- useEffect(()=>{
-  if(!context)return;
-  const target=document.querySelector<HTMLElement>(`[data-admin-context="${context}"]`);
-  if(!target)return;
-  if(target instanceof HTMLDetailsElement)target.open=true;
-  let parent=target.parentElement;while(parent){if(parent instanceof HTMLDetailsElement)parent.open=true;parent=parent.parentElement;}
-  target.scrollIntoView({block:'start'});target.querySelector<HTMLElement>('summary')?.focus();
- },[context]);
+ function items(group:AdminNavGroup){return <ul className={styles.taskItems}>{group.items.map(item=><li key={item.id}><Link prefetch={false} href={item.href} onClick={navigate} target={item.external?'_blank':undefined} rel={item.external?'noopener noreferrer':undefined} aria-current={active?.id===item.id?'page':undefined}><span>{item.label}{item.external&&<span aria-label=" (opens in a new tab)" className={styles.externalIcon}><AdminIcon name="external-link" size={16}/></span>}</span>{item.note&&<small>{item.note}</small>}<NavigationHint/></Link></li>)}</ul>;}
  const taskGroups=groups.filter(g=>drawer==='more'?['website','settings'].includes(g.id):g.id===drawer);
  return <>
   <aside className={styles.desktopNavigation}>
@@ -65,7 +60,7 @@ export function AdminNavigation({groups,section,account}:{groups:AdminNavGroup[]
    <details className={styles.accountMenu}><summary>Account</summary>{account}</details>
   </aside>
   <nav className={styles.bottomNavigation} aria-label="Primary admin navigation">
-   <a href={groups.find(g=>g.id==='overview')!.items[0].href} aria-current={area==='overview'?'page':undefined}><AdminIcon name="layout-dashboard"/><span>Home</span></a>
+   <Link prefetch={false} href={groups.find(g=>g.id==='overview')!.items[0].href} aria-current={area==='overview'?'page':undefined}><AdminIcon name="layout-dashboard"/><span>Home</span><NavigationHint/></Link>
    {groups.some(g=>g.id==='bookings')?<button type="button" aria-current={area==='bookings'?'page':undefined} aria-expanded={drawer==='bookings'} aria-controls="admin-task-menu" onClick={e=>open('bookings',e.currentTarget)}><AdminIcon name="calendar-check"/><span>Bookings</span></button>:<button type="button" disabled title="Bookings are not available to your role"><AdminIcon name="calendar-check"/><span>Bookings</span></button>}
    <button type="button" aria-current={area==='tours'?'page':undefined} aria-expanded={drawer==='tours'} aria-controls="admin-task-menu" onClick={e=>open('tours',e.currentTarget)}><AdminIcon name="bus-front"/><span>Tours</span></button>
    <button type="button" aria-current={area==='website'||area==='settings'?'page':undefined} aria-expanded={drawer==='more'} aria-controls="admin-task-menu" onClick={e=>open('more',e.currentTarget)}><AdminIcon name="users"/><span>More</span></button>
@@ -87,7 +82,9 @@ export function AdminConnectionStatus(){
 
 export function AdminPageTrail({groups,section}:{groups:AdminNavGroup[];section:string}){
  const [context,setContext]=useState('');
- useEffect(()=>{const sync=()=>setContext(adminContext(window.location.hash));sync();window.addEventListener('hashchange',sync);window.addEventListener('popstate',sync);window.addEventListener('admin:context-changed',sync);return()=>{window.removeEventListener('hashchange',sync);window.removeEventListener('popstate',sync);window.removeEventListener('admin:context-changed',sync);};},[]);
+ useEffect(()=>{const sync=()=>setContext(adminContext(window.location.hash));sync();window.addEventListener('hashchange',sync);window.addEventListener('popstate',sync);window.addEventListener('admin:context-changed',sync);return()=>{window.removeEventListener('hashchange',sync);window.removeEventListener('popstate',sync);window.removeEventListener('admin:context-changed',sync);};},[section]);
  const item=activeAdminItem(groups,section,context),group=groups.find(g=>g.items.some(i=>i.id===item?.id));
  return <p className={styles.pageTrail} aria-label="Current location">{group?.label}{item&&<> / {item.label}</>}</p>;
 }
+
+function NavigationHint(){const {pending}=useLinkStatus();return <span className={styles.navigationHint} data-pending={pending} aria-hidden="true"/>;}

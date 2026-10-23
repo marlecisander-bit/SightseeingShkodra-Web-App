@@ -1,0 +1,1169 @@
+{
+  "source": "cd17d901b315f4785e9497ceee9b2a1a4004bff4",
+  "productionBaseline": {
+    "faq-mobile": {
+      "formFactor": "mobile",
+      "viewport": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      },
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "fcpMs": 1222.402,
+      "lcpMs": 1222.402,
+      "cls": 0,
+      "tbtMs": 0,
+      "ttfbTraceMs": 120.538,
+      "serverResponseDiagnosticMs": 34,
+      "mainThreadWorkMs": 570.0279999999925,
+      "requests": 36,
+      "transferBytes": 281013,
+      "scriptTransferBytes": 179104,
+      "imageTransferBytes": 28538,
+      "runtimeError": null
+    },
+    "explore-mobile": {
+      "formFactor": "mobile",
+      "viewport": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      },
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "fcpMs": 1250.866,
+      "lcpMs": 2580.866,
+      "cls": 0,
+      "tbtMs": 6,
+      "ttfbTraceMs": 145.116,
+      "serverResponseDiagnosticMs": 33,
+      "mainThreadWorkMs": 449.5439999999953,
+      "requests": 29,
+      "transferBytes": 642669,
+      "scriptTransferBytes": 180728,
+      "imageTransferBytes": 386719,
+      "runtimeError": null
+    },
+    "destination-desktop": {
+      "formFactor": "desktop",
+      "viewport": {
+        "mobile": false,
+        "width": 1350,
+        "height": 940,
+        "deviceScaleFactor": 1,
+        "disabled": false
+      },
+      "throttling": {
+        "rttMs": 40,
+        "throughputKbps": 10240,
+        "requestLatencyMs": 0,
+        "downloadThroughputKbps": 0,
+        "uploadThroughputKbps": 0,
+        "cpuSlowdownMultiplier": 1
+      },
+      "fcpMs": 350.8115,
+      "lcpMs": 555.8115,
+      "cls": 0,
+      "tbtMs": 0,
+      "ttfbTraceMs": 127.498,
+      "serverResponseDiagnosticMs": 31,
+      "mainThreadWorkMs": 108.75299999999908,
+      "requests": 36,
+      "transferBytes": 376073,
+      "scriptTransferBytes": 180646,
+      "imageTransferBytes": 119496,
+      "runtimeError": null
+    }
+  },
+  "httpBaseline": [
+    {
+      "path": "/route",
+      "samples": [
+        {
+          "ttfb_ms": 1991.8,
+          "total_ms": 2119.3,
+          "html_bytes": 117494,
+          "status": 200
+        },
+        {
+          "ttfb_ms": 1547.4,
+          "total_ms": 1668.5,
+          "html_bytes": 117494,
+          "status": 200
+        },
+        {
+          "ttfb_ms": 5498.7,
+          "total_ms": 5687.9,
+          "html_bytes": 117494,
+          "status": 200
+        }
+      ]
+    },
+    {
+      "path": "/explore",
+      "samples": [
+        {
+          "ttfb_ms": 750.8,
+          "total_ms": 916.3,
+          "html_bytes": 109070,
+          "status": 200
+        },
+        {
+          "ttfb_ms": 543.3,
+          "total_ms": 663.9,
+          "html_bytes": 109070,
+          "status": 200
+        },
+        {
+          "ttfb_ms": 686.7,
+          "total_ms": 804.9,
+          "html_bytes": 109070,
+          "status": 200
+        }
+      ]
+    },
+    {
+      "path": "/faq",
+      "samples": [
+        {
+          "ttfb_ms": 662.2,
+          "total_ms": 684.4,
+          "html_bytes": 79185,
+          "status": 200
+        },
+        {
+          "ttfb_ms": 716.0,
+          "total_ms": 740.5,
+          "html_bytes": 79185,
+          "status": 200
+        },
+        {
+          "ttfb_ms": 557.7,
+          "total_ms": 673.7,
+          "html_bytes": 79185,
+          "status": 200
+        }
+      ]
+    },
+    {
+      "path": "/book",
+      "samples": [
+        {
+          "ttfb_ms": 500.6,
+          "total_ms": 620.5,
+          "html_bytes": 78580,
+          "status": 200
+        },
+        {
+          "ttfb_ms": 819.2,
+          "total_ms": 1178.7,
+          "html_bytes": 77348,
+          "status": 200
+        },
+        {
+          "ttfb_ms": 842.0,
+          "total_ms": 955.3,
+          "html_bytes": 78623,
+          "status": 200
+        }
+      ]
+    }
+  ],
+  "adminBaseline": [
+    {
+      "section": "overview",
+      "visiblePanelMs": 960,
+      "ready": true
+    },
+    {
+      "section": "departures",
+      "visiblePanelMs": 1005,
+      "ready": true
+    },
+    {
+      "section": "content",
+      "visiblePanelMs": 1705,
+      "ready": true
+    },
+    {
+      "section": "route-stops",
+      "visiblePanelMs": 877,
+      "ready": true
+    },
+    {
+      "section": "reviews",
+      "visiblePanelMs": 600,
+      "ready": true
+    },
+    {
+      "section": "partners",
+      "visiblePanelMs": 1203,
+      "ready": true
+    },
+    {
+      "section": "email",
+      "visiblePanelMs": 674,
+      "ready": true
+    }
+  ],
+  "warmProductionSidebarBaselineMs": 1336,
+  "localNavigation": [
+    {
+      "mode": "before",
+      "sample": 0,
+      "visiblePanelMs": 477,
+      "shellPreserved": false
+    },
+    {
+      "mode": "before",
+      "sample": 1,
+      "visiblePanelMs": 475,
+      "shellPreserved": false
+    },
+    {
+      "mode": "before",
+      "sample": 2,
+      "visiblePanelMs": 522,
+      "shellPreserved": false
+    },
+    {
+      "mode": "after",
+      "sample": 0,
+      "visiblePanelMs": 447,
+      "shellPreserved": true
+    },
+    {
+      "mode": "after",
+      "sample": 1,
+      "visiblePanelMs": 440,
+      "shellPreserved": true
+    },
+    {
+      "mode": "after",
+      "sample": 2,
+      "visiblePanelMs": 439,
+      "shellPreserved": true
+    }
+  ],
+  "localExplore": {
+    "mobile-before": [
+      {
+        "formFactor": "mobile",
+        "viewport": {
+          "mobile": true,
+          "width": 412,
+          "height": 823,
+          "deviceScaleFactor": 1.75,
+          "disabled": false
+        },
+        "throttling": {
+          "rttMs": 150,
+          "throughputKbps": 1638.4,
+          "requestLatencyMs": 562.5,
+          "downloadThroughputKbps": 1474.5600000000002,
+          "uploadThroughputKbps": 675,
+          "cpuSlowdownMultiplier": 4
+        },
+        "fcpMs": 908.6355000000001,
+        "lcpMs": 7308.747625000002,
+        "cls": 0,
+        "tbtMs": 19,
+        "ttfbTraceMs": 27.559,
+        "serverResponseDiagnosticMs": 27,
+        "mainThreadWorkMs": 697.1199999999998,
+        "requests": 31,
+        "transferBytes": 1158315,
+        "scriptTransferBytes": 871925,
+        "imageTransferBytes": 242259,
+        "runtimeError": null
+      },
+      {
+        "formFactor": "mobile",
+        "viewport": {
+          "mobile": true,
+          "width": 412,
+          "height": 823,
+          "deviceScaleFactor": 1.75,
+          "disabled": false
+        },
+        "throttling": {
+          "rttMs": 150,
+          "throughputKbps": 1638.4,
+          "requestLatencyMs": 562.5,
+          "downloadThroughputKbps": 1474.5600000000002,
+          "uploadThroughputKbps": 675,
+          "cpuSlowdownMultiplier": 4
+        },
+        "fcpMs": 906.1486,
+        "lcpMs": 7120.2229000000025,
+        "cls": 0,
+        "tbtMs": 22.5,
+        "ttfbTraceMs": 53.142,
+        "serverResponseDiagnosticMs": 51,
+        "mainThreadWorkMs": 737.5359999999989,
+        "requests": 33,
+        "transferBytes": 1158797,
+        "scriptTransferBytes": 871925,
+        "imageTransferBytes": 242255,
+        "runtimeError": null
+      }
+    ],
+    "mobile-after": [
+      {
+        "formFactor": "mobile",
+        "viewport": {
+          "mobile": true,
+          "width": 412,
+          "height": 823,
+          "deviceScaleFactor": 1.75,
+          "disabled": false
+        },
+        "throttling": {
+          "rttMs": 150,
+          "throughputKbps": 1638.4,
+          "requestLatencyMs": 562.5,
+          "downloadThroughputKbps": 1474.5600000000002,
+          "uploadThroughputKbps": 675,
+          "cpuSlowdownMultiplier": 4
+        },
+        "fcpMs": 907.2546,
+        "lcpMs": 2107.2546,
+        "cls": 0,
+        "tbtMs": 20,
+        "ttfbTraceMs": 22.537,
+        "serverResponseDiagnosticMs": 22,
+        "mainThreadWorkMs": 583.7599999999984,
+        "requests": 33,
+        "transferBytes": 1158840,
+        "scriptTransferBytes": 871925,
+        "imageTransferBytes": 242255,
+        "runtimeError": null
+      },
+      {
+        "formFactor": "mobile",
+        "viewport": {
+          "mobile": true,
+          "width": 412,
+          "height": 823,
+          "deviceScaleFactor": 1.75,
+          "disabled": false
+        },
+        "throttling": {
+          "rttMs": 150,
+          "throughputKbps": 1638.4,
+          "requestLatencyMs": 562.5,
+          "downloadThroughputKbps": 1474.5600000000002,
+          "uploadThroughputKbps": 675,
+          "cpuSlowdownMultiplier": 4
+        },
+        "fcpMs": 906.1052,
+        "lcpMs": 2482.6315,
+        "cls": 0,
+        "tbtMs": 17.5,
+        "ttfbTraceMs": 20.882,
+        "serverResponseDiagnosticMs": 20,
+        "mainThreadWorkMs": 565.6839999999988,
+        "requests": 33,
+        "transferBytes": 1158840,
+        "scriptTransferBytes": 871925,
+        "imageTransferBytes": 242255,
+        "runtimeError": null
+      }
+    ],
+    "desktop-before": [
+      {
+        "formFactor": "desktop",
+        "viewport": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        },
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "requestLatencyMs": 0,
+          "downloadThroughputKbps": 0,
+          "uploadThroughputKbps": 0,
+          "cpuSlowdownMultiplier": 1
+        },
+        "fcpMs": 247.53500000000003,
+        "lcpMs": 451.3025,
+        "cls": 0,
+        "tbtMs": 0,
+        "ttfbTraceMs": 23.48,
+        "serverResponseDiagnosticMs": 22,
+        "mainThreadWorkMs": 141.6119999999996,
+        "requests": 33,
+        "transferBytes": 1158798,
+        "scriptTransferBytes": 871925,
+        "imageTransferBytes": 242255,
+        "runtimeError": null
+      },
+      {
+        "formFactor": "desktop",
+        "viewport": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        },
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "requestLatencyMs": 0,
+          "downloadThroughputKbps": 0,
+          "uploadThroughputKbps": 0,
+          "cpuSlowdownMultiplier": 1
+        },
+        "fcpMs": 246.4731,
+        "lcpMs": 526.4731,
+        "cls": 0,
+        "tbtMs": 0,
+        "ttfbTraceMs": 21.899,
+        "serverResponseDiagnosticMs": 21,
+        "mainThreadWorkMs": 139.61099999999976,
+        "requests": 33,
+        "transferBytes": 1158797,
+        "scriptTransferBytes": 871925,
+        "imageTransferBytes": 242255,
+        "runtimeError": null
+      }
+    ],
+    "desktop-after": [
+      {
+        "formFactor": "desktop",
+        "viewport": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        },
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "requestLatencyMs": 0,
+          "downloadThroughputKbps": 0,
+          "uploadThroughputKbps": 0,
+          "cpuSlowdownMultiplier": 1
+        },
+        "fcpMs": 245.72609999999997,
+        "lcpMs": 611.4522,
+        "cls": 0,
+        "tbtMs": 0,
+        "ttfbTraceMs": 21.227,
+        "serverResponseDiagnosticMs": 20,
+        "mainThreadWorkMs": 138.8809999999998,
+        "requests": 33,
+        "transferBytes": 1158842,
+        "scriptTransferBytes": 871925,
+        "imageTransferBytes": 242255,
+        "runtimeError": null
+      },
+      {
+        "formFactor": "desktop",
+        "viewport": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        },
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "requestLatencyMs": 0,
+          "downloadThroughputKbps": 0,
+          "uploadThroughputKbps": 0,
+          "cpuSlowdownMultiplier": 1
+        },
+        "fcpMs": 248.31079999999997,
+        "lcpMs": 488.3108,
+        "cls": 0,
+        "tbtMs": 0,
+        "ttfbTraceMs": 22.499,
+        "serverResponseDiagnosticMs": 21,
+        "mainThreadWorkMs": 143.66999999999982,
+        "requests": 33,
+        "transferBytes": 1158845,
+        "scriptTransferBytes": 871925,
+        "imageTransferBytes": 242255,
+        "runtimeError": null
+      }
+    ]
+  },
+  "bundlesBefore": {
+    "/(public)/book/page": {
+      "chunks": 5,
+      "rawBytes": 98481,
+      "gzipBytes": 34048,
+      "clientModules": 15
+    },
+    "/(public)/booking/manage/page": {
+      "chunks": 6,
+      "rawBytes": 106160,
+      "gzipBytes": 36983,
+      "clientModules": 16
+    },
+    "/(public)/credits/page": {
+      "chunks": 5,
+      "rawBytes": 98481,
+      "gzipBytes": 34048,
+      "clientModules": 15
+    },
+    "/(public)/explore/[slug]/page": {
+      "chunks": 6,
+      "rawBytes": 115827,
+      "gzipBytes": 40243,
+      "clientModules": 20
+    },
+    "/(public)/explore/page": {
+      "chunks": 6,
+      "rawBytes": 115827,
+      "gzipBytes": 40243,
+      "clientModules": 20
+    },
+    "/(public)/faq/page": {
+      "chunks": 5,
+      "rawBytes": 98481,
+      "gzipBytes": 34048,
+      "clientModules": 15
+    },
+    "/(public)/live/page": {
+      "chunks": 5,
+      "rawBytes": 98481,
+      "gzipBytes": 34048,
+      "clientModules": 15
+    },
+    "/(public)/page": {
+      "chunks": 6,
+      "rawBytes": 124723,
+      "gzipBytes": 42815,
+      "clientModules": 21
+    },
+    "/(public)/privacy-policy/page": {
+      "chunks": 5,
+      "rawBytes": 98481,
+      "gzipBytes": 34048,
+      "clientModules": 15
+    },
+    "/(public)/route/page": {
+      "chunks": 6,
+      "rawBytes": 113249,
+      "gzipBytes": 39353,
+      "clientModules": 16
+    },
+    "/(public)/terms-and-conditions/page": {
+      "chunks": 5,
+      "rawBytes": 98481,
+      "gzipBytes": 34048,
+      "clientModules": 15
+    },
+    "/(public)/tour/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/(public)/your-day/page": {
+      "chunks": 6,
+      "rawBytes": 103202,
+      "gzipBytes": 35907,
+      "clientModules": 17
+    },
+    "/_global-error/page": {
+      "chunks": 1,
+      "rawBytes": 13822,
+      "gzipBytes": 3514,
+      "clientModules": 8
+    },
+    "/_not-found/page": {
+      "chunks": 1,
+      "rawBytes": 13822,
+      "gzipBytes": 3514,
+      "clientModules": 8
+    },
+    "/admin/[operatorId]/[section]/page": {
+      "chunks": 8,
+      "rawBytes": 466155,
+      "gzipBytes": 134633,
+      "clientModules": 29
+    },
+    "/admin/[operatorId]/destination-preview/page": {
+      "chunks": 6,
+      "rawBytes": 116067,
+      "gzipBytes": 40127,
+      "clientModules": 19
+    },
+    "/admin/[operatorId]/website-preview/page": {
+      "chunks": 7,
+      "rawBytes": 141421,
+      "gzipBytes": 47662,
+      "clientModules": 24
+    },
+    "/admin/page": {
+      "chunks": 4,
+      "rawBytes": 47276,
+      "gzipBytes": 16325,
+      "clientModules": 12
+    },
+    "/api/admin/notifications/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/api/internal/admin-notifications/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/api/internal/booking-emails/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/api/public/availability/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/api/public/booking-management/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/api/public/checkout/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/api/public/day-planner/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/api/webhooks/resend/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/auth/activate/page": {
+      "chunks": 2,
+      "rawBytes": 27384,
+      "gzipBytes": 8782,
+      "clientModules": 10
+    },
+    "/auth/forgot-password/page": {
+      "chunks": 2,
+      "rawBytes": 25401,
+      "gzipBytes": 8151,
+      "clientModules": 10
+    },
+    "/auth/set-password/page": {
+      "chunks": 2,
+      "rawBytes": 17718,
+      "gzipBytes": 5085,
+      "clientModules": 10
+    },
+    "/auth/sign-in/page": {
+      "chunks": 2,
+      "rawBytes": 40010,
+      "gzipBytes": 13098,
+      "clientModules": 11
+    },
+    "/dev/admin-notifications/page": {
+      "chunks": 4,
+      "rawBytes": 326618,
+      "gzipBytes": 90112,
+      "clientModules": 9
+    },
+    "/dev/booking-email-preview/page": {
+      "chunks": 1,
+      "rawBytes": 13822,
+      "gzipBytes": 3514,
+      "clientModules": 8
+    },
+    "/dev/booking-pass-preview/page": {
+      "chunks": 1,
+      "rawBytes": 13822,
+      "gzipBytes": 3514,
+      "clientModules": 8
+    },
+    "/dev/buttons-preview/page": {
+      "chunks": 1,
+      "rawBytes": 13822,
+      "gzipBytes": 3514,
+      "clientModules": 8
+    },
+    "/dev/calendar-preview/page": {
+      "chunks": 2,
+      "rawBytes": 42351,
+      "gzipBytes": 13137,
+      "clientModules": 9
+    },
+    "/dev/cms-reconciliation/page": {
+      "chunks": 5,
+      "rawBytes": 119407,
+      "gzipBytes": 39913,
+      "clientModules": 20
+    },
+    "/dev/email-reliability-preview/page": {
+      "chunks": 2,
+      "rawBytes": 26952,
+      "gzipBytes": 8686,
+      "clientModules": 12
+    },
+    "/dev/hero-preview/page": {
+      "chunks": 4,
+      "rawBytes": 94115,
+      "gzipBytes": 32332,
+      "clientModules": 12
+    },
+    "/dev/partners-preview/page": {
+      "chunks": 2,
+      "rawBytes": 29414,
+      "gzipBytes": 9288,
+      "clientModules": 9
+    },
+    "/dev/reviews-preview/page": {
+      "chunks": 2,
+      "rawBytes": 34281,
+      "gzipBytes": 11101,
+      "clientModules": 9
+    },
+    "/dev/route-stops-preview/page": {
+      "chunks": 3,
+      "rawBytes": 72210,
+      "gzipBytes": 23735,
+      "clientModules": 9
+    },
+    "/dev/stops-preview/page": {
+      "chunks": 5,
+      "rawBytes": 122064,
+      "gzipBytes": 40216,
+      "clientModules": 19
+    },
+    "/dev/tracking-preview/page": {
+      "chunks": 2,
+      "rawBytes": 25871,
+      "gzipBytes": 7849,
+      "clientModules": 9
+    },
+    "/dev/whatsapp-preview/page": {
+      "chunks": 5,
+      "rawBytes": 146470,
+      "gzipBytes": 49244,
+      "clientModules": 9
+    },
+    "/robots.txt/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/sitemap.xml/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    }
+  },
+  "bundlesAfter": {
+    "/(public)/book/page": {
+      "chunks": 5,
+      "rawBytes": 98779,
+      "gzipBytes": 34128,
+      "clientModules": 15
+    },
+    "/(public)/booking/manage/page": {
+      "chunks": 6,
+      "rawBytes": 106458,
+      "gzipBytes": 37063,
+      "clientModules": 16
+    },
+    "/(public)/credits/page": {
+      "chunks": 5,
+      "rawBytes": 98779,
+      "gzipBytes": 34128,
+      "clientModules": 15
+    },
+    "/(public)/explore/[slug]/page": {
+      "chunks": 6,
+      "rawBytes": 115927,
+      "gzipBytes": 40247,
+      "clientModules": 20
+    },
+    "/(public)/explore/page": {
+      "chunks": 6,
+      "rawBytes": 115927,
+      "gzipBytes": 40247,
+      "clientModules": 20
+    },
+    "/(public)/faq/page": {
+      "chunks": 5,
+      "rawBytes": 98779,
+      "gzipBytes": 34128,
+      "clientModules": 15
+    },
+    "/(public)/live/page": {
+      "chunks": 5,
+      "rawBytes": 98779,
+      "gzipBytes": 34128,
+      "clientModules": 15
+    },
+    "/(public)/page": {
+      "chunks": 6,
+      "rawBytes": 121258,
+      "gzipBytes": 41948,
+      "clientModules": 21
+    },
+    "/(public)/privacy-policy/page": {
+      "chunks": 5,
+      "rawBytes": 98779,
+      "gzipBytes": 34128,
+      "clientModules": 15
+    },
+    "/(public)/route/page": {
+      "chunks": 6,
+      "rawBytes": 113280,
+      "gzipBytes": 39353,
+      "clientModules": 16
+    },
+    "/(public)/terms-and-conditions/page": {
+      "chunks": 5,
+      "rawBytes": 98779,
+      "gzipBytes": 34128,
+      "clientModules": 15
+    },
+    "/(public)/tour/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/(public)/your-day/page": {
+      "chunks": 6,
+      "rawBytes": 103233,
+      "gzipBytes": 35894,
+      "clientModules": 17
+    },
+    "/_global-error/page": {
+      "chunks": 1,
+      "rawBytes": 13822,
+      "gzipBytes": 3514,
+      "clientModules": 8
+    },
+    "/_not-found/page": {
+      "chunks": 1,
+      "rawBytes": 13822,
+      "gzipBytes": 3514,
+      "clientModules": 8
+    },
+    "/admin/[operatorId]/(workspace)/bookings/page": {
+      "chunks": 6,
+      "rawBytes": 356550,
+      "gzipBytes": 100355,
+      "clientModules": 17
+    },
+    "/admin/[operatorId]/(workspace)/catalog/page": {
+      "chunks": 6,
+      "rawBytes": 355606,
+      "gzipBytes": 99924,
+      "clientModules": 16
+    },
+    "/admin/[operatorId]/(workspace)/content/page": {
+      "chunks": 7,
+      "rawBytes": 424690,
+      "gzipBytes": 122046,
+      "clientModules": 15
+    },
+    "/admin/[operatorId]/(workspace)/departures/page": {
+      "chunks": 6,
+      "rawBytes": 381458,
+      "gzipBytes": 107437,
+      "clientModules": 17
+    },
+    "/admin/[operatorId]/(workspace)/email/page": {
+      "chunks": 6,
+      "rawBytes": 354996,
+      "gzipBytes": 99735,
+      "clientModules": 16
+    },
+    "/admin/[operatorId]/(workspace)/notifications/page": {
+      "chunks": 5,
+      "rawBytes": 352121,
+      "gzipBytes": 98317,
+      "clientModules": 13
+    },
+    "/admin/[operatorId]/(workspace)/overview/page": {
+      "chunks": 5,
+      "rawBytes": 352121,
+      "gzipBytes": 98317,
+      "clientModules": 13
+    },
+    "/admin/[operatorId]/(workspace)/partners/page": {
+      "chunks": 6,
+      "rawBytes": 363110,
+      "gzipBytes": 102426,
+      "clientModules": 14
+    },
+    "/admin/[operatorId]/(workspace)/reviews/page": {
+      "chunks": 6,
+      "rawBytes": 390815,
+      "gzipBytes": 111417,
+      "clientModules": 14
+    },
+    "/admin/[operatorId]/(workspace)/route-stops/page": {
+      "chunks": 7,
+      "rawBytes": 394566,
+      "gzipBytes": 113011,
+      "clientModules": 13
+    },
+    "/admin/[operatorId]/destination-preview/page": {
+      "chunks": 6,
+      "rawBytes": 116614,
+      "gzipBytes": 40304,
+      "clientModules": 19
+    },
+    "/admin/[operatorId]/website-preview/page": {
+      "chunks": 7,
+      "rawBytes": 142566,
+      "gzipBytes": 48046,
+      "clientModules": 25
+    },
+    "/admin/page": {
+      "chunks": 4,
+      "rawBytes": 47740,
+      "gzipBytes": 16504,
+      "clientModules": 12
+    },
+    "/api/admin/notifications/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/api/internal/admin-notifications/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/api/internal/booking-emails/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/api/public/availability/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/api/public/booking-management/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/api/public/checkout/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/api/public/day-planner/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/api/webhooks/resend/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/auth/activate/page": {
+      "chunks": 2,
+      "rawBytes": 27460,
+      "gzipBytes": 8795,
+      "clientModules": 10
+    },
+    "/auth/forgot-password/page": {
+      "chunks": 2,
+      "rawBytes": 25477,
+      "gzipBytes": 8166,
+      "clientModules": 10
+    },
+    "/auth/set-password/page": {
+      "chunks": 2,
+      "rawBytes": 17794,
+      "gzipBytes": 5102,
+      "clientModules": 10
+    },
+    "/auth/sign-in/page": {
+      "chunks": 2,
+      "rawBytes": 40010,
+      "gzipBytes": 13098,
+      "clientModules": 11
+    },
+    "/dev/admin-notifications/page": {
+      "chunks": 4,
+      "rawBytes": 326825,
+      "gzipBytes": 90217,
+      "clientModules": 9
+    },
+    "/dev/booking-email-preview/page": {
+      "chunks": 1,
+      "rawBytes": 13822,
+      "gzipBytes": 3514,
+      "clientModules": 8
+    },
+    "/dev/booking-pass-preview/page": {
+      "chunks": 1,
+      "rawBytes": 13822,
+      "gzipBytes": 3514,
+      "clientModules": 8
+    },
+    "/dev/buttons-preview/page": {
+      "chunks": 1,
+      "rawBytes": 13822,
+      "gzipBytes": 3514,
+      "clientModules": 8
+    },
+    "/dev/calendar-preview/page": {
+      "chunks": 2,
+      "rawBytes": 42351,
+      "gzipBytes": 13135,
+      "clientModules": 9
+    },
+    "/dev/cms-reconciliation/page": {
+      "chunks": 5,
+      "rawBytes": 120105,
+      "gzipBytes": 40116,
+      "clientModules": 21
+    },
+    "/dev/email-reliability-preview/page": {
+      "chunks": 2,
+      "rawBytes": 27028,
+      "gzipBytes": 8702,
+      "clientModules": 12
+    },
+    "/dev/hero-preview/page": {
+      "chunks": 4,
+      "rawBytes": 94413,
+      "gzipBytes": 32412,
+      "clientModules": 12
+    },
+    "/dev/partners-preview/page": {
+      "chunks": 2,
+      "rawBytes": 29414,
+      "gzipBytes": 9288,
+      "clientModules": 9
+    },
+    "/dev/performance-explore/page": {
+      "chunks": 4,
+      "rawBytes": 105235,
+      "gzipBytes": 35654,
+      "clientModules": 17
+    },
+    "/dev/performance-navigation/after/[section]/page": {
+      "chunks": 2,
+      "rawBytes": 49530,
+      "gzipBytes": 14163,
+      "clientModules": 9
+    },
+    "/dev/performance-navigation/before/[section]/page": {
+      "chunks": 2,
+      "rawBytes": 49530,
+      "gzipBytes": 14163,
+      "clientModules": 9
+    },
+    "/dev/reviews-preview/page": {
+      "chunks": 2,
+      "rawBytes": 34281,
+      "gzipBytes": 11101,
+      "clientModules": 9
+    },
+    "/dev/route-stops-preview/page": {
+      "chunks": 3,
+      "rawBytes": 72508,
+      "gzipBytes": 23815,
+      "clientModules": 9
+    },
+    "/dev/stops-preview/page": {
+      "chunks": 5,
+      "rawBytes": 122693,
+      "gzipBytes": 40407,
+      "clientModules": 19
+    },
+    "/dev/tracking-preview/page": {
+      "chunks": 2,
+      "rawBytes": 25871,
+      "gzipBytes": 7849,
+      "clientModules": 9
+    },
+    "/dev/whatsapp-preview/page": {
+      "chunks": 5,
+      "rawBytes": 151581,
+      "gzipBytes": 50710,
+      "clientModules": 9
+    },
+    "/robots.txt/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    },
+    "/sitemap.xml/route": {
+      "chunks": 0,
+      "rawBytes": 0,
+      "gzipBytes": 0,
+      "clientModules": 0
+    }
+  },
+  "productionFixtureBlocking": [
+    {
+      "path": "/dev/performance-navigation/after/overview",
+      "status": 404
+    },
+    {
+      "path": "/dev/performance-navigation/before/overview",
+      "status": 404
+    },
+    {
+      "path": "/dev/performance-explore",
+      "status": 404
+    }
+  ]
+}

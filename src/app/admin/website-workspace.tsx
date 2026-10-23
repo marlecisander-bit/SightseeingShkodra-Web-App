@@ -61,11 +61,13 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
     window.addEventListener('hashchange', apply);
     window.addEventListener('popstate', apply);
     window.addEventListener('admin:navigate-context', guard);
+    window.addEventListener('admin:before-navigation', guard);
     return () => {
       window.removeEventListener('admin:context-changed', apply);
       window.removeEventListener('hashchange', apply);
       window.removeEventListener('popstate', apply);
       window.removeEventListener('admin:navigate-context', guard);
+      window.removeEventListener('admin:before-navigation', guard);
     };
   }, [unsaved, pending, scope, active]);
   const selected = websiteSections.find(s => s.id === active) ?? websiteSections[0];
@@ -125,7 +127,7 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
         </div>
         <div className={`${styles.sideCard} ${styles.tipsCard}`}><h2>Quick tips</h2><ul><li>Keep text short and clear.</li><li>Choose sharp, high-quality images.</li><li>Show only the sections you need.</li><li>Preview before publishing.</li></ul></div>
         <div className={styles.sideCard}><h2>Page status</h2><dl><div><dt>Content</dt><dd>{changed ? "Saved draft changes" : "Published"}</dd></div><div><dt>Unsaved changes</dt><dd>{unsaved ? "Yes" : "No"}</dd></div></dl><p className={styles.helper}>Publishing makes this section and all saved drafts visible on the website, according to their visibility settings.</p></div>
-        <nav className={styles.sideCard} aria-label="Website sections"><h2>Quick navigation</h2>{websiteSections.map(s => <button type="button" key={s.id} aria-current={active === s.id ? "true" : undefined} onClick={() => select(s.id, true)}>{ownerFieldLabel(s.title)}</button>)}</nav>
+        <nav className={`${styles.sideCard} ${styles.quickNavigation}`} aria-label="Website sections"><h2>Quick navigation</h2>{websiteSections.map(s => <button type="button" key={s.id} aria-current={active === s.id ? "true" : undefined} onClick={() => select(s.id, true)}>{ownerFieldLabel(s.title)}</button>)}</nav>
       </aside>
     </div>
   </section>;

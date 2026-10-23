@@ -198,3 +198,8 @@
 .cms .sectionHeading .editLabel:hover {color:var(--admin-primary);background:var(--admin-primary-soft);}
 .cms .editorActions button[value=draft] {background:var(--admin-surface);color:var(--admin-text);border-color:var(--admin-control-border);}
 @media(max-width:1023px){.cms .editorActions{bottom:calc(76px + env(safe-area-inset-bottom));}}
+
+/* Space sibling navigation controls, including wrapped labels. */
+.quickNavigation { display:grid; align-content:start; gap:8px; }
+.quickNavigation h2 { margin:0 0 8px; }
+.cms .quickNavigation button { min-width:0; white-space:normal; overflow-wrap:anywhere; align-items:center; }

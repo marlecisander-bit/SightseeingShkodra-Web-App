@@ -97,6 +97,24 @@ export function safeJsonLd(value: unknown) {
   return JSON.stringify(value).replaceAll("<", "\\u003c");
 }
 
-export function websiteMetadata(c:Record<string,string>,published=true){const metadata=pageMetadata("/",c["seo.title"],c["seo.description"],published);return {...metadata,title:c["seo.title"],openGraph:{...metadata.openGraph,images:[{url:c["seo.image"],alt:c["seo.alt"]}]}};}
+export function websiteMetadata(c: Record<string, string>, published = true): Metadata {
+  const metadata = pageMetadata("/", c["seo.title"], c["seo.description"], published);
+  const image = c["hero.desktop"] || c["seo.image"];
+  const alt = c["hero.desktop"] ? c["hero.alt"] : c["seo.alt"];
+  const origin = seoConfig().origin;
+  const url = origin ? new URL(image, origin).href : image;
+  const images = [{ url, alt }];
+  return {
+    ...metadata,
+    title: c["seo.title"],
+    openGraph: { ...metadata.openGraph, images },
+    twitter: {
+      card: "summary_large_image",
+      title: c["seo.title"],
+      description: c["seo.description"],
+      images,
+    },
+  };
+}
 
 export function editorialMetadata(path:string,prefix:string,c:Record<string,string>,published=true){const m=pageMetadata(path,c[prefix+'.seoTitle'],c[prefix+'.seoDescription'],published);return {...m,openGraph:{...m.openGraph,images:[{url:c[prefix+'.seoImage'],alt:c[prefix+'.seoAlt']}]}};}

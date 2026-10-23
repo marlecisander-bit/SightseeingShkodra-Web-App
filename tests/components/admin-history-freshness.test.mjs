@@ -1,0 +1,11 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createRequire} from 'node:module';import React,{act} from 'react';import {JSDOM} from 'jsdom';
+let pathname='/admin/fixture/overview',search='',refreshes=0;const router={refresh:()=>refreshes++};const require=createRequire(import.meta.url),navPath=require.resolve('next/navigation');require('next/navigation');require.cache[navPath].exports={useRouter:()=>router,usePathname:()=>pathname,useSearchParams:()=>new URLSearchParams(search)};
+const {SessionHistoryGuard}=await import('../../src/app/admin/session-history-guard.tsx');
+test('Back/Forward refreshes the committed destination while same-page hash history does not refetch live data',async()=>{
+ const dom=new JSDOM('<div id="root"></div>',{url:'http://localhost'+pathname});const saved=new Map();for(const name of ['window','document','navigator','IS_REACT_ACT_ENVIRONMENT']){saved.set(name,Object.getOwnPropertyDescriptor(globalThis,name));Object.defineProperty(globalThis,name,{configurable:true,writable:true,value:name==='IS_REACT_ACT_ENVIRONMENT'?true:dom.window[name]});}
+ const {createRoot}=await import('react-dom/client');const root=createRoot(document.querySelector('#root'));let tick=0;const render=()=>act(()=>root.render(React.createElement(SessionHistoryGuard,{tick:tick++})));
+ try{await render();assert.equal(refreshes,0);window.history.replaceState(null,'','/admin/fixture/bookings');await act(()=>window.dispatchEvent(new window.PopStateEvent('popstate')));assert.equal(refreshes,0);pathname='/admin/fixture/bookings';await render();assert.equal(refreshes,1);
+ window.history.replaceState(null,'','#admin-nav=prices');await act(()=>window.dispatchEvent(new window.PopStateEvent('popstate')));await render();assert.equal(refreshes,1);
+ window.history.replaceState(null,'','?date=2030-01-01');await act(()=>window.dispatchEvent(new window.PopStateEvent('popstate')));search='date=2030-01-01';await render();assert.equal(refreshes,2);await render();assert.equal(refreshes,2);
+ }finally{await act(()=>root.unmount());dom.window.close();for(const [key,value]of saved){if(value)Object.defineProperty(globalThis,key,value);else delete globalThis[key];}}
+});

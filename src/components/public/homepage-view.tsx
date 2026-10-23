@@ -9,7 +9,7 @@ import { GuestReviews } from "./guest-reviews";
 import { defaultReviewSettings, type ReviewSelection } from "@/modules/content/reviews";
 import { PublicBookingLink as Link } from "./booking";
 import { FinalBookingInvitation, ActionLink, Media, SectionHeading } from "./ui";
-import { HomepageMapDisclosure } from "./live-map-embed";
+import { HomepageMapDisclosure } from "./homepage-map-disclosure";
 import { homepageVisible, websitePlaces, type WebsiteContent } from "@/modules/content/website-schema";
 import type { Homepage } from "@/modules/content/homepage";
 
