@@ -75,3 +75,25 @@
 .day[data-state=past] strong,.day[data-state=past] .dayLabel{color:#64748B}
 .workspace,.service{width:100%;max-width:none}
 .dailyOverview{max-width:none;margin:0;padding:0 0 12px}
+/* Phase 3: compact service surfaces; existing calendar settings and actions are reused. */
+.service{margin:16px 0;padding:16px;border:1px solid #e3e7ec;border-radius:12px;background:#fff;}
+.service>h2{font-size:18px;margin:0 0 6px;letter-spacing:-.02em;}
+.servicePeriod{font-size:11px;color:#687588;}
+.workspace{margin:12px 0 0;}
+.monthPicker{padding:12px;background:#f8f9fb;border-color:#e3e7ec;border-radius:10px;}
+.monthNavigation h2{font-size:18px;}
+.dateSelector{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:end;gap:8px;margin:8px 0;}
+.dateSelector label{min-width:0;font-size:11px;display:grid;gap:5px;margin:0;}
+.dateSelector input{width:100%;min-width:0;min-height:44px;font-size:16px;border:1px solid #d9dfe6;border-radius:8px;padding:8px;background:white;}
+.dateSelector button{min-width:44px;min-height:44px;padding:0;}
+.mobileMonth{display:none;}
+.editor{margin-block:12px 0;scroll-margin-top:96px;border-color:#e3e7ec;}
+.editor :is(input,select,textarea){font-size:16px;min-height:44px;max-width:100%;}
+.editor :is(input[type=checkbox]){min-height:20px;}
+.editor .dailyOverview{margin:0;max-width:none;}
+.editor .occupancyRow{background:#f8f9fb;padding:12px;border:1px solid #e3e7ec;border-radius:9px;margin:8px 0;}
+.standardSettings details>summary{min-height:44px;font-size:13px;}
+.service :is(a,button,summary){min-height:44px;}
+.service form{min-width:0;}
+@media(max-width:767px){.service{padding:12px;}.grid:not([data-expanded=true]){display:none;}.mobileMonth{display:block;min-height:44px;width:100%;font-size:12px;}.legend{font-size:10px;gap:5px 8px;}.day{min-height:48px!important;}.editor{padding:12px;}.calendarNote{font-size:11px;}}
+@media(min-width:1100px){.editor{margin:0;}.workspace{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);}.editor .prices{grid-template-columns:1fr;}}

@@ -12,7 +12,7 @@ export function bookingTarget(operator:string,booking:string) {
 }
 export function safeAdminReturn(value:unknown):string {
  if(typeof value!=='string')return '/admin';
- const match=/^\/admin\/([^/]+)\/(overview|bookings|departures|content|route-stops|reviews|catalog|notifications|email)(?:\?([^#]*))?$/.exec(value);
+ const match=/^\/admin\/([^/]+)\/(overview|bookings|departures|content|route-stops|reviews|catalog|notifications|email|more)(?:\?([^#]*))?$/.exec(value);
  if(!match||!uuid.test(match[1]))return '/admin';
  if(!match[3])return value;
  const query=new URLSearchParams(match[3]);

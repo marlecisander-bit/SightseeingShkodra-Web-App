@@ -12,7 +12,7 @@ export function AdminSectionContext({identity}:{identity:Identity}){
   if(shell&&(shell.operatorId!==identity.operatorId||shell.userId!==identity.userId||shell.role!==identity.role)){window.location.reload();return;}
   let frame=0;
   const focus=()=>{cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{
-   const context=adminContext(window.location.hash);if(!context)return;
+   const context=adminContext(window.location.hash);if(!context){document.getElementById('workspace-content')?.focus({preventScroll:true});return;}
    const target=document.querySelector<HTMLElement>(`[data-admin-context="${context}"]`);if(!target)return;
    if(target instanceof HTMLDetailsElement)target.open=true;
    let parent=target.parentElement;while(parent){if(parent instanceof HTMLDetailsElement)parent.open=true;parent=parent.parentElement;}

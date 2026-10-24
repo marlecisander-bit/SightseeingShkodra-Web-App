@@ -1,4 +1,5 @@
 "use client";
+import {WebsiteHome} from './website-home';
 import {sectionConsumers} from "@/modules/content/editorial-fields";
 
 import {adminContext,websiteNavigationContext} from '@/modules/identity/admin-navigation-layout';
@@ -20,6 +21,7 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
   const [savedStamp, setSavedStamp] = useState(record.updated_at);
   const [scope, setScope] = useState<keyof typeof websiteEditorGroups>("homepage");
   const websiteSections = websiteEditorGroups[scope].filter(s=>canSensitive || !["footer","whatsapp","legalprivacy","legalterms"].includes(s.id));
+  const [home,setHome] = useState(true);
   const [active, setActive] = useState<string | null>(null);
   const [states, setStates] = useState<Record<string, { dirty: boolean; pending: boolean }>>({});
   const [notice, setNotice] = useState("");
@@ -37,24 +39,24 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
     return true;
   });
   const appliedNavigation = useRef(false);
-  const previousNavigationView = useRef<{scope:typeof scope;section:string|null}|null>(null);
+  const previousNavigationView = useRef<{scope:typeof scope;section:string|null;home:boolean}|null>(null);
   // Navigation context changes only the visible editor. No content or publication mutation.
   useEffect(() => {
     function apply() {
       const hash = window.location.hash;
       if (!hash.startsWith('#admin-nav=')) {
         if (!hash && previousNavigationView.current && !unsaved && !pending) {
-          setScope(previousNavigationView.current.scope); setActive(previousNavigationView.current.section);
+          setHome(previousNavigationView.current.home); setScope(previousNavigationView.current.scope); setActive(previousNavigationView.current.section);
         }
         return;
       }
       if (unsaved || pending) { setNotice('Save or discard your changes before switching editors.'); return; }
       const target = websiteNavigationContext(adminContext(hash));
-      setScope(target.scope); setActive(target.section);
+      setHome(false); setScope(target.scope); setActive(target.section);
     }
     function guard(event: Event) {
       if (unsaved || pending) { event.preventDefault(); setNotice('Save or discard your changes before switching editors.'); }
-      else if (!window.location.hash.startsWith('#admin-nav=')) previousNavigationView.current = {scope,section:active};
+      else if (!window.location.hash.startsWith('#admin-nav=')) previousNavigationView.current = {scope,section:active,home};
     }
     if (!appliedNavigation.current) { apply(); appliedNavigation.current = true; }
     window.addEventListener('admin:context-changed', apply);
@@ -69,7 +71,7 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
       window.removeEventListener('admin:navigate-context', guard);
       window.removeEventListener('admin:before-navigation', guard);
     };
-  }, [unsaved, pending, scope, active]);
+  }, [unsaved, pending, scope, active, home]);
   const selected = websiteSections.find(s => s.id === active) ?? websiteSections[0];
   const image = selected.fields.find(f => f.kind === "image");
   const preview = `/admin/${operatorId}/website-preview?page=${({routePage:"route",homeRoute:"home",bookSeo:"book",faqSeo:"faq",exploreSeo:"explore",legalprivacy:"privacy-policy",legalterms:"terms-and-conditions",faq:"faq",explorePage:"explore",bookPage:"book",dayPage:"your-day"} as Record<string,string>)[selected.id]??"home"}`;
@@ -81,8 +83,16 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
     if(window.matchMedia("(max-width: 767px)").matches) requestAnimationFrame(()=>document.getElementById(`cms-${id}`)?.scrollIntoView({block:"start"}));
     if (jump) requestAnimationFrame(() => { const el = document.getElementById(`cms-${id}`); el?.scrollIntoView({ block: "start", behavior: "smooth" }); el?.querySelector("summary")?.focus(); });
   }
-  if(scope==="destinations") return <section className={styles.cms} data-editing={!!active}><Button onClick={()=>setScope("homepage")}>Back to website content</Button>{destinationManager}</section>;
-  return <section className={styles.cms} data-editing={!!active}>
+  function openHome(scope: keyof typeof websiteEditorGroups,id:string|null) {
+    if(unsaved||pending){setNotice('Save or discard your edits before switching content areas.');return;}
+    setHome(false);setScope(scope);setActive(id);setNotice('');
+    if(id)panelHistory.open(id);
+  }
+  if(home)return <section className={styles.cms} data-website-workspace><WebsiteHome operatorId={operatorId} content={content} published={record.published_body?.content} canSensitive={canSensitive} onOpen={openHome}/>{notice&&<p role="alert">{notice}</p>}</section>;
+  if(scope==="destinations") return <section className={styles.cms} data-editing={!!active}><Button onClick={()=>{setScope("homepage");setHome(true);}}>Back to Website</Button>{destinationManager}</section>;
+  return <section className={styles.cms} data-website-workspace data-editing={!!active}>
+    <Button type="button" disabled={pending} onClick={()=>{if(unsaved){setNotice('Save or discard your changes before returning to Website.');return;}panelHistory.close();setHome(true);}}>Back to Website</Button>
+    {active&&<div className={styles.editorContext}><p>Website / {({homepage:'Homepage',pages:'Public pages',global:'Shared website',destinations:'Destinations'})[scope]}</p><h1>{ownerFieldLabel(selected.title)}</h1><span>English · Existing shared content</span></div>}
     {active&&<Button className={styles.backToSections} type="button" disabled={pending} onClick={()=>panelHistory.close()}>Back to website sections</Button>}
     {active&&<a className={styles.focusedPreview} href={preview} target="_blank" rel="noopener noreferrer">Preview saved draft</a>}
     <header className={styles.toolbar}>

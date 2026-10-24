@@ -94,3 +94,19 @@ export async function collectPayment(
   revalidatePath(path);
   redirect(`${path}?result=collected`);
 }
+
+/** Explicit UI preparation replaces the old render-time call. Domain logic is unchanged. */
+export async function loadBookingDepartures(operatorId:string,form:FormData){
+  const {requirePermission}=await import('@/modules/identity/require-permission');
+  const {prepareServiceDate}=await import('@/modules/booking/schedules-server');
+  const {validBookingDay}=await import('./bookings-presentation');
+  const value=form.get('date'),day=typeof value==='string'?validBookingDay(value):undefined;
+  try{
+    await requirePermission(operatorId,'bookings.create');
+    if(!day)throw Error('Choose a valid date');
+    await prepareServiceDate(operatorId,day);
+  }catch{return {error:'Departures could not be loaded. Check the service date and your scheduling access before retrying.'};}
+  const path=`/admin/${encodeURIComponent(operatorId)}/bookings`;
+  revalidatePath(path);
+  redirect(`${path}?date=${day}&create=1&result=departures_ready#new-booking`);
+}

@@ -3,14 +3,17 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import {adminSections} from '../../src/modules/identity/admin-navigation.ts';
+import {adminNavigationGroups} from '../../src/modules/identity/admin-navigation-layout.ts';
 registerHooks({load(url,context,next){if(url.endsWith('.module.css'))return {format:'module',source:'export default {}',shortCircuit:true};return next(url,context);}});
 const {OverviewPanel}=await import('../../src/app/admin/overview-panel.tsx');
 const {AmenitiesInput}=await import('../../src/app/admin/hero-amenities-input.tsx');
-for(const role of ['owner','admin','content_editor'])test(`${role} Overview retains Partners description and places it after Website`,()=>{
+for(const role of ['owner','admin','content_editor'])test(`${role} Website navigation retains the canonical Partners destination`,()=>{
  const html=renderToStaticMarkup(React.createElement(OverviewPanel,{operatorId:'synthetic',role}));
- assert.ok(html.includes(adminSections.find(s=>s.slug==='partners').description));
- assert.ok(html.indexOf('/synthetic/partners')>html.indexOf('/synthetic/content'));
+ if(role==='content_editor')assert.ok(html.includes('/synthetic/content'));
+ const website=adminNavigationGroups('synthetic',role).find(group=>group.id==='website');
+ assert.ok(website.items.find(item=>item.id==='content').href.startsWith('/admin/synthetic/content'));
+ assert.ok(website.items.find(item=>item.id==='partners').href.endsWith('/partners'));
+ assert.ok(website.items.findIndex(item=>item.id==='partners')>website.items.findIndex(item=>item.id==='content'));
 });
 test('operations Overview does not gain editorial access',()=>{
  const html=renderToStaticMarkup(React.createElement(OverviewPanel,{operatorId:'synthetic',role:'operations'}));

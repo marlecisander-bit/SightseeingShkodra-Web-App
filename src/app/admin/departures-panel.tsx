@@ -2,12 +2,12 @@ import { ownerStatus } from "./presentation";
 import { Button } from "@/components/ui/button";
 import { createSessionClient } from '../../modules/identity/supabase-server';
 import { requirePermission } from '../../modules/identity/require-permission';
-import { saveDeparture } from './departure-actions';
+import {BookingConfirmation} from './booking-confirmation';
+import { saveDeparture,loadDepartureDate } from './departure-actions';
 import { SubmitButton } from './submit-button';
 import Link from 'next/link';
 import { MutationForm } from './mutation-form';
 import { ScheduleEditor, ExceptionEditor, type ServiceSchedule, type ScheduleException } from './schedule-editor';
-import { prepareServiceDate } from '@/modules/booking/schedules-server';
 type Departure={id?:string;product_id?:string;vehicle_id?:string|null;service_date?:string;start_time?:string;capacity?:number;status?:string;updated_at?:string};
 type Choice={id:string;label:string};
 function Editor({operatorId,row,products,vehicles}:{operatorId:string;row:Departure;products:Choice[];vehicles:Choice[]}) {
@@ -27,7 +27,6 @@ export async function InventoryHistoryPanel({operatorId,date,result}:{operatorId
   await requirePermission(operatorId,'departures.manage');
   const client=await createSessionClient();
   const day=date && /^\d{4}-\d{2}-\d{2}$/.test(date) && Number.isFinite(Date.parse(date)) && new Date(date).toISOString().slice(0,10)===date?date:undefined;
-  try { if(day) await prepareServiceDate(operatorId,day); } catch { return <p role="alert">The schedule could not be loaded. Refresh the page or contact your administrator.</p>; }
   let query=client.from('departures').select('id,product_id,vehicle_id,service_date,start_time,capacity,status,updated_at,schedule_id').eq('operator_id',operatorId).order('service_date',{ascending:false}).order('start_time').limit(100);
   if(day)query=query.eq('service_date',day);
   const [departures,products,vehicles,operator,schedules,exceptions]=await Promise.all([query,
@@ -38,7 +37,7 @@ export async function InventoryHistoryPanel({operatorId,date,result}:{operatorId
     client.from('schedule_exceptions').select('*').eq('operator_id',operatorId).order('service_date').limit(500)]);
   if(departures.error||products.error||vehicles.error||operator.error||schedules.error||exceptions.error)return <p role="alert">The schedule could not be loaded. Refresh the page or contact your administrator.</p>;
   const p=products.data.map(r=>({id:r.id,label:r.title})),v=vehicles.data.map(r=>({id:r.id,label:r.name}));
-  const messages:Record<string,string>={saved:'Departure saved.',stale:'This departure changed. Review the latest values before saving.',inventory:'Existing seat reservations prevent this change. Review affected bookings before changing the schedule.',error:'Unable to save. Check the date, time, capacity and selected product and vehicle.'};
+  const messages:Record<string,string>={prepared:'Scheduled departures loaded.',saved:'Departure saved.',stale:'This departure changed. Review the latest values before saving.',inventory:'Existing seat reservations prevent this change. Review affected bookings before changing the schedule.',error:'Unable to save. Check the date, time, capacity and selected product and vehicle.'};
   const availableProducts=p.filter(product=>!schedules.data.some(schedule=>schedule.product_id===product.id));
   return <div>{result&&<p role="status">{result==='schedule'?'Service schedule saved.':messages[result]??messages.error}</p>}<h2>Service schedules</h2><p>Set an operating period once. All dates and times use {operator.data.timezone}.</p><p>Seats are reserved for the selected departure. This system does not currently validate all-day reboarding entitlement.</p>
     <details><summary>Create service schedule</summary><ScheduleEditor operatorId={operatorId} products={availableProducts} vehicles={v}/>{!availableProducts.length&&<p>Create a van-tour product without an existing schedule first.</p>}</details>
@@ -47,8 +46,8 @@ export async function InventoryHistoryPanel({operatorId,date,result}:{operatorId
       <h3>Date-specific changes</h3><details><summary>+ Change a date</summary><ExceptionEditor operatorId={operatorId} schedule={schedule} vehicles={v}/></details>
       {(exceptions.data as ScheduleException[]).filter(e=>e.schedule_id===schedule.id).map(exception=><details key={exception.id}><summary>{exception.service_date} · {exception.closed?'Closed':exception.departure_times.map(t=>t.time).join(', ')}</summary><ExceptionEditor operatorId={operatorId} schedule={schedule} exception={exception} vehicles={v}/></details>)}
     </details>)}
-    <h2>Departure history</h2><p>Choose a date to review departures. To change scheduled departures, edit the schedule or the selected date.</p>
-    <form method="get"><label>Browse calendar date<input type="date" name="date" defaultValue={day}/></label><Button>Show departures</Button> <Link href={`/admin/${operatorId}/departures`}>Clear filter</Link></form>
+    <h2>Departure history</h2><BookingConfirmation message="Load scheduled departures for this date? This may create dated inventory from the existing schedule but does not reserve seats."><MutationForm action={loadDepartureDate.bind(null,operatorId)}><label>Prepare service date<input type="date" name="date" defaultValue={day} required/></label><SubmitButton>Load scheduled departures</SubmitButton></MutationForm></BookingConfirmation><p>Choose a date to review departures. To change scheduled departures, edit the schedule or the selected date.</p>
+    <form method="get"><input type="hidden" name="view" value="calendar"/><input type="hidden" name="history" value="1"/><label>Browse calendar date<input type="date" name="date" defaultValue={day}/></label><Button>Show departures</Button> <Link prefetch={false} href={`/admin/${operatorId}/departures`}>Clear filter</Link></form>
     {departures.data.length===0&&<p>No departures found.</p>}
     {departures.data.map(row=><details key={row.id}><summary>{row.service_date} · {row.start_time} · {p.find(item=>item.id===row.product_id)?.label ?? 'Product'} · {ownerStatus(row.status)} · {row.capacity} seats</summary>{row.schedule_id?<p>Managed by its service schedule. Edit the selected date to make changes.</p>:<Editor operatorId={operatorId} row={row} products={p} vehicles={v}/>}</details>)}
     <p>Showing up to 100 departures. Filter by date to narrow the list. Departures with booking history cannot be moved to another product, date or time.</p></div>;

@@ -203,3 +203,11 @@
 .quickNavigation { display:grid; align-content:start; gap:8px; }
 .quickNavigation h2 { margin:0 0 8px; }
 .cms .quickNavigation button { min-width:0; white-space:normal; overflow-wrap:anywhere; align-items:center; }
+
+/* Phase 4 Website workspace presentation; canonical forms and submit ownership remain. */
+.cms[data-website-workspace]{margin:0;padding:0;max-width:none;min-width:0;background:transparent}
+.editorContext{display:grid;gap:4px;padding:12px 0}.editorContext p,.editorContext h1{margin:0}.editorContext h1{font-size:24px}.editorContext span,.editorContext p{font-size:12px;color:var(--admin-text-muted)}
+.cms .toolbar,.cms .card,.cms .sideCard{border-radius:12px;background:var(--admin-surface,#fff)}
+.cms .toolbar{padding:16px}.cms .editor :is(input,textarea,select){font-size:16px}.cms .editorActions{gap:8px}.cms .sectionNavigation{gap:8px}.cms .backToSections{margin-block:4px}
+@media(min-width:768px){.cms[data-editing=true] .editorContext{display:none}.cms .columns{grid-template-columns:minmax(0,1fr) 260px}}
+@media(max-width:767px){.cms .editor{padding:12px}.cms .editorActions{bottom:calc(76px + env(safe-area-inset-bottom));padding:10px;background:white}.cms .editorContext{scroll-margin-top:80px}}

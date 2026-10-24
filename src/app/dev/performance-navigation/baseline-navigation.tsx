@@ -56,7 +56,7 @@ export function AdminNavigation({groups,section,account}:{groups:AdminNavGroup[]
   let parent=target.parentElement;while(parent){if(parent instanceof HTMLDetailsElement)parent.open=true;parent=parent.parentElement;}
   target.scrollIntoView({block:'start'});target.querySelector<HTMLElement>('summary')?.focus();
  },[context]);
- const taskGroups=groups.filter(g=>drawer==='more'?['website','settings'].includes(g.id):g.id===drawer);
+ const taskGroups=groups.filter(g=>drawer==='more'?['website','more'].includes(g.id):g.id===drawer);
  return <>
   <aside className={styles.desktopNavigation}>
    <nav aria-label="Admin navigation" className={styles.taskNavigation}>{groups.map(group=><details className={styles.taskGroup} key={group.id+':'+(area===group.id)} open={area===group.id}>
@@ -68,7 +68,7 @@ export function AdminNavigation({groups,section,account}:{groups:AdminNavGroup[]
    <a href={groups.find(g=>g.id==='overview')!.items[0].href} aria-current={area==='overview'?'page':undefined}><AdminIcon name="layout-dashboard"/><span>Home</span></a>
    {groups.some(g=>g.id==='bookings')?<button type="button" aria-current={area==='bookings'?'page':undefined} aria-expanded={drawer==='bookings'} aria-controls="admin-task-menu" onClick={e=>open('bookings',e.currentTarget)}><AdminIcon name="calendar-check"/><span>Bookings</span></button>:<button type="button" disabled title="Bookings are not available to your role"><AdminIcon name="calendar-check"/><span>Bookings</span></button>}
    <button type="button" aria-current={area==='tours'?'page':undefined} aria-expanded={drawer==='tours'} aria-controls="admin-task-menu" onClick={e=>open('tours',e.currentTarget)}><AdminIcon name="bus-front"/><span>Tours</span></button>
-   <button type="button" aria-current={area==='website'||area==='settings'?'page':undefined} aria-expanded={drawer==='more'} aria-controls="admin-task-menu" onClick={e=>open('more',e.currentTarget)}><AdminIcon name="users"/><span>More</span></button>
+   <button type="button" aria-current={area==='website'||area==='more'?'page':undefined} aria-expanded={drawer==='more'} aria-controls="admin-task-menu" onClick={e=>open('more',e.currentTarget)}><AdminIcon name="users"/><span>More</span></button>
   </nav>
   <dialog ref={dialog} id="admin-task-menu" className={styles.mobileDrawer} aria-labelledby="admin-menu-title" onClick={e=>{if(e.target===e.currentTarget)close();}} onClose={()=>{
    if(window.history.state?.adminTaskMenu)window.history.back();setDrawer(null);trigger.current?.focus();

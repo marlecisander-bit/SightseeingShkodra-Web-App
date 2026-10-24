@@ -54,3 +54,28 @@
 .connection{font-size:11px!important;padding:8px 16px;margin:0;color:#64748B}
 @media(max-width:1023px){.bell .dropdown{position:fixed;top:calc(72px + env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));width:auto;max-height:min(600px,calc(100dvh - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));padding:0}.dropdown .closeButton{min-width:44px;width:44px}.dropdown .panelHeader{padding-inline:12px}.item .itemLink{padding:10px 12px}}
 @media(prefers-reduced-motion:reduce){.bell *, .dropdown *{scroll-behavior:auto;transition:none;animation:none}}
+/* Phase 1 dashboard projection shares the existing inbox and row actions. */
+.dashboardInbox {min-width:0;}
+.dashboardInbox > p {font-size:13px;}
+.dashboardInbox .list {padding:0;margin:8px -8px;list-style:none;}
+.dashboardInbox .itemLink {min-height:80px;padding:12px 8px;}
+.dashboardInbox .item {border-radius:8px;}
+
+/* Phase 1A: existing inbox controls with the same events, count and delivery semantics. */
+.attentionValue {display:flex;align-items:baseline;gap:8px;margin:8px 0 3px;min-height:36px;}
+.attentionValue strong {min-width:0;overflow-wrap:anywhere;font-size:32px;line-height:1.1;letter-spacing:-.05em;font-weight:700;color:#172334;}
+.attentionValue > span {font-size:11px;line-height:1.5;color:#566579;}
+.bell .bellButton,.bell .bellButton[data-unread=true] {background:#fff!important;color:#172334!important;border-color:#E6E9EF;border-radius:12px;}
+.bell .badge {background:#C92735;}
+.bell .dropdown {border-radius:14px;box-shadow:0 8px 24px #17233412;}
+.dropdown .markAll,.dropdown .viewAll {color:#A91F29!important;}
+.item.unread {background:#FAF2F3;}
+.itemIcon i {background:#C92735;}
+.dashboardInbox > p {font-size:12px;margin:4px 0 8px;}
+.dashboardInbox .itemLink {min-height:72px;padding:10px 8px;}
+.dashboardInbox .itemCopy strong {font-size:13px;}
+.dashboardInbox .list {margin:6px -4px;}
+@media(max-width:359px){.attentionValue {gap:6px;}.attentionValue > span {font-size:11px;}}
+
+/* Phase 5 settings presentation; request and delivery contracts remain unchanged. */
+.settings{scroll-margin-top:90px;min-width:0;padding:16px;border:1px solid #e0e4e8;border-radius:12px;background:#fff}.settings fieldset{min-width:0;border:1px solid #e0e4e8;border-radius:9px;margin:12px 0;padding:12px}.settings fieldset label{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin-right:16px}.settings input:not([type=checkbox]){font-size:16px;min-height:44px;max-width:100%;box-sizing:border-box}.settings button,.settings a{min-height:44px}.settings p{font-size:13px;line-height:1.6}.settings dl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;font-size:13px}.settings dd{margin:0;overflow-wrap:anywhere}.settings .device{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;padding:12px;border-bottom:1px solid #e0e4e8}.settings h2{font-size:20px}.settings h3{font-size:16px}.settings:focus-visible{outline:3px solid var(--ss-focus)}

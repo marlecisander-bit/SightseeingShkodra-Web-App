@@ -72,7 +72,7 @@ export function BookingProvider({ children, content = initialWebsiteContent, pre
     Object.assign(document.body.style, {position:"fixed", top:`-${y}px`, width:"100%"});
     return () => { Object.assign(document.body.style, previous); window.scrollTo(0,y); };
   }, [opened]);
-  const availability = useAvailability(selection.date, selection.guests,selection.passengers,generation);
+  const availability = useAvailability(preview?'':selection.date, selection.guests,selection.passengers,generation);
   return (
     <BookingContext.Provider
       value={{
@@ -85,7 +85,7 @@ export function BookingProvider({ children, content = initialWebsiteContent, pre
         open: () => {
           if (!dialog.current || dialog.current.open) return;
           dialog.current.showModal();
-          trackBookingEvent('begin_checkout', 'checkout:' + analyticsSessionIdentity());
+          if(!preview)trackBookingEvent('begin_checkout', 'checkout:' + analyticsSessionIdentity());
           setOpened(true);
         },
         close: () => dialog.current?.close(),

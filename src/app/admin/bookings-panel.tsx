@@ -1,30 +1,27 @@
+import {randomUUID} from 'node:crypto';
+import Link from 'next/link';
+import {createSessionClient} from '@/modules/identity/supabase-server';
+import {requirePermission} from '@/modules/identity/require-permission';
+import {hasPermission} from '@/modules/identity/roles';
+import {withOperatorService} from '@/modules/identity/operator-service';
+import type {PassengerCategories,PassengerSnapshot} from '@/modules/booking/passengers';
+import {BookingQr} from '@/components/public/booking-pass';
 import {emailOutcomeLabel} from '@/modules/integrations/email-delivery-status';
-import {AdminStatus} from './admin-status';
-import styles from './admin.module.css';
-import { BookingCard } from './booking-card';
-import { ownerStatus, ownerEmailEvent } from "./presentation";
-import { passengerLabels } from "@/modules/booking/passengers";
-import { StaffPassengers } from "./staff-passengers";
-import { withOperatorService } from "@/modules/identity/operator-service";
-import type { PassengerCategories,PassengerSnapshot } from "@/modules/booking/passengers";
-import { BookingQr } from "@/components/public/booking-pass";
-import { Button } from "@/components/ui/button";
-import { randomUUID } from "node:crypto";
-import { createSessionClient } from "../../modules/identity/supabase-server";
-import { requirePermission } from "../../modules/identity/require-permission";
-import { hasPermission } from "../../modules/identity/roles";
-import {
-  manualBooking,
-  cancelBooking,
-  collectPayment,
-} from "./booking-actions";
-import { SubmitButton } from "./submit-button";
-import Link from "next/link";
-import { MutationForm } from "./mutation-form";
-import { prepareServiceDate } from '@/modules/booking/schedules-server';
+import {ownerEmailEvent,ownerStatus} from './presentation';
+import {validBookingDay,bookingAmount,type BookingRecordView} from './bookings-presentation';
+import {BookingsWorkspace,type BookingEntry} from './bookings-workspace';
+import {BookingRecord} from './booking-record';
+import {BookingConfirmation} from './booking-confirmation';
+import {StaffPassengers} from './staff-passengers';
+import {MutationForm} from './mutation-form';
+import {SubmitButton} from './submit-button';
+import {manualBooking,cancelBooking,collectPayment,loadBookingDepartures} from './booking-actions';
+import styles from './bookings.module.css';
+function unavailable(message:string){return <div className={styles.workspace}><h1>Bookings</h1><p role="alert">{message} No partial booking details are shown.</p><Link prefetch={false} href="?">Retry without filters</Link></div>;}
 export async function BookingsPanel({
   operatorId,
   result,
+  create,
   date,
   email,
   requestId,
@@ -32,6 +29,7 @@ export async function BookingsPanel({
 }: {
   operatorId: string;
   result?: string;
+  create?: string;
   date?: string;
   email?: string;
   requestId?: string;
@@ -39,46 +37,40 @@ export async function BookingsPanel({
 }) {
   const context = await requirePermission(operatorId, "bookings.read");
   const client = await createSessionClient();
-  const day =
-    date &&
-    /^\d{4}-\d{2}-\d{2}$/.test(date) &&
-    Number.isFinite(Date.parse(date)) &&
-    new Date(date).toISOString().slice(0, 10) === date
-      ? date
-      : undefined;
-  const searchEmail = email?.trim().toLowerCase().slice(0, 254);
-  if (hasPermission(context.role, 'departures.manage')) {
-    try { await prepareServiceDate(operatorId, day); }
-    catch { return <p role="alert">Booking schedules are temporarily unavailable.</p>; }
-  }
+  if(selectedBooking&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(selectedBooking))return unavailable('The booking link is invalid.');
+  const day=validBookingDay(date),creating=create==='1';
+  const searchEmail=email?.trim().toLowerCase().slice(0,254);
+  const operator=await client.from('operators').select('timezone').eq('id',operatorId).single();
+  if(operator.error)return unavailable('Booking dates are temporarily unavailable.');
+  let today:string;try{today=new Intl.DateTimeFormat('en-CA',{timeZone:operator.data.timezone,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}catch{return unavailable('Booking dates are temporarily unavailable.');}
   let departureChoices = client.from('departures').select('id,product_id,service_date,start_time')
     .eq('operator_id', operatorId).eq('status', 'scheduled');
   departureChoices = day ? departureChoices.eq('service_date',day)
-    : departureChoices.gte('service_date',new Date().toISOString().slice(0,10));
+    : departureChoices.gte('service_date',today);
   const [customers, departures, products] = await Promise.all([
     searchEmail
       ? client
           .from("customers")
-          .select("id,name,email,phone")
+          .select("id,name,email,phone",{count:"exact"})
           .eq("operator_id", operatorId)
           .eq("email", searchEmail)
           .limit(100)
-      : Promise.resolve({ data: [], error: null }),
-    departureChoices.order('service_date').order('start_time').limit(100),
+      : Promise.resolve({ data: [], error: null, count:0 }),
+    creating?departureChoices.order('service_date').order('start_time').limit(100):Promise.resolve({data:[],error:null}),
     client
       .from("products")
       .select("id,title")
       .eq("operator_id", operatorId)
       .limit(100),
   ]);
-  if (customers.error || departures.error || products.error)
-    return <p role="alert">Booking data is temporarily unavailable.</p>;
-  const categories=hasPermission(context.role,'bookings.create')?await withOperatorService(operatorId,'bookings.create',async(service)=>Object.fromEntries(await Promise.all(products.data.map(async(p)=>{const r=await service.rpc('passenger_categories_v1',{p_product:p.id});if(r.error)throw Error('Passenger categories unavailable');return [p.id,r.data as PassengerCategories];})))):{};
+  if (customers.error || departures.error || products.error || (searchEmail&&customers.count!==customers.data?.length))
+    return unavailable('Booking data is temporarily unavailable.');
+  const categories=creating&&hasPermission(context.role,'bookings.create')?await withOperatorService(operatorId,'bookings.create',async(service)=>Object.fromEntries(await Promise.all(products.data.map(async(p)=>{const r=await service.rpc('passenger_categories_v1',{p_product:p.id});if(r.error)throw Error('Passenger categories unavailable');return [p.id,r.data as PassengerCategories];})))):{};
   let ordersQuery = client
     .from("orders")
-    .select("id,customer_id,status,total,currency,created_at,collection_mode")
+    .select("id,customer_id,status,total,currency,created_at,collection_mode",{count:"exact"})
     .eq("operator_id", operatorId)
-    .order("created_at", { ascending: false })
+    .order("created_at", { ascending: false }).order("id",{ascending:false})
     .limit(100);
   if (searchEmail)
     ordersQuery = ordersQuery.in(
@@ -87,27 +79,27 @@ export async function BookingsPanel({
     );
   if (selectedBooking && /^[0-9a-f-]{36}$/i.test(selectedBooking)) {
     const selected = await client.from("bookings").select("order_id").eq("operator_id", operatorId).eq("id", selectedBooking).maybeSingle();
-    if (selected.error) return <p role="alert">Booking is temporarily unavailable.</p>;
+    if (selected.error) return unavailable('Booking is temporarily unavailable.');
     ordersQuery = ordersQuery.in("id", selected.data ? [selected.data.order_id] : []);
   }
   if (day) {
     const scheduled = await client
       .from("departures")
-      .select("id")
+      .select("id",{count:"exact"})
       .eq("operator_id", operatorId)
       .eq("service_date", day)
       .limit(1000);
-    if (scheduled.error) return <p role="alert">Calendar is unavailable.</p>;
+    if (scheduled.error||scheduled.count!==scheduled.data?.length) return unavailable('Calendar is unavailable.');
     const items = await client
       .from("booking_items")
-      .select("order_id")
+      .select("order_id",{count:"exact"})
       .eq("operator_id", operatorId)
       .in(
         "departure_id",
         scheduled.data.map((d) => d.id),
       )
       .limit(1000);
-    if (items.error) return <p role="alert">Calendar is unavailable.</p>;
+    if (items.error||items.count!==items.data?.length) return unavailable('Calendar is unavailable.');
     ordersQuery = ordersQuery.in(
       "id",
       items.data.map((i) => i.order_id),
@@ -115,12 +107,12 @@ export async function BookingsPanel({
   }
   const orders = await ordersQuery;
   if (orders.error)
-    return <p role="alert">Orders are temporarily unavailable.</p>;
+    return unavailable('Orders are temporarily unavailable.');
   const ids = orders.data.map((o) => o.id);
-  const [people, bookings, items, payments, holds] = await Promise.all([
+  const [people, bookings, items, payments] = await Promise.all([
     client
       .from("customers")
-      .select("id,name,email,phone")
+      .select("id,name,email,phone",{count:"exact"})
       .eq("operator_id", operatorId)
       .in(
         "id",
@@ -128,258 +120,79 @@ export async function BookingsPanel({
       ),
     client
       .from("bookings")
-      .select("id,order_id,booking_reference,status,qr_token,qr_created_at,checked_in_at")
+      .select("id,order_id,booking_reference,status,qr_token,qr_created_at,checked_in_at",{count:"exact"})
       .eq("operator_id", operatorId)
       .in("order_id", ids),
     client
       .from("booking_items")
-      .select("order_id,product_id,departure_id,quantity,status,passenger_snapshot")
+      .select("order_id,product_id,departure_id,quantity,occupied_seats,status,passenger_snapshot",{count:"exact"})
       .eq("operator_id", operatorId)
       .in("order_id", ids),
     hasPermission(context.role, "payments.collect")
       ? client
           .from("payments")
-          .select("order_id,status,amount,currency")
+          .select("order_id,status,amount,currency",{count:"exact"})
           .eq("operator_id", operatorId)
           .in("order_id", ids)
-      : Promise.resolve({ data: [], error: null }),
-    client
-      .from("inventory_holds")
-      .select("order_id,status,expires_at")
-      .eq("operator_id", operatorId)
-      .in("order_id", ids),
+      : Promise.resolve({ data: [], error: null, count:0 }),
   ]);
   if (
     people.error ||
     bookings.error ||
     items.error ||
-    payments.error ||
-    holds.error
+    payments.error || people.count!==people.data?.length || bookings.count!==bookings.data?.length || items.count!==items.data?.length || payments.count!==payments.data?.length
   )
-    return <p role="alert">Booking details are temporarily unavailable.</p>;
-  const itemDepartures = await client.from("departures").select("id,service_date,start_time")
-    .eq("operator_id",operatorId).in("id",items.data.map(i=>i.departure_id));
-  if(itemDepartures.error) return <p role="alert">Departure details are temporarily unavailable.</p>;
-  const deliveries = await client
+    return unavailable('Booking details are temporarily unavailable.');
+  const preparedOrders=new Set(bookings.data.map(b=>b.order_id));
+  const holdIds=selectedBooking?ids:orders.data.filter(o=>!preparedOrders.has(o.id)).map(o=>o.id);
+  const holds=holdIds.length?await client.from('inventory_holds').select('order_id,status,expires_at',{count:'exact'}).eq('operator_id',operatorId).in('order_id',holdIds):{data:[],error:null,count:0};
+  if(holds.error||holds.count!==holds.data?.length)return unavailable('Temporary seat reservations are unavailable.');
+  const itemDepartures = await client.from("departures").select("id,service_date,start_time",{count:"exact"})
+    .eq("operator_id",operatorId).in("id",[...new Set(items.data.map(i=>i.departure_id).filter(Boolean))]);
+  if(itemDepartures.error||itemDepartures.count!==itemDepartures.data?.length) return unavailable('Departure details are temporarily unavailable.');
+  const deliveries = selectedBooking?await client
     .from("notification_deliveries")
     .select("id,booking_id,status,channel,attempt_count,last_error_code,provider_status,provider_updated_at,provider_reason,provider_reference,recipient_type,event_type,manual,created_at")
     .eq("operator_id", operatorId)
     .in(
       "booking_id",
       bookings.data.map((b) => b.id),
-    ).order("created_at", { ascending: false }).limit(1000);
-  const messages: Record<string, string> = {
-    email_queued: "Confirmation emails requested for the customer and owner. Check message status below after refreshing.",
-    created: "Reservation confirmed. Payment is due at the meeting point.",
-    collected: "Full payment recorded at the meeting point.",
-    cancelled: "Booking cancelled.",
-    review:
-      "Booking cancelled. Refund review requested; no refund has been issued.",
-    error:
-      "Unable to complete the action. Check availability, configured pricing and customer details, then refresh before retrying.",
-  };
-  return (
-    <div>
-      {result && <p role="status">{messages[result] ?? messages.error}</p>}
-      <form method="get">
-        <label>
-          Departure date
-          <input type="date" name="date" defaultValue={day} />
-        </label>
-        <label>
-          Customer email (exact match)
-          <input type="email" name="email" defaultValue={searchEmail} />
-        </label>
-        <Button>Find bookings</Button>{" "}
-        <Link href={`/admin/${operatorId}/bookings`}>Clear filters</Link>
-      </form>
-      {searchEmail && (
-        <div>
-          <h2>Customer lookup</h2>
-          {customers.data.length ? (
-            customers.data.map((c) => (
-              <p key={c.id}>
-                {c.name} · {c.email} · {c.phone ?? "No phone"}
-              </p>
-            ))
-          ) : (
-            <p>No matching customer.</p>
-          )}
-        </div>
-      )}
-      {hasPermission(context.role, "bookings.create") && (
-        <details>
-          <summary>Create manual booking</summary>
-          <p>
-            This confirms the seats immediately. Payment is due at the meeting
-            point.
-          </p>
-          <MutationForm action={manualBooking.bind(null, operatorId)}>
-            <input
-              type="hidden"
-              name="request_id"
-              value={
-                requestId && /^[0-9a-f-]{36}$/i.test(requestId)
-                  ? requestId
-                  : randomUUID()
-              }
-            />
-            <StaffPassengers departures={departures.data.map(d=>({id:d.id,label:d.service_date+' '+d.start_time+'  |  '+(products.data.find(p=>p.id===d.product_id)?.title??'Product'),categories:categories[d.product_id]}))}/>
-            <label>
-              Customer name
-              <input name="name" maxLength={200} required />
-            </label>
-            <label>
-              Email
-              <input name="email" type="email" maxLength={254} required />
-            </label>
-            <label>
-              Phone
-              <input name="phone" type="tel" maxLength={50} />
-            </label>
-            <SubmitButton disabled={departures.data.length === 0}>
-              Confirm reservation
-            </SubmitButton>
-            {departures.data.length === 0 && (
-              <p>
-                No scheduled departure is available. Schedule a departure before
-                creating a booking.
-              </p>
-            )}
-          </MutationForm>
-        </details>
-      )}
-      <h2>Bookings</h2>
-      {orders.data.length === 0 && <p>No bookings match these filters.</p>}
-      {orders.data.map((order) => {
-        const person = people.data.find((p) => p.id === order.customer_id),
-          booking = bookings.data.find((b) => b.order_id === order.id);
-        return (
-          <BookingCard key={order.id} id={booking?.id ?? order.id} initiallyOpen={booking?.id === selectedBooking} summary={<>
-              <strong>{booking?.booking_reference ?? "Pending reservation"}</strong>
-              <span>{person?.name ?? "Customer"}</span>
-              <span className={styles.bookingFacts}>{items.data.filter(i=>i.order_id===order.id).map((i,index)=>{const d=itemDepartures.data.find(d=>d.id===i.departure_id);return <span key={index}>{d?.service_date} {d?.start_time?.slice(0,5)} / {i.quantity} guests</span>;})}</span>
-              <span className={styles.bookingFacts}><span>{order.currency} {(order.total/100).toFixed(2)}</span><AdminStatus status={order.status}>{ownerStatus(order.status)}</AdminStatus></span>
-              <span className={styles.bookingView}>View booking</span>
-            </>}>
-            <div className={styles.bookingContact}><h3>Tour &amp; guests</h3>            <ul>
-              {items.data
-                .filter((i) => i.order_id === order.id)
-                .map((i, index) => (
-                  <li key={index}>
-                    {products.data.find((p) => p.id === i.product_id)?.title ??
-                      "Product unavailable"}{" "}
-                    · {i.quantity} passengers · {ownerStatus(i.status)}
-                    {(i.passenger_snapshot as PassengerSnapshot|null)?.lines.map(l=><span key={l.category}> | {l.quantity} {passengerLabels[l.category]}: EUR {(l.total/100).toFixed(2)}</span>)}
-                  </li>
-                ))}
-            </ul>
-</div>
-            <div className={styles.bookingContact}><h3>Contact</h3><p>{person?.name}</p>{person?.email&&<p><a href={'mailto:'+person.email}>{person.email}</a></p>}{person?.phone&&<p><a href={'tel:'+person.phone}>{person.phone}</a></p>}</div>
-            <details><summary>Technical details</summary><p>Order: {order.id}</p></details>
-            <h3>Payment</h3><p>
-              Total: {order.currency} {(order.total / 100).toFixed(2)}
-            </p>
-            <p>Booking: {booking ? <AdminStatus status={booking.status}>{ownerStatus(booking.status)}</AdminStatus> : "Not prepared"}</p>
-            <p>QR status: {booking?.qr_token ? (booking.status==='cancelled'?'Retained - booking cancelled':'Issued'):'Not issued'}. Check-in: {booking?.checked_in_at ? new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeStyle:'short',timeZone:'Europe/Tirane'}).format(new Date(booking.checked_in_at)) : 'Not checked in'}.</p>
-            {booking?.qr_token && <BookingQr token={booking.qr_token}/>}
-            {deliveries.error ? (
-              <p>Confirmation status is temporarily unavailable.</p>
-            ) : (
-              <div>
-                <h3>Booking emails</h3>
-                {!deliveries.data.some(d => d.booking_id === booking?.id) && <p>No emails sent yet. Check Email &amp; Notifications for sending status.</p>}
-                <ul>{deliveries.data.filter(d => d.booking_id === booking?.id).slice(0, 10).map(d => <li key={d.id}>
-                  {d.recipient_type === 'owner' ? 'Owner' : 'Customer'} · {ownerEmailEvent(d.event_type)}{d.manual ? " (manual resend)" : ""}: {emailOutcomeLabel(d)}<details><summary>Technical details</summary>{d.attempt_count} attempt(s){d.last_error_code ? ` · ${d.last_error_code}` : ""}</details>
-                </li>)}</ul>
-                <small>Up to ten most recent notifications. Sent does not confirm arrival in the inbox.</small>
-              </div>
-            )}
-            {booking && hasPermission(context.role,'integrations.manage') && <p><Link href={`/admin/${operatorId}/email?booking=${booking.booking_reference}`}>Inspect customer and owner delivery outcomes</Link>. Unresolved accepted messages cannot be resent.</p>}
-            {holds.data
-              .filter((h) => h.order_id === order.id && h.status !== "consumed")
-              .map((h, index) => (
-                <p key={index}>
-                  Temporary seat reservation: {ownerStatus(h.status)} · ends {new Intl.DateTimeFormat("en-GB",{dateStyle:"medium",timeStyle:"short",timeZone:"Europe/Tirane"}).format(new Date(h.expires_at))}.
-                </p>
-              ))}
-            {payments.data
-              .filter((p) => p.order_id === order.id)
-              .map((p, index) => (
-                <p key={index}>
-                  Payment: {ownerStatus(p.status)} · {p.currency}{" "}
-                  {(p.amount / 100).toFixed(2)}
-                </p>
-              ))}
-            {order.collection_mode === "meeting_point" && (
-              <p>
-                {order.status === "cancelled"
-                  ? "Reservation cancelled."
-                  : payments.data.some(
-                        (p) => p.order_id === order.id && p.status === "paid",
-                      )
-                    ? "Payment received."
-                    : "Payment due at the meeting point."}
-              </p>
-            )}
-            {hasPermission(context.role, "payments.collect") &&
-              order.collection_mode === "meeting_point" &&
-              order.status === "confirmed" &&
-              !payments.data.some((p) => p.order_id === order.id) && (
-                <MutationForm
-                  action={collectPayment.bind(null, operatorId, order.id)}
-                >
-                  <label>
-                    <input
-                      type="checkbox"
-                      name="received"
-                      value="yes"
-                      required
-                    />{" "}
-                    I received the full {order.currency}{" "}
-                    {(order.total / 100).toFixed(2)} at the meeting point
-                  </label>
-                  <SubmitButton>Record payment received</SubmitButton>
-                </MutationForm>
-              )}
-            {hasPermission(context.role, "bookings.cancel") &&
-              ["pending", "awaiting_payment", "paid", "confirmed"].includes(
-                order.status,
-              ) && (
-                <details>
-                <summary>Cancel this booking</summary>
-                <MutationForm
-                  action={cancelBooking.bind(null, operatorId, order.id)}
-                >
-                  <label>
-                    Cancellation reason
-                    <textarea name="reason" maxLength={500} required />
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      name="confirm"
-                      value="yes"
-                      required
-                    />{" "}
-                    Confirm cancellation and release these seats
-                  </label>
-                  <SubmitButton>Cancel booking</SubmitButton>
-                  <p>
-                    Paid bookings will be flagged for refund review. This does not
-                    issue a refund.
-                  </p>
-                </MutationForm>
-                </details>
-              )}
-          </BookingCard>
-        );
-      })}
-      <p>
-        Showing up to 100 bookings and upcoming departures. Date lookup is limited
-        to 1,000 departures/items. Only full meeting-point collection can be
-        recorded here. Refunds require manual review.
-      </p>
-    </div>
-  );
+    ).order("created_at", { ascending: false }).limit(1000):{data:[],error:null};
+  const messages:Record<string,string>={email_queued:'Confirmation emails requested. Check message status after refreshing.',created:'Reservation confirmed. Payment is due at the meeting point.',collected:'Full payment recorded at the meeting point.',cancelled:'Booking cancelled.',review:'Booking cancelled. Refund review requested; no refund has been issued.',departures_ready:'Booking departures loaded for the selected service date.',error:'Unable to complete the action. Check the latest booking details before retrying.'};
+  const root=`/admin/${encodeURIComponent(operatorId)}`;
+  const usableDepartures=departures.data.filter(d=>categories[d.product_id]);
+  const creation=creating&&hasPermission(context.role,'bookings.create')?<section id="new-booking" className={styles.creation}>
+   <div className={styles.creationTitle}><h2>Create booking</h2><Link prefetch={false} href={`${root}/bookings${day?'?date='+day:''}`}>Close</Link></div>
+   <p>Confirm a reservation with payment due at the meeting point.</p>
+   <details open={usableDepartures.length===0}><summary>Choose a service date</summary><p>Load this date’s departures before booking. This can add dated departures from the existing schedule; it does not reserve seats.</p>
+    <BookingConfirmation message="Load booking departures for this date? This may prepare dated departures from the schedule, but does not reserve seats."><MutationForm action={loadBookingDepartures.bind(null,operatorId)}><label>Service date<input type="date" name="date" defaultValue={day??today} required/></label><SubmitButton>Load booking departures</SubmitButton></MutationForm></BookingConfirmation>
+   </details>
+   <BookingConfirmation message="Confirm this reservation now? Seats will be reserved immediately and full payment will be due at the meeting point."><MutationForm action={manualBooking.bind(null,operatorId)}>
+    <input type="hidden" name="request_id" value={requestId&&/^[0-9a-f-]{36}$/i.test(requestId)?requestId:randomUUID()}/>
+    <StaffPassengers departures={usableDepartures.map(d=>({id:d.id,label:`${d.service_date} ${d.start_time} | ${products.data.find(p=>p.id===d.product_id)?.title??'Product'}`,categories:categories[d.product_id]}))}/>
+    <label>Guest name<input name="name" maxLength={200} autoComplete="name" required/></label><label>Email<input name="email" type="email" maxLength={254} autoComplete="email" required/></label><label>Phone<input name="phone" type="tel" maxLength={50} autoComplete="tel"/></label>
+    <SubmitButton disabled={!usableDepartures.length}>Confirm reservation</SubmitButton>
+    {!usableDepartures.length&&<p>No bookable departure with passenger configuration is loaded. Choose a service date above.</p>}
+    <small>Up to 100 scheduled departures are offered. Capacity, cutoff and prices are checked again when confirming.</small>
+   </MutationForm></BookingConfirmation>
+  </section>:undefined;
+  // Index related rows once instead of rescanning every collection for every card.
+  const peopleById=new Map(people.data.map(p=>[p.id,p])),bookingByOrder=new Map(bookings.data.map(b=>[b.order_id,b]));
+  const departureById=new Map(itemDepartures.data.map(d=>[d.id,d])),productById=new Map(products.data.map(p=>[p.id,p]));
+  const group=<T extends {order_id:string|null}>(rows:T[])=>{const map=new Map<string,T[]>();for(const row of rows)if(row.order_id){const list=map.get(row.order_id)??[];list.push(row);map.set(row.order_id,list);}return map;};
+  const itemsByOrder=group(items.data),paymentsByOrder=group(payments.data),holdsByOrder=group(holds.data);
+  const entries:BookingEntry[]=orders.data.map(order=>{
+   const person=peopleById.get(order.customer_id),booking=bookingByOrder.get(order.id),orderItems=itemsByOrder.get(order.id)??[],orderPayments=paymentsByOrder.get(order.id)??[];
+   const row:BookingRecordView={id:order.id,bookingId:booking?.id,reference:booking?.booking_reference??'Pending reservation',name:person?.name??'Guest unavailable',email:person?.email,phone:person?.phone,status:booking?.status??order.status,orderStatus:order.status,total:order.total,currency:order.currency,collectionMode:order.collection_mode,checkedInAt:booking?.checked_in_at,hasQr:!!booking?.qr_token,payments:orderPayments,items:orderItems.map(i=>{const d=departureById.get(i.departure_id);return {product:productById.get(i.product_id)?.title??'Product unavailable',date:d?.service_date,time:d?.start_time,quantity:i.quantity,seats:i.occupied_seats,status:i.status,snapshot:i.passenger_snapshot as PassengerSnapshot|null};})};
+   const selected=!!booking&&booking.id===selectedBooking;
+   const actions=<>
+    {hasPermission(context.role,'payments.collect')&&order.collection_mode==='meeting_point'&&order.status==='confirmed'&&!orderPayments.length&&<BookingConfirmation message={`Record full payment of ${bookingAmount(order.total,order.currency)} as received for ${row.reference}? This records receipt; it does not charge a card.`}><MutationForm action={collectPayment.bind(null,operatorId,order.id)}><label className={styles.check}><input type="checkbox" name="received" value="yes" required/>I received the full {bookingAmount(order.total,order.currency)} at the meeting point</label><SubmitButton>Record payment received</SubmitButton></MutationForm></BookingConfirmation>}
+    {hasPermission(context.role,'bookings.cancel')&&['pending','awaiting_payment','paid','confirmed'].includes(order.status)&&<details className={styles.cancel}><summary>Cancel this booking</summary><BookingConfirmation message={`Cancel ${row.reference} and release its reserved seats? Paid bookings are flagged for review; no refund is issued.`}><MutationForm action={cancelBooking.bind(null,operatorId,order.id)}><label>Cancellation reason<textarea name="reason" maxLength={500} required/></label><label className={styles.check}><input type="checkbox" name="confirm" value="yes" required/>Confirm cancellation and release these seats</label><SubmitButton>Cancel booking</SubmitButton><p>Paid bookings are flagged for refund review. This does not issue a refund.</p></MutationForm></BookingConfirmation></details>}
+    {(!hasPermission(context.role,'bookings.cancel')||!['pending','awaiting_payment','paid','confirmed'].includes(order.status))&&<p>No cancellation action is available.</p>}
+   </>;
+   const history=deliveries.data?.filter(d=>d.booking_id===booking?.id)??[];
+   const communications=<>{deliveries.error?<p>Confirmation status temporarily unavailable.</p>:<>{!history.length&&<p>No email history is recorded in this loaded view.</p>}<ul>{history.slice(0,10).map(d=><li key={d.id}>{d.recipient_type==='owner'?'Owner':'Customer'} · {ownerEmailEvent(d.event_type)}{d.manual?' (manual resend)':''}: {emailOutcomeLabel(d)}<details><summary>Delivery details</summary>{d.attempt_count} attempt(s){d.last_error_code?` · ${d.last_error_code}`:''}</details></li>)}</ul><small>Up to 10 most recent loaded notifications. Sent does not confirm inbox arrival; this history may be limited.</small></>}{booking&&hasPermission(context.role,'integrations.manage')&&<p><Link prefetch={false} href={`${root}/email?booking=${encodeURIComponent(booking.booking_reference)}`}>Inspect delivery outcomes</Link>. Unresolved accepted messages cannot be resent.</p>}</>;
+   return {id:order.id,status:row.status,searchText:[row.name,row.reference,row.email,row.phone].filter(Boolean).join(' '),content:<BookingRecord operatorId={operatorId} row={row} selected={selected} actions={actions} communications={communications} qr={selected&&booking?.qr_token?<BookingQr token={booking.qr_token}/>:undefined} holdNotes={(holdsByOrder.get(order.id)??[]).filter(h=>h.status!=='consumed').map((h,i)=><p key={i}>Temporary seat reservation: {ownerStatus(h.status)} · ends {new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeStyle:'short',timeZone:operator.data.timezone}).format(new Date(h.expires_at))}.</p>)}/>};
+  });
+  return <BookingsWorkspace operatorId={operatorId} today={today} day={day} email={searchEmail} selectedBooking={selectedBooking} entries={entries} creation={creation} canCreate={hasPermission(context.role,'bookings.create')} limited={orders.count===null||orders.count>orders.data.length} result={result?messages[result]??messages.error:undefined}/>;
 }

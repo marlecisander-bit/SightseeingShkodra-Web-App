@@ -1,0 +1,44 @@
+.tours{min-width:0;color:#172334;--tour-border:#e3e7ec;}
+.tours *{box-sizing:border-box;}
+.header{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:0 0 18px;}
+.tours .header h1{font-size:28px;line-height:1.15;letter-spacing:-.04em;margin:5px 0 8px;}
+.tours p{font-size:13px;line-height:1.55;color:#566579;margin:8px 0;}
+.tours .eyebrow{color:#c92735;text-transform:uppercase;font-size:10px;font-weight:700;letter-spacing:.1em;margin:0;}
+.tours :is(a,button,summary){min-height:44px;}
+.tours a{color:#a91f29;overflow-wrap:anywhere;}
+.primary{display:inline-flex;align-items:center;justify-content:center;gap:6px;flex:none;padding:10px 12px;background:#c92735;color:white!important;border-radius:9px;font-size:12px;font-weight:600;text-decoration:none;}
+.tabs{display:flex;flex-wrap:wrap;gap:4px;padding:6px;background:#fff;border:1px solid var(--tour-border);border-radius:12px;margin:0 0 16px;}
+.tabs a{display:inline-flex;align-items:center;justify-content:center;flex:1 1 120px;padding:8px 10px;font-size:12px;font-weight:600;text-decoration:none;color:#566579;border-radius:8px;}
+.tabs a[aria-current=page]{background:#fbeef0;color:#b62130;}
+.dateForm{display:flex;flex-wrap:wrap;align-items:end;gap:10px;padding:12px;background:#fff;border:1px solid var(--tour-border);border-radius:12px;margin-bottom:14px;}
+.dateForm label{font-size:11px;display:grid;gap:5px;flex:1 1 140px;min-width:0;}
+.dateForm input{font:inherit;font-size:16px;min-height:44px;max-width:100%;border:1px solid #d9dfe6;border-radius:8px;padding:8px;background:white;color:#172334;}
+.dateForm button{font:inherit;font-size:12px;border:1px solid #d9dfe6;border-radius:8px;background:#f6f7f9;color:#172334;padding:8px 12px;}
+.dateForm a{display:inline-flex;align-items:center;font-size:12px;}
+.dateForm>span{font-size:11px;color:#687588;align-self:center;}
+.tours .note{font-size:11px;line-height:1.6;margin:12px 0 16px;max-width:110ch;}
+.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:14px;}
+.tours .metrics section{margin:0;padding:12px;background:#f0f2f5;border:1px solid #e6e9ef;border-radius:12px;max-width:none;}
+.metrics span{font-size:11px;color:#566579;display:block;}
+.metrics strong{display:block;font-size:26px;letter-spacing:-.03em;margin-top:7px;}
+.metrics .unknown{font-size:15px;line-height:1.8;}
+.metrics section:last-child{grid-column:1/-1;}
+.departures{display:grid;gap:10px;}
+.departure{padding:14px;background:white;border:1px solid var(--tour-border);border-radius:12px;min-width:0;}
+.departureHeading{display:flex;justify-content:space-between;align-items:start;gap:8px;}
+.departureHeading strong{font-size:22px;letter-spacing:-.03em;}
+.departureHeading small{display:block;font-size:11px;color:#687588;margin-top:4px;}
+.status{font-size:10px;padding:4px 7px;border-radius:5px;color:#566579;background:#f0f2f5;line-height:1.5;text-align:right;}
+.links,.quick{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;}
+.links a,.quick a,.textLink{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;min-height:44px;}
+.quick{margin:16px 0;padding:10px 14px;border:1px solid var(--tour-border);border-radius:12px;background:#fff;}
+.tours .card{max-width:none;margin:0 0 14px;padding:16px;background:#fff;border:1px solid var(--tour-border);border-radius:12px;}
+.tours .card h2{font-size:18px;margin:0 0 10px;letter-spacing:-.02em;}
+.card small{display:block;font-size:11px;line-height:1.5;color:#687588;}
+.split{display:grid;gap:12px;}
+.liveTitle{display:flex;gap:8px;align-items:center;}
+.tours :is(a,button,input,select,textarea,summary):focus-visible{outline:3px solid #c92735;outline-offset:3px;}
+.tours :is(a,button,input,select,textarea,summary){scroll-margin-top:100px;scroll-margin-bottom:calc(96px + env(safe-area-inset-bottom));}
+@media(max-width:359px){.header{flex-wrap:wrap;}.primary{width:100%;}.tabs a{flex-basis:100px;padding:7px;}.departure{padding:12px;}}
+@media(min-width:768px){.metrics{grid-template-columns:repeat(3,minmax(0,1fr));}.metrics section:last-child{grid-column:auto;}.departures,.split{grid-template-columns:repeat(2,minmax(0,1fr));}.tabs a{flex:1 1 auto;}.card{padding:20px;}}
+@media(prefers-reduced-motion:reduce){.tours *{scroll-behavior:auto;transition:none;}}

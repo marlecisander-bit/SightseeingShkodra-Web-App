@@ -1,0 +1,73 @@
+/* Phase 1A: presentation only; no data or editor ownership changes. */
+.dashboard,.settings {min-width:0;color:var(--admin-text,#172334);}
+.dashboard {--dash-muted:#566579;--dash-border:#E3E7EC;--dash-soft:#F0F2F5;}
+.greeting {margin:0 0 20px;padding:0;}
+.dashboard .greeting h1 {font-size:clamp(26px,3vw,32px);line-height:1.15;letter-spacing:-.04em;margin:6px 0 10px;font-weight:700;}
+.dashboard p,.settings p {margin:8px 0;color:#566579;font-size:14px;}
+.dashboard .eyebrow {font-size:10px;line-height:1.4;font-weight:700;letter-spacing:.11em;text-transform:uppercase;margin:0;color:#687588;}
+.dashboard .greeting .eyebrow {color:#C92735;font-size:11px;letter-spacing:.09em;}
+.dashboard .date {display:flex;flex-wrap:wrap;align-items:center;gap:7px;font-size:12px;line-height:1.5;}
+.date > span {font-size:11px;white-space:nowrap;border-left:1px solid #D6DDE5;padding-left:8px;color:#566579;}
+.metrics {display:grid;grid-auto-rows:1fr;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+.metric {min-width:0;background:#F0F2F5;border:1px solid #E6E9EF;border-radius:14px;padding:14px;}
+.metricHeading {display:flex;align-items:center;gap:8px;min-height:24px;}
+.metricIcon {display:grid;place-items:center;flex:none;color:#566579;}
+.dashboard .metric h2 {font-size:12px;line-height:1.35;font-weight:600;margin:0;letter-spacing:-.01em;}
+.metricValue {display:flex;align-items:baseline;gap:8px;margin:8px 0 3px;min-height:36px;}
+.metricValue strong {font-size:32px;line-height:1.1;letter-spacing:-.05em;font-weight:700;}
+.metricValue span {color:#566579;font-size:11px;line-height:1.5;}
+.metric small {display:block;font-size:10px;line-height:1.4;color:#566579;}
+.dashboard .dataNote {display:flex;align-items:flex-start;gap:7px;font-size:11px;line-height:1.5;margin:12px 0 22px;max-width:76ch;}
+.dataNote > svg {flex:none;margin-top:1px;color:#687588;}
+.columns {display:grid;gap:16px;align-items:start;}
+.card {min-width:0;background:#fff;border:1px solid #E3E7EC;border-radius:14px;padding:16px;}
+.dashboard .card,.dashboard .metric {max-width:none;margin-block:0;}
+.dashboard .card h2,.settings .card h2 {font-size:18px;line-height:1.3;font-weight:700;letter-spacing:-.02em;margin:0;}
+.cardTitle {display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;}
+.cardTitle .eyebrow {margin-bottom:4px;}
+.dashboard :is(a,button),.settings :is(a,button) {min-height:44px;}
+.timeline {position:relative;display:flex;align-items:flex-start;gap:12px;margin:2px 0 6px;}
+.timeline::before {content:'';position:absolute;left:15px;top:33px;bottom:0;width:1px;background:#E3E7EC;}
+.timelinePoint {position:relative;display:grid;place-items:center;flex:none;width:32px;height:32px;border:1px solid #E9C3C9;border-radius:50%;background:#FCF0F1;color:#C92735;margin-top:4px;}
+.nextDeparture {min-width:0;flex:1;padding:14px;background:#F8F9FB;border:1px solid #E3E7EC;border-left:3px solid #C92735;border-radius:10px;}
+.nextHeading {display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:space-between;}
+.dashboard .nextDeparture h3 {font-size:15px;line-height:1.4;font-weight:700;margin:0;letter-spacing:-.01em;}
+.status {display:inline-flex;align-items:center;background:#FBEDEF;color:#9F2531;font-size:10px;font-weight:600;line-height:1.4;padding:3px 7px;border-radius:5px;}
+.dashboard .nextDeparture p {font-size:12px;line-height:1.5;margin:6px 0 4px;}
+.dashboard .textLink {display:inline-flex;align-items:center;gap:8px;min-height:44px;font-size:12px;font-weight:600;text-decoration:none;margin-top:4px;}
+.departures > .textLink {margin-left:44px;}
+.attention .cardTitle {margin-bottom:10px;}
+.attention .cardTitle > svg {color:#687588;}
+.mapCard {display:flex;align-items:center;gap:12px;background:#F0F3F2;padding:12px 14px;}
+.mapIcon {display:grid;place-items:center;flex:none;width:38px;height:38px;border:1px solid #DFE6E2;border-radius:11px;background:#fff;color:#216E4D;}
+.mapCard > div {min-width:0;flex:1;}
+.dashboard .mapCard h2 {font-size:15px;letter-spacing:-.01em;}
+.dashboard .mapCard p {font-size:11px;line-height:1.4;margin:4px 0 0;}
+.dashboard .mapLink {display:flex;align-items:center;justify-content:center;gap:8px;flex:none;min-width:44px;font-size:12px;font-weight:600;text-decoration:none;}
+.mapLink > span {display:none;}
+.quickCard {min-width:0;padding:0;background:transparent;margin-block:0;max-width:none;}
+.dashboard .quickCard h2 {font-size:11px;line-height:1.4;font-weight:700;color:#566579;letter-spacing:.07em;text-transform:uppercase;margin:2px 0 10px;}
+.quickActions {display:flex;flex-wrap:wrap;gap:8px;}
+.quickActions a {display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 12px;border:1px solid #D9DFE6;border-radius:9px;background:#fff;color:#172334;font-size:12px;font-weight:600;text-decoration:none;}
+.dashboard .quickActions a:hover {background:#F0F2F5;}
+.dashboard .primary {background:#C92735;color:#fff;border-color:#C92735;}
+.dashboard .primary:hover {background:#A91F29;color:#fff;}
+.settings {max-width:760px;}
+.settings .card {margin:20px 0;}
+.settingsList {list-style:none;padding:0;margin:0;}
+.settingsList li+li {border-top:1px solid #E2E7ED;}
+.settingsList a {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;text-decoration:none;font-size:14px;}
+.settingsList a small {display:block;font-size:12px;color:#566579;margin-top:4px;}
+.settings button {display:inline-flex;align-items:center;gap:8px;}
+
+.sr {position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);}
+@media(max-width:359px){.metric {padding:12px;}.metricHeading {gap:6px;}.dashboard .metric h2 {font-size:11px;}.metricValue {gap:6px;}.metricValue span {font-size:11px;}.card {padding:14px;}.nextDeparture {padding:11px;}.nextHeading {gap:6px;}.dashboard .card h2 {font-size:17px;}.departures > .textLink {margin-left:0;}}
+@media(min-width:768px){.metrics {grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}.columns {grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);}.mapCard {grid-column:1;}.quickCard {grid-column:2;}.card {padding:20px;}.mapCard {padding:16px;}.greeting {margin-bottom:24px;}}
+@media(min-width:1280px){.columns {grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:20px;}.metrics {gap:16px;}.metric {padding:18px;}.mapLink > span {display:inline;}.card {padding:22px;}.mapCard {padding:16px 20px;}}
+@media(prefers-reduced-motion:reduce){.dashboard *,.settings * {scroll-behavior:auto;transition:none;}}
+@media(min-width:768px){.columns:not(:has(.attention)) .departures {grid-column:1/-1;}}
+.cardTitle > svg {color:#687588;}
+
+.freshness {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin:-8px 0 16px;font-size:11px;color:#566579;}
+.freshness button {font:inherit;color:#172334;background:#fff;border:1px solid #D9DFE6;border-radius:8px;padding:8px 12px;cursor:pointer;}
+.metricValue strong {overflow-wrap:anywhere;min-width:0;}

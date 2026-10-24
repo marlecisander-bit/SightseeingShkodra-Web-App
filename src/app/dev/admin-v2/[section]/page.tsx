@@ -1,0 +1,4 @@
+import {EmailPanelView} from '@/app/admin/email-panel';
+import {emailAdminStatus,emailEvents} from '@/modules/integrations/email-admin-status';
+import {notFound} from 'next/navigation';
+export default async function Page({params}:{params:Promise<{section:string}>}){if(process.env.NODE_ENV!=='development')notFound();const {section}=await params;if(section==='email')return <><h1>Booking email delivery</h1><p>Local synthetic configuration. Sending is disabled and all form submissions are blocked.</p><EmailPanelView operatorId="10000000-0000-4000-8000-000000000001" data={{config:emailAdminStatus('10000000-0000-4000-8000-000000000001',{NODE_ENV:'development'}),health:null,providerEvents:[],heartbeat:null,heartbeatAvailable:false,rows:[],events:emailEvents.map(e=>({...e,pending:0,sent:0,failed:0})),pending:0,lastAccepted:null,lastFailed:null,resendable:[]}}/></>;return <span data-fixture-section={section}/>;}

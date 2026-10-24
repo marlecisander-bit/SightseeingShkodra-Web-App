@@ -13,7 +13,7 @@ import { HomepageMapDisclosure } from "./homepage-map-disclosure";
 import { homepageVisible, websitePlaces, type WebsiteContent } from "@/modules/content/website-schema";
 import type { Homepage } from "@/modules/content/homepage";
 
-export function HomepageView({ home, content: c, reviews = {reviews:[],settings:defaultReviewSettings}, places, planner, partners = [] }: { partners?:Partner[]; planner?:DayPlannerData; home: Homepage; content: WebsiteContent; reviews?: ReviewSelection; places?: ReturnType<typeof websitePlaces> }) {
+export function HomepageView({ home, content: c, reviews = {reviews:[],settings:defaultReviewSettings}, places, planner, partners = [], preview=false }: { preview?:boolean; partners?:Partner[]; planner?:DayPlannerData; home: Homepage; content: WebsiteContent; reviews?: ReviewSelection; places?: ReturnType<typeof websitePlaces> }) {
   const destinations = places ?? websitePlaces(c);
   const TimetableHeading = homepageVisible(c,"live") ? "h3" : "h2";
   return <main id="main-content" className={`p-home${homepageVisible(c,"hero") ? "" : " p-home-no-hero"}`}>
@@ -30,9 +30,9 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
         {homepageVisible(c,"live") && <ActionLink href="/route">{c["live.linkLabel"]}</ActionLink>}
       </div>}<div>
         {homepageVisible(c,"departures") && <details className="p-home-timetable"><summary>{c["departures.eyebrow"]}</summary><TimetableHeading>{c["departures.title"]}</TimetableHeading></details>}
-        <DayPlannerStrip initial={planner} heroSummaryTarget={homepageVisible(c,"hero") ? "home-hero-service" : undefined} service showSchedule={homepageVisible(c,"departures")} showLive={homepageVisible(c,"live")}/>
+        {preview?<p>Timetable and live service are unavailable in saved draft preview.</p>:<DayPlannerStrip initial={planner} heroSummaryTarget={homepageVisible(c,"hero") ? "home-hero-service" : undefined} service showSchedule={homepageVisible(c,"departures")} showLive={homepageVisible(c,"live")}/>}
         {homepageVisible(c,"departures") && <Link className="p-text-link" href="/route#journey-departures">{c["departures.linkLabel"]}</Link>}
-        {homepageVisible(c,"live") && <HomepageMapDisclosure/>}
+        {!preview && homepageVisible(c,"live") && <HomepageMapDisclosure/>}
       </div></div>
     </section>}
     {homepageVisible(c,"notebook") && <section className="p-section p-container">

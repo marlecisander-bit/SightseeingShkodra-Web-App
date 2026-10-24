@@ -362,3 +362,71 @@
 .shell .navigationHint[data-pending=true]{opacity:1}
 .panelLoading{min-height:320px;padding:16px 0}.panelLoading>div{height:48px;max-width:680px;margin:16px 0;background:#f1f1ee;border-radius:10px}.panelLoading>div:last-child{max-width:460px}
 @media(prefers-reduced-motion:reduce){.shell .navigationHint{transition:none}}
+
+/* Admin V2 Phase 1: shell/chrome only. Editor-specific layouts and actions stay unchanged. */
+.shell[data-admin-phase=v2-phase-1] {--admin-background:#F4F6F8;--admin-text:#172334;--admin-text-muted:#566579;--admin-border:#E2E7ED;--admin-sidebar:224px;--ss-font:Arial,Helvetica,sans-serif;font-family:var(--ss-font);}
+.shell[data-admin-phase=v2-phase-1] .header {min-height:68px;padding:10px max(20px,env(safe-area-inset-right)) 10px max(20px,env(safe-area-inset-left));padding-top:calc(10px + env(safe-area-inset-top));background:white;color:#172334;position:relative;z-index:20;}
+.shell[data-admin-phase=v2-phase-1] .adminBrand img {width:116px;height:auto;}
+.shell .headerActions .profileAccess {display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:44px;min-height:44px;border-radius:12px;background:#FBEDEF;color:#C92735;padding:10px;text-decoration:none;}
+.profileAccess span {display:none;text-transform:capitalize;}
+.shell[data-admin-phase=v2-phase-1] .headerIdentity {width:auto;min-width:0;}
+.shell[data-admin-phase=v2-phase-1] .headerActions {width:auto;flex:none;}
+.shell[data-admin-phase=v2-phase-1] .workspace {max-width:1680px;gap:24px;padding:20px max(20px,env(safe-area-inset-right)) calc(104px + env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));}
+.shell[data-admin-phase=v2-phase-1] .panel {min-width:0;}
+.shell[data-admin-phase=v2-phase-1] .panel:has([data-dashboard]),.shell[data-admin-phase=v2-phase-1] .panel:has([data-more-panel]) {background:transparent;border:0;padding:0;}
+.shell .bottomNavigation {position:fixed;bottom:0;left:0;right:0;z-index:30;display:grid;min-height:76px;padding:6px max(8px,env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));border-top:1px solid #E2E7ED;gap:0;}
+.shell .bottomNavigation a {display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;min-width:0;min-height:60px;text-decoration:none;border-radius:9px;font-size:11px;font-weight:500;line-height:1.3;}
+.shell .bottomNavigation a[aria-current=page] {background:transparent;color:#C92735;font-weight:700;}
+.primaryIcon {display:grid;place-items:center;min-width:48px;height:30px;border-radius:9px;}
+[aria-current=page] > .primaryIcon {background:#FBEDEF;}
+.shell .sectionMenu {border:1px solid #E2E7ED;border-radius:9px;background:white;margin:0 0 16px;padding:0;}
+.shell .sectionMenu > summary {display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;font-size:14px;list-style:none;margin:0;}
+.sectionMenu > summary::-webkit-details-marker {display:none;}
+.shell .sectionMenu .taskItems {padding:0 8px 8px;margin:0;}
+.shell .sectionMenu .taskItems a {padding:12px;}
+.shell .taskItems a {min-height:44px;}
+.shell .pageTrail {font-size:12px;line-height:1.5;margin:0 0 14px;color:#566579;}
+.shell .taskItems a small {font-size:12px;line-height:1.4;color:#566579;}
+.shell .taskGroup > summary {min-height:48px;}
+.shell .accountActions {overflow-wrap:anywhere;}
+@media(min-width:768px){.profileAccess span {display:inline;}.shell[data-admin-phase=v2-phase-1] .header .workspaceIdentity {display:grid;border-left:1px solid #E2E7ED;padding-left:16px;}.shell[data-admin-phase=v2-phase-1] .header .workspaceIdentity span {color:#566579;}.shell[data-admin-phase=v2-phase-1] .workspace {padding-inline:24px;}}
+@media(min-width:1024px){
+ .shell[data-admin-phase=v2-phase-1] .header {padding-inline:24px;min-height:72px;}
+ .shell[data-admin-phase=v2-phase-1] .workspace {grid-template-columns:224px minmax(0,1fr);padding:24px;gap:24px;}
+ .shell[data-admin-phase=v2-phase-1] .desktopNavigation {width:224px;position:sticky;top:20px;max-height:calc(100dvh - 40px);overflow-y:auto;overscroll-behavior:contain;padding:8px 12px;min-height:calc(100dvh - 140px);}
+ .shell .bottomNavigation,.shell .sectionMenu {display:none;}
+ .shell .taskItems a {padding-left:26px;}
+}
+@media(max-width:359px){.shell[data-admin-phase=v2-phase-1] .workspace {padding-inline:12px;}.shell[data-admin-phase=v2-phase-1] .header {padding-inline:12px;}.shell .bottomNavigation a {font-size:10.5px;}}
+/* The programmatic skip/arrival target is announced as a main landmark, without a page-sized ring. */
+.shell .panel:focus-visible {outline:0;}
+/* Restore the previous panel's block formatting after giving it a main landmark. */
+.shell[data-admin-phase=v2-phase-1] .panel {display:block;min-height:0;}
+
+/* Phase 1A graphical refinement: compact branded identity and quieter active navigation. */
+.brandVan {display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:10px;background:#FBEDEF;color:#C92735;}
+.shell[data-admin-phase=v2-phase-1] .header .adminBrand {gap:8px;flex-wrap:nowrap;}
+.shell[data-admin-phase=v2-phase-1] .header .adminBrand img {width:104px;}
+.shell .headerActions .profileAccess {width:40px;min-width:44px;padding:10px;background:#F6F7F9;color:#172334;border:1px solid #E6E9EF;border-radius:12px;}
+.shell .headerActions .profileAccess span {display:none;}
+.shell .bottomNavigation {min-height:72px;padding-top:4px;padding-bottom:calc(4px + env(safe-area-inset-bottom));}
+.shell .bottomNavigation a {min-height:60px;gap:3px;font-size:10.5px;}
+.shell .bottomNavigation .primaryIcon {min-width:42px;height:28px;border-radius:9px;}
+.shell .bottomNavigation a[aria-current=page] > .primaryIcon {background:#FBEDEF;}
+.shell .panel:has([data-dashboard]) > .pageTrail {display:none;}
+@media(min-width:1024px){.shell[data-admin-phase=v2-phase-1] .header .adminBrand img {width:116px;}.shell .headerActions .profileAccess {width:auto;}.shell .headerActions .profileAccess span {display:inline;}}
+/* Keep a shorter dashboard aligned with the top of the sidebar, not vertically centred. */
+.shell[data-admin-phase=v2-phase-1] .panel:has([data-dashboard]) {margin-block:0;}
+
+/* Phase 2: only the booking workspace owns its card surfaces. */
+.shell .panel:has([data-bookings-workspace]) {background:transparent;border:0;border-radius:0;padding:0;}
+.shell .panel:has([data-bookings-workspace]) > .pageTrail {display:none;}
+.shell[data-admin-phase=v2-phase-1] .panel:has([data-bookings-workspace]) {margin-block:0;}
+
+/* Tours owns its operational surfaces; other workspace panels retain their styling. */
+.shell .panel:has([data-tours-workspace]){background:transparent;border:0;padding:0;margin-block:0;}
+.shell .panel:has([data-tours-workspace])>.pageTrail,.shell .panel:has([data-tours-workspace])>.sectionMenu{display:none;}
+
+/* The Website workspace supplies its own compact page context. */
+.panel:has([data-website-workspace]){background:transparent;border:0;padding:0;box-shadow:none}
+.panel:has([data-website-workspace]) .pageTrail,.panel:has([data-website-workspace]) .sectionMenu{display:none}

@@ -21,7 +21,7 @@ test('admin palette stays shell-scoped; functional text and control pairs meet A
  assert.ok(section.includes(':focus-visible {outline:3px'));
 });
 test('Lucide subset uses one outline system with hidden decorative icons and intact notices',()=>{
- assert.deepEqual(adminPrimaryIcons,{overview:'layout-dashboard',bookings:'calendar-check',tours:'bus-front',website:'panels-top-left',reports:'chart-no-axes-combined',settings:'settings-2'});
+ assert.deepEqual(adminPrimaryIcons,{overview:'layout-dashboard',bookings:'ticket',tours:'bus-front',website:'panels-top-left',more:'settings-2'});
  const icons=JSON.parse(read('src/app/admin/admin-icons.json'));
  for(const name of Object.keys(icons)){
   const dom=new JSDOM(renderToStaticMarkup(React.createElement(AdminIcon,{name}))),svg=dom.window.document.querySelector('svg');

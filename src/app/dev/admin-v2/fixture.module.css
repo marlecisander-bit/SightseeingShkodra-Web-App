@@ -1,0 +1,3 @@
+/* Keep the development overlay from covering the first navigation target during fixture review. */
+.reviewMarker {font-size:12px;color:#566579;}
+:global(body:has([data-fixture-instance]) nextjs-portal) {display:none;}

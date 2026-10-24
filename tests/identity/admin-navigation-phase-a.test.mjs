@@ -13,8 +13,8 @@ for(const role of ['owner','admin','operations','content_editor'])test(`${role}:
  assert.equal(items.some(i=>i.id==='map-admin'),role!=='content_editor');
  assert.ok(!groups.some(g=>g.id==='reports'));
 });
-test('six conceptual areas, canonical external map and active contextual views',()=>{
- assert.equal(Object.keys(adminAreaLabels).length,6);
+test('five approved areas, canonical external map and active contextual views',()=>{
+ assert.equal(Object.keys(adminAreaLabels).length,5);
  const g=adminNavigationGroups('fixture','owner');
  assert.equal(activeAdminItem(g,'departures','prices').id,'prices');
  assert.equal(activeAdminItem(g,'departures','schedule').id,'schedule');
