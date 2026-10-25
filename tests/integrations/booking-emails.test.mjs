@@ -50,7 +50,7 @@ const jobs=async(b)=>(await db.query('select * from notification_deliveries wher
 test('successful committed booking sends exactly one customer and one owner email; repeat worker does not resend',async()=>{
  const b=await create();const n=sent.length;await run();await run();
  assert.equal(sent.length-n,2);const j=await jobs(b);assert.equal(j.length,2);assert.deepEqual(j.map(x=>x.recipient_type).sort(),['customer','owner']);assert.ok(j.every(x=>x.status==='accepted'));
- assert.ok(sent.slice(n).every(x=>x.to[0]==='qa@example.invalid'&&x.text.includes('09:00 (Europe/Tirane)')));assert.ok(sent.slice(n).some(x=>x.text.includes('EUR 12.50')));assert.equal((await jobs(b)).find(x=>x.recipient_type==='customer').envelope.customerConfirmationDesign,3);
+ assert.ok(sent.slice(n).every(x=>x.to[0]==='qa@example.invalid'&&x.text.includes('09:00')));assert.ok(sent.slice(n).some(x=>x.text.includes('€12.50')));assert.equal(j.find(x=>x.recipient_type==='owner').envelope.ownerNewBookingDesign,1);assert.equal(j.find(x=>x.recipient_type==='customer').envelope.ownerNewBookingDesign,undefined);assert.equal((await jobs(b)).find(x=>x.recipient_type==='customer').envelope.customerConfirmationDesign,3);
  assert.ok(sent.slice(n).some(x=>x.text.includes('?booking='+b.id)));
  assert.ok(!JSON.stringify(logs).includes('@example.invalid'));
 });
@@ -187,7 +187,7 @@ test('v2 ticket lifecycle uses canonical passenger seats and QR, reliable before
  let n=sent.length;await run();const pair=sent.slice(n);assert.equal(pair.length,2);
  const customer=pair.find(m=>m.attachments);assert(customer);const png=PNG.sync.read(Buffer.from(customer.attachments[0].content,'base64'));
  assert.equal(jsQR(new Uint8ClampedArray(png.data),png.width,png.height)?.data,b.qr_token);
- assert(customer.text.includes('4 passengers (2 adults, 1 child, 1 infant)'));assert(!customer.text.includes('Selected service day'));assert(!customer.text.includes('EUR 25.00'));const owner=pair.find(m=>!m.attachments);assert(owner.text.includes('EUR 25.00'));assert(owner.text.includes('Seats occupied: 3'));assert(owner.text.includes('Selected service day'));
+ assert(customer.text.includes('4 passengers (2 adults, 1 child, 1 infant)'));assert(!customer.text.includes('Selected service day'));assert(!customer.text.includes('EUR 25.00'));const owner=pair.find(m=>!m.attachments);assert(owner.text.includes('€25.00'));assert(owner.text.includes('3 seats'));assert(owner.text.includes('2 adults · 1 child · 1 infant (no seats)'));assert(!owner.text.includes('Selected service day'));assert(owner.subject.includes('3 seats'));
  assert(customer.html.includes('cid:booking-qr'));assert(customer.text.includes('/booking/manage#token='+b.management_token));
  assert(!pair.find(m=>!m.attachments).text.includes(b.management_token));
  const user=(await db.query('select auth_user_id from staff_profiles where id=$1',[staff])).rows[0].auth_user_id;
@@ -257,3 +257,27 @@ test('Catalog retirement preserves historical email copy and frozen prepared mes
  await store.finish(prepared,'retry','resend_http_500');await db.query('update notification_deliveries set next_attempt_at=clock_timestamp() where id=$1',[j.id]);
  const n=sent.length;await run();const retried=sent.slice(n).find(m=>m.key==='booking-email/'+j.id);assert.equal(retried.html,before.html);assert.equal(retried.text,before.text);assert.equal((await jobs(b)).find(x=>x.id===j.id).envelope.customerConfirmationDesign,undefined);
  });
+
+test('owner design marker freezes only newly prepared owner-created jobs; old owner retry bytes and identity survive',async()=>{
+ await run();const b=await create();await store.enqueue(op,config.since);
+ // Drain both fresh jobs so the owner envelope is explicitly prepared as an old v2 retry.
+ const prepared=[];
+ for(let i=0;i<2;i++){const job=await store.claim(op);prepared.push(await store.prepare(job,{version:2,from:config.from,owner:config.owner,replyTo:config.replyTo,siteUrl:config.siteUrl,testRecipient:config.testRecipient}));}
+ const owner=prepared.find(j=>j.recipient_type==='owner');assert.ok(owner);
+ const before=bookingEmailTemplate(owner.event_type,owner.recipient_type,owner.send_snapshot,owner.envelope,op,b.id);
+ for(const job of prepared){await store.finish(job,'retry','resend_http_500');await db.query('update notification_deliveries set next_attempt_at=clock_timestamp() where id=$1',[job.id]);}
+ const n=sent.length;await run();const retry=sent.slice(n).find(m=>m.key==='booking-email/'+owner.id);
+ assert.equal(retry.html,before.html);assert.equal(retry.text,before.text);assert.equal(retry.subject,before.subject);
+ const stored=(await jobs(b)).find(j=>j.id===owner.id);assert.equal(stored.envelope.ownerNewBookingDesign,undefined);
+ assert.deepEqual(retry.to,['qa@example.invalid']);assert.equal((await jobs(b)).length,2);
+});
+
+test('new owner compact retry keeps its frozen marker, contact snapshot, body and Resend identity',async()=>{
+ await run();const b=await create();await db.query("update customers set phone='+12025550123' where id=$1",[b.customer_id]);
+ const first=[];await processBookingEmails(store,config,async(key,message)=>{first.push({key,...message});return {outcome:'retry',code:'resend_http_500'};},()=>{});
+ const owner=(await jobs(b)).find(j=>j.recipient_type==='owner'&&j.event_type==='BOOKING_CREATED');assert.equal(owner.envelope.ownerNewBookingDesign,1);
+ const initial=first.find(m=>m.key==='booking-email/'+owner.id);assert.ok(initial.html.includes('wa.me/12025550123'));
+ await db.query('update notification_deliveries set next_attempt_at=clock_timestamp() where booking_id=$1',[b.id]);
+ const n=sent.length;await run();const retry=sent.slice(n).find(m=>m.key===initial.key);assert.ok(retry);assert.equal(retry.subject,initial.subject);assert.equal(retry.html,initial.html);assert.equal(retry.text,initial.text);
+ assert.equal((await jobs(b)).find(j=>j.id===owner.id).envelope.ownerNewBookingDesign,1);
+});

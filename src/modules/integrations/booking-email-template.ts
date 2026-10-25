@@ -1,3 +1,4 @@
+import {ownerNewBookingEmail} from './owner-new-booking-email';
 import {customerConfirmationTicket} from "./customer-confirmation-ticket";
 import { meetingPoint } from "../booking/meeting-point";
 import { bookingEmailTemplateV2 } from "./booking-email-template-v2";
@@ -15,7 +16,7 @@ export type EmailBooking = {
   initiatedBy: string | null; reason: string | null;
   items: { title: string; description?: string | null; inclusions?: string | null; date: string | null; time: string | null; timezone: string; guests: number; seats?: number; counts?: { adult: number; child: number; infant: number } | null }[];
 };
-export type EmailEnvelope = { version: 1 | 2; customerConfirmationDesign?: 3; from: string; owner: string; replyTo: string; siteUrl: string; testRecipient: string | null };
+export type EmailEnvelope = { version: 1 | 2; customerConfirmationDesign?: 3; ownerNewBookingDesign?: 1; from: string; owner: string; replyTo: string; siteUrl: string; testRecipient: string | null };
 const escape = (v: unknown) => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 const headerText = (v: string) => v.replace(/[\r\n\x00-\x1f\x7f]/g, " ").slice(0, 200);
 const labels = {
@@ -24,6 +25,7 @@ const labels = {
   BOOKING_CANCELLED: { customer: "Booking Cancelled", owner: "Booking Cancelled" },
 };
 export function bookingEmailTemplate(event: BookingEmailEvent, recipient: RecipientType, b: EmailBooking, envelope: EmailEnvelope, operatorId: string, bookingId: string) {
+  if (envelope.version === 2 && envelope.ownerNewBookingDesign === 1 && event === "BOOKING_CREATED" && recipient === "owner") return ownerNewBookingEmail(b,envelope,operatorId,bookingId);
   if (envelope.version === 2 && envelope.customerConfirmationDesign === 3 && event === "BOOKING_CREATED" && recipient === "customer" && b.status === "confirmed") return customerConfirmationTicket(b, envelope);
   if (envelope.version === 2) return bookingEmailTemplateV2(event, recipient, b, envelope, operatorId, bookingId);
   const title = labels[event][recipient];
