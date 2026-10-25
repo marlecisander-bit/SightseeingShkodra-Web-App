@@ -34,7 +34,7 @@ test('complete disposable verification has no unexpected failures and reports kn
 test('new request/client proofs reject stale or disconnected copy',async()=>{
  const {renderYourDay}=await import('../../scripts/cms-verification/request-route.mjs');
  const {renderClientProbe}=await import('../../scripts/cms-verification/client.mjs');
- for(const key of ['route.eyebrow','route.title','routePage.mapAction','bookingDialog.title','bookingDialog.text']){
+ for(const key of ['labels.destination','route.eyebrow','route.title','routePage.mapAction','bookingDialog.title','bookingDialog.text']){
   const field=active.find(f=>f.key===key),value=fixtureValue(field),base=preparedContent(key);
   const probe=key.startsWith('route.')?renderYourDay:c=>renderClientProbe(key,c);
   assert.equal(checkField(field,value,await probe({...base,[key]:value})).status,'PASS',key);
