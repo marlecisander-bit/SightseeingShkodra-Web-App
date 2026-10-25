@@ -1,6 +1,7 @@
 "use client";
 import {useState} from 'react';
+import {useHomepageJourney} from './homepage-journey';
 import dynamic from 'next/dynamic';
-const LiveMapEmbed=dynamic(()=>import('./live-map-embed').then(m=>m.LiveMapEmbed),{loading:()=> <p role="status">Loading map controls…</p>});
-/** No iframe or map controls bundle until the existing disclosure is opened. */
-export function HomepageMapDisclosure(){const [open,setOpen]=useState(false);return <details className="p-home-inline-map" onToggle={event=>setOpen(event.currentTarget.open)}><summary>Show live map here</summary>{open&&<LiveMapEmbed collapseRecovery/>}</details>;}
+const LiveMapEmbed=dynamic(()=>import('./live-map-embed').then(m=>m.LiveMapEmbed),{ssr:false,loading:()=> <p role="status">Loading map controls…</p>});
+/** One lazy map supplies both the homepage journey and visible map. */
+export function HomepageMapDisclosure(){const [open,setOpen]=useState(true);const live=useHomepageJourney();return <details open className="p-home-inline-map" onToggle={event=>{setOpen(event.currentTarget.open);if(!event.currentTarget.open)live?.receive(null,'loading');}}><summary>Show live map here</summary>{open&&<LiveMapEmbed collapseRecovery onJourney={live?.receive}/>}</details>;}

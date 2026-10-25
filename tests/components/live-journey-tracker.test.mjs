@@ -13,3 +13,13 @@ test('tracker renders five CMS-backed destinations and uses authoritative ETA on
 test('stale and unavailable snapshots remove progress, van-position and ETA claims',()=>{for(const props of [{stale:true},{journey:{...journey,unavailable:true}},{journey:null}]){const html=render(props);assert.ok(!html.includes('14 min'));assert.ok(!html.includes('data-state="departed"'));assert.ok(!html.includes('data-state="next"'));assert.ok(!html.includes('Van here'));assert.ok(html.includes('CMS lake'));}});
 test('arrival suppresses ETA and loop reset never preserves previous completion',()=>{const arrived={...journey,stops:journey.stops.map((s,i)=>({...s,state:i===0?'current':i===1?'next':'upcoming'}))};const html=render({journey:arrived});assert.ok(html.includes('Van at Published stop 1'));assert.ok(!html.includes('14 min'));assert.ok(!html.includes('data-state="departed"'));assert.ok(html.includes('Van here'));});
 test('an unvisited stop stays neutral even when a later stop becomes next',()=>{const skipped={...journey,stops:journey.stops.map((s,i)=>({...s,state:i===0?'departed':i===4?'next':'upcoming',eta:''}))};const html=render({journey:skipped});assert.equal((html.match(/data-state="departed"/g)||[]).length,2);assert.ok(html.includes('Next stop: 5 of 5'));assert.ok(!html.includes('Heading to'));assert.ok(!html.includes('minutes'));});
+
+test('every recognized arrival and multiple confirmed departures remain authoritative',()=>{
+ for(let target=0;target<5;target++){
+  const snapshot={...journey,stops:stops.map((s,i)=>({...s,state:i===target?'current':i<target?'departed':'upcoming',eta:''}))};
+  const html=render({journey:snapshot});
+  assert.equal((html.match(/data-state="departed"/g)||[]).length,target*2);
+  assert.ok(html.includes(`Van at ${target===1?'CMS lake':stops[target].label}`));
+  assert.equal((html.match(/data-state="current"/g)||[]).length,2);
+ }
+});

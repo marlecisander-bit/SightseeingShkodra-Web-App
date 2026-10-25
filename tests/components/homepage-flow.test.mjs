@@ -39,7 +39,7 @@ test('visibility removes all new consumers of the same section while preserving 
  const noSchedule=render({...c,'departures.showOnHomepage':'false'});
  assert.equal(noSchedule.includes('No service today'),false);
  assert.ok(noSchedule.includes('Show live map here'));
- assert.equal(noSchedule.includes('<iframe'),false,'external map is not mounted before interaction');
+ assert.equal(noSchedule.includes('<iframe'),false,'dynamic map remains outside server-rendered HTML');
  assert.ok(!noSchedule.includes('id="home-ticket"'));
 });
 
