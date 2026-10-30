@@ -197,3 +197,8 @@ The owner approved the complete single-workspace Products concept: details, phot
 ## 30 October 2026 — Complete Products redesign publication authorized
 
 The owner explicitly requested publishing all new developments: unified Products administration, compact product cards, product-aware booking-page links, product amenities/icon selection and hero amenity retirement. This supersedes the local-only limits for these developments. Production migration 20261030000200 committed on project ybngoppqqiohcduojfyg after both replaced function definitions matched the tested baseline. Stored migration source MD5 40b2323b97eba6515971714676db02c1 matches the exact source. Transactional product fingerprint afebc04e95412e51417efea404fd3add remained identical; no existing product content/prices, booking or inventory records were rewritten. All 633 tests and lint/typecheck/build passed again; production dependency audit has zero vulnerabilities. Application PR/CI/Vercel release and read-only hosted acceptance follow. Existing delivery, map and cloud settings are preserved.
+
+
+## 30 October 2026 — Homepage overlap publication authorized
+
+The owner explicitly requested publishing the locally reviewed homepage presentation change, superseding its local-only limit. Preserve original hero assets/copy, shared product data/pricing and product-specific booking links; remove the hero CTA and navigation/about strip and overlap cards in normal flow. Retire only the three obsolete strip controls from the active editor; retain their schema and stored values with compatibility verification. No migration, cloud configuration, scheduler or communication change.

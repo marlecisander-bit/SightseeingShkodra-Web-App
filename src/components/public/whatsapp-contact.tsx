@@ -5,7 +5,7 @@ import {usePathname} from 'next/navigation';
 import styles from './whatsapp-contact.module.css';
 
 const subscribe=()=>()=>{};
-const bookingControls='.p-booking-action,.p-transaction-action';
+const bookingControls='.p-booking-action,.p-transaction-action,[data-product-booking]';
 export function WhatsAppContact({href,label,desktop,mobile,excludePaths=[]}:{href:string|null;label:string;desktop:boolean;mobile:boolean;excludePaths?:string[]}){
  const mounted=useSyncExternalStore(subscribe,()=>true,()=>false);
  const path=usePathname(),link=useRef<HTMLAnchorElement>(null);
@@ -18,14 +18,18 @@ export function WhatsAppContact({href,label,desktop,mobile,excludePaths=[]}:{hre
    node.style.setProperty('--whatsapp-clearance','0px');
    const rect=node.getBoundingClientRect();
    const viewportHeight=document.documentElement.clientHeight;
-   // Ordinary page sections never move or hide the fixed button. Only clear
-   // visible sticky/fixed booking actions that would occupy the same corner.
+   // Clear sticky checkout actions and the product card price/booking controls.
+   // Other ordinary page sections do not affect the floating contact.
    const blockers=Array.from(document.querySelectorAll(bookingControls)).filter(element=>{
     const position=getComputedStyle(element).position;
-    return position==='fixed'||position==='sticky';
-   }).map(element=>element.getBoundingClientRect()).filter(r=>r.width>0&&r.height>0&&r.bottom>0&&r.top<viewportHeight&&rect.left<r.right+12&&rect.right>r.left-12&&rect.top<r.bottom+12&&rect.bottom>r.top-12);
-   const baseBottom=viewportHeight-rect.bottom;
-   const clearance=Math.max(0,...blockers.map(r=>viewportHeight-r.top+12-baseBottom));
+    return element.matches('[data-product-booking]')||position==='fixed'||position==='sticky';
+   }).map(element=>element.getBoundingClientRect()).filter(r=>r.width>0&&r.height>0&&r.bottom>0&&r.top<viewportHeight&&rect.left<r.right+12&&rect.right>r.left-12).sort((a,b)=>b.top-a.top);
+   let clearance=0;
+   for(const blocker of blockers){
+    if(rect.top-clearance<blocker.bottom+12&&rect.bottom-clearance>blocker.top-12){
+     clearance=Math.max(clearance,rect.bottom-blocker.top+12);
+    }
+   }
    node.style.setProperty('--whatsapp-clearance',`${clearance}px`);
   };
   const queue=()=>{if(!frame)frame=requestAnimationFrame(measure);};

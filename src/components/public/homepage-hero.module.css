@@ -1,17 +1,16 @@
 :global(.public-site) .hero{position:relative;isolation:isolate;background:var(--ss-cream);color:var(--ss-charcoal);padding:0 0 24px;}
 .media{height:calc(var(--p-header-height) + env(safe-area-inset-top) + clamp(160px,50vw,280px));overflow:hidden;position:relative;background:var(--ss-sand);}
 .media picture,.media img{display:block;width:100%;height:100%;}.media img{object-fit:cover;object-position:var(--hero-mobile-position);}
-.content{position:relative;max-width:var(--ss-container);margin:auto;padding:16px 16px 0;display:grid;gap:16px;min-width:0;}.intro{min-width:0;}
+.intro{min-width:0;}
 :global(.public-site) .eyebrow{font-size:11px;letter-spacing:.1em;color:var(--ss-primary);margin-bottom:8px;}
 :global(.public-site) .intro h1{font-size:clamp(30px,8vw,44px);line-height:1.08;margin:0 0 10px;overflow-wrap:anywhere;}.intro h1 em{color:var(--ss-primary);font-style:normal;}
 :global(.public-site) .subtitle{font-size:15px;line-height:1.5;margin-bottom:12px;}
 
-.about{font-size:13px;margin-top:6px;}.about summary{min-height:44px;display:flex;align-items:center;cursor:pointer;text-decoration:underline;text-underline-offset:3px;}:global(.public-site) .about p{margin-bottom:0;}
 .card{background:var(--ss-white);border:1px solid var(--ss-border);border-radius:var(--ss-radius);padding:16px;min-width:0;box-shadow:var(--ss-shadow);}
 :global(.public-site) .ticket{color:var(--ss-primary);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;}:global(.public-site) .card h2{font-size:18px;line-height:1.25;letter-spacing:-.02em;margin-bottom:16px;}
 .fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;min-width:0;}.passengers{position:relative;min-width:0;}.passengers summary{display:grid;gap:8px;min-height:44px;cursor:pointer;list-style:none;}.passengers summary::-webkit-details-marker{display:none;}.passengers summary>span:first-child{font-weight:600;}.passengers summary strong{font-size:14px;line-height:1.4;font-weight:400;border:1px solid var(--ss-input-border);border-radius:var(--ss-radius-control);padding:12px 30px 12px 12px;min-height:48px;overflow-wrap:anywhere;}.passengers summary>span:last-child{position:absolute;right:12px;top:46px;}.passengers>div{padding-top:16px;}.passengers[open]{grid-column:1/-1;}
 .purchase{display:grid;gap:12px;margin-top:16px;align-items:center;}:global(.public-site) .purchase :global(.p-booking-price){margin-bottom:0;line-height:1.3;}:global(.public-site) .purchase :global(.p-booking-price) strong{font-size:28px;}:global(.public-site) .purchase :global(.p-booking-price) small{display:block;font-size:12px;margin-top:6px;}:global(.public-site) .purchase button{width:100%;min-height:48px;white-space:normal;}:global(.public-site) .feedback{font-size:13px;margin:12px 0 0;}
-.shortcuts{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;justify-content:space-between;font-size:13px;}.shortcuts a{display:flex;gap:8px;align-items:center;min-height:44px;color:var(--ss-primary);font-weight:700;}.shortcuts svg{width:20px;height:20px;}.hero :is(a,button,summary,input):focus-visible{outline:3px solid var(--ss-focus);outline-offset:3px;}
+.hero :is(a,button,summary,input):focus-visible{outline:3px solid var(--ss-focus);outline-offset:3px;}
 /* V2: one photographic hero, with the existing ticket spanning the content grid. */
 :global(.public-site) .hero{background:var(--ss-white);padding-bottom:8px;}
 .visual{position:relative;isolation:isolate;min-height:560px;display:flex;flex-direction:column;justify-content:space-between;padding:calc(var(--p-header-height) + env(safe-area-inset-top) + 24px) 16px 76px;gap:144px;color:var(--ss-white);background:var(--ss-charcoal);}
@@ -23,18 +22,13 @@
 .intro h1 em{display:block;color:var(--ss-white);font-style:normal;}
 :global(.public-site) .subtitle{font-size:14px;line-height:1.5;margin-bottom:0;}
 
-
-
-
-.content{padding:0 16px;gap:12px;}
 .card{position:relative;margin-top:-48px;padding:20px;box-shadow:0 8px 28px #25232A14;}
 .fields{grid-template-columns:minmax(0,1fr);gap:14px;}
 .passengers summary>span:first-child,.fields label>span{font-size:14px;}
 .passengers[open]{grid-column:auto;}
 .purchase>div:first-child{min-height:84px;display:flex;flex-direction:column;justify-content:flex-end;}
 .purchase{padding-top:16px;border-top:1px solid var(--ss-border);margin-top:16px;gap:16px;}
-.shortcuts{padding-top:0;}
-.about{margin-top:0;}
+
 @media(max-width:599px){:global(.public-site) .eyebrow{display:none;}.visual{gap:132px;}:global(.public-site) .card h2{font-size:16px;margin-bottom:18px;}}
 @media(min-width:600px){
  .visual{min-height:620px;padding-inline:32px;padding-bottom:84px;gap:150px;}
@@ -45,8 +39,6 @@
  :global(.public-site) .subtitle{max-width:260px;}
  :global(.public-site) .intro h1{font-size:44px;max-width:320px;}
 
-
- .content{padding-inline:32px;}
  .card{margin-top:-56px;padding:24px;}
  .fields{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;}
  .passengers[open]{grid-column:1/-1;}
@@ -61,15 +53,13 @@
  :global(.public-site) .subtitle{font-size:16px;max-width:410px;}
  .visual .media img{object-position:var(--hero-desktop-position);}
 
- .content{padding-inline:var(--ss-gutter);grid-template-columns:minmax(0,1fr) auto;gap:12px 32px;}
  .card{grid-column:1/-1;margin-top:-64px;padding:24px;}
  :global(.public-site) .card h2{margin-bottom:18px;}
  .card form{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;gap:16px 24px;}
  .fields{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;}
  .purchase{grid-template-columns:minmax(0,1fr) minmax(160px,1fr);padding-top:0;border:0;margin-top:0;align-items:end;min-height:81px;}
  .feedback{grid-column:1/-1;}
- .shortcuts{justify-content:flex-start;gap:24px;}
- .about{justify-self:end;}
+
  :global(.public-site:has(#home-hero) .p-header-home:not(.p-header-solid)){background:linear-gradient(180deg,rgba(18,25,28,.42),transparent) no-repeat;}
 }
 @media(min-width:901px) and (max-width:1200px){.visual .intro{max-width:440px;}}
@@ -158,6 +148,12 @@
 .card.productCard .mobileFare{display:none;}
 .card.productCard .purchase>div:first-child{display:block;min-height:0;}
 
-.chooseExperience{display:inline-flex;align-items:center;justify-content:center;gap:16px;padding:16px 24px;background:var(--ss-yellow,#f6c928);color:var(--ss-charcoal);font-weight:750;border-radius:12px;min-height:52px;width:fit-content;margin-top:20px;text-decoration:none;}
-
 .card.productCard form{grid-template-columns:minmax(0,1fr);}.card.productCard{border:0;border-radius:0;box-shadow:none;}
+
+/* Hero ends at the photograph; the following normal-flow cards own the overlap. */
+:global(.public-site) .hero{padding-bottom:0;}
+.visual{gap:0;padding-bottom:72px;}
+@media(min-width:600px){.visual{padding-bottom:96px;}}
+@media(min-width:901px){.visual{padding-bottom:128px;}}
+
+@media(max-width:599px){.visual .intro{justify-content:flex-start;}}
