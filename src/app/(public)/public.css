@@ -1472,6 +1472,9 @@ body:has(.p-booking-dialog[open]) {
 
 /* Connected published route: flexible columns; vertical timeline below tablet. */
 .public-site .p-home-stops{border-top:1px solid var(--ss-border)}
+/* The divider needs its own inset despite adjacent sections sharing spacing. */
+.public-site .p-home>.p-section.p-home-stops{padding-top:32px}
+@media(max-width:900px){.public-site .p-home>.p-section.p-home-stops{padding-top:24px}}
 .public-site .p-home-route-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:24px 48px}
 .public-site .p-home-route-heading>div{min-width:0;max-width:65ch}
 .public-site .p-home-route-heading h2{font-size:clamp(28px,3vw,42px);line-height:1.12;margin-bottom:16px}
