@@ -47,5 +47,5 @@ test('homepage omits retired ticket inclusions and service panel while retaining
  const home={...emptyHomepage('ready'),product:{id:'fixture',slug:'fixture',title:'Synthetic ticket',description:'Shared product description',inclusions:'Shared inclusions',stops:[]}};
  const c={...initialWebsiteContent,'tourPage.includedTitle':'Saved inclusion heading','notebook.showOnHomepage':'false'};
  const html=renderToStaticMarkup(h(BookingProvider,{preview:true},h(HomepageView,{home,content:c,places:[],planner:{date:'2030-01-01',times:[],fares:[],stops:[]}})));
- assert.ok(!html.includes('href="/tour'));assert.ok(!html.includes('href="/route#journey-departures"'));assert.ok(html.includes('type="submit"'));assert.equal(html.includes('Saved inclusion heading'),false);assert.equal(html.includes('Shared inclusions'),false);
+ assert.ok(!html.includes('href="/tour'));assert.ok(!html.includes('href="/route#journey-departures"'));assert.ok(html.includes('/book?productId='));assert.equal(html.includes('Saved inclusion heading'),false);assert.equal(html.includes('Shared inclusions'),false);
 });

@@ -3,10 +3,10 @@ import {hasPermission, type StaffRole} from './roles';
 import {navigationFor} from './admin-navigation';
 import type {AmenityIconName} from '@/modules/content/hero-amenities';
 
-export type AdminArea = 'overview'|'bookings'|'tours'|'website'|'more';
+export type AdminArea = 'overview'|'bookings'|'tours'|'products'|'website'|'more';
 export type AdminNavItem = {id:string;label:string;section?:string;context?:string;href:string;external?:boolean;note?:string};
 export type AdminNavGroup = {id:AdminArea;label:string;icon:AmenityIconName;items:AdminNavItem[]};
-export const adminAreaLabels:Record<AdminArea,string>={overview:'Home',bookings:'Bookings',tours:'Tours',website:'Website',more:'More'};
+export const adminAreaLabels:Record<AdminArea,string>={overview:'Home',bookings:'Bookings',tours:'Tours',products:'Products',website:'Website',more:'More'};
 // Presentation only: every destination and action retains independent server authorization.
 export function adminNavigationGroups(operatorId:string,role:StaffRole):AdminNavGroup[]{
  const root=`/admin/${encodeURIComponent(operatorId)}`;
@@ -19,14 +19,12 @@ export function adminNavigationGroups(operatorId:string,role:StaffRole):AdminNav
   {id:'tours',label:'Tours',icon:'van',items:[
    tour('today','Today','today'),
    tour('availability','Calendar & departures','calendar','availability'),
-   ...(hasPermission(role,'pricing.manage')?[tour('prices','Prices & offers','prices')]:[]),
-   tour('schedule','Standard schedule','calendar','schedule'),
-   link('catalog','Ticket settings','catalog',undefined,'Passenger prices stay in Calendar & Pricing.'),
    tour('route','Route & stops','route'),
    ...(hasPermission(role,'tracking.manage')?[
     {id:'live',label:'Open Live Map',href:publicMapUrl,external:true},
     {id:'map-admin',label:'Operational stops & GPS',href:'https://sightseeingshkodralivetrackingapp.netlify.app/',external:true,note:'Independent Live Map · separate sign-in.'}
    ]:[])]},
+  {id:'products',label:'Products',icon:'ticket',items:[link('products','All products','products')]},
   {id:'website',label:'Website',icon:'camera',items:[
    link('content','Page editor','content'),link('route-stops','Route & destination content','route-stops'),
    link('media','Images & media','content','media','Use the existing page image fields.'),
@@ -34,7 +32,7 @@ export function adminNavigationGroups(operatorId:string,role:StaffRole):AdminNav
    link('faq','FAQ & policies','content','faq',hasPermission(role,'content.sensitive')?'FAQ, Privacy and Terms in their canonical editors.':'FAQ editor; legal policies remain owner-only.'),
    link('seo','SEO & visibility','content','seo','Page metadata and visibility in the canonical editor.')]},
   {id:'more',label:'More',icon:'info',items:[
-   link('more','Settings & account','more'),
+   link('more','Settings & account','more'),link('catalog','Suppliers','catalog'),
    ...(hasPermission(role,'content.sensitive')?[link('business','Business profile','content','business','Public contact, WhatsApp and footer controls.')]:[]),
    link('notifications','Notifications & devices','notifications'),
    link('email','Booking emails & integration status','email',undefined,'Owner-only delivery tools; personal preferences stay separate.')]

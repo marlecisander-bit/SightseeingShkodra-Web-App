@@ -29,5 +29,6 @@ export async function saveServiceSchedule(operatorId: string, form: FormData) {
   revalidatePath(`/admin/${operatorId}/departures`);
   revalidatePath(`/admin/${operatorId}/bookings`);
   revalidatePath('/');
-  redirect(`/admin/${operatorId}/departures?result=schedule`);
+  const product=String(form.get('workspace_product')??'');
+  redirect(/^[0-9a-f-]{36}$/i.test(product)?`/admin/${operatorId}/products?product=${product}&tab=schedule&result=saved`:`/admin/${operatorId}/departures?result=schedule`);
 }

@@ -26,7 +26,7 @@ export function AdminShellView({operatorId,operatorName,role,section:requestedSe
  const pathname=usePathname();
  useEffect(()=>installAdminNavigationGuard(window),[pathname]);
  const routeSection=requestedSection??pathname.split('/')[3]??'overview';
- const section=routeSection==='product-cards'?'content':routeSection;
+ const section=routeSection==='product-cards'?'products':routeSection;
  const groups=navigation??adminNavigationGroups(operatorId,role);
  const title=adminSections.find(item=>item.slug===section)?.label??'Workspace';
  const account=accountActions??<div className={styles.accountActions}><p>{operatorName} / {role.replace('_',' ')}</p><a href="/" target="_blank" rel="noopener noreferrer">View website <AdminIcon name="external-link" size={16}/></a><Link prefetch={false} href="/admin">Switch workspace</Link><form action={signOut}><Button><AdminIcon name="log-out" size={18}/>Sign out</Button></form></div>;

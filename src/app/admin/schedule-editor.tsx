@@ -35,10 +35,10 @@ function Times({ initial, vehicles }: { initial: ScheduleTime[]; vehicles: Choic
   </div>;
 }
 
-export function ScheduleEditor({operatorId, schedule, products, vehicles}: {operatorId:string; schedule?:ServiceSchedule; products:Choice[]; vehicles:Choice[]}) {
+export function ScheduleEditor({operatorId, schedule, products, vehicles,workspaceProduct}: {workspaceProduct?:string;operatorId:string; schedule?:ServiceSchedule; products:Choice[]; vehicles:Choice[]}) {
   return <MutationForm action={saveServiceSchedule.bind(null,operatorId)} className={styles.form}>
-    <input type="hidden" name="updated_at" value={schedule?.updated_at ?? ''}/>
-    <label>Product<select name="product_id" required defaultValue={schedule?.product_id ?? ''} disabled={!!schedule}><option value="">Choose product</option>{products.map(p=><option key={p.id} value={p.id}>{p.label}</option>)}</select></label>
+    {workspaceProduct&&<input type="hidden" name="workspace_product" value={workspaceProduct}/>}<input type="hidden" name="updated_at" value={schedule?.updated_at ?? ''}/>
+    <label>Product<select name="product_id" required defaultValue={schedule?.product_id ?? (products.length===1?products[0].id:'')} disabled={!!schedule}><option value="">Choose product</option>{products.map(p=><option key={p.id} value={p.id}>{p.label}</option>)}</select></label>
     {schedule && <input type="hidden" name="product_id" value={schedule.product_id}/>}
     <h3>Service operating period</h3>
     <div className={styles.pair}><label>Start date<input type="date" name="start_date" required defaultValue={schedule?.start_date}/></label><label>End date<input type="date" name="end_date" required defaultValue={schedule?.end_date}/></label></div>

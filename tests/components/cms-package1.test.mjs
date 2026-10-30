@@ -6,7 +6,7 @@ import {renderToStaticMarkup} from 'react-dom/server';
 import {adminNavigationGroups} from '../../src/modules/identity/admin-navigation-layout.ts';
 registerHooks({load(url,context,next){if(url.endsWith('.module.css'))return {format:'module',source:'export default {}',shortCircuit:true};return next(url,context);}});
 const {OverviewPanel}=await import('../../src/app/admin/overview-panel.tsx');
-const {AmenitiesInput}=await import('../../src/app/admin/hero-amenities-input.tsx');
+const {editableWebsiteSections,validateWebsiteContent,initialWebsiteContent}=await import('../../src/modules/content/website-schema.ts');
 for(const role of ['owner','admin','content_editor'])test(`${role} Website navigation retains the canonical Partners destination`,()=>{
  const html=renderToStaticMarkup(React.createElement(OverviewPanel,{operatorId:'synthetic',role}));
  if(role==='content_editor')assert.ok(html.includes('/synthetic/content'));
@@ -19,8 +19,6 @@ test('operations Overview does not gain editorial access',()=>{
  const html=renderToStaticMarkup(React.createElement(OverviewPanel,{operatorId:'synthetic',role:'operations'}));
  assert.ok(!html.includes('/synthetic/partners'));
 });
-test('amenity Description control is absent while submitted historical value survives',()=>{
- const rows=[{id:'00000000-0000-4000-8000-000000000001',title:'Audio Guide',icon:'headphones',description:'Historical saved description',display_order:1,published:true,created_at:'2026-01-01T00:00:00Z',updated_at:'2026-01-01T00:00:00Z'}];
- const html=renderToStaticMarkup(React.createElement(AmenitiesInput,{value:JSON.stringify(rows),onChange:()=>{}}));
- assert.ok(!html.includes('<label>Description'));assert.ok(html.includes('Historical saved description'));assert.ok(html.includes('name="hero.amenities"'));assert.ok(html.includes('Amenity 1 title'));
+test('hero amenities have no active Website editor and legacy values remain compatible',()=>{
+ const content={...initialWebsiteContent,'hero.amenities':'[]'};assert.ok(!editableWebsiteSections.some(s=>s.id==='heroAmenities'));assert.ok(!editableWebsiteSections.flatMap(s=>s.fields).some(f=>f.key==='hero.amenities'));assert.equal(validateWebsiteContent(content)['hero.amenities'],'[]');
 });

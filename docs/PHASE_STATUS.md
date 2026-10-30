@@ -612,3 +612,23 @@ Latest explicit authorization retires all four Catalog presentation controls, su
 ## 30 October 2026 - Shared product release authorized
 
 Owner authorized publication. Production migration 20261030000100 committed with zero-current-allocation preflight, 24 matching function fingerprints and transactional record integrity checks. All 621 tests and standard checks pass. Application publication and hosted read-only acceptance follow. See SHARED-VAN-PRODUCTS-2026-10-30.md.
+
+
+## 30 October 2026 — Unified Products ownership approved
+
+The owner approved the complete single-workspace Products concept: details, photos, passenger fares, shared schedule/seat policy and website publication are managed under Products. This supersedes the earlier split between Catalog, Calendar & Pricing and Website product-card editors, including the older AGENTS content-ownership placement rule. The same entities and booking engine remain authoritative; daily date-specific calendar operations stay operational consumers. Every published card, including Daily Ticket, belongs directly below the hero. Original roadmap unchanged. Local implementation and migration only; no redesign publication or hosted write performed. See UNIFIED-PRODUCTS-2026-10-30.md.
+
+Unified Products local verification: 628 tests pass; lint, typecheck and optimized build pass. Both synthetic previews return HTTP 200. Chrome responsive/visual review remains unverified after repeated native-control timeouts. New migration prepared, not hosted. No production product edits or redesign deployment.
+
+Owner clarification implemented locally: full vertical product booking cards expose photo, date, passengers, departures, quoted total and booking directly. 153 component tests and lint/types/build pass; no hosted change. See UNIFIED-PRODUCTS-2026-10-30.md.
+
+
+30 October 2026 — Latest product-card amendment: owner supplied the Prague card reference and requested less prose, icon information badges and one booking button at the end. Remove all date/passenger/departure controls from homepage cards. Product-specific links open the shared booking platform; selection happens there. Optional product features are explicitly managed under Products, with no inferred service claims. This supersedes the previous inline-card request. Local development only. See UNIFIED-PRODUCTS-2026-10-30.md.
+
+
+30 October 2026 — Owner moved all amenity controls to Products, with selectable service/ticket badges and per-amenity icon choices. Hero strip/defaults and old Website amenity editor removed; persisted hero data retained only for compatibility. 2-hour/full-day labels are exclusive and do not mutate seat occupancy. Local validation: 633 tests, lint/typecheck/build pass; no hosted write or redesign deployment. See UNIFIED-PRODUCTS-2026-10-30.md.
+
+
+## 30 October 2026 — Complete Products redesign publication authorized
+
+The owner explicitly requested publishing all new developments: unified Products administration, compact product cards, product-aware booking-page links, product amenities/icon selection and hero amenity retirement. This supersedes the local-only limits for these developments. Production migration 20261030000200 committed on project ybngoppqqiohcduojfyg after both replaced function definitions matched the tested baseline. Stored migration source MD5 40b2323b97eba6515971714676db02c1 matches the exact source. Transactional product fingerprint afebc04e95412e51417efea404fd3add remained identical; no existing product content/prices, booking or inventory records were rewritten. All 633 tests and lint/typecheck/build passed again; production dependency audit has zero vulnerabilities. Application PR/CI/Vercel release and read-only hosted acceptance follow. Existing delivery, map and cloud settings are preserved.

@@ -11,5 +11,5 @@ export async function saveProductBooking(operatorId:string,productId:string,form
   revalidatePath('/','layout');
 
  }catch(error){return {error:error instanceof Error?error.message:'Unable to save reservation settings.'};}
- redirect(`/admin/${operatorId}/departures?view=calendar&result=saved`);
+ redirect(form.get('workspace_product')===productId?`/admin/${operatorId}/products?product=${productId}&tab=schedule&result=saved`:`/admin/${operatorId}/departures?view=calendar&result=saved`);
 }

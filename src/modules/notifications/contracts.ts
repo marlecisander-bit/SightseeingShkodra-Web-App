@@ -12,7 +12,7 @@ export function bookingTarget(operator:string,booking:string) {
 }
 export function safeAdminReturn(value:unknown):string {
  if(typeof value!=='string')return '/admin';
- const match=/^\/admin\/([^/]+)\/(overview|bookings|departures|content|route-stops|reviews|catalog|notifications|email|more)(?:\?([^#]*))?$/.exec(value);
+ const match=/^\/admin\/([^/]+)\/(overview|bookings|departures|products|content|route-stops|reviews|catalog|notifications|email|more)(?:\?([^#]*))?$/.exec(value);
  if(!match||!uuid.test(match[1]))return '/admin';
  if(!match[3])return value;
  const query=new URLSearchParams(match[3]);
@@ -20,6 +20,8 @@ export function safeAdminReturn(value:unknown):string {
  for(const [key,item] of query){
   if(seen.has(key))return '/admin';
   seen.add(key);
+  if(key==='product'&&match[2]==='products'&&uuid.test(item))continue;
+  if(key==='tab'&&match[2]==='products'&&['details','prices','schedule','website'].includes(item))continue;
   if(key==='booking'&&match[2]==='bookings'&&uuid.test(item))continue;
   if(key==='date'&&['bookings','departures'].includes(match[2])&&/^\d{4}-\d{2}-\d{2}$/.test(item)&&!Number.isNaN(Date.parse(item))&&new Date(item).toISOString().slice(0,10)===item)continue;
   return '/admin';

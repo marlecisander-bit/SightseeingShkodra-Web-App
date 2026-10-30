@@ -122,7 +122,6 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
                 {dirtySection?.id === section.id && active !== section.id && <span className={styles.visibilityActions}><Button form={`cms-form-${section.id}`} name="operation" value="draft" disabled={pending}>Save draft</Button><Button type="button" disabled={pending} onClick={() => setValues(current => ({...current, ...Object.fromEntries(section.fields.map(f => [f.key, content[f.key]]))}))}>Discard</Button></span>}
               </span>} />
               {dirtySection?.id === section.id && section.fields.some(f => f.kind === "visibility" && values[f.key] !== content[f.key]) && <small className={styles.helper}>Unsaved visibility. Last saved: {homepageVisible(content, section.id) ? "Visible" : "Hidden"}. Save draft keeps changes private until you publish.</small>}
-              {section.id === "heroAmenities" && <small className={styles.helper}>Hero labels, icons, order and visibility. Keep five short labels for the compact row.</small>}
               {active !== section.id && feedback[section.id] && <span className={styles.notice} role="status">{feedback[section.id]}</span>}
             </summary>
             {(active===section.id || dirtySection?.id===section.id || (!active&&index===0))&&<WebsiteSectionEditor canPublish={canPublish} destinationLinks={destinationLinks} onFeedback={onFeedback} values={values} setValues={setValues} operatorId={operatorId} sectionId={section.id} content={content} stamp={record.updated_at} onStateChange={onStateChange} />}

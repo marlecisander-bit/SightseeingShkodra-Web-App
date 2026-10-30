@@ -38,10 +38,10 @@ test('content editor has no operational KPI, booking/create or calendar actions'
  assert.match(d.body.textContent,/Open page editor/);assert.doesNotMatch(d.body.textContent,/Needs attention/);
  dom.window.close();
 });
-for(const [role,expected] of [['owner',['Home','Bookings','Tours','Website','More']],['admin',['Home','Bookings','Tours','Website','More']],['operations',['Home','Bookings','Tours','More']],['content_editor',['Home','Website','More']]])test(`${role} primary destinations expose only supported capability groups`,()=>{
+for(const [role,expected] of [['owner',['Home','Bookings','Tours','Products','Website','More']],['admin',['Home','Bookings','Tours','Products','Website','More']],['operations',['Home','Bookings','Tours','Products','More']],['content_editor',['Home','Products','Website','More']]])test(`${role} primary destinations expose only supported capability groups`,()=>{
  const g=adminNavigationGroups(op,role);assert.deepEqual(g.map(x=>x.label),expected);
  const items=g.flatMap(x=>x.items);assert.equal(new Set(items.map(x=>x.href)).size,items.length);
- assert.equal(items.some(x=>x.id==='email'),role==='owner');assert.equal(items.some(x=>x.id==='prices'),['owner','admin'].includes(role));
+ assert.equal(items.some(x=>x.id==='email'),role==='owner');assert.equal(items.some(x=>x.id==='products'),true);
 });
 test('More has a validated internal sign-in return and rejects added external redirects',()=>{
  assert.equal(safeAdminReturn(`/admin/${op}/more`),`/admin/${op}/more`);
