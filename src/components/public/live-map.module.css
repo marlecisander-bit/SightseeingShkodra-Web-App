@@ -9,14 +9,10 @@
 .map {
   display: block;
   width: 100%;
-  height: clamp(320px, 62svh, 680px);
+  height: clamp(300px, 62svh, 680px);
   border: 1px solid var(--ss-border);
   border-radius: var(--ss-radius);
   background: var(--ss-sand);
-}
-.embed[data-presentation="compact"] .map { height:clamp(320px, 90cqi, 500px); }
-@media (orientation:landscape) and (max-height:520px) {
-  .embed[data-presentation="compact"] .map { height:clamp(280px, 75svh, 400px); }
 }
 .recovery {
   margin-top: 16px;
@@ -48,20 +44,24 @@
   .recovery { width: 100%; flex-direction: column; }
   .recovery > :is(button, a) { width: 100%; }
 }
-.embed[data-journey="true"] .map { height:clamp(300px,52svh,520px); }
 .help{margin-top:8px;font-size:14px;}
 .help summary{cursor:pointer;min-height:44px;display:flex;align-items:center;text-decoration:underline;}
 .help summary:focus-visible{outline:3px solid var(--brand-red);outline-offset:2px;}
 /* All embeds keep one clipped, isolated widget. Internal commands belong to the iframe. */
 .viewport{isolation:isolate;contain:paint;border:1px solid var(--ss-border);background:var(--ss-white,#fff);}
 .map{border:0;border-radius:0;box-sizing:border-box;}
-.embed[data-journey="true"][data-presentation="full"] .map{height:clamp(420px,62svh,680px);}
+
 @media(max-width:700px){
- .embed .map,.embed[data-journey="true"] .map,.embed[data-presentation="compact"] .map{height:420px;}
  .interaction{margin-top:6px;gap:4px 8px;}
  .interaction span{font-size:12px;}
  .help{margin-top:2px;}
 }
+
+/* Context heights reserve space before loading and track browser chrome. */
+.embed[data-presentation="compact"] .map{height:clamp(260px,48svh,440px);height:clamp(260px,48dvh,440px);}
+.embed[data-presentation="full"] .map{height:clamp(300px,calc(75dvh - env(safe-area-inset-bottom,0px)),720px);}
 @media(max-height:520px) and (orientation:landscape){
- .embed .map,.embed[data-journey="true"] .map,.embed[data-presentation="compact"] .map{height:320px;}
+ .embed[data-presentation="compact"] .map{height:clamp(220px,68dvh,320px);}
+ .embed[data-presentation="full"] .map{height:clamp(240px,82dvh,420px);}
 }
+.loading{position:absolute;z-index:2;top:8px;left:8px;right:8px;margin:0;padding:8px 12px;background:var(--ss-white,#fff);color:var(--ss-muted);font-size:13px;pointer-events:none;}
