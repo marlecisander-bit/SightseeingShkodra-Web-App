@@ -13,14 +13,14 @@ const home={...emptyHomepage('ready'),product:{id:'product',slug:'ticket',title:
 const planner={date:plannerClock().date,title:home.product.title,times:[],fares:[],stops:[{id:'operational-1',label:'Actual boarding point'}]};
 const c={...initialWebsiteContent,'how.0.title':'Published step','intro.title':'Published story','route.title':'Published highlights','notebook.showOnHomepage':'false'};
 const render=(content=c,data=home,plan=planner)=>renderToStaticMarkup(React.createElement(BookingProvider,null,React.createElement(HomepageView,{home:data,content,planner:plan,places:[]})));
-test('homepage guides visitors through operational stops and service without the retired ticket promotion',()=>{
+test('homepage retains hero and operational stops without the retired service section',()=>{
  const html=render();
- const markers=['id="home-hero"','id="route"','aria-label="Live service"'];
+ const markers=['id="home-hero"','id="route"'];
  for(let i=1;i<markers.length;i++)assert.ok(html.indexOf(markers[i])>html.indexOf(markers[i-1]),markers[i]);
  for(const value of ['Actual boarding point','17.50'])assert.ok(html.includes(value),value);
  assert.ok(!html.includes('Published step'));assert.ok(!html.includes('Published highlights'));assert.ok(!html.includes('home-intro'));
  assert.ok(html.includes('1 stop around Shkodra'));
- assert.ok(html.includes('No service today'));
+ assert.equal(html.includes('aria-label="Live service"'),false);
  assert.equal(html.includes('Wi-Fi'),false);
 });
 test('missing product, operational route and schedule never fabricate a price, five stops or a departure',()=>{
@@ -32,20 +32,18 @@ test('missing product, operational route and schedule never fabricate a price, f
  assert.match(html, /<h2>[^<]*Published stops[^<]*<\/h2>/);
  assert.ok(html.includes('Published stops are temporarily unavailable.'));
 });
-test('visibility removes all new consumers of the same section while preserving independent service content',()=>{
- const hidden=render({...c,'intro.showOnHomepage':'false','route.showOnHomepage':'false','live.showOnHomepage':'false'});
- for(const value of ['Published step','Published story','Published highlights','Actual boarding point','<iframe'])assert.equal(hidden.includes(value),false,value);
- assert.ok(hidden.includes('No service today'));
- const noSchedule=render({...c,'departures.showOnHomepage':'false'});
- assert.equal(noSchedule.includes('No service today'),false);
- assert.ok(noSchedule.includes('Show live map here'));
- assert.equal(noSchedule.includes('<iframe'),false,'dynamic map remains outside server-rendered HTML');
- assert.ok(!noSchedule.includes('id="home-ticket"'));
+test('retired service section stays absent with either saved visibility setting',()=>{
+ for(const flag of ['true','false']) {
+  const html=render({...c,'live.showOnHomepage':flag,'departures.showOnHomepage':flag});
+  for(const value of ['p-home-service','More time here.','Less time waiting.','Show live map here','TODAY, AT A GLANCE','<iframe'])assert.equal(html.includes(value),false,value);
+  assert.ok(html.includes('id="home-hero"'));
+  assert.ok(html.includes('Actual boarding point'));
+ }
 });
 
 test('Admin homepage order has one owner per section and matches the public progression',async()=>{
  const {websiteEditorGroups,editableWebsiteSections}=await import('../../src/modules/content/website-schema.ts');
- assert.deepEqual(websiteEditorGroups.homepage.map(s=>s.id),['hero','heroAmenities','homeRoute','route','live','departures','notebook','reviews','final','partners']);
+ assert.deepEqual(websiteEditorGroups.homepage.map(s=>s.id),['hero','heroAmenities','homeRoute','route','notebook','reviews','final','partners']);
  assert.equal(editableWebsiteSections.filter(s=>s.id==='how').length,0);
  assert.equal(new Set(editableWebsiteSections.flatMap(s=>s.fields.map(f=>f.key))).size,editableWebsiteSections.flatMap(s=>s.fields).length);
 });

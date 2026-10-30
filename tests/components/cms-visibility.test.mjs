@@ -17,8 +17,8 @@ const routes=['/','/route','/explore','/explore/lake','/live','/your-day','/cred
 const home={state:'empty',product:null,content:{},date:null,timezone:null,price:'',frequency:'Unavailable',departures:[],schedule:'empty',adultFares:[]};
 const reviews={reviews:[{id:'review-1',author:'Fixture guest',rating:5,body:'A published fixture review.',source:'Direct',review_date:null,original_url:null,avatar_url:null,language:null,featured:false,published:true,display_order:0,updated_at:''}],settings:{display_limit:3,google_reviews_url:null,leave_review_url:null}};
 
-test('all homepage visibility flags remove their edited content and restore it from the same source',()=>{
- const keys={hero:'hero.title',live:'live.title',departures:'departures.title',reviews:'reviews.title',notebook:'notebook.title',final:'final.title'};
+test('active homepage visibility flags remove their edited content and restore it from the same source',()=>{
+ const keys={hero:'hero.title',reviews:'reviews.title',notebook:'notebook.title',final:'final.title'};
  const c={...initialWebsiteContent,...Object.fromEntries(Object.entries(keys).map(([section,key])=>[key,'Audit '+section+' marker']))};
  const page=content=>render(h(React.Fragment,null,h(HomepageView,{home:{...home,product:{title:'Test ticket',inclusions:'Configured benefits'}},content,reviews,places:[]}),h(Footer,{content,previewPathname:'/',homepageInvitationInContent:true})));
  for(const [section] of Object.entries(keys)){

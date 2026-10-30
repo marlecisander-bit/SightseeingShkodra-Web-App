@@ -1,3 +1,5 @@
+PUBLICATION AUTHORIZED (30 October 2026): Owner requested complete homepage More time here / Less time waiting service-section removal and publication. Homepage-only rendering change; Route map and stored shared content retained. Validation/release in progress. See HOMEPAGE-SERVICE-SECTION-REMOVAL-2026-10-30.md.
+
 PUBLICATION AUTHORIZED (30 October 2026): Owner requested website-only iframe readiness/reconnection and responsive-height publication. Checks pass; Chrome visual acceptance remains BLOCKED. No map, database or configuration changes. See LIVE-MAP-IFRAME-INTEGRATION-2026-10-30.md.
 
 RELEASE AUTHORIZED (23 October 2026): Owner approved publication of local performance improvements, admin navigation spacing and homepage hero sharing metadata. Release validation and GitHub/Vercel verification in progress. No database, provider, DNS or scheduler changes.
