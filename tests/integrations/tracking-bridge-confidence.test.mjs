@@ -1,0 +1,8 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {parseJourney} from '../../src/modules/tracking/journey-contract.ts';
+import {sightseeingStops,sightseeingStatus} from '../../src/modules/content/sightseeing-stops.ts';
+const message=()=>({type:'shkodra:journey',version:1,unavailable:true,movement:'The van is on the way',confidence:{position:'live'},lastObservationAt:new Date().toISOString(),stops:[{id:'fixture',number:'1',label:'Fictional stop',state:'next',eta:'unsafe old ETA'}]});
+test('fresh location remains available independently of route continuity',()=>{const j=parseJourney(message());assert(j);const items=sightseeingStops([],[],j);assert.equal(items.length,1);assert.equal(items[0].state,'upcoming');assert.equal(items[0].eta,'');assert.equal(sightseeingStatus(items,j),'The van is on the way');assert.match(sightseeingStatus(items,j,true),/stale/);assert.match(sightseeingStatus(items,{...j,lastObservationAt:new Date(Date.now()-120000).toISOString()}),/unavailable/);});
+test('bridge metadata fallback preserves canonical CMS stop ownership',()=>{const j=parseJourney(message());assert.equal(sightseeingStops([{id:'fixture',label:'Server name'}],[],j)[0].name,'Server name');assert.equal(sightseeingStops([],[],j)[0].name,'Fictional stop');});
+test('optional v1 metadata is bounded, with legacy compatibility',()=>{assert.equal(parseJourney({...message(),movement:'x'.repeat(181)}),null);assert.equal(parseJourney({...message(),confidence:{position:'invented'}}),null);assert(parseJourney({type:'shkodra:journey',version:1,unavailable:false,stops:[]}));});
