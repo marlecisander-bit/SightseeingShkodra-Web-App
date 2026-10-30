@@ -6,6 +6,7 @@ import type {
 
 /** Presentation only. Production adapters must obtain quotes from the shared domain. */
 export type BookingSelection = {
+  productId?: string;
   passengers?: PassengerCounts;
   date: string;
   guests: number;

@@ -1,3 +1,4 @@
+import {reservationLabel} from '@/modules/booking/products';
 import { meetingPoint } from "@/modules/booking/meeting-point";
 import { passengerCaption, bookingMoney } from "./booking-presentation";
 import type { PendingOrder } from '@/modules/booking/contracts';
@@ -17,6 +18,7 @@ export function BookingPassCard({order}:{order:PendingOrder}) {
     {order.pass ? <BookingQr token={order.pass.token}/> : <p role="status">Your booking is saved. Reload this page to retrieve your QR pass.</p>}
     <p className={styles.reference}>Booking reference<br/><strong>{order.bookingReference??order.orderId}</strong></p>
     <div>{order.items.flatMap(i=>i.passengerSnapshot?.lines??[]).map((l,i)=><p key={i}>{passengerCaption(l.category,l.quantity)} {l.category==="infant"&&l.total===0?"Free":bookingMoney(l.total,order.currency)}</p>)}</div><div className={styles.facts}>{order.pass?.departures.map((d,i)=><div key={i}><strong>{new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(d.date+'T12:00:00Z'))}</strong><span>{d.time.slice(0,5)} | {d.guests} {d.guests===1?'guest':'guests'}</span></div>)}<strong>{bookingMoney(order.total,order.currency)}</strong></div>
+    {order.items.map(item=>item.reservationSnapshot&&<p key={item.id}>{reservationLabel(item.reservationSnapshot)}</p>)}
     <h4>Your booking pass</h4>
     <p>{confirmed?'Show this QR code to our staff when you arrive.':'This booking is not valid for boarding. Contact staff for assistance.'}</p>
     {order.pass?.checkedInAt&&<p>Checked in: {new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeStyle:'short',timeZone:'Europe/Tirane'}).format(new Date(order.pass.checkedInAt))}</p>}

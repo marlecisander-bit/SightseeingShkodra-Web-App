@@ -22,15 +22,15 @@ async function call(name: string, args: Record<string, unknown>): Promise<Hold> 
     }
     if (!data?.id) throw new HoldError('UNAVAILABLE');
     // Never return the private session key or internal order/request metadata.
-    return { passengerSnapshot:data.passenger_snapshot, id: data.id, departure_id: data.departure_id, quantity: data.quantity, status: data.status, expires_at: data.expires_at };
+    return { reservationSnapshot:data.reservation_snapshot?{mode:data.reservation_snapshot.mode,minutes:data.reservation_snapshot.minutes,start:data.reservation_snapshot.start,end:data.reservation_snapshot.end}:undefined,passengerSnapshot:data.passenger_snapshot, id: data.id, departure_id: data.departure_id, quantity: data.quantity, status: data.status, expires_at: data.expires_at };
   } catch (error) { if (error instanceof HoldError) throw error; throw new HoldError('UNAVAILABLE'); }
 }
 // Trusted server callers must derive sessionKey from a secure server-issued session.
 export function createHold(input: CreateHoldRequest) {
   if (!Number.isInteger(input.quantity) || input.quantity < 1 || input.quantity > 2147483647) throw new HoldError('INVALID_REQUEST');
   if(input.passengers){try{if(passengerCount(input.passengers)!==input.quantity)throw Error();}catch{throw new HoldError(input.passengers.adult<1&&(input.passengers.child>0||input.passengers.infant>0)?'ADULT_REQUIRED':'INVALID_REQUEST');}}
-  return call('create_passenger_hold_v1', { p_operator_id: input.operatorId, p_departure_id: input.departureId,
-    p_session_key: input.sessionKey, p_request_id: input.requestId, p_quantity: input.quantity,p_counts:input.passengers??{adult:input.quantity,child:0,infant:0} });
+  return call(input.productId?'create_product_hold_v1':'create_passenger_hold_v1', { p_operator_id: input.operatorId, p_departure_id: input.departureId,
+    p_session_key: input.sessionKey, p_request_id: input.requestId, p_quantity: input.quantity,p_counts:input.passengers??{adult:input.quantity,child:0,infant:0},...(input.productId?{p_product:input.productId}:{}) });
 }
 export function readHold(operatorId: string, holdId: string, sessionKey: string) {
   return call('manage_hold_v1', { p_operator_id: operatorId, p_hold_id: holdId, p_session_key: sessionKey, p_release: false });

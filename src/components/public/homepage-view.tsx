@@ -1,3 +1,5 @@
+import {ProductBookingCards} from './product-booking-cards';
+import type {BookableProduct} from '@/modules/booking/products';
 import { PartnersSection } from './partners-section';
 import type {Partner} from '@/modules/content/partners';
 import {HomepageJourney,HomepageJourneyProvider} from './homepage-journey';
@@ -10,11 +12,12 @@ import { ActionLink } from "./ui";
 import { homepageVisible, websitePlaces, type WebsiteContent } from "@/modules/content/website-schema";
 import type { Homepage } from "@/modules/content/homepage";
 
-export function HomepageView({ home, content: c, reviews = {reviews:[],settings:defaultReviewSettings}, places, planner, partners = [] }: { preview?:boolean; partners?:Partner[]; planner?:DayPlannerData; home: Homepage; content: WebsiteContent; reviews?: ReviewSelection; places?: ReturnType<typeof websitePlaces> }) {
+export function HomepageView({ home, content: c, reviews = {reviews:[],settings:defaultReviewSettings}, places, planner, partners = [],products = [],preview=false }: { products?:BookableProduct[]; preview?:boolean; partners?:Partner[]; planner?:DayPlannerData; home: Homepage; content: WebsiteContent; reviews?: ReviewSelection; places?: ReturnType<typeof websitePlaces> }) {
   const destinations = places ?? websitePlaces(c);
   return <HomepageJourneyProvider><main id="main-content" className={`p-home${homepageVisible(c,"hero") ? "" : " p-home-no-hero"}`}>
     {!homepageVisible(c,"hero") && <h1 className="p-screen-reader-only">{home.product?.title ?? c["seo.title"]}</h1>}
     {homepageVisible(c,"hero") && <HomepageHero content={c} fare={home.heroFare} productTitle={home.product?.title} stopCount={homepageVisible(c,"route") ? planner?.stops?.length : undefined}/>}
+    <ProductBookingCards products={products} content={c} preview={preview}/>
     {homepageVisible(c,"route") && <section id="route" className="p-section p-container p-home-stops" aria-label="Route and stops">
       <div className="p-home-route-heading"><div><p className="p-eyebrow">{c["homeRoute.eyebrow"]}</p>
       <h2>{routeHeading(c["homeRoute.title"],planner?.stops?.length)}</h2><p>{c["homeRoute.text"]}</p></div><ActionLink href="/route">{c["homeRoute.action"]}</ActionLink></div>

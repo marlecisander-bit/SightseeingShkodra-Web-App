@@ -1,4 +1,5 @@
 "use client";
+import type {BookableProduct} from "@/modules/booking/products";
 import { analyticsSessionIdentity, trackBookingEvent } from "@/modules/analytics/browser";
 import type {MeetingPoint} from "@/modules/booking/meeting-point";
 import {MeetingPointSummary} from "./meeting-point-summary";
@@ -19,6 +20,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useId,
   useRef,
   useState,
   type ReactNode,
@@ -40,6 +42,7 @@ const CheckoutFlow = dynamic(
 );
 
 type BookingContextValue = {
+  product?: BookableProduct;
   currentMeetingPoint?:MeetingPoint|null;
   selection: BookingSelection;
   setSelection: Dispatch<SetStateAction<BookingSelection>>;
@@ -55,14 +58,17 @@ export function useBooking() {
   if (!value) throw new Error("BookingProvider is required");
   return value;
 }
-export function BookingProvider({ children, content = initialWebsiteContent, preview = false, currentMeetingPoint }: { children: ReactNode; content?: WebsiteContent; preview?:boolean;currentMeetingPoint?:MeetingPoint|null }) {
+export function BookingProvider({ children, content = initialWebsiteContent, preview = false, currentMeetingPoint, product }: { children: ReactNode; content?: WebsiteContent; preview?:boolean;currentMeetingPoint?:MeetingPoint|null; product?:BookableProduct }) {
+  const parent=useContext(BookingContext);
   const [selection, setSelection] = useState<BookingSelection>({
+    productId: product?.id,
     date: "",
     guests: 1,
     departureId: "",
   });
   const [generation, setGeneration] = useState(0);
-  const reset = useCallback(() => { clearCheckoutSession(); setSelection(freshBookingSelection()); setGeneration(value=>value+1); }, []);
+  const reset = useCallback(() => { clearCheckoutSession(product?.primary?undefined:product?.id); setSelection({...freshBookingSelection(),productId:product?.id}); setGeneration(value=>value+1); }, [product?.id,product?.primary]);
+  const dialogTitle=useId();
   const dialog = useRef<HTMLDialogElement>(null);
   const [opened, setOpened] = useState(false);
   useEffect(() => {
@@ -72,12 +78,13 @@ export function BookingProvider({ children, content = initialWebsiteContent, pre
     Object.assign(document.body.style, {position:"fixed", top:`-${y}px`, width:"100%"});
     return () => { Object.assign(document.body.style, previous); window.scrollTo(0,y); };
   }, [opened]);
-  const availability = useAvailability(preview?'':selection.date, selection.guests,selection.passengers,generation);
+  const availability = useAvailability(preview?'':selection.date, selection.guests,selection.passengers,generation,product?.id);
   return (
     <BookingContext.Provider
       value={{
         selection,
-        currentMeetingPoint,
+        product,
+        currentMeetingPoint:currentMeetingPoint===undefined?parent?.currentMeetingPoint:currentMeetingPoint,
         reset,
         generation,
         setSelection,
@@ -96,7 +103,8 @@ export function BookingProvider({ children, content = initialWebsiteContent, pre
         ref={dialog}
         className={`p-booking-dialog ${styles.dialog}`}
         onClose={() => setOpened(false)}
-        aria-labelledby="booking-dialog-title"
+        aria-labelledby={opened?dialogTitle:undefined}
+        aria-label={opened?undefined:product?`Book ${product.title}`:"Booking"}
         onKeyDown={(event) => {
           if (event.key !== "Tab") return;
           const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>(
@@ -113,17 +121,17 @@ export function BookingProvider({ children, content = initialWebsiteContent, pre
           }
         }}
       >
-        {opened && <BookingDialogContent key={generation} content={content} preview={preview} />}
+        {opened && <BookingDialogContent titleId={dialogTitle} key={generation} content={content} preview={preview} />}
       </dialog>
     </BookingContext.Provider>
   );
 }
 
-function BookingDialogContent({content,preview=false}: {content: WebsiteContent;preview?:boolean}) {
+function BookingDialogContent({content,preview=false,titleId}: {titleId:string;content: WebsiteContent;preview?:boolean}) {
   const {close,currentMeetingPoint}=useBooking();
   const closeButton = useRef<HTMLButtonElement>(null);
   useEffect(() => { closeButton.current?.focus(); }, []);
-  return <><header className={styles.header}><div><BrandLogo light/><h2 id="booking-dialog-title">{content["bookingDialog.title"]}</h2></div><button ref={closeButton} type="button" className={styles.close} aria-label="Close booking" onClick={close}>&times;</button></header><div className={styles.content}><p>{content["bookingDialog.text"]}</p><MeetingPointSummary value={currentMeetingPoint}/>{preview ? <p>Saved editorial preview. Booking actions are unavailable here.</p> : <CheckoutFlow />}</div></>;
+  return <><header className={styles.header}><div><BrandLogo light/><h2 id={titleId}>{content["bookingDialog.title"]}</h2></div><button ref={closeButton} type="button" className={styles.close} aria-label="Close booking" onClick={close}>&times;</button></header><div className={styles.content}><p>{content["bookingDialog.text"]}</p><MeetingPointSummary value={currentMeetingPoint}/>{preview ? <p>Saved editorial preview. Booking actions are unavailable here.</p> : <CheckoutFlow />}</div></>;
 }
 
 /** Keep link styling and direct/new-tab access; ordinary booking activation opens the shared dialog. */

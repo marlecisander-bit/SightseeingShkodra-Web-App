@@ -1,0 +1,6 @@
+.section{min-width:0;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:24px;align-items:start;}
+.card{min-width:0;max-width:100%;}
+.card>p{overflow-wrap:anywhere;}
+.card :global(img){width:100%;object-fit:cover;}
+.card button:focus-visible,.card input:focus-visible,.card summary:focus-visible{outline:3px solid var(--brand-red);outline-offset:3px;}

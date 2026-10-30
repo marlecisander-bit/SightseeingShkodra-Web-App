@@ -1,4 +1,8 @@
+PUBLISHED (30 October 2026): Local notebook and Final booking invitation retired via PR #39, main 4f8637c, Vercel BxNYTGnWaSZSLb1s9rdEqT74wGjt Production success. All 604 release tests and PR/main CI pass. Both public domains: Home/Route/Explore/FAQ HTTP 200, zero retired sections and one business footer. Chrome visual/admin acceptance unavailable. Shared-product work remains local and is reconciled with this removal. No schema/configuration change. See RETIRED-HOMEPAGE-FEATURES-PUBLICATION-2026-10-30.json.
+
 PUBLICATION AUTHORIZED (30 October 2026): Local notebook and Final booking invitation retired from admin, public pages and saved previews. Exclusive renderer/styles removed; stored keys/media retained only for compatibility. All 604 tests, clean install, lint/types/build and zero-vulnerability production audit pass. Scoped release excludes unpublished shared-van development; deployment verification pending. See RETIRED-HOMEPAGE-FEATURES-2026-10-30.md.
+
+LOCAL ONLY (30 October 2026): Self-service shared-van products implemented on feature/shared-van-products-20261030. Products share dated inventory; selected-departure (default 120 minutes) and whole-day seat policies are snapshotted. Product-specific public/staff booking and Website card draft/publish reuse the existing engine. 621 tests across suites, lint/types/build and clean production audit pass; Chrome visual acceptance BLOCKED. New migration prepared and tested only in disposable databases; no hosted migration, product write or publication. See SHARED-VAN-PRODUCTS-2026-10-30.md.
 
 PUBLICATION AUTHORIZED (30 October 2026): Owner requested complete homepage More time here / Less time waiting service-section removal and publication. Homepage-only rendering change; Route map and stored shared content retained. Validation/release in progress. See HOMEPAGE-SERVICE-SECTION-REMOVAL-2026-10-30.md.
 
@@ -603,3 +607,8 @@ Isolated candidate at production baseline 8f71e2743bff64cc04018fb433f4c51066394b
 ## 2026-10-16 - F04 implementation completed locally
 
 Latest explicit authorization retires all four Catalog presentation controls, superseding the earlier three-control plan. New compatible local save_catalog_v1 migration preserves omitted stored values and historic email copy; no columns/records deleted. 438 regression tests pass; lint, TypeScript, production build and strict F10 verification pass. F10 active Website controls remain 126 PASS; four retired Catalog fields now have separate compatibility PASS evidence, not public-rendering PASS. Prior FAIL evidence is archived. No push, hosted migration, deployment or production mutation. Migration-first release is mandatory and requires separate approval. F09 approved editorial content and broader manual/device/dependency limits remain. See CMS-F04-IMPLEMENTATION-RESULT.md.
+
+
+## 30 October 2026 - Shared product release authorized
+
+Owner authorized publication. Production migration 20261030000100 committed with zero-current-allocation preflight, 24 matching function fingerprints and transactional record integrity checks. All 621 tests and standard checks pass. Application publication and hosted read-only acceptance follow. See SHARED-VAN-PRODUCTS-2026-10-30.md.

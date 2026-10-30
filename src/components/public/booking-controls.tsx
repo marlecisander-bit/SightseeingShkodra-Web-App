@@ -14,9 +14,9 @@ export function BookingProgress({step,complete=false}:{step:number;complete?:boo
   })}</ol>;
 }
 
-export function BookingPriceIndicator({amount,date,total=false,currency="EUR"}:{amount?:number;date?:string;total?:boolean;currency?:string}) {
+export function BookingPriceIndicator({amount,date,total=false,currency="EUR",ticketLabel="Daily ticket"}:{ticketLabel?:string;amount?:number;date?:string;total?:boolean;currency?:string}) {
   amount=amount!==undefined&&Number.isSafeInteger(amount)&&amount>=0?amount:undefined;
-  return <p className="p-booking-price"><strong>{amount===undefined?"Check availability":<><span className="p-price-prefix">{total?"Total":"From"}</span>{` ${displayMoney(amount,currency,!total)}`}</>}</strong>{amount!==undefined&&!total&&<small>Per adult · Daily ticket{date&&<span className="p-price-date">{` · ${bookingDate(date)}`}</span>}</small>}</p>;
+  return <p className="p-booking-price"><strong>{amount===undefined?"Check availability":<><span className="p-price-prefix">{total?"Total":"From"}</span>{` ${displayMoney(amount,currency,!total)}`}</>}</strong>{amount!==undefined&&!total&&<small>Per adult · {ticketLabel}{date&&<span className="p-price-date">{` · ${bookingDate(date)}`}</span>}</small>}</p>;
 }
 
 export function BookingDateSelector({value,onChange}:{value:string;onChange:(value:string)=>void}) {

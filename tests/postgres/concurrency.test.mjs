@@ -184,12 +184,12 @@ test('confirmation requires settled evidence and atomically consumes inventory o
   for (const mutation of [
     () => first.query('update payments set amount=1 where id=$1',[pay]),
     () => first.query("update inventory_holds set status='released' where id=$1",[h.id]),
-    () => first.query('update departures set capacity=0 where id=$1',[dep]),
   ]) {
     await first.query('begin');
     try { await mutation(); await assert.rejects(first.query(sql,args),error=>error.code==='P0001'); }
     finally { await first.query('rollback'); }
   }
+  await assert.rejects(first.query('update departures set capacity=0 where id=$1',[dep]),error=>error.code==='PT422');
   await first.query('begin');
   await first.query(sql,args);
   await first.query('rollback');
@@ -602,4 +602,22 @@ test('provider receipt before acceptance publication recovers without lost outco
  }finally{await first.query('rollback');if(pending)await pending;}
  assert.equal((await observer.query('select count(*)::int n from email_provider_events where delivery_id=$1',[delivery])).rows[0].n,2);
  assert.equal((await observer.query('select provider_status from notification_deliveries where id=$1',[delivery])).rows[0].provider_status,'bounced');
+});
+
+test('different products and departures on the same van serialize shared occupancy, including whole-day holds',async()=>{
+ const op='10000000-0000-4000-8000-000000000001',session='shared-product-concurrency-1234567890';
+ for(const mode of ['selected_departure','whole_day'])for(const rollback of [false,true]){
+  const vehicle=(await observer.query("insert into vehicles(operator_id,name) values($1,'Shared concurrency van') returning id",[op])).rows[0].id;
+  const source=(await observer.query(`insert into products(operator_id,type,title,slug,status,pricing_rules,capacity_rules) values($1,'van_tour','Shared source',gen_random_uuid()::text,'published','{"version":1,"model":"per_guest","currency":"EUR","unit_price":1000}','{"version":1,"model":"departure_seats"}') returning id`,[op])).rows[0].id;
+  const offer=(await observer.query(`insert into products(operator_id,type,title,slug,status,inventory_product_id,seat_reservation_mode,pricing_rules,capacity_rules) values($1,'van_tour','Shared offer',gen_random_uuid()::text,'published',$2,$3,'{"version":1,"model":"per_guest","currency":"EUR","unit_price":1000}','{"version":1,"model":"departure_seats"}') returning id`,[op,source,mode])).rows[0].id;
+  const dep=(await observer.query("insert into departures(operator_id,product_id,vehicle_id,service_date,start_time,capacity,status) values($1,$2,$3,'2031-06-01','09:00',8,'scheduled'),($1,$2,$3,'2031-06-01','10:00',8,'scheduled') returning id",[op,source,vehicle])).rows;
+  const sql='select create_product_hold_v1($1,$2,$3,gen_random_uuid(),8,\'{"adult":8,"child":0,"infant":0}\',$4)';
+  await first.query('begin');let pending;
+  try{
+   await first.query(sql,[op,dep[0].id,session,offer]);pending=second.query(sql,[op,dep[1].id,session,source]).then(result=>({result}),error=>({error}));
+   await waitForLock();await first.query(rollback?'rollback':'commit');const result=await pending;
+   if(rollback)assert.ifError(result.error);else assert.equal(result.error?.code,'P0001');
+   assert.equal((await observer.query("select sum(occupied_seats)::integer n from inventory_holds where operator_id=$1 and departure_id in ($2,$3) and status='active'",[op,dep[0].id,dep[1].id])).rows[0].n,8);
+  }finally{await first.query('rollback');if(pending)await pending;}
+ }
 });

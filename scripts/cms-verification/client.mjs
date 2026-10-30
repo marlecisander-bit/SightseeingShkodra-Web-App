@@ -37,10 +37,10 @@ export async function renderClientProbe(key,content){
   }else{
    assert.ok(!host.querySelector('dialog[open]'));assert.ok(!host.textContent.includes(content[key]),'dialog copy must not leak before opening');
    await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Open synthetic booking').click());
-   const dialog=host.querySelector('dialog[open]');assert.ok(dialog);html=dialog.outerHTML;
+   const dialog=host.querySelector('dialog[open]');assert.ok(dialog);assert.equal(host.querySelector('[id="'+dialog.getAttribute('aria-labelledby')+'"]'),dialog.querySelector('h2'));html=dialog.outerHTML;
    assert.equal(dialog.querySelector(key.endsWith('title')?'h2':'div > p')?.textContent,content[key]);
    await act(async()=>dialog.querySelector('button[aria-label="Close booking"]').click());assert.ok(!host.querySelector('dialog[open]'));
   }
-  return {route:key==='labels.destination'?'/':key==='routePage.mapAction'?'/route':'shared booking dialog',consumer:'actual React client component, opened/closed in isolated jsdom',html};
+  return {route:key==='labels.destination'?'/':key==='routePage.mapAction'?'/route':'shared booking dialog',consumer:'actual React client component, opened/closed in isolated jsdom',html:html.replace(/(id|aria-labelledby)="_r_[a-z0-9]+_"/g,'$1="fixture-react-id"')};
  }finally{await act(async()=>root.unmount());dom.window.close();for(const [name,descriptor]of saved){if(descriptor)Object.defineProperty(globalThis,name,descriptor);else delete globalThis[name];}}
 }

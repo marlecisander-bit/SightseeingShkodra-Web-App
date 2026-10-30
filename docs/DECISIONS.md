@@ -1,5 +1,13 @@
 # Approved roadmap amendments
 
+## 2026-10-30 - Self-service van products and shared seat-reservation periods
+
+The owner requested creating Sightseeing Loop Tour and future equivalent van products through the admin, with reusable website booking cards and the existing booking engine. Multiple offers may reference one existing inventory-owning product/schedule; they must not duplicate physical seats or dated departures. The owner specified that both Loop Tour and Hop On Hop Off currently occupy seats for two hours, and requested an option to change new Hop On Hop Off reservations to the whole operating day later.
+
+Add product-level selected-departure versus whole-day reservation policy, defaulting to 120-minute selected departures. Snapshot the actual reservation period on holds/items; later configuration changes affect only new reservations. Enforce overlapping physical-vehicle occupancy transactionally, including across offers and departure times; preserve tenant-scoped purchased-product and inventory-owner identities. Calendar & Pricing owns operational settings/prices; Website owns card presentation and draft/publication. Existing booking, payment-at-meeting-point, infant seat rules, cutoff, QR, events and delivery infrastructure remain shared. No multi-product cart, new booking engine, repeated-boarding entitlement, map change, production migration or publication is authorized by this local development request. This explicitly amends the earlier per-departure-only inventory decision; the unchanged V4 roadmap remains retained.
+
+
+
 ## 2026-10-30 - Retire Local notebook and Final booking invitation
 
 The owner identified the two hidden Website cards in a screenshot and requested their removal from the admin and all public connections, with publication. Remove the Local notebook homepage section and Final booking invitation on every public route, along with their active editors, preview wiring, exclusive components and styles. Preserve shared destinations/Explore guides, business footer, booking controls, saved records and reused media. Retained document keys are compatibility-only and cannot restore the retired sections. No database or cloud-configuration change is required. The separate unpublished shared-van product development is not part of this publication.
@@ -168,3 +176,8 @@ The user authorized isolated local CMS completion after F10 production merge 8f7
 ## 2026-10-16 - F04 four-control retirement, local authorization
 
 The latest explicit user authorization supersedes the earlier keep-description-control plan: retire Catalog meta_title, meta_description, og_image and og_image_alt from the active editor, including their publication requirements. Retain all columns/omitted stored values and existing historical email consumers. A narrow backwards-compatible save_catalog_v1 replacement was implemented and tested only in disposable local databases. This authorizes no push, hosted migration or deployment. A future rollout must apply the compatible SQL migration before the metadata-free editor. See CMS-F04-IMPLEMENTATION-RESULT.md.
+
+
+## 30 October 2026 — Shared product publication authorized
+
+The owner explicitly requested publication of the shared product development, superseding local-only release limits for this feature. Shared van infrastructure and selectable 120-minute/whole-day seat policies remain the approved design. Production migration `20261030000100` committed after zero-allocation preflight, 24 matching function fingerprints and transactional preservation checks; its exact source MD5 is `754641645ebe70770e8366d559550dc1`. Existing Loop product is preserved for owner configuration; no new price, editorial content or booking is created. All 621 tests and standard checks pass. Application PR/CI/Vercel release and read-only hosted acceptance follow; see SHARED-VAN-PRODUCTS-2026-10-30.md. Existing delivery and external map settings remain untouched.

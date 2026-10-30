@@ -1,3 +1,4 @@
+import {getBookableProducts} from '@/modules/booking/products-server';
 import { PublicAnalytics } from "@/components/public/analytics";
 import {getCurrentMeetingPoint} from "@/modules/booking/meeting-point-server";
 import { BookingProvider, Header } from "@/components/public/booking";
@@ -14,10 +15,10 @@ export default async function PublicLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [content,reviews,currentMeetingPoint] = await Promise.all([getPublishedWebsite(),getPublicReviewSettings(),getCurrentMeetingPoint()]);
+  const [content,reviews,currentMeetingPoint,products] = await Promise.all([getPublishedWebsite(),getPublicReviewSettings(),getCurrentMeetingPoint(),getBookableProducts().catch(()=>[])]);
   return (
     <div className="public-site">
-      <BookingProvider content={content} currentMeetingPoint={currentMeetingPoint}>
+      <BookingProvider product={products.find(p=>p.slug===process.env.PUBLIC_HOMEPAGE_PRODUCT_SLUG)} content={content} currentMeetingPoint={currentMeetingPoint}>
         <a className="p-skip" href="#main-content">
           Skip to content
         </a>

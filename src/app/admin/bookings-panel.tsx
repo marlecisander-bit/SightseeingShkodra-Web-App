@@ -59,7 +59,7 @@ export async function BookingsPanel({
     creating?departureChoices.order('service_date').order('start_time').limit(100):Promise.resolve({data:[],error:null}),
     client
       .from("products")
-      .select("id,title")
+      .select("id,title,inventory_product_id,status,type")
       .eq("operator_id", operatorId)
       .limit(100),
   ]);
@@ -169,7 +169,7 @@ export async function BookingsPanel({
    </details>
    <BookingConfirmation message="Confirm this reservation now? Seats will be reserved immediately and full payment will be due at the meeting point."><MutationForm action={manualBooking.bind(null,operatorId)}>
     <input type="hidden" name="request_id" value={requestId&&/^[0-9a-f-]{36}$/i.test(requestId)?requestId:randomUUID()}/>
-    <StaffPassengers departures={usableDepartures.map(d=>({id:d.id,label:`${d.service_date} ${d.start_time} | ${products.data.find(p=>p.id===d.product_id)?.title??'Product'}`,categories:categories[d.product_id]}))}/>
+    <StaffPassengers departures={usableDepartures.flatMap(d=>products.data.filter(p=>p.status==='published'&&p.type==='van_tour'&&(p.inventory_product_id??p.id)===d.product_id).map(p=>({id:d.id,productId:p.id,label:`${d.service_date} ${d.start_time} | ${p.title}`,categories:categories[p.id]})))}/>
     <label>Guest name<input name="name" maxLength={200} autoComplete="name" required/></label><label>Email<input name="email" type="email" maxLength={254} autoComplete="email" required/></label><label>Phone<input name="phone" type="tel" maxLength={50} autoComplete="tel"/></label>
     <SubmitButton disabled={!usableDepartures.length}>Confirm reservation</SubmitButton>
     {!usableDepartures.length&&<p>No bookable departure with passenger configuration is loaded. Choose a service date above.</p>}

@@ -141,3 +141,6 @@ Live Map owns operational stop order, coordinates, vehicle position, recognition
 
 
 30 October 2026 retirement amendment: Local notebook and Final booking invitation have no active admin owner or public consumer. Homepage notebook, cross-route footer invitation, saved-preview wiring, exclusive renderer and styles are removed. Their existing document keys/media remain historical compatibility data. Shared destinations/Explore and business/footer/booking controls remain active. See RETIRED-HOMEPAGE-FEATURES-2026-10-30.md.
+
+
+30 October 2026 local product extension: product identity/publication remains in Products & suppliers. Calendar & Pricing owns shared inventory links, reservation periods and passenger prices. Website > Product booking cards is the single owner of product card draft/published photo, alt text, introduction, display order and homepage visibility, stored on the same product entity. Public cards consume only card_published and the shared booking API. The main CMS verification normalizes opaque per-mount React IDs while still checking dialog title associations. See SHARED-VAN-PRODUCTS-2026-10-30.md.

@@ -1,6 +1,7 @@
 import { passengerCount, type PassengerCounts } from "@/modules/booking/passengers";
 import { cookies } from "next/headers";
-import { getHomepage } from "@/modules/content/homepage-server";
+import {resolveBookableProduct} from "@/modules/booking/products-server";
+import {validProductId} from "@/modules/booking/products";
 import { getAvailability } from "@/modules/booking/availability-server";
 import { AvailabilityError } from "@/modules/booking/availability";
 import {
@@ -91,7 +92,7 @@ export async function POST(request: Request) {
     if (!operatorId || !uuid.test(operatorId)) return fail("UNAVAILABLE", 503);
     if (body.action === "hold") {
       if (
-        Object.keys(body).filter(k=>k!=="passengers").sort().join() !==
+        Object.keys(body).filter(k=>k!=="passengers"&&k!=="productId").sort().join() !==
           "action,date,departureId,guests,requestId" ||
         typeof body.departureId !== "string" ||
         !uuid.test(body.departureId) ||
@@ -103,16 +104,13 @@ export async function POST(request: Request) {
         return fail("INVALID_REQUEST");
       const passengers=body.passengers as PassengerCounts|undefined;
       if(passengers){try{if(passengerCount(passengers)!==body.guests)return fail("INVALID_REQUEST");}catch{return fail(passengers.adult<1&&(passengers.child>0||passengers.infant>0)?"ADULT_REQUIRED":"INVALID_REQUEST");}}
-      const home = await getHomepage();
-      if (!home.product)
-        return fail(
-          home.state === "unavailable" ? "UNAVAILABLE" : "NOT_PUBLISHED",
-          home.state === "unavailable" ? 503 : 404,
-        );
+      if(body.productId!==undefined&&!validProductId(body.productId))return fail("INVALID_REQUEST");
+      const product=await resolveBookableProduct(body.productId as string|undefined);
+      if(!product)return fail("NOT_PUBLISHED",404);
       const quote = await getAvailability({
         version: 1,
         operatorId,
-        productId: home.product.id,
+        productId: product.id,
         date: body.date,
         guests: body.guests,passengers,
       });
@@ -121,6 +119,7 @@ export async function POST(request: Request) {
         return fail("NOT_FOUND", 404);
       const hold = await createHold({
         operatorId,
+        productId: product.id,
         departureId: body.departureId,
         quantity: body.guests,passengers,
         requestId: body.requestId,

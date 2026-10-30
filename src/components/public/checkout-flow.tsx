@@ -18,7 +18,7 @@ type Attempt = {
   total: number;
   hold?: Hold;
 };
-const storageKey = checkoutStorageKey;
+
 async function send(body: object) {
   const response = await fetch("/api/public/checkout", {
     method: "POST",
@@ -47,7 +47,8 @@ const messages: Record<string, string> = {
   SESSION_REQUIRED: "Your booking session has ended. Please start again.",
 };
 export function CheckoutFlow() {
-  const { selection, setSelection, availability, reset } = useBooking();
+  const { selection, setSelection, availability, reset, product } = useBooking();
+  const storageKey = product&&!product.primary ? `${checkoutStorageKey}:${product.id}` : checkoutStorageKey;
   const [attempt, setAttempt] = useState<Attempt | null>(null);
   const [order, setOrder] = useState<PendingOrder | null>(null);
   useEffect(() => {
@@ -131,7 +132,7 @@ export function CheckoutFlow() {
     return () => {
       live = false;
     };
-  }, [setSelection, reset]);
+  }, [setSelection, reset, storageKey]);
   useEffect(() => {
     const timer = setInterval(
       () =>
@@ -189,6 +190,7 @@ export function CheckoutFlow() {
     try {
       const result = await send({
         action: "hold",
+        ...(product?{productId:product.id}:{}),
         date: value.selection.date,
         guests: value.selection.guests,passengers:value.selection.passengers??{adult:value.selection.guests,child:0,infant:0},
         departureId: value.selection.departureId,
@@ -386,6 +388,7 @@ export function CheckoutFlow() {
         </>
       )}
       </div>
+      {!order&&product&&<p><strong>{product.title}</strong></p>}
       {!order && <BookingSummary date={chosen.date} time={attempt?.time??selected?.startTime} counts={chosen.passengers??{adult:chosen.guests,child:0,infant:0}} total={attempt?.total??selected?.passengerQuote?.total} currency={availability.quote?.currency}/>}
       </div>
 

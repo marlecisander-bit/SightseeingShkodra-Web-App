@@ -3,7 +3,7 @@ import { AvailabilityError, validateAvailabilityRequest } from "./availability";
 import type { AvailabilityQuote, AvailabilityRequest } from "./contracts";
 
 type Sources = {
-  resolve: () => Promise<{
+  resolve: (productId?: string) => Promise<{
     operatorId: string;
     productId: string;
     timezone: string;
@@ -25,12 +25,13 @@ export async function publicAvailability(request: Request, sources: Sources) {
   try {
     if(params.has("adult")||params.has("child")||params.has("infant")){passengers={adult:Number(params.get("adult")),child:Number(params.get("child")),infant:Number(params.get("infant"))};if(["adult","child","infant"].some(k=>params.getAll(k).length!==1)||passengerCount(passengers)!==guests)throw Error();}
     if (
-      [...params.keys()].some((key) => !["date","guests","adult","child","infant"].includes(key)) ||
+      [...params.keys()].some((key) => !["date","guests","adult","child","infant","productId"].includes(key)) ||
       params.getAll("date").length !== 1 ||
       params.getAll("guests").length !== 1 ||
       !/^[1-9]\d{0,9}$/.test(params.get("guests") ?? "")
     )
       throw new AvailabilityError("INVALID_REQUEST");
+    if(params.has("productId") && (params.getAll("productId").length!==1 || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.get("productId")!)))throw new AvailabilityError("INVALID_REQUEST");
     validateAvailabilityRequest({
       version: 1,
       operatorId: placeholderId,
@@ -42,8 +43,8 @@ export async function publicAvailability(request: Request, sources: Sources) {
     return errorResponse("INVALID_REQUEST", 400);
   }
   try {
-    const binding = await sources.resolve();
-    if (!binding) return errorResponse("NOT_PUBLISHED", 404);
+    const binding = await sources.resolve(params.get("productId")??undefined);
+    if (!binding || (params.has("productId") && binding.productId!==params.get("productId"))) return errorResponse("NOT_PUBLISHED", 404);
     const quote = await sources.quote({
       version: 1,
       operatorId: binding.operatorId,
