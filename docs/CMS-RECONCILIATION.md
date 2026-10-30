@@ -138,3 +138,6 @@ Live Map owns operational stop order, coordinates, vehicle position, recognition
 
 
 30 October 2026 amendment: the complete homepage live-service/timetable/map section was removed at owner request. Its text/link fields remain stored compatibility data and are absent from active Homepage controls. Departures visibility remains operational on Route/Your Day and is owned by the existing Route page editor. The active CMS verification probes RouteJourney for that flag; no shared content was deleted. See HOMEPAGE-SERVICE-SECTION-REMOVAL-2026-10-30.md.
+
+
+30 October 2026 retirement amendment: Local notebook and Final booking invitation have no active admin owner or public consumer. Homepage notebook, cross-route footer invitation, saved-preview wiring, exclusive renderer and styles are removed. Their existing document keys/media remain historical compatibility data. Shared destinations/Explore and business/footer/booking controls remain active. See RETIRED-HOMEPAGE-FEATURES-2026-10-30.md.

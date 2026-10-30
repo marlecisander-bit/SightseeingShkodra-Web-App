@@ -21,6 +21,6 @@ export function WhatsAppFixture(){
  <section style={{minHeight:900,paddingBlock:48}}><h2>Scroll and booking controls</h2><BookButton/><p>Actual booking dialog can be opened without submitting a booking.</p></section>
  <section><h2>Live Map overlap</h2><LiveMapEmbed presentation="full"/></section>
  <section style={{minHeight:800,paddingBlock:48}}><h2>Sticky booking control layout</h2><div className="p-booking-action"><button className="p-button">Synthetic booking action</button></div><p>Layout-only control, no booking mutation.</p></section>
- </main><Footer content={{...content,'final.showOnHomepage':'false'}}/><WhatsAppContact href={whatsappLink(content)} label={content['whatsapp.label']} desktop={content['whatsapp.desktop']==='true'} mobile={content['whatsapp.mobile']==='true'}/></BookingProvider></div>;
+ </main><Footer content={content}/><WhatsAppContact href={whatsappLink(content)} label={content['whatsapp.label']} desktop={content['whatsapp.desktop']==='true'} mobile={content['whatsapp.mobile']==='true'}/></BookingProvider></div>;
 }
 

@@ -11,8 +11,6 @@ export const sectionCardMetadata: Record<string, {icon:AdminIconName; descriptio
   live:{icon:"bus-front",description:"Live Map introduction and van-finding link"},
   departures:{icon:"clock-3",description:"Timetable heading and departure-information link"},
   reviews:{icon:"star",description:"Guest-review section heading and introduction"},
-  notebook:{icon:"book-open",description:"Local inspiration heading and destination-card link labels"},
-  final:{icon:"ticket",description:"Closing booking invitation, banner and button label"},
   navigation:{icon:"map",description:"Shared website navigation labels and links",scope:"Global"},
   footer:{icon:"panels-top-left",description:"Social links, business details and copyright",scope:"Global"},
   seo:{icon:"search",description:"Homepage search title, description and social image",scope:"Homepage search & sharing"},

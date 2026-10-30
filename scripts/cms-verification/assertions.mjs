@@ -8,7 +8,7 @@ export function checkField(field,value,projection){
  let ok;
  if(projection.metadata){const m=projection.metadata;ok=key.endsWith('.image')||key.endsWith('.seoImage')?m.openGraph.images[0].url===value:key.endsWith('.alt')||key.endsWith('.seoAlt')?m.openGraph.images[0].alt===value:key.endsWith('.title')||key.endsWith('.seoTitle')?m.title===value:m.description===value;}
  else if(key.endsWith('.showOnHomepage')){
-  const match={hero:'id="home-hero"',route:'id="route"',live:'without the guesswork',departures:'id="journey-departures"',notebook:'p-editorial',reviews:'aria-label="Guest reviews"',final:'aria-label="Final booking invitation"',partners:'id="partners"'}[key.split('.')[0]];
+  const match={hero:'id="home-hero"',route:'id="route"',live:'without the guesswork',departures:'id="journey-departures"',reviews:'aria-label="Guest reviews"',partners:'id="partners"'}[key.split('.')[0]];
   // Live flags are tested against a stable eyebrow supplied by the case runner.
   ok=key==='live.showOnHomepage'?!text(html,projection.visibilityMarker):!html.includes(match);
  }

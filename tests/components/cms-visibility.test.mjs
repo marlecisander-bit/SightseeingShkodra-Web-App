@@ -1,4 +1,3 @@
-import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { registerHooks } from 'node:module';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -18,9 +17,9 @@ const home={state:'empty',product:null,content:{},date:null,timezone:null,price:
 const reviews={reviews:[{id:'review-1',author:'Fixture guest',rating:5,body:'A published fixture review.',source:'Direct',review_date:null,original_url:null,avatar_url:null,language:null,featured:false,published:true,display_order:0,updated_at:''}],settings:{display_limit:3,google_reviews_url:null,leave_review_url:null}};
 
 test('active homepage visibility flags remove their edited content and restore it from the same source',()=>{
- const keys={hero:'hero.title',reviews:'reviews.title',notebook:'notebook.title',final:'final.title'};
+ const keys={hero:'hero.title',reviews:'reviews.title'};
  const c={...initialWebsiteContent,...Object.fromEntries(Object.entries(keys).map(([section,key])=>[key,'Audit '+section+' marker']))};
- const page=content=>render(h(React.Fragment,null,h(HomepageView,{home:{...home,product:{title:'Test ticket',inclusions:'Configured benefits'}},content,reviews,places:[]}),h(Footer,{content,previewPathname:'/',homepageInvitationInContent:true})));
+ const page=content=>render(h(React.Fragment,null,h(HomepageView,{home:{...home,product:{title:'Test ticket',inclusions:'Configured benefits'}},content,reviews,places:[]}),h(Footer,{content,previewPathname:'/'})));
  for(const [section] of Object.entries(keys)){
   for(const visible of [true,false,true]){
    const html=page({...c,[section+'.showOnHomepage']:String(visible)});
@@ -30,24 +29,24 @@ test('active homepage visibility flags remove their edited content and restore i
  }
 });
 
-test('published CMS enable-disable-enable and edited fields reach every shared footer without a hidden wrapper or image',async()=>{
+test('retired notebook and invitation stay absent after saved flags are enabled; business footer stays connected',async()=>{
  const db=await createTestDatabase();try{
  await loadDevelopmentFixtures(db);const op='10000000-0000-4000-8000-000000000001';
  const uid=(await db.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;
  const actor=(await db.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'owner') returning id",[op,uid])).rows[0].id;
  const row=async()=>(await db.query("select * from content_pages where operator_id=$1 and slug='website-homepage'",[op])).rows[0];
  const save=async(c,action)=>db.query('select save_website_content_v1($1,$2,$3,$4,$5)',[op,actor,JSON.stringify(c),(await row())?.updated_at??null,action]);
- const c={...initialWebsiteContent,'final.eyebrow':'Shared invitation marker','final.title':'Edited title','final.emphasis':'Edited emphasis','final.book':'Choose this day','final.image':'/images/bridge-view.webp','final.alt':'Edited invitation image'};
+ const c={...initialWebsiteContent,'notebook.title':'Retired notebook marker','final.title':'Retired invitation marker','final.image':'/images/bridge-view.webp','final.alt':'Retired banner image','footer.business':'Published business name'};
  await save(c,'initialize');
  for(const visible of [true,false,true]){
- c['final.showOnHomepage']=String(visible);await save(c,'draft');
- const previous=(await row()).published_body;assert.ok(previous);
- await save(c,'publish');const published=(await row()).published_body.content;
- if(process.env.CMS_VISIBILITY_EVIDENCE){mkdirSync('private/cms-visibility',{recursive:true});const css=['src/app/brand-tokens.css','src/app/globals.css','src/app/(public)/public.css'].filter(p=>{try{readFileSync(p);return true;}catch{return false;}}).map(p=>readFileSync(p,'utf8')).join('\n');writeFileSync('private/cms-visibility/'+(visible?'enabled':'disabled')+'.html','<!doctype html><html><head><base href="http://localhost:3000/"><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+css+'</style></head><body><nav><a href="http://localhost:3002/enabled.html">Enabled</a> <a href="http://localhost:3002/disabled.html">Disabled</a></nav>'+routes.map(pathname=>'<article data-route="'+pathname+'"><p>Preceding content '+pathname+'</p><div class="public-site">'+render(h(Footer,{content:published,previewPathname:pathname}))+'</div></article>').join('')+'</body></html>');}
- for(const pathname of routes){const html=render(h(Footer,{content:published,previewPathname:pathname}));assert.equal(html.includes('p-footer-cta'),visible,pathname);assert.equal(html.includes('Shared invitation marker'),visible,pathname);assert.equal(html.includes('Edited invitation image'),visible,pathname);assert.equal((html.match(/<footer/g)||[]).length,1);assert.ok(html.includes('VAT: '+published['footer.vat']));assert.match(html,/href="\/privacy-policy"/);assert.match(html,/href="\/terms-and-conditions"/);
- if(visible){for(const value of ['Edited title','Edited emphasis','Choose this day','bridge-view.webp'])assert.ok(html.includes(value),value);assert.match(html,/href="\/book"/);assert.match(html,/aria-haspopup="dialog"/);}}
+ c['final.showOnHomepage']=String(visible);c['notebook.showOnHomepage']=String(visible);await save(c,'draft');await save(c,'publish');const published=(await row()).published_body.content;
+ assert.equal(published['final.title'],c['final.title']);assert.equal(published['notebook.title'],c['notebook.title'],'historical data is retained');
+ for(const pathname of [...routes,'/faq','/book','/booking/example']){
+ const html=render(h(React.Fragment,null,pathname==='/'?h(HomepageView,{home,content:published,reviews,places:[]}):null,h(Footer,{content:published})));
+ for(const retired of ['p-footer-cta','p-site-footer','p-editorial','Retired notebook marker','Retired invitation marker','Retired banner image'])assert.equal(html.includes(retired),false,pathname+': '+retired);
+ assert.equal((html.match(/<footer/g)||[]).length,1);assert.ok(html.includes('Published business name'));assert.ok(html.includes('VAT: '+published['footer.vat']));assert.match(html,/href="\/privacy-policy"/);assert.match(html,/href="\/terms-and-conditions"/);
  }
- for(const pathname of ['/faq','/book','/booking/example']){const html=render(h(Footer,{content:c,previewPathname:pathname}));assert.ok(!html.includes('p-footer-cta'));assert.ok(!html.includes('Edited invitation image'));}
+ }
  }finally{await db.close();}
 });
 test('shared section flags remove secondary Live consumers but preserve independent map and booking',()=>{

@@ -1,3 +1,5 @@
+PUBLICATION AUTHORIZED (30 October 2026): Local notebook and Final booking invitation retired from admin, public pages and saved previews. Exclusive renderer/styles removed; stored keys/media retained only for compatibility. All 604 tests, clean install, lint/types/build and zero-vulnerability production audit pass. Scoped release excludes unpublished shared-van development; deployment verification pending. See RETIRED-HOMEPAGE-FEATURES-2026-10-30.md.
+
 PUBLICATION AUTHORIZED (30 October 2026): Owner requested complete homepage More time here / Less time waiting service-section removal and publication. Homepage-only rendering change; Route map and stored shared content retained. Validation/release in progress. See HOMEPAGE-SERVICE-SECTION-REMOVAL-2026-10-30.md.
 
 PUBLICATION AUTHORIZED (30 October 2026): Owner requested website-only iframe readiness/reconnection and responsive-height publication. Checks pass; Chrome visual acceptance remains BLOCKED. No map, database or configuration changes. See LIVE-MAP-IFRAME-INTEGRATION-2026-10-30.md.

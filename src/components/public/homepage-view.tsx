@@ -6,8 +6,7 @@ import type { DayPlannerData } from "@/modules/content/day-planner";
 import { HomepageHero } from "./homepage-hero";
 import { GuestReviews } from "./guest-reviews";
 import { defaultReviewSettings, type ReviewSelection } from "@/modules/content/reviews";
-import { PublicBookingLink as Link } from "./booking";
-import { FinalBookingInvitation, ActionLink, Media, SectionHeading } from "./ui";
+import { ActionLink } from "./ui";
 import { homepageVisible, websitePlaces, type WebsiteContent } from "@/modules/content/website-schema";
 import type { Homepage } from "@/modules/content/homepage";
 
@@ -21,12 +20,7 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
       <h2>{routeHeading(c["homeRoute.title"],planner?.stops?.length)}</h2><p>{c["homeRoute.text"]}</p></div><ActionLink href="/route">{c["homeRoute.action"]}</ActionLink></div>
       <HomepageJourney stops={planner?.stops??[]} places={destinations} learnLabel={c['labels.destination']}/>
     </section>}
-    {homepageVisible(c,"notebook") && <section className="p-section p-container">
-      <SectionHeading eyebrow={c["notebook.eyebrow"]} title={c["notebook.title"]}><Link className="p-text-link" href="/explore">{c["notebook.linkLabel"]}</Link></SectionHeading>
-      <div className="p-editorial">{destinations.map(place=><Link href={place.link} key={place.id}><Media src={place.image} alt={place.alt}/><p className="p-eyebrow">{place.tag}</p><h3>{place.name}</h3><span className="p-text-link">{c["notebook.0.linkLabel"]}</span></Link>)}</div>
-    </section>}
     {homepageVisible(c,"reviews") && <GuestReviews labels={c} selection={reviews} eyebrow={c["reviews.eyebrow"]} title={c["reviews.title"]} subtitle={c["reviews.text"]}/>}
-    <FinalBookingInvitation content={c} previewPathname="/"/>
     <PartnersSection content={c} partners={partners}/>
   </main></HomepageJourneyProvider>;
 }

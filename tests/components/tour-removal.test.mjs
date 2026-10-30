@@ -31,7 +31,7 @@ test('historical navigation removes the Tour entry and preserves Route, FAQ and 
  assert.equal(resolveWebsiteLink('/book'),'/book');assert.equal(resolveWebsiteLink('/tourist'),'/tourist');
  validateWebsiteContent(c);assert.equal(JSON.stringify(c),before);
  const html=renderToStaticMarkup(h(PathnameContext.Provider,{value:'/'},h(BookingProvider,{content:c,preview:true},h(Header,{content:c}),h(Footer,{content:c,previewPathname:'/'}))));
- assert.ok(!html.includes('href="/tour'));assert.ok(!html.includes('>Tour<'));assert.ok(html.includes('/book'));
+ assert.ok(!html.includes('href="/tour'));assert.ok(!html.includes('>Tour<'));assert.ok(html.includes('Book your day'));
 });
 test('Tour and retired homepage promotion controls are absent while FAQ retains its owner',()=>{
  assert.ok(!websiteEditorGroups.pages.some(s=>s.id==='tourPage'||s.id==='how'));
@@ -47,5 +47,5 @@ test('homepage omits retired ticket inclusions and service panel while retaining
  const home={...emptyHomepage('ready'),product:{id:'fixture',slug:'fixture',title:'Synthetic ticket',description:'Shared product description',inclusions:'Shared inclusions',stops:[]}};
  const c={...initialWebsiteContent,'tourPage.includedTitle':'Saved inclusion heading','notebook.showOnHomepage':'false'};
  const html=renderToStaticMarkup(h(BookingProvider,{preview:true},h(HomepageView,{home,content:c,places:[],planner:{date:'2030-01-01',times:[],fares:[],stops:[]}})));
- assert.ok(!html.includes('href="/tour'));assert.ok(!html.includes('href="/route#journey-departures"'));assert.ok(html.includes('href="/book"'));assert.equal(html.includes('Saved inclusion heading'),false);assert.equal(html.includes('Shared inclusions'),false);
+ assert.ok(!html.includes('href="/tour'));assert.ok(!html.includes('href="/route#journey-departures"'));assert.ok(html.includes('type="submit"'));assert.equal(html.includes('Saved inclusion heading'),false);assert.equal(html.includes('Shared inclusions'),false);
 });
