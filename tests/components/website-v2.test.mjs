@@ -9,12 +9,12 @@ const {WebsiteHome}=await import('../../src/app/admin/website-home.tsx');
 const {ReviewSummary,PartnerSummary}=await import('../../src/app/admin/website-engagement.tsx');
 const render=props=>renderToStaticMarkup(React.createElement(WebsiteHome,{operatorId:'fixture',content:initialWebsiteContent,published:initialWebsiteContent,canSensitive:true,onOpen(){},...props}));
 test('Website home offers existing canonical destinations and contextual media without mounting mutation forms',()=>{
- const html=render();for(const label of ['Homepage','Route &amp; Live Map','FAQ','Images &amp; media','Homepage SEO','Privacy Policy','Terms &amp; Conditions'])assert(html.includes(label),label);
+ const html=render();for(const label of ['Homepage','Route &amp; Live Map','FAQ','Images &amp; media','Homepage search settings','Privacy Policy','Terms &amp; Conditions'])assert(html.includes(label),label);
  for(const route of ['reviews','partners','route-stops'])assert(html.includes(`/admin/fixture/${route}`));
  assert(html.includes('website-preview?page=route'));assert(html.includes('hero'));assert(!html.includes('<form'));assert(!html.includes('<iframe'));assert(!html.includes('page=tour'));
 });
 test('Website publication comparison and destination status do not claim unsupported translation or publication states',()=>{
- const html=render({content:{...initialWebsiteContent,'hero.title':'Local draft'}});assert(html.includes('Saved draft changes'));assert(html.includes('Publication managed per destination'));assert(html.includes('Content language: English'));assert(!html.includes('name="language"'));assert(!html.includes('Translation complete'));
+ const html=render({content:{...initialWebsiteContent,'hero.title':'Local draft'}});assert(html.includes('Saved draft changes'));assert(html.includes('Publish each destination separately'));assert(!html.includes('Homepage sections'));assert(!html.includes('name="language"'));assert(!html.includes('Translation complete'));
  const restricted=render({canSensitive:false});assert(!restricted.includes('Edit Privacy Policy'));assert(!restricted.includes('Edit Terms &amp; Conditions'));assert(restricted.includes('Edit FAQ'));
 });
 test('engagement summaries retain original review text, language, display order and partner visibility without new moderation actions',()=>{

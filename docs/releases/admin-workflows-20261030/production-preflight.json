@@ -1,0 +1,49 @@
+{
+  "project": "ybngoppqqiohcduojfyg",
+  "function_exists": false,
+  "latest_migration": "20261030000200",
+  "migration_columns": [
+    "version",
+    "statements",
+    "name"
+  ],
+  "service_select_ok": true,
+  "orders": 36,
+  "bookings": 34,
+  "customers": 36,
+  "unique_operator_order": true,
+  "source_body_md5": "2bc0a210cc5d48c369156e97e21ce171",
+  "source_sha256": "0748ebf0e0a6c5e6532469b6a43c2e31d1fb251ddb6448a63ebf107494b6ed2a",
+  "vercel": {
+    "behavior": "Only build production",
+    "command": "if [ \"$VERCEL_ENV\" == \"production\" ]; then exit 1; else exit 0; fi",
+    "node": "24.x",
+    "production_commit": "5ce856450b785ffba3681119d8693e8f6d9750c3",
+    "production_deployment": "2Zi5ee8t4yAwW4E9HMnsxdWxrTp1",
+    "instant_rollback_visible": true
+  },
+  "applied": {
+    "version": "20261030000300",
+    "source_body_md5": "2bc0a210cc5d48c369156e97e21ce171",
+    "records_unchanged": true,
+    "record_fingerprint": "190fc49e26b8aea672ef9741792cf380",
+    "history_registered": true,
+    "service_page1": {
+      "total": 30,
+      "page": 1,
+      "pageSize": 25,
+      "ids_count": 25
+    },
+    "explain_execution_ms": 6.574,
+    "explain_planning_ms": 0.062,
+    "stable": true,
+    "security_invoker": true,
+    "anon_denied": true,
+    "authenticated_denied": true,
+    "service_allowed": true,
+    "foreign_operator_denied": true,
+    "page2_count": 5,
+    "empty_total": 0
+  },
+  "required_columns_ok": true
+}

@@ -2,7 +2,7 @@ import { requirePermission } from "@/modules/identity/require-permission";
 import { hasPermission } from "@/modules/identity/roles";
 import { getDestinationEditor } from "@/modules/content/destinations-server";
 import { getDestinationStops } from "@/modules/content/destination-stops-server";
-import { DestinationsEditor } from "./destinations-editor";
+import { DestinationsWorkspace } from "./destinations-workspace";
 import { getWebsiteEditor } from "@/modules/content/website-server";
 import { WebsiteWorkspace } from "./website-workspace";
 import {getEditorReviewSettings} from "@/modules/content/reviews-server";
@@ -14,5 +14,5 @@ export async function WebsitePanel({ operatorId }: { operatorId: string }) {
   const [record,destinations,source,context,reviews]=data;
   const canPublish=hasPermission(context.role,"content.publish"), canSensitive=hasPermission(context.role,"content.sensitive");
   const links=destinations.filter(d=>d.status==="published"&&d.published_body).map(d=>({value:"/explore/"+d.published_body!.slug,label:d.published_body!.name}));
-  return <WebsiteWorkspace canPublish={canPublish} canSensitive={canSensitive} destinationLinks={links} footerGoogleEditor={<FooterGoogleEditor operatorId={operatorId} url={reviews.google_reviews_url}/>} operatorId={operatorId} record={record} destinationManager={<DestinationsEditor canPublish={canPublish} operatorId={operatorId} records={destinations} stops={source.stops} stopsAvailable={source.available}/>}/>;
+  return <WebsiteWorkspace canPublish={canPublish} canSensitive={canSensitive} destinationLinks={links} footerGoogleEditor={<FooterGoogleEditor operatorId={operatorId} url={reviews.google_reviews_url}/>} operatorId={operatorId} record={record} destinationManager={<DestinationsWorkspace initialView="destinations" canPublish={canPublish} operatorId={operatorId} records={destinations} stops={source.stops} stopsAvailable={source.available}/>}/>;
 }

@@ -1,0 +1,10 @@
+.field{min-width:0;margin:0;padding:16px;border:1px solid var(--admin-border,#dbe2e9);border-radius:12px;}
+.imagePreview{display:block;width:100%;height:150px;object-fit:cover;border-radius:10px;margin-top:8px;}
+.field .actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-block:16px;min-width:0;}
+.field .actions .replaceButton{position:relative;display:inline-flex;align-items:center;justify-content:center;min-height:44px;max-width:100%;box-sizing:border-box;padding:10px 16px;margin:0;overflow:hidden;border:1px solid transparent;border-radius:9px;background:var(--admin-primary,#c62832);color:#fff;font-size:14px;font-weight:600;line-height:1.4;cursor:pointer;}
+.field .actions .replaceButton:hover{background:var(--admin-primary-hover,#a91f29);}
+.field .actions .replaceButton input[type=file]{position:absolute;inset:0;width:100%;height:100%;min-height:0;max-width:100%;padding:0;margin:0;border:0;opacity:0;cursor:pointer;}
+.replaceButton:focus-within{outline:3px solid var(--admin-focus,#076978);outline-offset:3px;}
+.field details{min-width:0;}
+.field details summary{min-height:44px;cursor:pointer;}
+@media(max-width:480px){.field .actions>*{flex:1 1 100%;}}

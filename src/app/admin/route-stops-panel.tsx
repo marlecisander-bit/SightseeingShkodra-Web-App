@@ -2,9 +2,9 @@ import {requirePermission} from '@/modules/identity/require-permission';
 import {hasPermission} from '@/modules/identity/roles';
 import {getDestinationEditor} from '@/modules/content/destinations-server';
 import {getDestinationStops} from '@/modules/content/destination-stops-server';
-import {RouteStopsEditor} from './route-stops-editor';
+import {DestinationsWorkspace} from './destinations-workspace';
 
-export async function RouteStopsPanel({operatorId}:{operatorId:string}) {
+export async function RouteStopsPanel({operatorId,view}:{operatorId:string;view?:string}) {
  const context=await requirePermission(operatorId,'content.manage');
  let data;
  try {
@@ -13,5 +13,5 @@ export async function RouteStopsPanel({operatorId}:{operatorId:string}) {
   return <p role="alert">Stop presentation could not be loaded. Refresh the page or contact your administrator.</p>;
  }
  const [records,source]=data;
- return <RouteStopsEditor operatorId={operatorId} records={records} stops={source.stops} stopsAvailable={source.available} canPublish={hasPermission(context.role,'content.publish')}/>;
+ return <DestinationsWorkspace initialView={view==='destinations'?'destinations':'stops'} operatorId={operatorId} records={records} stops={source.stops} stopsAvailable={source.available} canPublish={hasPermission(context.role,'content.publish')}/>;
 }

@@ -635,3 +635,8 @@ The owner explicitly requested publishing all new developments: unified Products
 
 
 30 October 2026 - Owner authorized publishing the homepage overlap presentation change. Responsive local evidence covers 375, 390, 768, 1024 and 1440px. Three removed strip fields remain in stored schema but leave the active editor; public and compatibility probes follow that ownership. Release checks/CI and Vercel acceptance pending. No migration or cloud settings change. See HOMEPAGE-OVERLAP-LOCAL-2026-10-30.md.
+
+
+## 30 October 2026 - Admin release candidate validation
+
+Authorized admin release: additive production booking-search RPC applied and verified; 646 tests plus lint, typecheck and build passed. Native Chrome controlled acceptance completed; production owner access confirmed. Unrelated Live Map work remains excluded. See docs/releases/admin-workflows-20261030/README.md for evidence, limits and rollback. Publication receipt will record final deployment health.

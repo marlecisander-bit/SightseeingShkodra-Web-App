@@ -89,7 +89,7 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
     if(id)panelHistory.open(id);
   }
   if(home)return <section className={styles.cms} data-website-workspace><WebsiteHome operatorId={operatorId} content={content} published={record.published_body?.content} canSensitive={canSensitive} onOpen={openHome}/>{notice&&<p role="alert">{notice}</p>}</section>;
-  if(scope==="destinations") return <section className={styles.cms} data-editing={!!active}><Button onClick={()=>{setScope("homepage");setHome(true);}}>Back to Website</Button>{destinationManager}</section>;
+  if(scope==="destinations") return <section className={styles.cms} data-editing={!!active}><Button onClick={()=>{if(window.dispatchEvent(new CustomEvent("admin:before-navigation",{cancelable:true}))){setScope("homepage");setHome(true);}}}>Back to Website</Button>{destinationManager}</section>;
   return <section className={styles.cms} data-website-workspace data-editing={!!active}>
     <Button type="button" disabled={pending} onClick={()=>{if(unsaved){setNotice('Save or discard your changes before returning to Website.');return;}panelHistory.close();setHome(true);}}>Back to Website</Button>
     {active&&<div className={styles.editorContext}><p>Website / {({homepage:'Homepage',pages:'Public pages',global:'Shared website',destinations:'Destinations'})[scope]}</p><h1>{ownerFieldLabel(selected.title)}</h1><span>English · Existing shared content</span></div>}
@@ -124,7 +124,7 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
               {dirtySection?.id === section.id && section.fields.some(f => f.kind === "visibility" && values[f.key] !== content[f.key]) && <small className={styles.helper}>Unsaved visibility. Last saved: {homepageVisible(content, section.id) ? "Visible" : "Hidden"}. Save draft keeps changes private until you publish.</small>}
               {active !== section.id && feedback[section.id] && <span className={styles.notice} role="status">{feedback[section.id]}</span>}
             </summary>
-            {(active===section.id || dirtySection?.id===section.id || (!active&&index===0))&&<WebsiteSectionEditor canPublish={canPublish} destinationLinks={destinationLinks} onFeedback={onFeedback} values={values} setValues={setValues} operatorId={operatorId} sectionId={section.id} content={content} stamp={record.updated_at} onStateChange={onStateChange} />}
+            {(active===section.id || dirtySection?.id===section.id || (!active&&index===0))&&<WebsiteSectionEditor previewHref={preview} canPublish={canPublish} destinationLinks={destinationLinks} onFeedback={onFeedback} values={values} setValues={setValues} operatorId={operatorId} sectionId={section.id} content={content} stamp={record.updated_at} onStateChange={onStateChange} />}
             {active===section.id&&section.id==="footer"&&footerGoogleEditor}
           </details>;
         })}

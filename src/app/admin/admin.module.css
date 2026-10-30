@@ -285,7 +285,7 @@
 .shell .panel {background:var(--admin-surface);border:1px solid var(--admin-border);border-radius:12px;box-shadow:none;}
 .shell .cmsPanel {background:transparent;border:0;}
 .shell label {font-size:14px;font-weight:500;}
-.shell :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]),select,textarea) {border:1px solid var(--admin-control-border);border-radius:9px;background:var(--admin-surface);color:var(--admin-text);font:inherit;min-height:44px;padding:10px 12px;}
+.shell :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]),select,textarea) {border:1px solid var(--admin-control-border);border-radius:9px;background:var(--admin-surface);color:var(--admin-text);font:inherit;font-weight:400;min-height:44px;padding:10px 12px;}
 .shell input::placeholder,.shell textarea::placeholder {color:var(--admin-text-muted);opacity:1;}
 .shell :is(input,select,textarea):disabled {background:var(--admin-neutral-soft);color:var(--admin-text-muted);opacity:1;cursor:not-allowed;}
 .shell :is(input[type=checkbox],input[type=radio]) {accent-color:var(--admin-primary);}
@@ -404,7 +404,6 @@
 .shell[data-admin-phase=v2-phase-1] .panel {display:block;min-height:0;}
 
 /* Phase 1A graphical refinement: compact branded identity and quieter active navigation. */
-.brandVan {display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:10px;background:#FBEDEF;color:#C92735;}
 .shell[data-admin-phase=v2-phase-1] .header .adminBrand {gap:8px;flex-wrap:nowrap;}
 .shell[data-admin-phase=v2-phase-1] .header .adminBrand img {width:104px;}
 .shell .headerActions .profileAccess {width:40px;min-width:44px;padding:10px;background:#F6F7F9;color:#172334;border:1px solid #E6E9EF;border-radius:12px;}
@@ -430,3 +429,10 @@
 /* The Website workspace supplies its own compact page context. */
 .panel:has([data-website-workspace]){background:transparent;border:0;padding:0;box-shadow:none}
 .panel:has([data-website-workspace]) .pageTrail,.panel:has([data-website-workspace]) .sectionMenu{display:none}
+
+/* Shared form containment: long labels and native controls stay in their panel. */
+.shell :is(input,select,textarea){box-sizing:border-box;}
+.shell fieldset{min-inline-size:0;max-width:100%;}
+.shell :is(button,summary){white-space:normal;overflow-wrap:anywhere;}
+.shell .panel :is(h1,h2,h3,legend){overflow-wrap:anywhere;}
+@media(max-width:600px){.shell input[type=date],.shell input[type=time]{min-width:0;width:100%;}}

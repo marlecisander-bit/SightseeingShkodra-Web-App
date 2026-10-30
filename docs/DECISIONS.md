@@ -202,3 +202,8 @@ The owner explicitly requested publishing all new developments: unified Products
 ## 30 October 2026 — Homepage overlap publication authorized
 
 The owner explicitly requested publishing the locally reviewed homepage presentation change, superseding its local-only limit. Preserve original hero assets/copy, shared product data/pricing and product-specific booking links; remove the hero CTA and navigation/about strip and overlap cards in normal flow. Retire only the three obsolete strip controls from the active editor; retain their schema and stored values with compatibility verification. No migration, cloud configuration, scheduler or communication change.
+
+
+## 30 October 2026 — Authorized admin workflow release
+
+User authorized production publication after database and acceptance gates. The additive booking search migration is applied and verified on the existing Supabase production project. Isolated admin candidate passes646 tests, lint, typecheck and build; native Chrome acceptance used controlled synthetic editor responses and production read-only database checks. Unrelated embedded Live Map development remains excluded and preserved. See `docs/releases/admin-workflows-20261030/README.md` for evidence, limits, deployment sequence and tested rollback. Publication receipt will identify the released commit and hosted health checks.

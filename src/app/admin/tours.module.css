@@ -42,3 +42,4 @@
 @media(max-width:359px){.header{flex-wrap:wrap;}.primary{width:100%;}.tabs a{flex-basis:100px;padding:7px;}.departure{padding:12px;}}
 @media(min-width:768px){.metrics{grid-template-columns:repeat(3,minmax(0,1fr));}.metrics section:last-child{grid-column:auto;}.departures,.split{grid-template-columns:repeat(2,minmax(0,1fr));}.tabs a{flex:1 1 auto;}.card{padding:20px;}}
 @media(prefers-reduced-motion:reduce){.tours *{scroll-behavior:auto;transition:none;}}
+@media(max-width:600px){.header{flex-wrap:wrap;}.header .primary{max-width:100%;white-space:normal;text-align:center;}.note summary{font-weight:600;}}

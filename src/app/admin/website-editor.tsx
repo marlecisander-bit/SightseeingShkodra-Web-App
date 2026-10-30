@@ -1,5 +1,6 @@
 "use client";
 import {sectionConsumers} from "@/modules/content/editorial-fields";
+import {EditorActions} from "./editor-action-bar";
 import {FaqInput} from './faq-input';
 import { ownerFieldLabel, positionLabels, imageUploadMessage } from "./presentation";
 import { focalPositions } from "@/modules/content/hero-amenities";
@@ -13,7 +14,7 @@ import styles from "./website-editor.module.css";
 import { NavigationPreview } from "./navigation-preview";
 import { prepareWebsiteImage } from "@/modules/content/image-upload";
 
-export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, values, setValues, onStateChange, onFeedback, canPublish = false, destinationLinks = [] }: { canPublish?:boolean; destinationLinks?:{value:string;label:string}[]; operatorId: string; sectionId: string; content: WebsiteContent; stamp: string; values: WebsiteContent; setValues: Dispatch<SetStateAction<WebsiteContent>>; onStateChange?: (id: string, dirty: boolean, pending: boolean) => void; onFeedback?: (id: string, message: string) => void }) {
+export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, values, setValues, onStateChange, onFeedback, canPublish = false, destinationLinks = [], previewHref }: { previewHref?:string; canPublish?:boolean; destinationLinks?:{value:string;label:string}[]; operatorId: string; sectionId: string; content: WebsiteContent; stamp: string; values: WebsiteContent; setValues: Dispatch<SetStateAction<WebsiteContent>>; onStateChange?: (id: string, dirty: boolean, pending: boolean) => void; onFeedback?: (id: string, message: string) => void }) {
   const section = editableWebsiteSections.find(section => section.id === sectionId)!;
   const [message, setMessage] = useState("");
   const [pending, start] = useTransition();
@@ -96,13 +97,12 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
         </div>;
       })}</div></fieldset>)}
       {section.fields.some(f=>f.kind === "image") && <details><summary>Technical details</summary><p>For support: replace an existing image link without uploading a new file.</p>{section.fields.filter(f=>f.kind === "image").map(f=><label key={f.key}>{ownerFieldLabel(f.label)} link<input maxLength={f.max} value={values[f.key]} onChange={e=>setValues(v=>({...v,[f.key]:e.target.value}))}/></label>)}</details>}
-      <div className={styles.editorActions}>
-        <span className={styles.helper}>{dirty ? "Unsaved changes" : "Saved content"}</span>
+      <EditorActions dirty={dirty} pending={pending} scope="Publish applies this section and all previously saved website drafts.">
         <Button className={styles.textButton} type="button" disabled={!dirty} onClick={() => {setValues(current => ({...current, ...Object.fromEntries(section.fields.map(f => [f.key, content[f.key]]))})); setMessage("Unsaved changes discarded.");}}>Discard</Button>
         <Button className={styles.secondary} name="operation" value="draft">{pending ? "Saving…" : "Save draft"}</Button>
+        {previewHref&&(!dirty?<a href={previewHref} target="_blank" rel="noopener noreferrer">Preview saved draft</a>:<span>Save draft to preview your changes</span>)}
         <Button className={styles.primary} name="operation" value="publish" disabled={!canPublish}>Publish website changes</Button>
-      </div>
-      <p className={styles.helper}>Publish applies this section and all previously saved website drafts.</p>
+      </EditorActions>
     </fieldset>
     {message && <p className={styles.notice} role="status">{message}</p>}
   </form>;
