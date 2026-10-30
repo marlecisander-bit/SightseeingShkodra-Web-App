@@ -6,7 +6,7 @@ import {platformSql,loadDevelopmentFixtures} from '../helpers/database.mjs';
 test('migration preserves existing booking, QR, management capability, prices and events while backfilling inventory snapshots',async()=>{
  const db=new PGlite();try{
   await db.exec(platformSql);const dir=new URL('../../supabase/migrations/',import.meta.url);const files=(await readdir(dir)).filter(f=>f.endsWith('.sql')).sort();
-  for(const f of files.filter(f=>f!=='20261030000100_shared_van_products.sql'))await db.exec(await readFile(new URL(f,dir),'utf8'));
+  for(const f of files.filter(f=>f<'20261030000100_shared_van_products.sql'))await db.exec(await readFile(new URL(f,dir),'utf8'));
   await loadDevelopmentFixtures(db);const op='10000000-0000-4000-8000-000000000001',p='10000000-0000-4000-8000-000000000020',dep='10000000-0000-4000-8000-000000000052',session='existing-before-migration-session-123456';
   await db.query(`update products set status='published',pricing_rules='{"version":1,"model":"per_guest","currency":"EUR","unit_price":1000}',capacity_rules='{"version":1,"model":"departure_seats"}' where id=$1`,[p]);await db.query("update departures set status='scheduled' where id=$1",[dep]);
   const hold=(await db.query('select * from create_hold_v1($1,$2,$3,gen_random_uuid(),2)',[op,dep,session])).rows[0];

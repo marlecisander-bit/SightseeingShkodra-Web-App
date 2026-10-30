@@ -110,35 +110,9 @@ export async function CatalogPanel({
 }) {
   await requirePermission(operatorId, "catalog.manage");
   const client = await createSessionClient();
-  const [p, s] = await Promise.all([
-    client
-      .from("products")
-      .select(
-        "id,title,slug,type,status,inclusions,supplier_id,pricing_rules,updated_at",
-      )
-      .eq("operator_id", operatorId)
-      .order("title")
-      .limit(100),
-    client
-      .from("suppliers")
-      .select("id,name,type")
-      .eq("operator_id", operatorId)
-      .order("name")
-      .limit(100),
-  ]);
-  if (p.error || s.error)
-    return <p role="alert">Catalog is temporarily unavailable.</p>;
-  const products = (p.data ?? []).map(({ pricing_rules, ...row }) => ({
-      ...row,
-      price_eur:
-        pricing_rules?.version === 1 &&
-        pricing_rules?.model === "per_guest" &&
-        pricing_rules?.currency === "EUR" &&
-        Number.isSafeInteger(pricing_rules.unit_price)
-          ? `${BigInt(pricing_rules.unit_price) / BigInt(100)}.${String(BigInt(pricing_rules.unit_price) % BigInt(100)).padStart(2, "0")}`
-          : "",
-    })),
-    suppliers = s.data ?? [];
+  const s = await client.from('suppliers').select('id,name,type').eq('operator_id',operatorId).order('name').limit(100);
+  if(s.error)return <p role="alert">Suppliers are temporarily unavailable.</p>;
+  const suppliers=s.data??[];
   return (
     <div>
       {result && (
@@ -148,11 +122,7 @@ export async function CatalogPanel({
             : "Unable to save. Check the required fields, website address and selected supplier."}
         </p>
       )}
-      <p>
-        Product publication does not require legacy search titles, descriptions or images. Public SEO is managed in Website. Manage schedules, seats and passenger prices under Calendar & Pricing. Existing bookings keep their agreed total.
-      </p>
-      <p>For offers sharing the van, choose Van tour. After creating a van product, open Calendar &amp; Pricing to select its shared van schedule, seat-reservation period and passenger prices. Then publish its booking card in Website.</p><p>Stops and live vehicle information are managed from Live Map.</p>
-      {(["product", "supplier"] as const).map((entity) => (
+      {(["supplier"] as string[]).map((entity) => (
         <div key={entity} className={styles.group}>
           <h2>
             {entity === "product"
@@ -169,7 +139,7 @@ export async function CatalogPanel({
           </CatalogCreate>
           <p className={styles.listLabel}>Existing {entity === "product" ? "products" : "suppliers"}</p>
           {(entity === "product"
-            ? products
+            ? []
             : suppliers
           ).map((row) => (
             <details key={row.id} className={styles.record}>
@@ -192,7 +162,7 @@ export async function CatalogPanel({
         </div>
       ))}
       <p>
-        Showing up to 100 products and 100 suppliers. Suppliers linked to products cannot be
+        Showing up to 100 suppliers. Suppliers linked to products cannot be
         deleted.
       </p>
     </div>

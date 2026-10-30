@@ -266,7 +266,7 @@ export function Header({ content: c = initialWebsiteContent, previewPathname }: 
   const pathname = previewPathname ?? currentPathname;
   const inBooking = pathname === "/book" || pathname.startsWith("/booking/");
   const [heroVisible, setHeroVisible] = useState(true);
-  const { open, setSelection } = useBooking();
+  const { open } = useBooking();
   const [hash, setHash] = useState("");
   const headerRef = useRef<HTMLElement>(null);
   const [mobileHeadlineCovered,setMobileHeadlineCovered]=useState(false);
@@ -349,8 +349,8 @@ export function Header({ content: c = initialWebsiteContent, previewPathname }: 
   },[pathname]);
   const bookFromHeader = () => {
     setMenu(false);
-    const date = pathname === "/" ? document.querySelector<HTMLInputElement>('#home-hero [aria-label="Daily ticket availability"] input[type="date"]')?.value : undefined;
-    if (date) setSelection(current => current.date === date ? current : {...current, date, departureId:""});
+    const experiences=pathname==='/'?document.getElementById('experiences'):null;
+    if(experiences){experiences.scrollIntoView({behavior:'smooth',block:'start'});return;}
     open();
   };
   return (

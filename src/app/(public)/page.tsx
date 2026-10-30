@@ -17,5 +17,5 @@ export default async function Home() {
   if (!publication.published) return <main id="main-content" className="p-section p-container"><p role="alert">Website content is temporarily unavailable. Please try again later.</p></main>;
   const content = publication.content;
   const [home, reviews, planner, places, partners,products] = await Promise.all([getHomepage(), getPublicReviews(), getDayPlanner(), getPublicDestinations(), loadPublicPartners(homepageVisible(content,"partners")),getBookableProducts().catch(()=>[])]);
-  return <HomepageView products={products.filter(p=>!p.primary&&p.id!==home.product?.id)} partners={partners} planner={planner} home={home} content={content} reviews={reviews} places={places.filter(d=>d.showOnHomepage)} />;
+  return <HomepageView products={products} partners={partners} planner={planner} home={home} content={content} reviews={reviews} places={places.filter(d=>d.showOnHomepage)} />;
 }

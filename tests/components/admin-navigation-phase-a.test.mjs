@@ -8,14 +8,14 @@ import {adminNavigationGroups} from '../../src/modules/identity/admin-navigation
 registerHooks({load(url,c,next){if(url.endsWith('.module.css'))return {format:'module',source:'export default new Proxy({}, {get:(_,key)=>String(key)})',shortCircuit:true};return next(url,c);}});
 const {AdminNavigation}=await import('../../src/app/admin/admin-navigation.tsx');
 const props={groups:adminNavigationGroups('fixture','owner'),section:'content',account:React.createElement('a',{href:'/admin'},'Switch workspace')};
-test('five direct mobile links share role-filtered desktop groups; canonical URLs and external behavior survive',()=>{
+test('six direct mobile links share role-filtered desktop groups; canonical URLs and external behavior survive',()=>{
  const dom=new JSDOM(renderToStaticMarkup(React.createElement(AdminNavigation,props))),d=dom.window.document;
- assert.equal(d.querySelectorAll('aside details.taskGroup').length,5);
+ assert.equal(d.querySelectorAll('aside details.taskGroup').length,6);
  assert.equal(d.querySelectorAll('aside details.taskGroup[open]').length,1);
  assert.equal(d.querySelector('.taskGroup[open] summary').textContent.trim(),'Website');
  const links=[...d.querySelectorAll('nav[aria-label="Primary admin navigation"] > a')];
- assert.deepEqual(links.map(x=>x.textContent),['Home','Bookings','Tours','Website','More']);
- assert.deepEqual(links.map(x=>x.getAttribute('href')),['/admin/fixture/overview','/admin/fixture/bookings','/admin/fixture/departures?view=today#admin-nav=today','/admin/fixture/content','/admin/fixture/more']);
+ assert.deepEqual(links.map(x=>x.textContent),['Home','Bookings','Tours','Products','Website','More']);
+ assert.deepEqual(links.map(x=>x.getAttribute('href')),['/admin/fixture/overview','/admin/fixture/bookings','/admin/fixture/departures?view=today#admin-nav=today','/admin/fixture/products','/admin/fixture/content','/admin/fixture/more']);
  assert.equal(d.querySelectorAll('aside [aria-current=page]').length,1);
  assert.equal(d.querySelector('a[href*="netlify.app"]').rel,'noopener noreferrer');
  assert.equal(d.querySelectorAll('dialog').length,0,'primary destinations do not create temporary history entries');

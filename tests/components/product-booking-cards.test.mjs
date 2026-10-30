@@ -10,33 +10,24 @@ registerHooks({resolve(specifier,c,next){
  return next(specifier,c);
 },load(url,c,next){if(url.startsWith('data:text/javascript,'))return {format:'module',source:decodeURIComponent(url.slice('data:text/javascript,'.length)),shortCircuit:true};if(url.endsWith('.module.css'))return {format:'module',source:'export default {}',shortCircuit:true};return next(url,c);}});
 const {ProductBookingCards}=await import('../../src/components/public/product-booking-cards.tsx');
-const {ProductBookingSettings}=await import('../../src/app/admin/product-booking-settings.tsx');
 const source={id:'10000000-0000-4000-8000-000000000001',title:'Hop On Hop Off'};
 const loop={id:'10000000-0000-4000-8000-000000000002',title:'Sightseeing Loop Tour',slug:'loop',mode:'selected_departure',minutes:120,card:{image:'/images/lake.webp',alt:'Lake',description:'Published loop description',enabled:true,order:1}};
-test('published cards reuse accessible date/passenger/checkout controls and distinguish reservation periods',()=>{
- const html=renderToStaticMarkup(React.createElement(ProductBookingCards,{products:[loop,{...loop,id:source.id,title:'Whole-day ticket',mode:'whole_day'}],content:initialWebsiteContent,preview:true}));
- const dom=new JSDOM(html);const document=dom.window.document;
- assert.equal(document.querySelectorAll('article').length,2);
- assert.equal(document.querySelectorAll('input[type="date"]').length,2);
- assert.equal(document.querySelectorAll('button[type="submit"]').length,2);
- assert.match(document.body.textContent,/Sightseeing Loop Tour/);assert.match(document.body.textContent,/selected departure · 2 hours/);assert.match(document.body.textContent,/all operating day/);
- assert.equal(document.querySelectorAll('dialog').length,2);
- assert.doesNotMatch(document.body.textContent,/€\d/,'no invented price before a domain quote');dom.window.close();
+test('compact cards show photos, short facts and one product-specific booking link without selectors',()=>{
+ const html=renderToStaticMarkup(React.createElement(ProductBookingCards,{products:[{...loop,adultPrice:1200,card:{...loop.card,features:['audio_guide']}},{...loop,id:source.id,title:'Whole-day ticket',mode:'whole_day',adultPrice:0}],content:initialWebsiteContent}));
+ const dom=new JSDOM(html),d=dom.window.document;assert.equal(d.querySelectorAll('article').length,2);assert.equal(d.querySelectorAll('img').length,2);assert.equal(d.querySelectorAll('input,select,form,dialog,details').length,0);
+ const cards=[...d.querySelectorAll('article')];assert.equal(cards[0].querySelector('h3').textContent,loop.title);assert.doesNotMatch(cards[0].textContent,/2 hours reservation/);assert.match(cards[0].textContent,/Audio guide/);assert.match(cards[0].textContent,/12.00/);assert.doesNotMatch(cards[1].textContent,/Whole-day reservation/);assert.match(cards[1].textContent,/0.00/);
+ for(const [i,product]of [loop,{id:source.id}].entries()){const links=cards[i].querySelectorAll('a');assert.equal(links.length,1);assert.equal(links[0].getAttribute('href'),`/book?productId=${product.id}`);assert.equal(cards[i].querySelector('div').textContent.includes('Published loop description'),false);}
+ assert.doesNotMatch(cards[1].textContent,/Audio guide/);dom.window.close();
 });
-test('disabled cards are absent; reservation settings expose shared inventory without creating another schedule',()=>{
+test('hidden cards remain absent and private previews cannot navigate into live booking',()=>{
  assert.equal(renderToStaticMarkup(React.createElement(ProductBookingCards,{products:[{...loop,card:{...loop.card,enabled:false}}],content:initialWebsiteContent})), '');
- const html=renderToStaticMarkup(React.createElement(ProductBookingSettings,{operatorId:source.id,product:{...loop,updated_at:'2030-01-01',inventory_product_id:source.id,seat_reservation_mode:'selected_departure',reservation_minutes:120},sources:[source]}));
- const dom=new JSDOM(html);const document=dom.window.document;
- assert.equal(document.querySelector('select[name="inventory_product_id"]').value,source.id);
- assert.equal(document.querySelector('input[name="reservation_minutes"]').value,'120');
- assert.deepEqual([...document.querySelectorAll('select[name="seat_reservation_mode"] option')].map(o=>o.value),['selected_departure','whole_day']);
- assert.match(document.body.textContent,/new reservations only/);dom.window.close();
+ const dom=new JSDOM(renderToStaticMarkup(React.createElement(ProductBookingCards,{products:[loop],content:initialWebsiteContent,preview:true})));assert.equal(dom.window.document.querySelectorAll('a').length,0);assert.equal(dom.window.document.querySelector('button').disabled,true);assert.doesNotMatch(dom.window.document.body.textContent,/Audio guide|Wi-Fi/);dom.window.close();
 });
 test('product contexts isolate selection, inherit meeting-point settings and use distinct accessible dialog titles',async()=>{
  const {act}=await import('react');const {BookingProvider,useBooking}=await import('../../src/components/public/booking.tsx');
  const dom=new JSDOM('<div id="root"></div>',{url:'http://localhost/'});const saved=new Map();
  for(const name of ['window','document','navigator','HTMLElement','HTMLDialogElement','Node','Event','sessionStorage','IS_REACT_ACT_ENVIRONMENT']){saved.set(name,Object.getOwnPropertyDescriptor(globalThis,name));Object.defineProperty(globalThis,name,{configurable:true,writable:true,value:name==='IS_REACT_ACT_ENVIRONMENT'?true:dom.window[name]});}
- window.scrollTo=()=>{};window.HTMLDialogElement.prototype.showModal=function(){this.open=true;};window.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new window.Event('close'));};
+ window.scrollTo=()=>{};window.HTMLElement.prototype.scrollIntoView=function(){};window.HTMLDialogElement.prototype.showModal=function(){this.open=true;};window.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new window.Event('close'));};
  const contexts=new Map();function Observe({id}){contexts.set(id,useBooking());return null;}
  const point={name:'Configured boarding point',directions:'Synthetic fixture',url:'https://maps.app.goo.gl/test',label:'Find boarding point',stopId:null};
  const {createRoot}=await import('react-dom/client');const root=createRoot(document.getElementById('root'));

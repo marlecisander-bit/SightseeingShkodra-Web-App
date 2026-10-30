@@ -32,7 +32,7 @@ test('all four page SEO owners supply title, description and social image withou
 });
 test('obsolete intro controls stay stored but are not editable; email renders the saved meeting commitment safely',()=>{
  const keys=editableWebsiteSections.flatMap(s=>s.fields.map(f=>f.key));for(const key of ['intro.eyebrow','intro.title','intro.showOnHomepage','tourPage.includedTitle','intro.text','intro.link','intro.linkLabel','how.title','nav.mobileMap','nav.mobileBook','footer.line1']){assert.ok(key in initial);assert.equal(keys.includes(key),false,key);}
- assert.ok(keys.includes('hero.amenities'));
+ assert.equal(keys.includes('hero.amenities'),false);
  const b={reference:'TEST',status:'confirmed',name:'Synthetic',createdAt:'2030-01-01',currency:'EUR',total:1000,paymentStatuses:[],items:[{title:'Synthetic ticket',description:'Saved <email copy>',guests:1}],meetingPoint:{name:'Saved <meeting>',directions:'Bring <ticket>',url:'https://maps.app.goo.gl/Test123',label:'Open meeting point in Google Maps',stopId:null}};
  const email=bookingEmailTemplate('BOOKING_CREATED','customer',b,{version:2,from:'test@example.invalid',replyTo:'test@example.invalid',owner:'test@example.invalid',siteUrl:'https://example.invalid',testRecipient:null},'operator','booking');
  assert.ok(email.html.includes('About your ticket'));assert.ok(email.html.includes('Saved &lt;email copy&gt;'));assert.ok(email.text.includes('Saved <email copy>'));assert.ok(email.html.includes('Saved &lt;meeting&gt;'));assert.ok(email.html.includes(b.meetingPoint.url));assert.equal(email.html.includes('rssrPnaBYZVWp316A'),false);assert.ok(email.text.includes('Bring <ticket>'));

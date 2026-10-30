@@ -15,11 +15,11 @@ const c={...initialWebsiteContent,'how.0.title':'Published step','intro.title':'
 const render=(content=c,data=home,plan=planner)=>renderToStaticMarkup(React.createElement(BookingProvider,null,React.createElement(HomepageView,{home:data,content,planner:plan,places:[]})));
 test('homepage retains hero and operational stops without the retired service section',()=>{
  const html=render();
- const markers=['id="home-hero"','id="route"'];
+ const markers=['id="home-hero"','id="experiences"','id="route"'];
  for(let i=1;i<markers.length;i++)assert.ok(html.indexOf(markers[i])>html.indexOf(markers[i-1]),markers[i]);
  for(const value of ['Actual boarding point','17.50'])assert.ok(html.includes(value),value);
  assert.ok(!html.includes('Published step'));assert.ok(!html.includes('Published highlights'));assert.ok(!html.includes('home-intro'));
- assert.ok(html.includes('1 stop around Shkodra'));
+ assert.equal(html.includes('1 stop around Shkodra'),false);
  assert.equal(html.includes('aria-label="Live service"'),false);
  assert.equal(html.includes('Wi-Fi'),false);
 });
@@ -28,7 +28,7 @@ test('missing product, operational route and schedule never fabricate a price, f
  assert.equal(html.includes('id="home-ticket"'),false);
  assert.equal(html.includes('5 stops'),false);
  assert.equal(html.includes('From €'),false);
- assert.ok(html.includes('Check availability'));
+ assert.ok(html.includes('Choose your experience'));assert.equal(html.includes('id="experiences"'),false);
  assert.match(html, /<h2>[^<]*Published stops[^<]*<\/h2>/);
  assert.ok(html.includes('Published stops are temporarily unavailable.'));
 });
@@ -43,7 +43,7 @@ test('retired service section stays absent with either saved visibility setting'
 
 test('Admin homepage order has one owner per section and matches the public progression',async()=>{
  const {websiteEditorGroups,editableWebsiteSections}=await import('../../src/modules/content/website-schema.ts');
- assert.deepEqual(websiteEditorGroups.homepage.map(s=>s.id),['hero','heroAmenities','homeRoute','route','reviews','partners']);
+ assert.deepEqual(websiteEditorGroups.homepage.map(s=>s.id),['hero','homeRoute','route','reviews','partners']);
  assert.equal(editableWebsiteSections.filter(s=>s.id==='how').length,0);
  assert.equal(new Set(editableWebsiteSections.flatMap(s=>s.fields.map(f=>f.key))).size,editableWebsiteSections.flatMap(s=>s.fields).length);
 });
@@ -58,6 +58,6 @@ test('stale CMS promotion flags cannot restore the section or its spacing wrappe
  for(const flag of ['true','false']) {
  const html=render({...c,'intro.showOnHomepage':flag});
  for(const value of ['id="home-ticket"','p-daily-ticket','home-ticket-service','Published story','Published product description','Only the configured inclusion'])assert.equal(html.includes(value),false,value);
- assert.ok(html.includes('id="home-hero"'));assert.ok(html.includes('type="submit"'));assert.ok(html.includes('Book your day'));
+ assert.ok(html.includes('id="home-hero"'));assert.ok(html.includes('/book?productId='));assert.ok(html.includes('Book your day'));
  }
 });

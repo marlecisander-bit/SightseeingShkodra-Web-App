@@ -144,3 +144,14 @@ Live Map owns operational stop order, coordinates, vehicle position, recognition
 
 
 30 October 2026 local product extension: product identity/publication remains in Products & suppliers. Calendar & Pricing owns shared inventory links, reservation periods and passenger prices. Website > Product booking cards is the single owner of product card draft/published photo, alt text, introduction, display order and homepage visibility, stored on the same product entity. Public cards consume only card_published and the shared booking API. The main CMS verification normalizes opaque per-mount React IDs while still checking dialog title associations. See SHARED-VAN-PRODUCTS-2026-10-30.md.
+
+
+## 30 October 2026 — Unified Products ownership approved
+
+The owner approved the complete single-workspace Products concept: details, photos, passenger fares, shared schedule/seat policy and website publication are managed under Products. This supersedes the earlier split between Catalog, Calendar & Pricing and Website product-card editors, including the older AGENTS content-ownership placement rule. The same entities and booking engine remain authoritative; daily date-specific calendar operations stay operational consumers. Every published card, including Daily Ticket, belongs directly below the hero. Original roadmap unchanged. Local implementation and migration only; no redesign publication or hosted write performed. See UNIFIED-PRODUCTS-2026-10-30.md.
+
+
+30 October 2026 — Latest product-card amendment: owner supplied the Prague card reference and requested less prose, icon information badges and one booking button at the end. Remove all date/passenger/departure controls from homepage cards. Product-specific links open the shared booking platform; selection happens there. Optional product features are explicitly managed under Products, with no inferred service claims. This supersedes the previous inline-card request. Local development only. See UNIFIED-PRODUCTS-2026-10-30.md.
+
+
+30 October 2026 — Owner moved all amenity controls to Products, with selectable service/ticket badges and per-amenity icon choices. Hero strip/defaults and old Website amenity editor removed; persisted hero data retained only for compatibility. 2-hour/full-day labels are exclusive and do not mutate seat occupancy. Local validation: 633 tests, lint/typecheck/build pass; no hosted write or redesign deployment. See UNIFIED-PRODUCTS-2026-10-30.md.

@@ -2,9 +2,9 @@ import {MutationForm} from './mutation-form';
 import {SubmitButton} from './submit-button';
 import {saveProductBooking} from './product-booking-actions';
 export type BookingProductSettings={id:string;title:string;updated_at:string;inventory_product_id:string|null;seat_reservation_mode:string;reservation_minutes:number};
-export function ProductBookingSettings({operatorId,product,sources}:{operatorId:string;product:BookingProductSettings;sources:{id:string;title:string}[]}) {
+export function ProductBookingSettings({operatorId,product,sources,workspace=false}:{workspace?:boolean;operatorId:string;product:BookingProductSettings;sources:{id:string;title:string}[]}) {
  return <details><summary>{product.title} · Seat reservation &amp; shared schedule</summary><MutationForm action={saveProductBooking.bind(null,operatorId,product.id)}>
- <input type="hidden" name="updated_at" value={product.updated_at}/>
+ {workspace&&<input type="hidden" name="workspace_product" value={product.id}/>}<input type="hidden" name="updated_at" value={product.updated_at}/>
  <label>Van schedule &amp; capacity<select name="inventory_product_id" defaultValue={product.inventory_product_id??''}><option value="">Own schedule (configure below)</option>{sources.filter(p=>p.id!==product.id).map(p=><option value={p.id} key={p.id}>Share {p.title}</option>)}</select></label>
  <p>Shared products sell seats from the same van inventory. Do not create another schedule for a linked product.</p>
  <label>Seat reservation<select name="seat_reservation_mode" defaultValue={product.seat_reservation_mode}><option value="selected_departure">Selected departure</option><option value="whole_day">Whole operating day</option></select></label>

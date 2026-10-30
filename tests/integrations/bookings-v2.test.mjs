@@ -114,12 +114,14 @@ test('sign-in return from the safe calendar handoff stays in read-only Bookings;
 
 test('Tours static destinations skip operational reads and keep the existing departure permission',async()=>{
  const {CalendarPanel}=await import('../../src/app/admin/calendar-panel.tsx');
- for(const view of ['tickets','route','live']){const f=fixture();const result=await CalendarPanel({operatorId:op,view});assert.equal(result.props.view,view);assert.equal(f.calls.length,0);assert.deepEqual(f.checks,['departures.manage']);}
+ for(const view of ['route','live']){const f=fixture();const result=await CalendarPanel({operatorId:op,view});assert.equal(result.props.view,view);assert.equal(f.calls.length,0);assert.deepEqual(f.checks,['departures.manage']);}
  const f=fixture({role:'content_editor'});await assert.rejects(CalendarPanel({operatorId:op,view:'today'}),/FORBIDDEN/);assert.equal(f.calls.length,0);
 });
-test('Tours Today uses a pure month projection; pricing reads categories without inventory preparation',async()=>{
+test('Tours Today uses a pure month projection and former product settings redirect without inventory preparation',async()=>{
  const {CalendarPanel}=await import('../../src/app/admin/calendar-panel.tsx');
- for(const view of ['today','prices']){const f=fixture({allowRpc:true});const result=await CalendarPanel({operatorId:op,view,date:'2026-10-24'});assert.equal(result.props.view,view);assert(f.calls.some(c=>c.table===(view==='today'?'read_operations_calendar_v1':'passenger_categories_v1')));assert(!f.calls.some(c=>c.table==='ensure_schedule_date_v1'));assert(!f.calls.some(c=>['orders','bookings','inventory_holds'].includes(c.table)));}
+ const f=fixture({allowRpc:true});const result=await CalendarPanel({operatorId:op,view:'today',date:'2026-10-24'});assert.equal(result.props.view,'today');assert(f.calls.some(c=>c.table==='read_operations_calendar_v1'));assert(!f.calls.some(c=>c.table==='ensure_schedule_date_v1'));assert(!f.calls.some(c=>['orders','bookings','inventory_holds'].includes(c.table)));
+ for(const view of ['prices','tickets']){const f=fixture();await assert.rejects(CalendarPanel({operatorId:op,view}),e=>e.destination===`/admin/${op}/products`);assert.equal(f.calls.length,0);}
+
 });
 test('Tours incomplete schedule enumeration fails closed instead of presenting a partial total',async()=>{
  const {CalendarPanel}=await import('../../src/app/admin/calendar-panel.tsx');
