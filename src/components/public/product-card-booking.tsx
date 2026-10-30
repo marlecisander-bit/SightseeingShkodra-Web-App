@@ -15,7 +15,7 @@ export function ProductCardBooking({product,fare,bookingLabel,preview=false}:{pr
  {features.length>0&&<ul className={styles.badges} aria-label={`${product.title} information`}>
  {features.map(f=><li key={f.key}><AmenityIcon name={f.icon}/>{f.label}</li>)}
  </ul>}
- <div className={styles.price}>{validPrice?<><strong>{bookingMoney(price,'EUR')}</strong><span>{product.adultPrice===undefined?'Quoted adult fare':'Standard adult price'}</span></>:<span>See prices when booking</span>}</div>
- {preview?<button className={`p-button p-button-booking ${styles.book}`} type="button" disabled>{bookingLabel}</button>:<Link className={`p-button p-button-booking ${styles.book}`} href={`/book?productId=${product.id}`}>{bookingLabel}</Link>}
+ <div className={styles.price} data-product-booking>{validPrice?<><strong>{bookingMoney(price,'EUR')}</strong><span>{product.adultPrice===undefined?'Quoted adult fare':'Standard adult price'}</span></>:<span>See prices when booking</span>}</div>
+ {preview?<button className={`p-button p-button-booking ${styles.book}`} type="button" disabled>{bookingLabel}</button>:<Link data-product-booking className={`p-button p-button-booking ${styles.book}`} href={`/book?productId=${product.id}`}>{bookingLabel}</Link>}
  </div>;
 }

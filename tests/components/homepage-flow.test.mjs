@@ -28,7 +28,7 @@ test('missing product, operational route and schedule never fabricate a price, f
  assert.equal(html.includes('id="home-ticket"'),false);
  assert.equal(html.includes('5 stops'),false);
  assert.equal(html.includes('From €'),false);
- assert.ok(html.includes('Choose your experience'));assert.equal(html.includes('id="experiences"'),false);
+ assert.equal(html.includes('Choose your experience'),false);assert.equal(html.includes('id="experiences"'),false);
  assert.match(html, /<h2>[^<]*Published stops[^<]*<\/h2>/);
  assert.ok(html.includes('Published stops are temporarily unavailable.'));
 });
