@@ -1,6 +1,6 @@
 export const checkoutStorageKey = "shkodra-checkout-v1";
-export function clearCheckoutSession() {
-  try { sessionStorage.removeItem(checkoutStorageKey); } catch { /* Storage may be unavailable. */ }
+export function clearCheckoutSession(productId?:string) {
+  try { sessionStorage.removeItem(productId?`${checkoutStorageKey}:${productId}`:checkoutStorageKey); } catch { /* Storage may be unavailable. */ }
 }
 export function freshBookingSelection(now = new Date()) {
   const date = new Intl.DateTimeFormat("en-CA", {timeZone:"Europe/Tirane",year:"numeric",month:"2-digit",day:"2-digit"}).format(now);

@@ -114,8 +114,8 @@ test('cross-operator relationships are rejected across the business graph', asyn
   }
 });
 
-test('booking item departure must belong to its selected product', async () => {
-  await rejects(`update booking_items set departure_id='${id(9)}' where id='${id(13)}'`, '23503');
+test('booking item departure cannot be rebound outside the atomic modification RPC', async () => {
+  await rejects(`update booking_items set departure_id='${id(9)}' where id='${id(13)}'`, '23514');
 });
 
 test('money, quantity and capacity reject invalid values', async () => {

@@ -27,7 +27,7 @@ export function CatalogRecordEditor({
       className="catalog-form"
     >
       <input type="hidden" name="id" value={row.id ?? ""} />
-      {entity === "product" && <p>Product name, status and inclusions remain managed here. Public page search titles and social images are managed in Website; actual passenger prices are managed in Calendar &amp; Pricing. Existing descriptions remain available to booking emails. Historical presentation values are retained and no longer edited here.</p>}
+      {entity === "product" && <p>Product name, status and inclusions remain managed here. Public page search titles and social images are managed in Website; product booking cards are managed there too; actual passenger prices are managed in Calendar &amp; Pricing. Existing descriptions remain available to booking emails. Historical presentation values are retained and no longer edited here.</p>}
       {entity === "product" && !row.id && <ProductNameFields />}
       {entity === "product" && row.id && <p>Page address and operational type are developer-controlled bindings.</p>}
       {catalogFields[entity].filter(field => !(entity === "product" && row.id && ["slug","type"].includes(field.key))).filter(field => !(entity === "product" && !row.id &&
@@ -151,7 +151,7 @@ export async function CatalogPanel({
       <p>
         Product publication does not require legacy search titles, descriptions or images. Public SEO is managed in Website. Manage schedules, seats and passenger prices under Calendar & Pricing. Existing bookings keep their agreed total.
       </p>
-      <p>Stops and live vehicle information are managed from Live Map.</p>
+      <p>For offers sharing the van, choose Van tour. After creating a van product, open Calendar &amp; Pricing to select its shared van schedule, seat-reservation period and passenger prices. Then publish its booking card in Website.</p><p>Stops and live vehicle information are managed from Live Map.</p>
       {(["product", "supplier"] as const).map((entity) => (
         <div key={entity} className={styles.group}>
           <h2>

@@ -1,3 +1,4 @@
+import type {SeatReservation} from './products';
 import type {MeetingPoint} from "./meeting-point";
 import type { PassengerCounts, PassengerCategories, PassengerSnapshot } from "./passengers";
 /** V1 booking domain DTOs. Safe for type-only imports in browser/partner clients. */
@@ -40,6 +41,7 @@ export type AvailabilityQuote = {
   }[];
 };
 export type CreateHoldRequest = {
+  productId?: string;
   passengers?: PassengerCounts;
   operatorId: string;
   departureId: string;
@@ -48,6 +50,7 @@ export type CreateHoldRequest = {
   quantity: number;
 };
 export type Hold = {
+  reservationSnapshot?:SeatReservation;
   passengerSnapshot?: PassengerSnapshot;
   id: string;
   departure_id: string;
@@ -83,6 +86,7 @@ export type PendingOrder = {
   bookingStatus?: BookingStatus;
   paymentStatus?: "due" | "paid";
   items: {
+    reservationSnapshot?:SeatReservation;
     id: string;
     productId: string;
     departureId: string;

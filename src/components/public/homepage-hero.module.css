@@ -148,3 +148,12 @@
 @media(max-width:599px) and (orientation:portrait){
   :global(.public-site) .visual::after{background:linear-gradient(180deg,rgba(0,0,0,.12) 0%,rgba(0,0,0,.32) 28%,rgba(0,0,0,.26) 55%,rgba(0,0,0,.38) 100%);}
 }
+
+/* Reusable product cards keep normal-flow layout and their own booking action. */
+.card.productCard{margin-top:0;grid-column:auto;--hero-overlap:0px;}
+.card.productCard .purchase{display:grid;}
+.card.productCard .purchase button{display:block;}
+.card.productCard .fields{grid-template-columns:minmax(0,1fr);}
+.card.productCard .ticketHeader{display:block;}
+.card.productCard .mobileFare{display:none;}
+.card.productCard .purchase>div:first-child{display:block;min-height:0;}

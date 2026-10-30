@@ -30,6 +30,7 @@ export async function manualBooking(operatorId: string, form: FormData) {
     const quantity=passengerCount(passengers);
     await createStaffBooking({
       operatorId,
+      productId: get("product_id")||undefined,
       departureId: get("departure_id"),
       requestId: get("request_id"),
       quantity,passengers,

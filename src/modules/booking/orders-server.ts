@@ -52,7 +52,7 @@ export async function readPendingOrder(
     .single();
   const items = await client
     .from("booking_items")
-    .select("id,product_id,departure_id,quantity,unit_price,total_price,status,passenger_snapshot")
+    .select("id,product_id,departure_id,quantity,unit_price,total_price,status,passenger_snapshot,reservation_snapshot")
     .eq("operator_id", operatorId)
     .eq("order_id", hold.data.order_id)
     .order("id");
@@ -101,6 +101,7 @@ export async function readPendingOrder(
       productId: i.product_id,
       departureId: i.departure_id,
       quantity: i.quantity,
+      reservationSnapshot:i.reservation_snapshot?{mode:i.reservation_snapshot.mode,minutes:i.reservation_snapshot.minutes,start:i.reservation_snapshot.start,end:i.reservation_snapshot.end}:undefined,
       passengerSnapshot:i.passenger_snapshot,
       unitPrice: i.unit_price,
       total: i.total_price,

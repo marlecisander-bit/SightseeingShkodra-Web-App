@@ -41,9 +41,10 @@ test('tenant mismatch and draft products are not exposed', async () => {
 test('active unexpired holds reduce seats while elapsed active holds do not', async () => {
   await db.exec('begin');
   try {
-    await db.exec(`insert into inventory_holds(operator_id,departure_id,session_key,quantity,expires_at) values ('${id(1)}','${id(51)}','active',1,now()+interval '1 hour');
-      insert into inventory_holds(operator_id,departure_id,session_key,quantity,expires_at) values ('${id(1)}','${id(51)}','elapsed',4,clock_timestamp()+interval '100 milliseconds');`);
+    // Let a valid one-seat hold expire before allocating the same physical seat again.
+    await db.exec(`insert into inventory_holds(operator_id,departure_id,session_key,quantity,expires_at) values ('${id(1)}','${id(51)}','elapsed',1,clock_timestamp()+interval '100 milliseconds');`);
     await new Promise((resolve) => setTimeout(resolve, 150));
+    await db.exec(`insert into inventory_holds(operator_id,departure_id,session_key,quantity,expires_at) values ('${id(1)}','${id(51)}','active',1,clock_timestamp()+interval '1 hour');`);
     assert.equal((await snapshot()).departures[1].held, 1);
     assert.equal(quoteAvailability(request, await snapshot()).departures[1].remaining, 0);
   } finally { await db.exec('rollback'); }

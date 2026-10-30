@@ -67,9 +67,9 @@ test('content editor is denied before a client read; operations preserves permit
  let f=fixture({role:'content_editor'});await assert.rejects(BookingsPanel({operatorId:op}),/FORBIDDEN/);assert.equal(f.calls.length,0);
  f=fixture({role:'operations'});const view=await BookingsPanel({operatorId:op});assert.equal(view.props.canCreate,true);
 });
-test('original mutation implementations are preserved; only explicit UI preparation is added',()=>{
+test('original mutation implementations are preserved apart from the explicit purchased-product selector',()=>{
  const source=readFileSync(new URL('../../src/app/admin/booking-actions.ts',import.meta.url),'utf8');
- assert.equal(createHash('sha256').update(source.split('\n/** Explicit UI preparation')[0]).digest('hex'),'1f98c92bdeb5d186dda447f341f2c885c1888837a5ff2950ac6427c659e2bc54');
+ assert.equal(createHash('sha256').update(source.replace('      productId: get("product_id")||undefined,\n','').split('\n/** Explicit UI preparation')[0]).digest('hex'),'1f98c92bdeb5d186dda447f341f2c885c1888837a5ff2950ac6427c659e2bc54');
  const panel=readFileSync(new URL('../../src/app/admin/bookings-panel.tsx',import.meta.url),'utf8');
  assert.doesNotMatch(panel,/prepareServiceDate|ensure_schedule|\.insert\(|\.update\(|\.delete\(/);
  assert.match(source,/await requirePermission\(operatorId,'bookings.create'\)/);assert.match(source,/await prepareServiceDate\(operatorId,day\)/);
