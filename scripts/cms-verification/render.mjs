@@ -33,6 +33,7 @@ export function renderConsumer(key,c,extra={}){
  if(key.startsWith('footer.'))return {route:'shared footer',consumer:'Footer',html:render(Footer,{content:c,previewPathname:'/',googleReviewsUrl:settings.google_reviews_url,homepageInvitationInContent:true})};
  if(key.startsWith('whatsapp.'))return {route:'shared public contact',consumer:'whatsappLink + WhatsAppContact',html:render(WhatsAppContact,{href:whatsappLink(c),label:c['whatsapp.label'],desktop:c['whatsapp.desktop']==='true',mobile:c['whatsapp.mobile']==='true'})};
  if(key.startsWith('partners.'))return {route:'/',consumer:'PartnersSection',html:render(PartnersSection,{content:c,partners:[partner]})};
+ if(key==='departures.showOnHomepage')return {route:'/route',consumer:'RouteJourney',html:render(RouteJourney,{content:c,initial:planner,places:[place]})};
  if(key.startsWith('routePage.'))return {route:'/route',consumer:'RouteJourney',html:render(RouteJourney,{content:c,initial:planner,places:[place]})};
  if(key.startsWith('explorePage.')||key==='labels.guide')return {route:'/explore',consumer:'ExploreView',html:render(ExploreView,{c,places:[place]})};
  if(/^(bookPage|dayPage)\./.test(key))return {route:key.startsWith('bookPage')?'/book':'/your-day',consumer:'PageIntro',html:render(PageIntro,{content:c,prefix:key.split('.')[0]})};

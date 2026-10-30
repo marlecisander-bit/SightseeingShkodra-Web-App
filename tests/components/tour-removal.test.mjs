@@ -43,9 +43,9 @@ test('Tour and retired homepage promotion controls are absent while FAQ retains 
  assert.ok(websiteEditorGroups.pages.find(s=>s.id==='faq').fields.some(f=>f.key==='tourPage.faqTitle'));
  assert.ok('tourPage.eyebrow' in initialWebsiteContent);assert.ok('how.title' in initialWebsiteContent);
 });
-test('homepage omits retired ticket inclusions and retains timetable and booking destinations',()=>{
+test('homepage omits retired ticket inclusions and service panel while retaining booking destinations',()=>{
  const home={...emptyHomepage('ready'),product:{id:'fixture',slug:'fixture',title:'Synthetic ticket',description:'Shared product description',inclusions:'Shared inclusions',stops:[]}};
  const c={...initialWebsiteContent,'tourPage.includedTitle':'Saved inclusion heading','notebook.showOnHomepage':'false'};
  const html=renderToStaticMarkup(h(BookingProvider,{preview:true},h(HomepageView,{home,content:c,places:[],planner:{date:'2030-01-01',times:[],fares:[],stops:[]}})));
- assert.ok(!html.includes('href="/tour'));assert.ok(html.includes('href="/route#journey-departures"'));assert.ok(html.includes('href="/book"'));assert.equal(html.includes('Saved inclusion heading'),false);assert.equal(html.includes('Shared inclusions'),false);
+ assert.ok(!html.includes('href="/tour'));assert.ok(!html.includes('href="/route#journey-departures"'));assert.ok(html.includes('href="/book"'));assert.equal(html.includes('Saved inclusion heading'),false);assert.equal(html.includes('Shared inclusions'),false);
 });
