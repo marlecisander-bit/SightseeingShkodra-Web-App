@@ -23,3 +23,5 @@ test('every recognized arrival and multiple confirmed departures remain authorit
   assert.equal((html.match(/data-state="current"/g)||[]).length,2);
  }
 });
+
+test('Route page can keep editorial destinations without a duplicate status summary',()=>{const html=render({showStatus:false});assert(!html.includes('aria-label="Live journey status"'));assert.match(html,/CMS lake/);assert.match(html,/Choose a destination/);});

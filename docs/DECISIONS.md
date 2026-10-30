@@ -207,3 +207,30 @@ The owner explicitly requested publishing the locally reviewed homepage presenta
 ## 30 October 2026 — Authorized admin workflow release
 
 User authorized production publication after database and acceptance gates. The additive booking search migration is applied and verified on the existing Supabase production project. Isolated admin candidate passes646 tests, lint, typecheck and build; native Chrome acceptance used controlled synthetic editor responses and production read-only database checks. Unrelated embedded Live Map development remains excluded and preserved. See `docs/releases/admin-workflows-20261030/README.md` for evidence, limits, deployment sequence and tested rollback. Publication receipt will identify the released commit and hosted health checks.
+## 30 October 2026 — Admin workflow improvements approved locally
+
+The owner requested implementation of the proposed setup checklist, consistent editor actions, full-history booking search and unified stop/destination workspace. Local scope includes one read-only staff search RPC migration with independent operator/role checks; booking/capacity/payment/write rules and CMS schema remain unchanged. Shared destinations retain one entity and save action across both views. Publication and hosted migration are not authorized by this implementation request. See ADMIN-WORKFLOW-IMPROVEMENTS-2026-10-30.md.
+
+## 30 October 2026 — Website-only embedded map layout authorized locally
+
+Owner requested status above the website iframe, preserving the standalone app by default. Reuse the existing authoritative journey display through a bounded versioned message contract; no parent GPS/status engine or cross-origin DOM access. The clean current companion candidate in `live-tracking-app-release/frontend` permits a minimal opt-in compatibility patch, including explicit runtime override hashes. Both projects remain local and unpublished; no GPS/backend/schema/storage or hosted changes. See LIVE-MAP-EMBEDDED-REDESIGN-2026-10-30.md for contract, evidence and limitations.
+
+
+## 30 October 2026 - Website-only Live Map handoff completed locally
+
+Latest user request authorizes only Web App work. Existing external panel and shkodra:journey v1 display projection reused. Public external-status gate is false; default iframe retains its internal status, with no duplicate parent panel. Development-only self-contained mock replaces the sibling-dependent preview. Origin/source/schema checks, expiry, reload and cleanup verified; 652 tests, lint/typecheck/build passed. Native Chrome fixtures cover320/360/375/390/430/768/1024/1440 and landscape/short viewports. Existing320px header crowding and real companion/physical-device acceptance remain unverified/out of scope. No companion change, hosted database update, commit, push or deployment. Pending admin and unrelated work preserved. Authoritative contract and exact companion task: docs/LIVE-MAP-WEBSITE-HANDOFF.md; evidence: docs/evidence/live-map-website-connection-2026-10-30/validation.json.
+
+
+## 30 October 2026 - Responsive controls and dialogs fixed locally
+
+User requested mobile date/status overlap correction and shared button/dialog responsiveness review. Booking filters now use a contained responsive grid; native admin date controls, notification action header, public booking/cancellation dialogs and shared action wrapping improved. Five active dialog implementations inventoried; representative synthetic Chrome reviews cover phones, tablet, desktop and short/landscape sizes. 652 tests and lint/typecheck/build passed. Physical Safari and exhaustive live-state acceptance remain unverified. No commit, push, deployment, hosted database update or customer action. Existing work preserved. See docs/RESPONSIVE-CONTROLS-REVIEW-2026-10-30.md and its evidence directory.
+
+
+## 30 October 2026 - Permanent booking deletion implemented locally
+
+User requested database-backed reservation deletion and explicitly included paid bookings with financial/audit history retained. Owner-only bookings.delete permission, typed reference/reason/acknowledgement and final confirmation added. Transactional RPC releases seats through existing inventory/cancellation rules, deletes the bookings row/tokens, retains financial records and a service-only identity/deletion audit record, skips pending sends and blocks in-flight work. Tenant-scoped delivery history FKs remain valid; search excludes retained financial orders for deleted reservations. New migration20261030000400 is local and unapplied. 661 tests plus lint/typecheck/build passed, including real PostgreSQL deletion/allocation contention and synthetic mobile/desktop form acceptance. No production deletion/database update, commit, push or deployment. Existing admin/map/layout work preserved. See docs/BOOKING-DELETION-2026-10-30.md for exact retention, migration-first activation and rollback limitations.
+
+
+## 31 October 2026 — completed-development publication authorization
+
+User requested publication of completed developments. Isolated candidate preserves already released fixes and pending IDE work. Migration20261030000400 applied before code:34 bookings unchanged,34 retained registry identities,0 deletions; security and source checks passed. Final candidate664 tests plus lint/typecheck/build and clean audit. Public external Live Map status remains disabled pending real companion acceptance. Release evidence and rollback: `docs/releases/all-completed-20261030/README.md`; final deployment receipt follows publication.

@@ -12,9 +12,9 @@ function TrackingVanIcon() {
 }
 
 /** Presentation only: selection never changes the iframe's authoritative journey. */
-export function LiveJourneyTracker({stops, places, journey, stale=false, onMap, learnLabel='Learn more', mapLabel='View on map'}: {
+export function LiveJourneyTracker({stops, places, journey, stale=false, showStatus=true, onMap, learnLabel='Learn more', mapLabel='View on map'}: {
  stops:readonly {id:string;label:string}[]; places:readonly StopPlace[];
- journey?:JourneySnapshot|null; stale?:boolean; onMap?:(id:string)=>void;
+ journey?:JourneySnapshot|null; stale?:boolean; showStatus?:boolean; onMap?:(id:string)=>void;
  learnLabel?:string; mapLabel?:string;
 }) {
  const [selected,setSelected]=useState<string|null>(null);
@@ -38,7 +38,7 @@ export function LiveJourneyTracker({stops, places, journey, stale=false, onMap, 
  const label=(state:string)=>state==='current'?'Van here':state==='next'?'Next stop':state==='departed'?'Departure confirmed':'Upcoming';
  const close=()=>{setSelected(null);if(selected)triggers.current.get(selected)?.focus();};
  return <div className={styles.tracker}>
-  <section className={styles.status} aria-label="Live journey status">
+  {showStatus&&<section className={styles.status} aria-label="Live journey status">
    <div className={styles.summary}>
     <span className={styles.vehicle}><TrackingVanIcon/></span>
     <div role="status">
@@ -49,7 +49,7 @@ export function LiveJourneyTracker({stops, places, journey, stale=false, onMap, 
     </div>
    </div>
    {!!items.length&&<ol className={styles.progress} aria-label="Live stop progression">{items.map(s=><li key={s.id} data-state={s.state} aria-label={`Stop ${s.number}: ${s.name}. ${label(s.state)}`}><button type="button" aria-label={`Browse stop ${s.number}: ${s.name}`} onClick={()=>{setFollowing(false);center(s.id);}}>{s.state==='departed'?'✓':s.number}</button>{(s.state==='current'||(!current&&s.state==='next'))&&<i data-moving={!current}><TrackingVanIcon/></i>}</li>)}</ol>}
-  </section>
+  </section>}
   {!items.length&&<p>Published stops are temporarily unavailable.</p>}
   {!following&&target&&<button type="button" className={styles.follow} onClick={()=>{setFollowing(true);center(target);}}>Follow van</button>}
   <ol ref={rail} className={styles.timeline} onTouchStart={event=>{const touch=event.touches[0];gesture.current={x:touch.clientX,y:touch.clientY};dragged.current=false;}} onTouchMove={event=>{const touch=event.touches[0];const start=gesture.current;if(start&&Math.abs(touch.clientX-start.x)>10&&Math.abs(touch.clientX-start.x)>Math.abs(touch.clientY-start.y)){dragged.current=true;setFollowing(false);}}} onPointerDown={event=>{gesture.current={x:event.clientX,y:event.clientY};dragged.current=false;}} onPointerMove={event=>{const start=gesture.current;if(start&&Math.abs(event.clientX-start.x)>10&&Math.abs(event.clientX-start.x)>Math.abs(event.clientY-start.y)){dragged.current=true;setFollowing(false);}}} onPointerUp={()=>{gesture.current=null;}} onWheel={event=>{if(Math.abs(event.deltaX)>0)setFollowing(false);}} onKeyDown={event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key))setFollowing(false);}} tabIndex={0} aria-label="Choose a destination">{items.map(s=><li key={s.id} data-state={s.state} data-stop-id={s.id}>

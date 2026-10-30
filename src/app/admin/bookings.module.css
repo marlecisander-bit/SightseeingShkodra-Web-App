@@ -117,3 +117,17 @@
 .workspace .section{margin:0;max-width:none;align-self:start;}
 .detailGrid{align-items:start;}
 .workspace .empty{margin:0;max-width:none;}
+
+/* Search controls own their layout; native date widgets must not set flex widths. */
+.workspace{container-type:inline-size;}
+.workspace form.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:end;gap:12px;margin-bottom:16px;}
+.workspace form.controls>label{display:grid;gap:6px;min-width:0;width:100%;margin:0;flex:initial;}
+.workspace form.controls .search{grid-column:1/-1;display:grid!important;grid-template-columns:minmax(0,1fr);gap:6px;}
+.workspace form.controls label :is(input,select){inline-size:100%;min-inline-size:0;max-inline-size:100%;margin:0;box-sizing:border-box;}
+.workspace .filterActions{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;min-width:0;}
+.workspace .filterActions>:is(button,a){display:inline-flex;align-items:center;justify-content:center;min-height:44px;max-width:100%;margin:0;}
+.header>div{min-width:0;}
+.primary{max-width:100%;white-space:normal;overflow-wrap:anywhere;text-align:center;}
+.primary svg{flex:none;}
+@container(max-width:480px){.workspace form.controls{grid-template-columns:minmax(0,1fr);}.workspace .filterActions>button{width:100%;}.detailTitle,.creationTitle{flex-wrap:wrap;}.tourSummary,.statuses{min-width:0;overflow-wrap:anywhere;}}
+@container(min-width:800px){.workspace form.controls{grid-template-columns:minmax(0,2fr) repeat(2,minmax(0,1fr));}.workspace form.controls .search{grid-column:auto;}}

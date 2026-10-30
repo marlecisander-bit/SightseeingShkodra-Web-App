@@ -22,3 +22,8 @@
 
 .ss-button.ss-button--outline{background:transparent;color:var(--brand-red-active);border:1px solid var(--brand-red-border)}
 .ss-button.ss-button--outline:hover{background:var(--brand-red-soft)}
+
+.ss-button-label>svg{flex-shrink:0;}
+.public-site dialog{box-sizing:border-box;min-width:0;overflow-wrap:anywhere;}
+.public-site dialog :is(input[type=date],input[type=time],input[type=datetime-local]){box-sizing:border-box;min-inline-size:0;max-inline-size:100%;-webkit-appearance:none;appearance:none;}
+.public-site dialog :is(input[type=date],input[type=time],input[type=datetime-local])::-webkit-date-and-time-value{min-height:1.4em;}

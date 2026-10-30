@@ -16,6 +16,7 @@ export const permissions = [
   "bookings.read",
   "bookings.create",
   "bookings.cancel",
+  "bookings.delete",
   "payments.collect",
   "payments.refund",
   "customers.read",

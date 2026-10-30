@@ -79,3 +79,10 @@
 
 /* Phase 5 settings presentation; request and delivery contracts remain unchanged. */
 .settings{scroll-margin-top:90px;min-width:0;padding:16px;border:1px solid #e0e4e8;border-radius:12px;background:#fff}.settings fieldset{min-width:0;border:1px solid #e0e4e8;border-radius:9px;margin:12px 0;padding:12px}.settings fieldset label{display:inline-flex;align-items:center;gap:8px;min-height:44px;margin-right:16px}.settings input:not([type=checkbox]){font-size:16px;min-height:44px;max-width:100%;box-sizing:border-box}.settings button,.settings a{min-height:44px}.settings p{font-size:13px;line-height:1.6}.settings dl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;font-size:13px}.settings dd{margin:0;overflow-wrap:anywhere}.settings .device{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;padding:12px;border-bottom:1px solid #e0e4e8}.settings h2{font-size:20px}.settings h3{font-size:16px}.settings:focus-visible{outline:3px solid var(--ss-focus)}
+
+@media(max-width:480px){
+ .dropdown .panelHeader{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:4px 8px;align-items:center;}
+ .dropdown .panelHeader h2{grid-column:1;grid-row:1;min-width:0;overflow-wrap:anywhere;}
+ .dropdown .panelHeader .closeButton{grid-column:2;grid-row:1;margin:0;}
+ .dropdown .panelHeader .markAll{grid-column:1/-1;grid-row:2;justify-self:start;max-width:100%;white-space:normal;margin:0;}
+}
