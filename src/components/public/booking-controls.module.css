@@ -32,3 +32,12 @@
  :global(.public-site) .date input[type="date"]::-webkit-date-and-time-value{min-width:0;text-align:center;}
  :global(.public-site) .date input[type="date"]::-webkit-datetime-edit{min-width:0;padding:0;text-align:center;}
 }
+
+.passenger> :first-child{min-width:0;overflow-wrap:anywhere;}
+.summary dl>div,.breakdown>div{flex-wrap:wrap;}
+.summary dd,.breakdown dd{min-width:0;max-width:100%;overflow-wrap:anywhere;}
+.cancel{box-sizing:border-box;max-width:calc(100% - 24px);overflow-wrap:anywhere;padding-bottom:max(24px,env(safe-area-inset-bottom));}
+.cancel button{flex:1 1 160px;min-width:0;max-width:100%;white-space:normal;}
+@media(max-width:430px){.cancel>div{flex-direction:column;}.cancel button{flex:auto;width:100%;}.passenger{flex-wrap:wrap;}.counter{margin-left:auto;}}
+:global(.public-site) .cancel h2{font-size:24px;line-height:1.25;margin:0 0 16px;}
+.cancel{scroll-padding-block:16px;}

@@ -2,11 +2,11 @@ import { parseJourney, presentationTtl, type JourneySnapshot } from './journey-c
 
 /** Transport lifecycle only: all operational facts remain upstream. */
 export function connectJourneyBridge(host: Window, source: () => Window | null, origin: string,
-  receive: (snapshot: JourneySnapshot | null, reason?: 'stale' | 'loading') => void) {
+  receive: (snapshot: JourneySnapshot | null, reason?: 'stale' | 'loading') => void, externalDisplay = false) {
   let expires: ReturnType<typeof setTimeout> | undefined;
   let connected = false;
   let disposed = false;
-  const request = () => source()?.postMessage({ type: 'shkodra:request-journey', version: 1 }, origin);
+  const request = () => source()?.postMessage({ type: 'shkodra:request-journey', version: 1, ...(externalDisplay ? {embeddedDisplayVersion: 1} : {}) }, origin);
   const reset = () => {
     if (disposed) return;
     connected = false;
@@ -19,7 +19,10 @@ export function connectJourneyBridge(host: Window, source: () => Window | null, 
     const snapshot = parseJourney(event.data);
     if (!snapshot) return;
     const ttl = presentationTtl(snapshot);
-    if (ttl <= 0) return;
+    if (ttl <= 0) {
+      if (connected) { clearTimeout(expires); connected = false; receive(null, 'stale'); }
+      return;
+    }
     connected = true;
     clearTimeout(expires);
     receive(snapshot);

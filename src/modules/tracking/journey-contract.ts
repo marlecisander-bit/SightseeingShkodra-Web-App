@@ -1,9 +1,18 @@
+export type EmbeddedDisplay = {version:1;label:string;destination:string;activity:string;eta:string;nextStop:string;live:boolean;stops:{id:string;number:string;name:string;label:string;state:'unknown'|'current'|'approaching'|'next'|'completed'|'upcoming'}[]};
+function validDisplay(value:unknown):value is EmbeddedDisplay {
+ if(!value||typeof value!=='object')return false;
+ const d=value as EmbeddedDisplay;
+ if(d.version!==1||typeof d.live!=='boolean'||!['label','destination','activity','eta','nextStop'].every(key=>typeof d[key as keyof EmbeddedDisplay]==='string'&&(d[key as keyof EmbeddedDisplay] as string).length<=240)||!Array.isArray(d.stops)||d.stops.length>100)return false;
+ const ids=new Set<string>();
+ return d.stops.every(s=>{if(!s||!['id','number','name','label'].every(key=>typeof s[key as keyof typeof s]==='string'&&s[key as keyof typeof s].length<=180)||!s.id||ids.has(s.id)||!['unknown','current','approaching','next','completed','upcoming'].includes(s.state))return false;ids.add(s.id);return true;});
+}
 export type JourneyStop = {id:string;number?:string;label:string;state:'current'|'next'|'departed'|'upcoming';eta:string};
-export type JourneySnapshot = {type:'shkodra:journey';version:1;unavailable:boolean;stops:JourneyStop[];movement?:string;phase?:'ARRIVING'|'PARKED'|'LEAVING'|'EN_ROUTE'|'UNKNOWN';statusValidUntil?:string|null;lastObservationAt?:string|null;confidence?:{position:'live'|'delayed'|'unavailable'}};
+export type JourneySnapshot = {type:'shkodra:journey';version:1;unavailable:boolean;stops:JourneyStop[];embeddedDisplay?:EmbeddedDisplay;movement?:string;phase?:'ARRIVING'|'PARKED'|'LEAVING'|'EN_ROUTE'|'UNKNOWN';statusValidUntil?:string|null;lastObservationAt?:string|null;confidence?:{position:'live'|'delayed'|'unavailable'}};
 export function parseJourney(value:unknown):JourneySnapshot|null {
  if(!value||typeof value!=='object')return null;
  const d=value as JourneySnapshot;
  if(d.type!=='shkodra:journey'||d.version!==1||typeof d.unavailable!=='boolean'||!Array.isArray(d.stops)||d.stops.length>100)return null;
+ if(d.embeddedDisplay!==undefined&&!validDisplay(d.embeddedDisplay))return null;
  // Additive v1 presentation metadata; never interpret GPS or infer a stop here.
  if(d.movement!==undefined&&(typeof d.movement!=='string'||d.movement.length>180))return null;
  if(d.lastObservationAt!=null&&(typeof d.lastObservationAt!=='string'||d.lastObservationAt.length>40||!Number.isFinite(Date.parse(d.lastObservationAt))))return null;

@@ -9,3 +9,6 @@ export const publicMapUrl = `${publicMapBinding.origin}/live-map.html?project=${
 export function matchesPublicMapProject(project: string | undefined) {
   return project === undefined || project === publicMapBinding.project;
 }
+
+/** Release gate: enable only after paired Live Map acceptance. No runtime/CMS override. */
+export const websiteExternalStatusEnabled = false;

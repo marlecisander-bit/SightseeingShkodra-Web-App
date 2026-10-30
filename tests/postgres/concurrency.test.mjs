@@ -621,3 +621,26 @@ test('different products and departures on the same van serialize shared occupan
   }finally{await first.query('rollback');if(pending)await pending;}
  }
 });
+
+test('permanent deletion serializes seat release with a replacement and retry is idempotent',async()=>{
+ const op='10000000-0000-4000-8000-000000000001',session='permanent-delete-concurrency-session';
+ const user=(await observer.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;
+ const actor=(await observer.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'owner') returning id",[op,user])).rows[0].id;
+ const product=(await observer.query(`insert into products(operator_id,type,title,slug,status,pricing_rules,capacity_rules) values($1,'van_tour','Deletion concurrency',gen_random_uuid()::text,'published','{"version":1,"model":"per_guest","currency":"EUR","unit_price":1000}','{"version":1,"model":"departure_seats"}') returning id`,[op])).rows[0].id;
+ const dep=(await observer.query("insert into departures(operator_id,product_id,service_date,start_time,capacity,status) values($1,$2,'2031-06-01','15:00',1,'scheduled') returning id",[op,product])).rows[0].id;
+ const hold=(await observer.query('select * from create_hold_v1($1,$2,$3,gen_random_uuid(),1)',[op,dep,session])).rows[0];
+ const order=(await observer.query("select create_meeting_point_booking_v1($1,$2,$3,'Synthetic','delete@example.test') result",[op,hold.id,session])).rows[0].result;
+ const b=(await observer.query('select id,booking_reference from bookings where order_id=$1',[order.orderId])).rows[0];
+ const sql="select delete_admin_booking_v1($1,$2,$3,$4,'Synthetic concurrency test') result",args=[op,actor,b.id,b.booking_reference];
+ await first.query('begin');let waiting;
+ try{
+  await first.query(sql,args);
+  waiting=second.query('select * from create_hold_v1($1,$2,$3,gen_random_uuid(),1)',[op,dep,session+'-replacement']).then(result=>({result}),error=>({error}));
+  await waitForLock();await first.query('commit');const replacement=await waiting;assert.ifError(replacement.error);assert(replacement.result.rows[0].id);
+  assert.equal((await observer.query('select count(*)::int n from bookings where id=$1',[b.id])).rows[0].n,0);
+ }finally{await first.query('rollback');if(waiting)await waiting;}
+ // Replayed deletion must not erase financial evidence or duplicate audit records.
+ const again=(await second.query(sql,args)).rows[0].result;assert.equal(again.deleted,true);
+ assert.equal((await observer.query("select count(*)::int n from audit_logs where entity_id=$1 and action='booking.deleted'",[b.id])).rows[0].n,1);
+ assert.equal((await observer.query('select count(*)::int n from orders where id=$1',[order.orderId])).rows[0].n,1);
+});

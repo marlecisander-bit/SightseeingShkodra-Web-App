@@ -111,3 +111,20 @@ export async function loadBookingDepartures(operatorId:string,form:FormData){
   revalidatePath(path);
   redirect(`${path}?date=${day}&create=1&result=departures_ready#new-booking`);
 }
+
+
+export async function deleteBooking(operatorId:string,bookingId:string,form:FormData){
+ try{
+  if(form.get('confirm')!=='yes')return {error:'Confirm permanent deletion before continuing.'};
+  const reference=form.get('reference'),reason=form.get('reason');
+  if(typeof reference!=='string'||typeof reason!=='string')return {error:'Enter the booking reference and a reason.'};
+  const {deleteBookingRecord}=await import('@/modules/booking/deletion-server');
+  await deleteBookingRecord(operatorId,bookingId,reference,reason);
+ }catch(error){
+  const {BookingDeletionError}=await import('@/modules/booking/deletion-server');
+  return {error:error instanceof BookingDeletionError&&error.code==='BUSY'?'A payment or message delivery is in progress. Wait for it to finish, then retry.':error instanceof BookingDeletionError&&error.code==='NOT_FOUND'?'The booking reference does not match. Review it and retry.':'Booking was not deleted. Check your owner access, the reference and the latest booking details.'};
+ }
+ const path=`/admin/${encodeURIComponent(operatorId)}/bookings`;
+ revalidatePath(path);revalidatePath(`/admin/${encodeURIComponent(operatorId)}/overview`);revalidatePath(`/admin/${encodeURIComponent(operatorId)}/departures`);
+ redirect(`${path}?result=deleted`);
+}

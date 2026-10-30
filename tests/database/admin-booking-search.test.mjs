@@ -21,15 +21,27 @@ test('date filtering searches all orders without prefilter caps and keeps other 
 test('search is stable and changes no booking or customer records',async()=>{const snapshot=async()=>(await db.query("select jsonb_build_object('orders',(select jsonb_agg(to_jsonb(o) order by id) from orders o),'bookings',(select jsonb_agg(to_jsonb(b) order by id) from bookings b),'customers',(select jsonb_agg(to_jsonb(c) order by id) from customers c)) data")).rows[0].data;const before=await snapshot();await search('historic');assert.deepEqual(await snapshot(),before);assert.equal((await db.query("select provolatile from pg_proc where proname='search_admin_orders_v1'")).rows[0].provolatile,'s');});
 test('cross-operator, inactive/editor staff and public execution are denied',async()=>{await assert.rejects(search('','all',1,'20000000-0000-4000-8000-000000000001'),e=>e.code==='42501');for(const role of ['content_editor','operations']){await db.query('update staff_profiles set role=$1 where id=$2',[role,actor]);if(role==='content_editor')await assert.rejects(search(),e=>e.code==='42501');else assert.equal((await search('historic')).total,130);}await db.query('update staff_profiles set is_active=false where id=$1',[actor]);await assert.rejects(search(),e=>e.code==='42501');for(const role of ['anon','authenticated'])assert.equal((await db.query("select has_function_privilege($1,'public.search_admin_orders_v1(uuid,uuid,text,date,text,text,integer)','execute') allowed",[role])).rows[0].allowed,false);await db.query("update staff_profiles set role='owner',is_active=true where id=$1",[actor]);});
 
-test('reviewed rollback removes only the new RPC/history and can reapply without data changes',async()=>{
- const {readFile}=await import('node:fs/promises');
- const snapshot=async()=>(await db.query("select jsonb_build_object('orders',(select jsonb_agg(to_jsonb(o) order by id) from orders o),'bookings',(select jsonb_agg(to_jsonb(b) order by id) from bookings b),'customers',(select jsonb_agg(to_jsonb(c) order by id) from customers c),'items',(select jsonb_agg(to_jsonb(i) order by id) from booking_items i)) data")).rows[0].data;
- await db.exec("create schema supabase_migrations; create table supabase_migrations.schema_migrations(version text primary key,name text,statements text[]); insert into supabase_migrations.schema_migrations values('20261030000200','unified_product_workspace','{}'),('20261030000300','admin_booking_search','{}');");
- const before=await snapshot();
- await db.exec(await readFile(new URL('../../docs/releases/admin-workflows-20261030/rollback.sql',import.meta.url),'utf8'));
- assert.equal((await db.query("select to_regprocedure('public.search_admin_orders_v1(uuid,uuid,text,date,text,text,integer)') result")).rows[0].result,null);
- assert.deepEqual((await db.query('select version from supabase_migrations.schema_migrations')).rows.map(r=>r.version),['20261030000200']);
- assert.deepEqual(await snapshot(),before);
- await db.exec(await readFile(new URL('../../supabase/migrations/20261030000300_admin_booking_search.sql',import.meta.url),'utf8'));
- assert.equal((await search('historic')).total,130);assert.deepEqual(await snapshot(),before);
+test('reviewed historical search rollback removes only its RPC/history and can reapply without data changes',async()=>{
+ const {PGlite}=await import('@electric-sql/pglite');const {platformSql}=await import('../helpers/database.mjs');const {readFile,readdir}=await import('node:fs/promises');const db=new PGlite();
+ try{
+  await db.exec(platformSql);const dir=new URL('../../supabase/migrations/',import.meta.url);
+  for(const file of (await readdir(dir)).filter(f=>f.endsWith('.sql')&&f<='20261030000300_admin_booking_search.sql').sort())await db.exec(await readFile(new URL(file,dir),'utf8'));
+  await loadDevelopmentFixtures(db);
+  const user=(await db.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;
+  const actor=(await db.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'owner') returning id",[op,user])).rows[0].id;
+  const customer=(await db.query("insert into customers(operator_id,name) values($1,'Historical rollback fixture') returning id",[op])).rows[0].id;
+  await db.query('insert into orders(operator_id,customer_id,subtotal,total) select $1,$2,0,0 from generate_series(1,4)',[op,customer]);
+  const snapshot=async()=>(await db.query("select jsonb_build_object('orders',(select jsonb_agg(to_jsonb(o) order by id) from orders o),'bookings',(select jsonb_agg(to_jsonb(b) order by id) from bookings b),'customers',(select jsonb_agg(to_jsonb(c) order by id) from customers c),'items',(select jsonb_agg(to_jsonb(i) order by id) from booking_items i)) data")).rows[0].data;
+  await db.exec("create schema supabase_migrations; create table supabase_migrations.schema_migrations(version text primary key,name text,statements text[]); insert into supabase_migrations.schema_migrations values('20261030000200','unified_product_workspace','{}'),('20261030000300','admin_booking_search','{}');");
+  const before=await snapshot();await db.exec(await readFile(new URL('../../docs/releases/admin-workflows-20261030/rollback.sql',import.meta.url),'utf8'));
+  assert.equal((await db.query("select to_regprocedure('public.search_admin_orders_v1(uuid,uuid,text,date,text,text,integer)') result")).rows[0].result,null);
+  assert.deepEqual((await db.query('select version from supabase_migrations.schema_migrations')).rows.map(r=>r.version),['20261030000200']);assert.deepEqual(await snapshot(),before);
+  await db.exec(await readFile(new URL('../../supabase/migrations/20261030000300_admin_booking_search.sql',import.meta.url),'utf8'));
+  assert.equal((await db.query("select search_admin_orders_v1($1,$2,'Historical rollback fixture') result",[op,actor])).rows[0].result.total,4);assert.deepEqual(await snapshot(),before);
+ }finally{await db.close();}
+});
+test('historical rollback refuses to remove the upgraded deletion-aware search function',async()=>{
+ const {readFile}=await import('node:fs/promises');const before=(await db.query("select md5(prosrc) hash from pg_proc where oid='public.search_admin_orders_v1(uuid,uuid,text,date,text,text,integer)'::regprocedure")).rows[0].hash;
+ await assert.rejects(db.exec(await readFile(new URL('../../docs/releases/admin-workflows-20261030/rollback.sql',import.meta.url),'utf8')),/Search function differs/);await db.exec('rollback');
+ assert.equal((await db.query("select md5(prosrc) hash from pg_proc where oid='public.search_admin_orders_v1(uuid,uuid,text,date,text,text,integer)'::regprocedure")).rows[0].hash,before);
 });

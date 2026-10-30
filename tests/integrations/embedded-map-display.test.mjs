@@ -1,0 +1,7 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {parseJourney,presentationTtl} from '../../src/modules/tracking/journey-contract.ts';
+const display={version:1,label:'PARKED AT',destination:'Fixture stop',activity:'Next departure not confirmed',eta:'Travel · ~8 min after departure',nextStop:'Fixture next stop',live:false,stops:[{id:'1',number:'1',name:'Fixture stop',label:'Current stop',state:'current'}]};
+const snapshot=()=>{const now=Date.now();return ({type:'shkodra:journey',version:1,unavailable:false,phase:'PARKED',movement:'Parked at Fixture stop',lastObservationAt:new Date(now).toISOString(),statusValidUntil:new Date(now+20000).toISOString(),stops:[],embeddedDisplay:display});};
+test('embedded display is additive and preserves exact upstream wording and expiry',()=>{const j=parseJourney(snapshot());const now=Date.parse(j.lastObservationAt);assert.deepEqual(j.embeddedDisplay,display);assert(presentationTtl(j,now)<=20000);assert.equal(presentationTtl(j,now+21000),0);const legacy=snapshot();delete legacy.embeddedDisplay;assert(parseJourney(legacy));});
+test('display contract rejects malformed, excessive and duplicate stop data',()=>{for(const bad of [null,{}, {...display,version:2},{...display,live:'yes'},{...display,destination:'x'.repeat(241)},{...display,eta:{}},{...display,stops:Array(101).fill(display.stops[0])},{...display,stops:[...display.stops,...display.stops]},{...display,stops:[{...display.stops[0],state:'invented'}]}])assert.equal(parseJourney({...snapshot(),embeddedDisplay:bad}),null);});

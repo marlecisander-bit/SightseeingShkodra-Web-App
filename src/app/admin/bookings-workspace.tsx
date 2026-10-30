@@ -26,7 +26,7 @@ export function BookingsWorkspace({operatorId,today,day,email,selectedBooking,en
    <label>Departure date<input type="date" name="date" defaultValue={day}/></label>
    {email&&<input type="hidden" name="email" value={email}/>}
    <label>Status<select name="status" defaultValue={serverSearch.status}>{bookingStatuses.map(value=><option key={value} value={value}>{value==='all'?'All statuses':ownerStatus(value)}</option>)}</select></label>
-   <button type="submit">Find bookings</button><Link prefetch={false} href={base}>Clear filters</Link><Link prefetch={false} href={`${base}?date=${today}`}>Today</Link>
+   <div className={styles.filterActions}><button type="submit">Find bookings</button><Link prefetch={false} href={base}>Clear filters</Link><Link prefetch={false} href={`${base}?date=${today}`}>Today</Link></div>
   </Form>:!selectedBooking&&<div className={styles.controls}>
    <label className={styles.search}><AdminIcon name="users" size={18}/><span className={styles.sr}>Search these results</span><input type="search" disabled={!ready} placeholder="Search these results" value={search} onChange={e=>setSearch(e.target.value)} aria-describedby="booking-search-scope"/></label>
    <nav className={styles.filters} aria-label="Booking date filters"><Link prefetch={false} aria-current={day===today?'page':undefined} href={`${base}?date=${today}`}>Today</Link><Link prefetch={false} aria-current={!day&&!selectedBooking&&!email?'page':undefined} href={base}>All bookings</Link><Link prefetch={false} href={`${root}/departures?fromBookings=1${day?'&date='+day:''}`}>Calendar</Link></nav>

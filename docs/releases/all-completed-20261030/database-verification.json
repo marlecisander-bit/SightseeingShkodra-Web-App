@@ -1,0 +1,19 @@
+{
+  "project": "ybngoppqqiohcduojfyg",
+  "migration": "20261030000400",
+  "bookings": 34,
+  "registry": 34,
+  "deleted": 0,
+  "business_fingerprints_unchanged": true,
+  "rls": true,
+  "private": true,
+  "fks": true,
+  "delete_exact": true,
+  "search_exact": true,
+  "cancel_unchanged": true,
+  "anon_denied": true,
+  "authenticated_denied": true,
+  "service_allowed": true,
+  "scoped_search_total": 30,
+  "empty_search_total": 0
+}

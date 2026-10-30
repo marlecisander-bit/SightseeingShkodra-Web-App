@@ -1,0 +1,72 @@
+{
+  "time_utc": "2026-10-30T22:17:54.499688+00:00",
+  "scope": "website only; local; public gate false",
+  "contract": "existing shkodra:journey v1 + embeddedDisplay v1; no new message protocol",
+  "checks": {
+    "npm_run_check": "passed lint/typecheck/build",
+    "npm_test": {
+      "pass": 652,
+      "fail": 0,
+      "components": 160,
+      "identity": 24,
+      "integrations": 225,
+      "database_disposable": 209,
+      "postgres_disposable": 27,
+      "cms_verification": 7
+    },
+    "final_gate_component_tests": 4,
+    "targeted_eslint": "passed",
+    "git_diff_check": "passed"
+  },
+  "browser": {
+    "tool": "native Chrome responsive emulation",
+    "parent": "http://localhost:3011/dev/live-map-preview",
+    "child": "http://127.0.0.1:4199",
+    "unauthorized_sender": "http://127.0.0.1:4200",
+    "widths": [
+      320,
+      360,
+      375,
+      390,
+      430,
+      768,
+      1024,
+      1440
+    ],
+    "additional_sizes": [
+      [
+        844,
+        390
+      ],
+      [
+        390,
+        500
+      ]
+    ],
+    "states_verified": [
+      "parked",
+      "moving with contextual ETA",
+      "unknown",
+      "out-of-service",
+      "error",
+      "loading after iframe reload",
+      "unavailable after no data",
+      "stale expiry",
+      "malformed version ignored",
+      "unauthorized origin/source ignored",
+      "long labels"
+    ],
+    "controls": "compact Interact/Done toggle passed; mock Stops opens/closes within iframe; parent stop3 selection received by child; Tab advances to stop4",
+    "map_section": "stacked at narrow widths, horizontal at desktop; contained panel and iframe; scrolled landscape mock toolbar stays inside iframe"
+  },
+  "limits": [
+    "Schematic mock sender, not the actual Live Map app, route, GPS or operational controls; no end-to-end acceptance",
+    "No real companion/standalone regression performed in this continuation; prior patch must be inspected separately",
+    "Physical devices, Safari, safe areas and actual geolocation/map gestures remain unverified",
+    "Known existing website header crowding/clipping at320px preserved outside map-only scope",
+    "Chrome full-page landscape capture omits offscreen iframe; native scrolled viewport separately inspected",
+    "Full CMS-backed homepage and Route traversal not run locally; full/compact widget modes and existing page differences covered by source review/component tests",
+    "No cloud writes, hosted database updates, commit, push or deployment"
+  ],
+  "test_fix": "Full-suite fixture-clock race fixed using one observation timestamp; complete652-test rerun passed. Final additional gate assertion passed in focused rerun."
+}

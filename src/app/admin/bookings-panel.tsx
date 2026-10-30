@@ -11,11 +11,12 @@ import {ownerEmailEvent,ownerStatus} from './presentation';
 import {validBookingDay,bookingAmount,type BookingRecordView} from './bookings-presentation';
 import {BookingsWorkspace,type BookingEntry} from './bookings-workspace';
 import {BookingRecord} from './booking-record';
+import {BookingDeletionForm} from './booking-deletion-form';
 import {BookingConfirmation} from './booking-confirmation';
 import {StaffPassengers} from './staff-passengers';
 import {MutationForm} from './mutation-form';
 import {SubmitButton} from './submit-button';
-import {manualBooking,cancelBooking,collectPayment,loadBookingDepartures} from './booking-actions';
+import {manualBooking,cancelBooking,collectPayment,loadBookingDepartures,deleteBooking} from './booking-actions';
 import styles from './bookings.module.css';
 function unavailable(message:string){return <div className={styles.workspace}><h1>Bookings</h1><p role="alert">{message} No partial booking details are shown.</p><Link prefetch={false} href="?">Retry without filters</Link></div>;}
 export async function BookingsPanel({
@@ -120,7 +121,7 @@ export async function BookingsPanel({
       "booking_id",
       bookings.data.map((b) => b.id),
     ).order("created_at", { ascending: false }).limit(1000):{data:[],error:null};
-  const messages:Record<string,string>={email_queued:'Confirmation emails requested. Check message status after refreshing.',created:'Reservation confirmed. Payment is due at the meeting point.',collected:'Full payment recorded at the meeting point.',cancelled:'Booking cancelled.',review:'Booking cancelled. Refund review requested; no refund has been issued.',departures_ready:'Booking departures loaded for the selected service date.',error:'Unable to complete the action. Check the latest booking details before retrying.'};
+  const messages:Record<string,string>={deleted:'Booking permanently deleted. Financial and audit history retained. No refund was issued.',email_queued:'Confirmation emails requested. Check message status after refreshing.',created:'Reservation confirmed. Payment is due at the meeting point.',collected:'Full payment recorded at the meeting point.',cancelled:'Booking cancelled.',review:'Booking cancelled. Refund review requested; no refund has been issued.',departures_ready:'Booking departures loaded for the selected service date.',error:'Unable to complete the action. Check the latest booking details before retrying.'};
   const root=`/admin/${encodeURIComponent(operatorId)}`;
   const usableDepartures=departures.data.filter(d=>categories[d.product_id]);
   const creation=creating&&hasPermission(context.role,'bookings.create')?<section id="new-booking" className={styles.creation}>
@@ -150,6 +151,7 @@ export async function BookingsPanel({
    const actions=<>
     {hasPermission(context.role,'payments.collect')&&order.collection_mode==='meeting_point'&&order.status==='confirmed'&&!orderPayments.length&&<BookingConfirmation message={`Record full payment of ${bookingAmount(order.total,order.currency)} as received for ${row.reference}? This records receipt; it does not charge a card.`}><MutationForm action={collectPayment.bind(null,operatorId,order.id)}><label className={styles.check}><input type="checkbox" name="received" value="yes" required/>I received the full {bookingAmount(order.total,order.currency)} at the meeting point</label><SubmitButton>Record payment received</SubmitButton></MutationForm></BookingConfirmation>}
     {hasPermission(context.role,'bookings.cancel')&&['pending','awaiting_payment','paid','confirmed'].includes(order.status)&&<details className={styles.cancel}><summary>Cancel this booking</summary><BookingConfirmation message={`Cancel ${row.reference} and release its reserved seats? Paid bookings are flagged for review; no refund is issued.`}><MutationForm action={cancelBooking.bind(null,operatorId,order.id)}><label>Cancellation reason<textarea name="reason" maxLength={500} required/></label><label className={styles.check}><input type="checkbox" name="confirm" value="yes" required/>Confirm cancellation and release these seats</label><SubmitButton>Cancel booking</SubmitButton><p>Paid bookings are flagged for refund review. This does not issue a refund.</p></MutationForm></BookingConfirmation></details>}
+    {booking&&hasPermission(context.role,'bookings.delete')&&<BookingDeletionForm reference={booking.booking_reference} action={deleteBooking.bind(null,operatorId,booking.id)}/>}
     {(!hasPermission(context.role,'bookings.cancel')||!['pending','awaiting_payment','paid','confirmed'].includes(order.status))&&<p>No cancellation action is available.</p>}
    </>;
    const history=deliveries.data?.filter(d=>d.booking_id===booking?.id)??[];

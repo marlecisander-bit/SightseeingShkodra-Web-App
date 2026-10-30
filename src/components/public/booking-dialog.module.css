@@ -25,3 +25,9 @@
 }
 @keyframes enter{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
 @media(prefers-reduced-motion:reduce){:global(.public-site) .dialog.dialog{animation:none}}
+
+.header>div{min-width:0;flex:1;}
+.header h2{overflow-wrap:anywhere;}
+.header img,.header svg{flex-shrink:0;}
+.content{min-width:0;overflow-wrap:anywhere;}
+.content :global(label),.content :global(fieldset){min-width:0;max-width:100%;}

@@ -436,3 +436,13 @@
 .shell :is(button,summary){white-space:normal;overflow-wrap:anywhere;}
 .shell .panel :is(h1,h2,h3,legend){overflow-wrap:anywhere;}
 @media(max-width:600px){.shell input[type=date],.shell input[type=time]{min-width:0;width:100%;}}
+
+/* Shared containment for native Safari controls and long action labels. */
+.shell :is(input[type=date],input[type=time],input[type=datetime-local]){display:block;box-sizing:border-box;inline-size:100%;min-inline-size:0;max-inline-size:100%;-webkit-appearance:none;appearance:none;}
+.shell :is(input[type=date],input[type=time],input[type=datetime-local])::-webkit-date-and-time-value{min-height:1.4em;text-align:left;}
+.shell :is(input[type=date],input[type=time],input[type=datetime-local])::-webkit-datetime-edit{min-width:0;padding:0;}
+.shell button{max-width:100%;min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.4;}
+.shell button>svg{flex-shrink:0;}
+.mobileDrawer{overflow-y:auto;}
+.drawerHeading>strong{min-width:0;overflow-wrap:anywhere;}
+.drawerHeading>button{flex-shrink:0;}
