@@ -42,7 +42,7 @@ export function LiveJourneyTracker({stops, places, journey, stale=false, onMap, 
    <div className={styles.summary}>
     <span className={styles.vehicle}><TrackingVanIcon/></span>
     <div role="status">
-     <p className={styles.eyebrow}><span className={styles.dot} data-live={!!journey&&!journey.unavailable&&!stale}/>Live journey</p>
+     <p className={styles.eyebrow}><span className={styles.dot} data-live={!!journey&&!journey.unavailable&&!stale&&(!journey.confidence||journey.confidence.position==='live')}/>Live journey</p>
      <h3>{!stale&&next&&!current?`Next destination: ${next.name}`:sightseeingStatus(items,journey,stale)}</h3>
      {!stale&&journey&&!journey.unavailable&&next&&<p>Next stop: {next.number} of {items.length}{current?` · ${next.name}`:''}</p>}
      {!stale&&!current&&next?.eta&&<p className={styles.eta}>ETA: {next.eta}</p>}
