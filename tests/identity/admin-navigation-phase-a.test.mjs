@@ -26,3 +26,11 @@ test('six approved areas, canonical external map and active contextual views',()
  assert.deepEqual(websiteNavigationContext('faq'),{scope:'pages',section:'faq'});
  assert.deepEqual(websiteNavigationContext('destinations'),{scope:'destinations',section:null});
 });
+
+test('supplier management belongs with Products and keeps its original permissions and route',()=>{
+ for(const role of ['owner','admin','operations','content_editor']){
+  const groups=adminNavigationGroups('fixture',role),supplier=groups.flatMap(g=>g.items).find(i=>i.id==='catalog');
+  if(supplier){assert.equal(groups.find(g=>g.items.includes(supplier)).id,'products');assert.equal(supplier.href,'/admin/fixture/catalog');}
+  assert.equal(groups.find(g=>g.id==='more')?.items.some(i=>i.id==='catalog'),false);
+ }
+});

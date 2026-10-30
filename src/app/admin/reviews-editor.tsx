@@ -1,4 +1,5 @@
 'use client';
+import {EditorActions} from './editor-action-bar';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -25,7 +26,7 @@ export function ReviewEditor({operatorId,review}:{operatorId:string;review?:Gues
  <ImageField operatorId={operatorId} name="avatar_url" label="Reviewer photo" value={value.avatar_url??''} onChange={v=>setValue(current=>({...current,avatar_url:v}))} optional/>
  <label className={styles.check}><input type="checkbox" name="featured" checked={value.featured} onChange={e=>setValue({...value,featured:e.target.checked})}/>Featured</label>
  <label className={styles.check}><input type="checkbox" name="published" checked={value.published} onChange={e=>setValue({...value,published:e.target.checked})}/>Published</label>
- </div><p>Saving updates the website immediately when Published is selected and the Guest Reviews section is visible. An unpublished review stays off the website.</p><div className={styles.actions}><Button type="button" onClick={()=>{setValue(review??blank);setMessage('Changes discarded.');}}>Cancel</Button><Button name="operation" value="save">Save &amp; update website</Button>{review&&<Button name="operation" value="delete" formNoValidate>Delete review</Button>}</div></fieldset>
+ </div><p>Saving updates the website immediately when Published is selected and the Guest Reviews section is visible. An unpublished review stays off the website.</p><EditorActions dirty={JSON.stringify(value)!==JSON.stringify(review??blank)} pending={pending} scope="Saving updates published reviews immediately. Unpublished reviews remain private."><Button type="button" onClick={()=>{setValue(review??blank);setMessage('Changes discarded.');}}>Cancel</Button><Button name="operation" value="save">Save &amp; update website</Button>{review&&<Button name="operation" value="delete" formNoValidate>Delete review</Button>}</EditorActions></fieldset>
  {message&&<p role="status">{message}</p>}
  {value.author&&value.body&&<aside className={styles.preview}><h3>Homepage preview</h3><ReviewCard review={{...value,original_url:null,avatar_url:value.avatar_url?.startsWith('/images/')||value.avatar_url?.startsWith('https://')?value.avatar_url:null}}/></aside>}
  </form>;

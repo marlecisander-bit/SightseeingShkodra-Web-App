@@ -24,18 +24,18 @@ export function adminNavigationGroups(operatorId:string,role:StaffRole):AdminNav
     {id:'live',label:'Open Live Map',href:publicMapUrl,external:true},
     {id:'map-admin',label:'Operational stops & GPS',href:'https://sightseeingshkodralivetrackingapp.netlify.app/',external:true,note:'Independent Live Map · separate sign-in.'}
    ]:[])]},
-  {id:'products',label:'Products',icon:'ticket',items:[link('products','All products','products')]},
+  {id:'products',label:'Products',icon:'ticket',items:[link('products','All products','products'),link('catalog','Suppliers','catalog')]},
   {id:'website',label:'Website',icon:'camera',items:[
    link('content','Page editor','content'),link('route-stops','Route & destination content','route-stops'),
-   link('media','Images & media','content','media','Use the existing page image fields.'),
+   link('media','Images & media','content','media','Photos stay with their page or product.'),
    link('reviews','Guest reviews','reviews'),link('partners','Partners','partners'),
-   link('faq','FAQ & policies','content','faq',hasPermission(role,'content.sensitive')?'FAQ, Privacy and Terms in their canonical editors.':'FAQ editor; legal policies remain owner-only.'),
-   link('seo','SEO & visibility','content','seo','Page metadata and visibility in the canonical editor.')]},
+   link('faq','FAQ & policies','content','faq',hasPermission(role,'content.sensitive')?'FAQ, privacy and terms.':'FAQ editor; legal policies remain owner-only.'),
+   link('seo','SEO & visibility','content','seo','Search titles and page visibility.')]},
   {id:'more',label:'More',icon:'info',items:[
-   link('more','Settings & account','more'),link('catalog','Suppliers','catalog'),
+   link('more','Settings & account','more'),
    ...(hasPermission(role,'content.sensitive')?[link('business','Business profile','content','business','Public contact, WhatsApp and footer controls.')]:[]),
    link('notifications','Notifications & devices','notifications'),
-   link('email','Booking emails & integration status','email',undefined,'Owner-only delivery tools; personal preferences stay separate.')]
+   link('email','Booking emails','email',undefined,'Delivery history and settings.')]
   },
  ];
  return groups.map(group=>({...group,items:group.items.filter(item=>!item.section||allowed.has(item.section))})).filter(group=>group.items.length);

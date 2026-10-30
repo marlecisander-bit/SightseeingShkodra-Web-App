@@ -25,6 +25,7 @@ export async function BookingsPanel({
   date,
   email,
   requestId,
+  q, status, page,
   booking: selectedBooking,
 }: {
   operatorId: string;
@@ -33,6 +34,7 @@ export async function BookingsPanel({
   date?: string;
   email?: string;
   requestId?: string;
+  q?:string;status?:string;page?:string;
   booking?: string;
 }) {
   const context = await requirePermission(operatorId, "bookings.read");
@@ -47,64 +49,24 @@ export async function BookingsPanel({
     .eq('operator_id', operatorId).eq('status', 'scheduled');
   departureChoices = day ? departureChoices.eq('service_date',day)
     : departureChoices.gte('service_date',today);
-  const [customers, departures, products] = await Promise.all([
-    searchEmail
-      ? client
-          .from("customers")
-          .select("id,name,email,phone",{count:"exact"})
-          .eq("operator_id", operatorId)
-          .eq("email", searchEmail)
-          .limit(100)
-      : Promise.resolve({ data: [], error: null, count:0 }),
+  const query=(q??'').trim().slice(0,200),searchStatus=['confirmed','pending','cancelled','expired'].includes(status??'')?status!:'all';
+  const pageNumber=/^[1-9]\d{0,5}$/.test(page??'')?Number(page):1;
+  const [departures,products,searchResult]=await Promise.all([
     creating?departureChoices.order('service_date').order('start_time').limit(100):Promise.resolve({data:[],error:null}),
-    client
-      .from("products")
-      .select("id,title,inventory_product_id,status,type")
-      .eq("operator_id", operatorId)
-      .limit(100),
+    client.from('products').select('id,title,inventory_product_id,status,type').eq('operator_id',operatorId).limit(100),
+    selectedBooking?Promise.resolve(null):withOperatorService(operatorId,'bookings.read',async(service,ctx)=>{
+      const result=await service.rpc('search_admin_orders_v1',{p_operator:ctx.operatorId,p_actor:ctx.staffProfileId,p_query:query,p_day:day??null,p_email:searchEmail??null,p_status:searchStatus,p_page:pageNumber});
+      if(result.error)throw Error('Booking search unavailable');return result.data as {ids:string[];total:number;page:number;pageSize:number};
+    }).catch(()=>undefined),
   ]);
-  if (customers.error || departures.error || products.error || (searchEmail&&customers.count!==customers.data?.length))
-    return unavailable('Booking data is temporarily unavailable.');
+  if(departures.error||products.error||searchResult===undefined)return unavailable('Booking search is temporarily unavailable.');
   const categories=creating&&hasPermission(context.role,'bookings.create')?await withOperatorService(operatorId,'bookings.create',async(service)=>Object.fromEntries(await Promise.all(products.data.map(async(p)=>{const r=await service.rpc('passenger_categories_v1',{p_product:p.id});if(r.error)throw Error('Passenger categories unavailable');return [p.id,r.data as PassengerCategories];})))):{};
-  let ordersQuery = client
-    .from("orders")
-    .select("id,customer_id,status,total,currency,created_at,collection_mode",{count:"exact"})
-    .eq("operator_id", operatorId)
-    .order("created_at", { ascending: false }).order("id",{ascending:false})
-    .limit(100);
-  if (searchEmail)
-    ordersQuery = ordersQuery.in(
-      "customer_id",
-      customers.data.map((c) => c.id),
-    );
-  if (selectedBooking && /^[0-9a-f-]{36}$/i.test(selectedBooking)) {
-    const selected = await client.from("bookings").select("order_id").eq("operator_id", operatorId).eq("id", selectedBooking).maybeSingle();
-    if (selected.error) return unavailable('Booking is temporarily unavailable.');
-    ordersQuery = ordersQuery.in("id", selected.data ? [selected.data.order_id] : []);
-  }
-  if (day) {
-    const scheduled = await client
-      .from("departures")
-      .select("id",{count:"exact"})
-      .eq("operator_id", operatorId)
-      .eq("service_date", day)
-      .limit(1000);
-    if (scheduled.error||scheduled.count!==scheduled.data?.length) return unavailable('Calendar is unavailable.');
-    const items = await client
-      .from("booking_items")
-      .select("order_id",{count:"exact"})
-      .eq("operator_id", operatorId)
-      .in(
-        "departure_id",
-        scheduled.data.map((d) => d.id),
-      )
-      .limit(1000);
-    if (items.error||items.count!==items.data?.length) return unavailable('Calendar is unavailable.');
-    ordersQuery = ordersQuery.in(
-      "id",
-      items.data.map((i) => i.order_id),
-    );
-  }
+  let ordersQuery=client.from('orders').select('id,customer_id,status,total,currency,created_at,collection_mode',{count:'exact'}).eq('operator_id',operatorId).order('created_at',{ascending:false}).order('id',{ascending:false});
+  if(selectedBooking){
+    const selected=await client.from('bookings').select('order_id').eq('operator_id',operatorId).eq('id',selectedBooking).maybeSingle();
+    if(selected.error)return unavailable('Booking is temporarily unavailable.');
+    ordersQuery=ordersQuery.in('id',selected.data?[selected.data.order_id]:[]);
+  }else ordersQuery=ordersQuery.in('id',searchResult!.ids);
   const orders = await ordersQuery;
   if (orders.error)
     return unavailable('Orders are temporarily unavailable.');
@@ -194,5 +156,5 @@ export async function BookingsPanel({
    const communications=<>{deliveries.error?<p>Confirmation status temporarily unavailable.</p>:<>{!history.length&&<p>No email history is recorded in this loaded view.</p>}<ul>{history.slice(0,10).map(d=><li key={d.id}>{d.recipient_type==='owner'?'Owner':'Customer'} · {ownerEmailEvent(d.event_type)}{d.manual?' (manual resend)':''}: {emailOutcomeLabel(d)}<details><summary>Delivery details</summary>{d.attempt_count} attempt(s){d.last_error_code?` · ${d.last_error_code}`:''}</details></li>)}</ul><small>Up to 10 most recent loaded notifications. Sent does not confirm inbox arrival; this history may be limited.</small></>}{booking&&hasPermission(context.role,'integrations.manage')&&<p><Link prefetch={false} href={`${root}/email?booking=${encodeURIComponent(booking.booking_reference)}`}>Inspect delivery outcomes</Link>. Unresolved accepted messages cannot be resent.</p>}</>;
    return {id:order.id,status:row.status,searchText:[row.name,row.reference,row.email,row.phone].filter(Boolean).join(' '),content:<BookingRecord operatorId={operatorId} row={row} selected={selected} actions={actions} communications={communications} qr={selected&&booking?.qr_token?<BookingQr token={booking.qr_token}/>:undefined} holdNotes={(holdsByOrder.get(order.id)??[]).filter(h=>h.status!=='consumed').map((h,i)=><p key={i}>Temporary seat reservation: {ownerStatus(h.status)} · ends {new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeStyle:'short',timeZone:operator.data.timezone}).format(new Date(h.expires_at))}.</p>)}/>};
   });
-  return <BookingsWorkspace operatorId={operatorId} today={today} day={day} email={searchEmail} selectedBooking={selectedBooking} entries={entries} creation={creation} canCreate={hasPermission(context.role,'bookings.create')} limited={orders.count===null||orders.count>orders.data.length} result={result?messages[result]??messages.error:undefined}/>;
+  return <BookingsWorkspace operatorId={operatorId} today={today} day={day} email={searchEmail} selectedBooking={selectedBooking} entries={entries} creation={creation} canCreate={hasPermission(context.role,'bookings.create')} serverSearch={{query,status:searchStatus,page:searchResult?.page??1,total:searchResult?.total??entries.length,pageSize:25}} limited={orders.count===null||orders.count>orders.data.length} result={result?messages[result]??messages.error:undefined}/>;
 }
