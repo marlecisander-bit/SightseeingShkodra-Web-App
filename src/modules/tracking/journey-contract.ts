@@ -1,5 +1,5 @@
 export type JourneyStop = {id:string;number?:string;label:string;state:'current'|'next'|'departed'|'upcoming';eta:string};
-export type JourneySnapshot = {type:'shkodra:journey';version:1;unavailable:boolean;stops:JourneyStop[];movement?:string;lastObservationAt?:string|null;confidence?:{position:'live'|'delayed'|'unavailable'}};
+export type JourneySnapshot = {type:'shkodra:journey';version:1;unavailable:boolean;stops:JourneyStop[];movement?:string;phase?:'ARRIVING'|'PARKED'|'LEAVING'|'EN_ROUTE'|'UNKNOWN';statusValidUntil?:string|null;lastObservationAt?:string|null;confidence?:{position:'live'|'delayed'|'unavailable'}};
 export function parseJourney(value:unknown):JourneySnapshot|null {
  if(!value||typeof value!=='object')return null;
  const d=value as JourneySnapshot;
@@ -8,7 +8,24 @@ export function parseJourney(value:unknown):JourneySnapshot|null {
  if(d.movement!==undefined&&(typeof d.movement!=='string'||d.movement.length>180))return null;
  if(d.lastObservationAt!=null&&(typeof d.lastObservationAt!=='string'||d.lastObservationAt.length>40||!Number.isFinite(Date.parse(d.lastObservationAt))))return null;
  if(d.confidence!==undefined&&(!d.confidence||typeof d.confidence!=='object'||!['live','delayed','unavailable'].includes(d.confidence.position)))return null;
+ if(d.phase!==undefined&&!['ARRIVING','PARKED','LEAVING','EN_ROUTE','UNKNOWN'].includes(d.phase))return null;
+ if(d.statusValidUntil!=null&&(typeof d.statusValidUntil!=='string'||d.statusValidUntil.length>40||!Number.isFinite(Date.parse(d.statusValidUntil))))return null;
  const ids=new Set<string>();
  for(const s of d.stops){if(!s||typeof s.id!=='string'||!s.id||s.id.length>180||ids.has(s.id)||(s.number!==undefined&&(typeof s.number!=='string'||s.number.length>30))||typeof s.label!=='string'||s.label.length>180||typeof s.eta!=='string'||s.eta.length>80||!['current','next','departed','upcoming'].includes(s.state))return null;ids.add(s.id);}
  return d;
+}
+
+// Validate the upstream presentation lifetime; never reclassify GPS or infer parking here.
+export function presentationMessage(d:Pick<JourneySnapshot,'movement'|'phase'|'statusValidUntil'|'lastObservationAt'>,now=Date.now()):string|null {
+ if(!d.movement||typeof d.movement!=='string'||d.movement.length>180)return null;
+ if(d.phase==='UNKNOWN')return d.movement;
+ if(!d.phase||!['ARRIVING','PARKED','LEAVING','EN_ROUTE'].includes(d.phase))return null;
+ const observed=Date.parse(d.lastObservationAt??''),until=Date.parse(d.statusValidUntil??''),limit=d.phase==='PARKED'?180000:90000;
+ return Number.isFinite(observed)&&Number.isFinite(until)&&now-observed>=-60000&&now-observed<=limit&&until-observed<=limit&&until>=now?d.movement:null;
+}
+
+export function presentationTtl(d:Pick<JourneySnapshot,'movement'|'phase'|'statusValidUntil'|'lastObservationAt'>,now=Date.now()):number {
+ if(!d.phase||d.phase==='UNKNOWN')return 45000;
+ if(presentationMessage(d,now)===null)return 0;
+ return Math.max(0,Math.min(45000,Date.parse(d.statusValidUntil??'')-now));
 }

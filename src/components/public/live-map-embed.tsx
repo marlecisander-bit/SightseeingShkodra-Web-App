@@ -4,7 +4,7 @@ import { Button, ButtonContent } from "@/components/ui/button";
 import { useEffect, useState, useRef } from "react";
 import styles from "./live-map.module.css";
 
-import {parseJourney,type JourneySnapshot} from '@/modules/tracking/journey-contract';
+import {parseJourney,presentationTtl,type JourneySnapshot} from '@/modules/tracking/journey-contract';
 import { publicMapBinding, publicMapUrl as mapUrl } from '@/modules/tracking/public-map-binding';
 const mapOrigin = publicMapBinding.origin;
 
@@ -16,7 +16,7 @@ export function LiveMapEmbed({ priority = false, presentation = "compact", colla
     let expires:ReturnType<typeof setTimeout>;
     const request=()=>frame.current?.contentWindow?.postMessage({type:"shkodra:request-journey"},mapOrigin);
     const handshake=setInterval(request,3000);
-    const receive=(event:MessageEvent)=>{if(event.origin!==mapOrigin||event.source!==frame.current?.contentWindow)return;const snapshot=parseJourney(event.data);if(!snapshot)return;clearInterval(handshake);onJourney(snapshot);clearTimeout(expires);expires=setTimeout(()=>onJourney(null,'stale'),45000);};
+    const receive=(event:MessageEvent)=>{if(event.origin!==mapOrigin||event.source!==frame.current?.contentWindow)return;const snapshot=parseJourney(event.data);if(!snapshot)return;clearInterval(handshake);onJourney(snapshot);clearTimeout(expires);expires=setTimeout(()=>onJourney(null,'stale'),presentationTtl(snapshot));};
     window.addEventListener('message',receive);
     request();
     return()=>{window.removeEventListener('message',receive);clearTimeout(expires);clearInterval(handshake);};
