@@ -1,5 +1,10 @@
 # Approved roadmap amendments
 
+## 2026-10-30 - Retire Local notebook and Final booking invitation
+
+The owner identified the two hidden Website cards in a screenshot and requested their removal from the admin and all public connections, with publication. Remove the Local notebook homepage section and Final booking invitation on every public route, along with their active editors, preview wiring, exclusive components and styles. Preserve shared destinations/Explore guides, business footer, booking controls, saved records and reused media. Retained document keys are compatibility-only and cannot restore the retired sections. No database or cloud-configuration change is required. The separate unpublished shared-van product development is not part of this publication.
+
+
 ## 2026-09-29 - Full-screen mobile hero from phone reference
 
 The user supplied the real-phone screenshot and requested that the mobile photograph, including Discover your day, cover the screen; remove the mobile hero Track live option and lower the headline/support slightly. This supersedes the earlier requirement that Discover sit outside the photo and that hero geometry remain independent of viewport height. Use stable small-viewport minimum height (100svh), allow readable content to extend on short screens, retain proportional cropping, and keep desktop/header/booking/pricing/map behavior. No deployment is included in this implementation request. See MOBILE-HERO-FULLSCREEN.md.

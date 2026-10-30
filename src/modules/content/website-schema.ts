@@ -17,14 +17,11 @@ export const homepageVisibilitySections = ["hero", "intro", "route", "live", "de
 export function sectionVisible(content: WebsiteContent, section: string) { return content[`${section}.showOnHomepage`] !== "false"; }
 export const homepageVisible = sectionVisible;
 export function visibilityScope(section: string) {
- return ({hero:'on Homepage',route:'on Homepage, Route stop overview and Your day sample; Route map stays available',live:'on homepage live amenity; Route map stays available',departures:'on Route departures and Your day boarding link; booking availability stays available',reviews:'on Homepage Guest Reviews',notebook:'on Homepage destination cards; Explore guides stay available',final:'on Homepage and in other public footers except FAQ, Book and booking-management pages',partners:'on Homepage partner section'} as Record<string,string>)[section] ?? 'on Homepage';
+ return ({hero:'on Homepage',route:'on Homepage, Route stop overview and Your day sample; Route map stays available',live:'on homepage live amenity; Route map stays available',departures:'on Route departures and Your day boarding link; booking availability stays available',reviews:'on Homepage Guest Reviews',partners:'on Homepage partner section'} as Record<string,string>)[section] ?? 'on Homepage';
 }
 export function visibleWebsiteLink(link: string, content: WebsiteContent) {
   const resolved = resolveWebsiteLink(link);
   return !(resolved === "/#route" && !sectionVisible(content, "route") || (link === "/tour#timetable" || resolved === "/route#journey-departures") && !sectionVisible(content, "departures"));
-}
-export function invitationVisible(content: WebsiteContent, pathname: string) {
-  return sectionVisible(content, "final") && pathname !== "/faq" && pathname !== "/book" && !pathname.startsWith("/booking/");
 }
 export function unavailableWebsiteContent(): WebsiteContent {
   return { ...initialWebsiteContent, "faq.items":"[]", ...Object.fromEntries(homepageVisibilitySections.map(id => [`${id}.showOnHomepage`, "false"])) };
@@ -115,8 +112,8 @@ for (const section of websiteSections) {
   if (homepageVisibilitySections.some(id => id === section.id)) section.fields.push(f(`${section.id}.showOnHomepage`, `Show ${visibilityScope(section.id)}`, "true", "visibility"));
 }
 // Retain the stored schema and historical showcase headings without offering obsolete controls.
-const homepageEditorOrder = ["hero","heroAmenities","homeRoute","route","notebook","reviews","final","partners"];
-export const homepageEditorSections = websiteSections.filter(s => !["intro","how","live","departures","faq","whatsapp","destinations","navigation","footer","seo",...legalSections.map(s=>s.id),...pageSections.map(p=>p.id),...editorialSections.filter(p=>p.id!=="homeRoute").map(p=>p.id)].includes(s.id)).map(s => s.id === "reviews" ? {...s,title:"Guest Reviews",fields:s.fields.filter(f => f.key !== "reviews.second")} : s.id === "notebook" ? {...s,fields:s.fields.filter(f=>!/^notebook\.[0-9]+\./.test(f.key)||f.key==="notebook.0.linkLabel").map(f=>f.key==="notebook.0.linkLabel"?{...f,label:"Destination card link label"}:f)} : s.id === "route" ? {...s,fields:s.fields.filter(f=>f.key!=="route.text")} : s.id === "how" ? {...s,title:"How it works"} : s).sort((a,b)=>homepageEditorOrder.indexOf(a.id)-homepageEditorOrder.indexOf(b.id));
+const homepageEditorOrder = ["hero","heroAmenities","homeRoute","route","reviews","partners"];
+export const homepageEditorSections = websiteSections.filter(s => !["intro","how","live","departures","notebook","final","faq","whatsapp","destinations","navigation","footer","seo",...legalSections.map(s=>s.id),...pageSections.map(p=>p.id),...editorialSections.filter(p=>p.id!=="homeRoute").map(p=>p.id)].includes(s.id)).map(s => s.id === "reviews" ? {...s,title:"Guest Reviews",fields:s.fields.filter(f => f.key !== "reviews.second")} : s.id === "route" ? {...s,fields:s.fields.filter(f=>f.key!=="route.text")} : s.id === "how" ? {...s,title:"How it works"} : s).sort((a,b)=>homepageEditorOrder.indexOf(a.id)-homepageEditorOrder.indexOf(b.id));
 export const destinationEditorSections = websiteSections.filter(s => s.id === "destinations").map(s => ({ ...s, title: "Destination content", fields: s.fields.filter(f => f.key.startsWith("place.")) }));
 export const globalEditorSections = websiteSections.filter(s=>["whatsapp","navigation","footer","seo",...legalSections.map(s=>s.id)].includes(s.id)).map(s=>s.id==="footer"?{...s,fields:footerFields}:s.id==="navigation"?{...s,fields:s.fields.filter(f=>!["nav.mobileBook","nav.mobileMap"].includes(f.key))}:s.id==="seo"?{...s,fields:s.fields.filter(f=>!["seo.image","seo.alt"].includes(f.key))}:s);
 export const publicPageEditorSections = [...editorialSections.filter(s=>s.id!=="homeRoute").map(s=>s.id==="editorialLabels"?{...s,fields:s.fields.filter(f=>!["labels.tour","labels.ticket","labels.faq"].includes(f.key))}:s.id==="routePage"?{...s,fields:[...s.fields,...websiteSections.find(section=>section.id==="departures")!.fields.filter(f=>f.kind==="visibility")]}:s),...pageSections.filter(s=>s.id!=="tourPage"),websiteSections.find(s=>s.id==="faq")!];

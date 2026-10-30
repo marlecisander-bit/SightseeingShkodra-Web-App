@@ -43,7 +43,7 @@ test('retired service section stays absent with either saved visibility setting'
 
 test('Admin homepage order has one owner per section and matches the public progression',async()=>{
  const {websiteEditorGroups,editableWebsiteSections}=await import('../../src/modules/content/website-schema.ts');
- assert.deepEqual(websiteEditorGroups.homepage.map(s=>s.id),['hero','heroAmenities','homeRoute','route','notebook','reviews','final','partners']);
+ assert.deepEqual(websiteEditorGroups.homepage.map(s=>s.id),['hero','heroAmenities','homeRoute','route','reviews','partners']);
  assert.equal(editableWebsiteSections.filter(s=>s.id==='how').length,0);
  assert.equal(new Set(editableWebsiteSections.flatMap(s=>s.fields.map(f=>f.key))).size,editableWebsiteSections.flatMap(s=>s.fields).length);
 });

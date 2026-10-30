@@ -23,8 +23,8 @@ test('partner input validates required publication logo and rejects foreign stor
  assert.equal(parsePartner(form,'test').display_order,3);
  for(const [key,value] of [['logo_url',''],['website_url','javascript:alert(1)'],['logo_url','https://test.supabase.co/storage/v1/object/public/website-media/other/00000000-0000-4000-8000-000000000001.png'],['display_order','1.5'],['name','']]){const copy=new FormData();for(const [k,v] of form)copy.set(k,v);copy.set(key,value);assert.throws(()=>parsePartner(copy,'test'));}
 });
-test('homepage preserves one final invitation before partners and shared footer',async()=>{
+test('homepage retains partners and business footer without the retired invitation',async()=>{
  const {HomepageView}=await import('../../src/components/public/homepage-view.tsx');const {Footer}=await import('../../src/components/public/ui.tsx');const {BookingProvider}=await import('../../src/components/public/booking.tsx');const {emptyHomepage}=await import('../../src/modules/content/homepage.ts');
- const html=renderToStaticMarkup(React.createElement(BookingProvider,null,React.createElement(React.Fragment,null,React.createElement(HomepageView,{home:emptyHomepage('ready'),content:initialWebsiteContent,partners:[row],places:[]}),React.createElement(Footer,{content:initialWebsiteContent,previewPathname:'/',homepageInvitationInContent:true}))));
- assert.equal((html.match(/aria-label="Final booking invitation"/g)||[]).length,1);assert.ok(html.indexOf('id="partners"')>html.indexOf('aria-label="Final booking invitation"'));assert.ok(html.indexOf('class="p-global-footer"')>html.indexOf('id="partners"'));
+ const html=renderToStaticMarkup(React.createElement(BookingProvider,null,React.createElement(React.Fragment,null,React.createElement(HomepageView,{home:emptyHomepage('ready'),content:initialWebsiteContent,partners:[row],places:[]}),React.createElement(Footer,{content:initialWebsiteContent,previewPathname:'/'}))));
+ assert.equal((html.match(/aria-label="Final booking invitation"/g)||[]).length,0);assert.ok(html.indexOf('class="p-global-footer"')>html.indexOf('id="partners"'));
 });

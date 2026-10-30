@@ -1,4 +1,3 @@
-import { FinalInvitation } from "./final-invitation";
 import { ButtonContent } from "@/components/ui/button";
 import Image from "next/image";
 import { PublicBookingLink as Link } from "./booking";
@@ -92,17 +91,11 @@ export function Field({
     </label>
   );
 }
-export function PreviewNote() {
-  return (
-    <p className="p-preview">Reserve online. Pay at the meeting point.</p>
-  );
-}
-export function Footer({ content = initialWebsiteContent, previewPathname, googleReviewsUrl = '', homepageInvitationInContent = false }: { content?: WebsiteContent; previewPathname?: string; googleReviewsUrl?:string|null; homepageInvitationInContent?:boolean }) {
+export function Footer({ content = initialWebsiteContent, googleReviewsUrl = '' }: { content?: WebsiteContent; googleReviewsUrl?:string|null; }) {
  const c={...footerDefaults,...content};
  const socials=[['instagram','Instagram',c['footer.social.instagram']],['facebook','Facebook',c['footer.social.facebook']],['getyourguide','GetYourGuide',c['footer.social.getYourGuide']],['tripadvisor','Tripadvisor',c['footer.social.tripadvisor']],['google','Google Reviews',googleReviewsUrl??'']].filter(([, ,url])=>url&&safeSocialUrl(url));
   return (
     <>
-      <FinalBookingInvitation content={c} previewPathname={previewPathname} excludeHomepage={homepageInvitationInContent}/>
       <footer className="p-global-footer" data-floating-obstacle>
        <div className="p-footer-inner">
          <HomeLink className="p-footer-logo" aria-label="Sightseeing Shkodra homepage"><BrandLogo /></HomeLink>
@@ -114,16 +107,4 @@ export function Footer({ content = initialWebsiteContent, previewPathname, googl
       </footer>
     </>
   );
-}
-
-export function FinalBookingInvitation({content:c,previewPathname,excludeHomepage=false}:{content:WebsiteContent;previewPathname?:string;excludeHomepage?:boolean}) {
- return (<FinalInvitation content={c} previewPathname={previewPathname} excludeHomepage={excludeHomepage}><section className="p-site-footer" aria-label="Final booking invitation">
-      <Media src={c["final.image"]} alt={c["final.alt"]} sizes="100vw" />
-      <div className="p-footer-cta">
-        <p className="p-eyebrow">{c["final.eyebrow"]}</p>
-        <h2>{c["final.title"]}<br /><em>{c["final.emphasis"]}</em></h2>
-        <ActionLink href="/book" className="p-button-booking">{c["final.book"]}</ActionLink>
-        <PreviewNote />
-      </div>
-      </section></FinalInvitation>);
 }

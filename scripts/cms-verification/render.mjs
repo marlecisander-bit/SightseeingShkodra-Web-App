@@ -30,7 +30,7 @@ export function renderConsumer(key,c,extra={}){
  if(/^(bookPage|routePage|faqPage|explorePage)\.seo/.test(key)){const prefix=key.split('.')[0];return {route:{bookPage:'/book',routePage:'/route',faqPage:'/faq',explorePage:'/explore'}[prefix],consumer:'editorialMetadata',metadata:editorialMetadata('/fixture',prefix,c,true)};}
  if(key.startsWith('legal.'))return {route:key.includes('privacy')?'/privacy-policy':'/terms-and-conditions',consumer:'LegalPage',html:render(LegalPage,{content:c,kind:key.split('.')[1]})};
  if(key.startsWith('nav.'))return {route:'shared header',consumer:'Header',html:render(Header,{content:c,previewPathname:'/'})};
- if(key.startsWith('footer.'))return {route:'shared footer',consumer:'Footer',html:render(Footer,{content:c,previewPathname:'/',googleReviewsUrl:settings.google_reviews_url,homepageInvitationInContent:true})};
+ if(key.startsWith('footer.'))return {route:'shared footer',consumer:'Footer',html:render(Footer,{content:c,googleReviewsUrl:settings.google_reviews_url})};
  if(key.startsWith('whatsapp.'))return {route:'shared public contact',consumer:'whatsappLink + WhatsAppContact',html:render(WhatsAppContact,{href:whatsappLink(c),label:c['whatsapp.label'],desktop:c['whatsapp.desktop']==='true',mobile:c['whatsapp.mobile']==='true'})};
  if(key.startsWith('partners.'))return {route:'/',consumer:'PartnersSection',html:render(PartnersSection,{content:c,partners:[partner]})};
  if(key==='departures.showOnHomepage')return {route:'/route',consumer:'RouteJourney',html:render(RouteJourney,{content:c,initial:planner,places:[place]})};
