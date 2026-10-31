@@ -31,8 +31,10 @@ test('external display capability is explicit, expired replacement clears claims
  const bridge=connectJourneyBridge(host,()=>source,origin,(...args)=>received.push(args),true);
  assert.deepEqual(sent[0],[{type:'shkodra:request-journey',version:1,embeddedDisplayVersion:1},origin]);
  const data={type:'shkodra:journey',version:1,unavailable:false,stops:[],phase:'PARKED',movement:'Parked',lastObservationAt:new Date().toISOString(),statusValidUntil:new Date(Date.now()+10000).toISOString()};
+ const display={version:1,label:'PARKED AT',destination:'Fixture',activity:'',eta:'',nextStop:'',live:false,stops:[]};
  const emit=(d,extra={})=>{for(const fn of listeners)fn({origin,source,data:d,...extra});};
- emit(data);assert.equal(received.length,1);
+ emit(data);assert.equal(received.length,0);
+ data.embeddedDisplay=display;emit(data);assert.equal(received.length,1);
  for(const extra of [{origin:'http://127.0.0.1:4200'},{origin:'null'},{source:{}}])emit(data,extra);
  emit({...data,embeddedDisplay:{version:99}});assert.equal(received.length,1);
  emit({...data,statusValidUntil:new Date(Date.now()-1).toISOString()});assert.deepEqual(received.at(-1),[null,'stale']);
