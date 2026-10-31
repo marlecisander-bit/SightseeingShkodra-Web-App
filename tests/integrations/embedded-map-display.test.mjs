@@ -15,3 +15,15 @@ test('local paired override cannot activate production even when supplied at bui
  assert.deepEqual(production,[production[0],false,production[0]]);
  assert.deepEqual(flags('development'),[production[0],true,true]);
 });
+
+test('historical context expires from source time at ten minutes; duplicate delivery cannot extend it',()=>{
+ const at=Date.parse('2026-10-31T10:00:00Z'),j={...snapshot(),phase:'UNKNOWN',presentationKind:'historical_stopped',lastObservationAt:new Date(at).toISOString(),statusValidUntil:new Date(at+600000).toISOString()};
+ assert(parseJourney(j));assert.equal(presentationTtl(j,at+270000),45000);assert.equal(presentationTtl(j,at+599000),1000);assert.equal(presentationTtl(j,at+600001),0);assert.equal(presentationTtl({...j,statusValidUntil:new Date(at+900000).toISOString()},at+270000),0);
+ assert.equal(presentationTtl({...j,phase:'PARKED'},at+270000),0);
+});
+test('fresh reported context expires at ninety seconds and safe upstream artwork remains additive',()=>{
+ const at=Date.now(),j={...snapshot(),phase:'UNKNOWN',presentationKind:'reported_stopped',lastObservationAt:new Date(at).toISOString(),statusValidUntil:new Date(at+90000).toISOString()};
+ assert.equal(presentationTtl(j,at+89000),1000);assert.equal(presentationTtl(j,at+90001),0);
+ for(const photoUrl of ['javascript:evil','data:image/png,evil','https://user:password@example.com/a.png'])assert.equal(parseJourney({...j,embeddedDisplay:{...display,stops:[{...display.stops[0],photoUrl}]}}),null);
+ assert(parseJourney({...j,embeddedDisplay:{...display,stops:[{...display.stops[0],photoUrl:'https://example.com/stop.jpg',color:'#078B51'}]}}));
+});
