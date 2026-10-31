@@ -107,3 +107,17 @@
 .statusProgress li[data-state=skipped] button{outline:2px dashed #6b7785;outline-offset:2px}
 
 .nextStop{font-size:15px;font-weight:650;line-height:1.4;color:var(--ss-charcoal,#25232a)}
+
+/* Compact copy/chart spacing; retain existing button hit areas. */
+.embed .statusPanel{padding:10px 12px;gap:6px 16px;margin-bottom:8px}
+.statusCopy{gap:2px;font-size:12px;line-height:1.35}
+.statusCopy strong{font-size:18px;line-height:1.2}
+.context:empty{display:none}
+.statusTiming{gap:3px;font-size:12px;line-height:1.35}
+.nextStop{font-size:13px}
+@container(max-width:600px){.embed .statusPanel{padding:9px 11px;gap:4px}.statusCopy strong{font-size:17px}}
+
+/* Content-sized information card; the map itself keeps its full width. */
+.embed .statusPanel{width:fit-content;max-width:min(300px,100%);margin-left:auto;flex-direction:column;align-items:flex-start}
+.embed .statusCopy,.embed .statusTiming,.embed .statusProgress{flex:none;max-width:100%}
+.embed .statusProgress{width:236px;grid-template-columns:repeat(5,44px);gap:4px}
