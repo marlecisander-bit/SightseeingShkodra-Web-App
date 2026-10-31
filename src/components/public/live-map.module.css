@@ -80,3 +80,30 @@
 .embed[data-presentation="full"] .map{height:clamp(420px,70dvh,760px);}
 @media(max-height:520px){.embed[data-presentation="full"] .map{height:clamp(260px,80dvh,420px);}}
 .statusProgress :is([data-state="next"],[data-state="approaching"]) button{background:#fff8df;border-color:#d69a00;box-shadow:none;}
+
+/* Shared upstream stop artwork; image/color metadata is presentation only. */
+.statusProgress{flex:1 1 320px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;isolation:isolate}
+.statusProgress li{position:relative;display:block;min-width:0}
+.statusProgress li+li::before{content:'';position:absolute;top:23px;right:50%;width:100%;border-top:2px dashed #e0ad00;z-index:-1}
+.statusProgress li[data-state=completed]+li[data-state=completed]::before{border-top:3px solid #168051}
+.statusProgress li[data-state] button{width:100%;min-height:80px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:2px;border:0;border-radius:8px;background:none;box-shadow:none;color:inherit}
+.stopPortrait{position:relative;display:block;width:42px;height:42px;border:3px solid var(--stop-color);border-radius:50%;background:#edf2f7}
+.stopPortrait img{display:block;width:100%;height:100%;object-fit:cover;border-radius:50%}
+.stopNumber{position:absolute;left:-6px;top:-5px;display:grid;place-items:center;width:18px;height:18px;border:1px solid #fff;border-radius:50%;font-size:10px;background:var(--stop-color);color:white;text-shadow:0 1px 2px #000}
+.stopName{max-width:100%;padding:3px 4px;border-radius:6px;background:var(--stop-color);color:white;text-shadow:0 1px 2px #0009;font-size:10px;line-height:1.3;overflow-wrap:anywhere}
+.statusProgress [data-state=next] .stopPortrait{outline:3px solid #e0ad00;outline-offset:2px}
+.statusProgress [data-state=completed] .stopPortrait{outline:3px solid #168051;outline-offset:2px}
+.statusProgress [data-state=unknown] .stopPortrait{outline:1px dotted #6b7785;outline-offset:2px}
+.stopPortrait img[hidden]{display:none}
+
+.statusProgress [data-state=current] .stopPortrait{outline:3px solid #168051;outline-offset:2px}
+.statusProgress li[data-state=completed]+li[data-state=current]::before{border-top:3px solid #168051}
+.statusProgress [data-state=skipped] .stopPortrait{outline:2px dashed #6b7785;outline-offset:2px}
+
+/* Numbered chart retains the same accessible stop command buttons. */
+.statusProgress li[data-state] button{width:44px;min-height:44px;margin:2px auto;border:2px solid white;border-radius:50%;padding:0;justify-content:center;background:var(--stop-color,#526476);color:var(--stop-ink,#fff);text-shadow:none;font-size:13px;box-shadow:0 0 0 1px #dce3e9}
+.statusProgress li[data-state=next] button{outline:2px solid #e0ad00;outline-offset:2px}
+.statusProgress li[data-state=current] button{outline:2px solid #168051;outline-offset:2px}
+.statusProgress li[data-state=skipped] button{outline:2px dashed #6b7785;outline-offset:2px}
+
+.nextStop{font-size:15px;font-weight:650;line-height:1.4;color:var(--ss-charcoal,#25232a)}
