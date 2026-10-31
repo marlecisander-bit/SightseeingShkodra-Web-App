@@ -446,3 +446,10 @@
 .mobileDrawer{overflow-y:auto;}
 .drawerHeading>strong{min-width:0;overflow-wrap:anywhere;}
 .drawerHeading>button{flex-shrink:0;}
+
+/* Home opens the overview directly instead of repeating it in a submenu. */
+.shell .homeLink {display:flex;align-items:center;gap:10px;min-height:48px;padding:10px 12px;border-radius:9px;font-size:14px;font-weight:500;color:var(--admin-text);text-decoration:none;}
+.shell .homeLink > svg {width:20px;height:20px;flex:none;color:var(--admin-text-muted);}
+.shell .homeLink:hover {background:var(--admin-hover);}
+.shell .homeLink[aria-current="page"] {background:var(--admin-primary-soft);color:var(--admin-primary);}
+.shell .homeLink[aria-current="page"] > svg {color:var(--admin-primary);}

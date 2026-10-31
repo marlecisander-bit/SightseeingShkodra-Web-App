@@ -34,7 +34,7 @@ export function AdminNavigation({groups,section,account}:{groups:AdminNavGroup[]
  const area=groups.find(group=>group.items.some(item=>item.id===active?.id))?.id;
  return <>
   <aside className={styles.desktopNavigation}>
-   <nav aria-label="Admin navigation" className={styles.taskNavigation}>{groups.map(group=><details className={styles.taskGroup} key={group.id+':'+(area===group.id)} open={area===group.id}>
+   <nav aria-label="Admin navigation" className={styles.taskNavigation}>{groups.map(group=>group.id==='overview'?<Link key={group.id} className={styles.homeLink} prefetch={false} href={group.items[0].href} onClick={navigateAdminContext} aria-current={area===group.id?'page':undefined}><AdminIcon name={adminPrimaryIcons[group.id]}/><span>{group.label}</span><NavigationHint/></Link>:<details className={styles.taskGroup} key={group.id+':'+(area===group.id)} open={area===group.id}>
     <summary><AdminIcon name={adminPrimaryIcons[group.id]}/><span>{group.label}</span><span className={styles.chevron}><AdminIcon name="chevron-down" size={16}/></span></summary>
     <TaskItems items={group.items} activeId={active?.id}/>
    </details>)}</nav>

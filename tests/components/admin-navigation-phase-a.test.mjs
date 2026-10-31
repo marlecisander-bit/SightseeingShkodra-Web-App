@@ -10,7 +10,15 @@ const {AdminNavigation}=await import('../../src/app/admin/admin-navigation.tsx')
 const props={groups:adminNavigationGroups('fixture','owner'),section:'content',account:React.createElement('a',{href:'/admin'},'Switch workspace')};
 test('six direct mobile links share role-filtered desktop groups; canonical URLs and external behavior survive',()=>{
  const dom=new JSDOM(renderToStaticMarkup(React.createElement(AdminNavigation,props))),d=dom.window.document;
- assert.equal(d.querySelectorAll('aside details.taskGroup').length,6);
+ assert.equal(d.querySelectorAll('aside details.taskGroup').length,5);
+ const home=d.querySelector('aside nav > a');
+ assert.equal(home.textContent,'Home');
+ assert.equal(home.getAttribute('href'),'/admin/fixture/overview');
+ assert(!d.body.textContent.includes('Today’s overview'));
+ const overview=new JSDOM(renderToStaticMarkup(React.createElement(AdminNavigation,{...props,section:'overview'})));
+ assert.equal(overview.window.document.querySelector('aside [aria-current=page]').textContent,'Home');
+ assert.equal(overview.window.document.querySelectorAll('aside details.taskGroup[open]').length,0);
+ overview.window.close();
  assert.equal(d.querySelectorAll('aside details.taskGroup[open]').length,1);
  assert.equal(d.querySelector('.taskGroup[open] summary').textContent.trim(),'Website');
  const links=[...d.querySelectorAll('nav[aria-label="Primary admin navigation"] > a')];
