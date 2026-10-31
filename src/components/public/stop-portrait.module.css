@@ -11,3 +11,13 @@
 @media(hover:hover){button:hover .frame{transform:scale(1.035);box-shadow:0 10px 24px #182b3626;}}
 button[aria-expanded=true] .frame{box-shadow:0 0 0 4px white,0 0 0 7px var(--stop-color),0 10px 24px #182b3626;}
 @media(prefers-reduced-motion:reduce){.frame{transition:none;}button:hover .frame{transform:none;}}
+
+/* Compact editorial selectors keep labels below the photograph in normal flow. */
+.compact{width:min(100%,136px);aspect-ratio:auto;margin:0 auto;gap:12px;}
+.compact .frame{aspect-ratio:1;height:auto;border-width:2px;padding:3px;box-shadow:none;}
+.compact .number{width:32px;height:32px;font-size:15px;border-width:2px;}
+.compact .name{position:static;transform:none;width:100%;max-width:100%;padding:0;border:0;border-radius:0;background:transparent;color:var(--ss-charcoal);font-size:14px;line-height:1.4;box-shadow:none;}
+button[aria-pressed=true] .compact .frame{box-shadow:0 0 0 3px white,0 0 0 5px color-mix(in srgb,var(--stop-color) 65%,transparent);}
+@media(max-width:700px){.compact{width:96px;gap:10px;}.compact .number{width:28px;height:28px;font-size:14px;}.compact .name{font-size:13px;}}
+
+.compact .placeholder{padding:10px;font-size:11px;}
