@@ -19,21 +19,18 @@ export async function renderClientProbe(key,content){
   const component=key==='labels.destination'?React.createElement(BookingProvider,{content,preview:true},React.createElement(HomepageView,{preview:true,home:homeData(),content,planner,places:[place]})):key==='routePage.mapAction'?React.createElement(RouteJourney,{content,initial:{date:'2030-06-01',times:[],fares:[],stops:[{id:'fixture-stop',label:'Synthetic stop'}]},places:[]}):React.createElement(BookingProvider,{content,preview:true},React.createElement(BookButton,null,'Open synthetic booking'));
   await act(async()=>{root.render(component);});
   let html;
-  if(key==='labels.destination'){
-   assert.ok(!host.querySelector('dialog[open]'));
-   const trigger=host.querySelector('[data-homepage-discovery] li button');assert.ok(trigger,'Homepage discovery trigger missing');await act(async()=>trigger.click());
-   const dialog=host.querySelector('dialog[open]');assert.ok(dialog);assert.equal(host.querySelector('[id=\"'+dialog.getAttribute('aria-labelledby')+'\"]'),dialog.querySelector('h3'));
-   // React allocates fresh useId values across whole-Homepage client mounts.
-   // Compare CMS output independently of those opaque per-mount identifiers.
-   html=dialog.outerHTML.replace(/_r_[a-z0-9]+_/g,'fixture-react-id');
-   assert.ok(dialog.querySelector('a'));assert.equal(dialog.querySelector('a').getAttribute('href'),place.link);
-   await act(async()=>dialog.querySelector('button[aria-label="Close stop information"]').click());assert.ok(!host.querySelector('dialog[open]'));
-  }else if(key==='routePage.mapAction'){
-   assert.ok(!host.textContent.includes(content[key]),'action must not appear before opening a stop');
-   const trigger=host.querySelector('button[aria-controls]');assert.ok(trigger,'real stop trigger missing');await act(async()=>trigger.click());
-   const detail=host.querySelector('section[aria-label="Synthetic stop details"]');assert.ok(detail);html=detail.outerHTML;
-   assert.ok([...detail.querySelectorAll('button')].some(b=>b.textContent===content[key]),'map action missing from opened real stop details');
-   await act(async()=>[...detail.querySelectorAll('button')].find(b=>b.textContent==='Close details').click());assert.equal(host.querySelector('section[aria-label="Synthetic stop details"]'),null);
+  if(key==='labels.destination'||key==='routePage.mapAction'){
+   const trigger=host.querySelector('ol[aria-label="Choose a destination"] button');assert.ok(trigger,'real stop selector missing');
+   const detail=host.querySelector('[id="'+trigger.getAttribute('aria-controls')+'"]');assert.ok(detail,'persistent details missing');
+   assert.equal(host.querySelector('[id="'+detail.getAttribute('aria-labelledby')+'"]'),detail.querySelector('h3'));
+   await act(async()=>trigger.click());
+   assert.equal(host.querySelector('[id="'+trigger.getAttribute('aria-controls')+'"]'),detail,'selection must update the same persistent card');
+   assert.equal(trigger.getAttribute('aria-pressed'),'true');
+   assert.ok(!detail.textContent.includes('Close details'));
+   if(key==='labels.destination'){const link=detail.querySelector('a');assert.ok(link);assert.equal(link.getAttribute('href'),place.link);assert.equal(link.textContent,content[key]);}
+   else assert.ok([...detail.querySelectorAll('button')].some(b=>b.textContent===content[key]),'CMS map action missing from persistent details');
+   // Ignore opaque per-mount React IDs while retaining all CMS output assertions.
+   html=detail.outerHTML.replace(/_r_[a-z0-9]+_/g,'fixture-react-id');
   }else{
    assert.ok(!host.querySelector('dialog[open]'));assert.ok(!host.textContent.includes(content[key]),'dialog copy must not leak before opening');
    await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent==='Open synthetic booking').click());
@@ -41,6 +38,6 @@ export async function renderClientProbe(key,content){
    assert.equal(dialog.querySelector(key.endsWith('title')?'h2':'div > p')?.textContent,content[key]);
    await act(async()=>dialog.querySelector('button[aria-label="Close booking"]').click());assert.ok(!host.querySelector('dialog[open]'));
   }
-  return {route:key==='labels.destination'?'/':key==='routePage.mapAction'?'/route':'shared booking dialog',consumer:'actual React client component, opened/closed in isolated jsdom',html:html.replace(/(id|aria-labelledby)="_r_[a-z0-9]+_"/g,'$1="fixture-react-id"')};
+  return {route:key==='labels.destination'?'/':key==='routePage.mapAction'?'/route':'shared booking dialog',consumer:key==='labels.destination'||key==='routePage.mapAction'?'actual React persistent stop card selected in isolated jsdom':'actual React booking component opened/closed in isolated jsdom',html:html.replace(/(id|aria-labelledby)="_r_[a-z0-9]+_"/g,'$1="fixture-react-id"')};
  }finally{await act(async()=>root.unmount());dom.window.close();for(const [name,descriptor]of saved){if(descriptor)Object.defineProperty(globalThis,name,descriptor);else delete globalThis[name];}}
 }
