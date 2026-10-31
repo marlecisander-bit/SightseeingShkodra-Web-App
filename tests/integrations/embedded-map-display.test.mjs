@@ -5,3 +5,13 @@ const display={version:1,label:'PARKED AT',destination:'Fixture stop',activity:'
 const snapshot=()=>{const now=Date.now();return ({type:'shkodra:journey',version:1,unavailable:false,phase:'PARKED',movement:'Parked at Fixture stop',lastObservationAt:new Date(now).toISOString(),statusValidUntil:new Date(now+20000).toISOString(),stops:[],embeddedDisplay:display});};
 test('embedded display is additive and preserves exact upstream wording and expiry',()=>{const j=parseJourney(snapshot());const now=Date.parse(j.lastObservationAt);assert.deepEqual(j.embeddedDisplay,display);assert(presentationTtl(j,now)<=20000);assert.equal(presentationTtl(j,now+21000),0);const legacy=snapshot();delete legacy.embeddedDisplay;assert(parseJourney(legacy));});
 test('display contract rejects malformed, excessive and duplicate stop data',()=>{for(const bad of [null,{}, {...display,version:2},{...display,live:'yes'},{...display,destination:'x'.repeat(241)},{...display,eta:{}},{...display,stops:Array(101).fill(display.stops[0])},{...display,stops:[...display.stops,...display.stops]},{...display,stops:[{...display.stops[0],state:'invented'}]}])assert.equal(parseJourney({...snapshot(),embeddedDisplay:bad}),null);});
+
+test('local paired override cannot activate production even when supplied at build time',async()=>{
+ const {execFileSync}=await import('node:child_process');
+ const code="import {websiteExternalStatusEnabled,localMapPreviewEnabled,externalMapStatusEnabled} from './src/modules/tracking/public-map-binding.ts'; console.log(JSON.stringify([websiteExternalStatusEnabled,localMapPreviewEnabled,externalMapStatusEnabled]));";
+ const flags=mode=>JSON.parse(execFileSync(process.execPath,['--import','tsx','--input-type=module','-e',code],{env:{...process.env,NODE_ENV:mode,NEXT_PUBLIC_LOCAL_MAP_PREVIEW:'1'},encoding:'utf8'}));
+ const production=flags('production');
+ assert.equal(typeof production[0],'boolean');
+ assert.deepEqual(production,[production[0],false,production[0]]);
+ assert.deepEqual(flags('development'),[production[0],true,true]);
+});

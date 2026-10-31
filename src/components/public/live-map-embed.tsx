@@ -6,12 +6,12 @@ import styles from "./live-map.module.css";
 
 import {EmbeddedMapStatus} from './embedded-map-status';
 import {type JourneySnapshot} from '@/modules/tracking/journey-contract';
-import { publicMapBinding, publicMapUrl, websiteExternalStatusEnabled } from '@/modules/tracking/public-map-binding';
+import { publicMapBinding, publicMapUrl, websiteExternalStatusEnabled, localMapPreviewEnabled } from '@/modules/tracking/public-map-binding';
 import { connectJourneyBridge } from "@/modules/tracking/journey-bridge";
 
 export function LiveMapEmbed({ priority = false, presentation = "compact", collapseRecovery = false, onJourney, selectedStopId, localPreview = false }: { priority?: boolean; collapseRecovery?: boolean; presentation?: "full" | "compact"; onJourney?:(snapshot:JourneySnapshot|null,reason?:'stale'|'loading')=>void; selectedStopId?:string; localPreview?:boolean }) {
-  // Fixed loopback fixture only; production always uses the canonical binding.
-  const preview = process.env.NODE_ENV === 'development' && localPreview;
+  // Fixed loopback paired preview only; production always uses the canonical binding.
+  const preview = process.env.NODE_ENV === 'development' && (localPreview || localMapPreviewEnabled);
   const externalStatus = preview || websiteExternalStatusEnabled;
   const mapOrigin = preview ? 'http://127.0.0.1:4199' : publicMapBinding.origin;
   const mapUrl = preview ? `${mapOrigin}/live-map.html?project=sightseeing-shkodra` : publicMapUrl;
@@ -37,6 +37,7 @@ export function LiveMapEmbed({ priority = false, presentation = "compact", colla
     return () => clearTimeout(timer);
   }, [reload,loadCycle]);
   return <div className={`interactive-widget ${styles.embed}`} data-presentation={presentation} data-journey={!!onJourney}>
+    {preview&&<p role="note">Local paired preview · simulated tracking data</p>}
     {externalStatus&&<EmbeddedMapStatus display={journey?.embeddedDisplay} reason={statusReason} unavailable={slow} onStop={id=>frame.current?.contentWindow?.postMessage({type:"shkodra:select-stop",version:1,id},mapOrigin)}/>}
     <div className={styles.viewport}>
     <iframe

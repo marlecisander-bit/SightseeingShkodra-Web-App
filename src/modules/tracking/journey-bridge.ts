@@ -17,7 +17,7 @@ export function connectJourneyBridge(host: Window, source: () => Window | null, 
   const listener = (event: MessageEvent) => {
     if (disposed || event.origin !== origin || !source() || event.source !== source()) return;
     const snapshot = parseJourney(event.data);
-    if (!snapshot) return;
+    if (!snapshot || (externalDisplay && !snapshot.embeddedDisplay)) return;
     const ttl = presentationTtl(snapshot);
     if (ttl <= 0) {
       if (connected) { clearTimeout(expires); connected = false; receive(null, 'stale'); }

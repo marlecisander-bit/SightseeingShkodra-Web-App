@@ -11,4 +11,8 @@ export function matchesPublicMapProject(project: string | undefined) {
 }
 
 /** Release gate: enable only after paired Live Map acceptance. No runtime/CMS override. */
-export const websiteExternalStatusEnabled = false;
+export const websiteExternalStatusEnabled = true;
+
+/** Fixed loopback paired acceptance only; compiled out of production. */
+export const localMapPreviewEnabled = process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_LOCAL_MAP_PREVIEW === '1';
+export const externalMapStatusEnabled = websiteExternalStatusEnabled || localMapPreviewEnabled;

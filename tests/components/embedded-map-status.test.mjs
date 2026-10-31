@@ -16,12 +16,12 @@ test('multiple next hints still render a single accessible current step',()=>{
  assert.equal((html.match(/aria-current="step"/g)||[]).length,1);
 });
 
-test('public activation is off: legacy iframe remains usable without an external duplicate',async()=>{
+test('release gate controls the external panel and query; production never uses loopback',async()=>{
  const {LiveMapEmbed}=await import('../../src/components/public/live-map-embed.tsx');
  const {websiteExternalStatusEnabled}=await import('../../src/modules/tracking/public-map-binding.ts');
- assert.equal(websiteExternalStatusEnabled,false);
- if(process.env.NODE_ENV!=='development'){const fixtureAttempt=renderToStaticMarkup(React.createElement(LiveMapEmbed,{localPreview:true}));assert(!fixtureAttempt.includes('127.0.0.1'));assert(!fixtureAttempt.includes('websiteStatus='));}
+ assert.equal(typeof websiteExternalStatusEnabled,'boolean');
+ if(process.env.NODE_ENV!=='development'){const fixtureAttempt=renderToStaticMarkup(React.createElement(LiveMapEmbed,{localPreview:true}));assert(!fixtureAttempt.includes('127.0.0.1'));assert.equal(fixtureAttempt.includes('websiteStatus='),websiteExternalStatusEnabled);}
  const html=renderToStaticMarkup(React.createElement(LiveMapEmbed,{presentation:'full'}));
- assert(html.includes('embed=1'));assert(!html.includes('websiteStatus='));assert(!html.includes('Live van status'));
+ assert(html.includes('embed=1'));assert.equal(html.includes('websiteStatus='),websiteExternalStatusEnabled);assert.equal(html.includes('Live van status'),websiteExternalStatusEnabled);
  assert(html.includes('allow="geolocation"'));assert(html.includes('strict-origin-when-cross-origin'));
 });
