@@ -14,7 +14,7 @@ export function adminNavigationGroups(operatorId:string,role:StaffRole):AdminNav
  const link=(id:string,label:string,section:string,context?:string,note?:string):AdminNavItem=>({id,label,section,context,href:`${root}/${section}${context?'#admin-nav='+context:''}`,note});
  const tour=(id:string,label:string,view:string,context=id):AdminNavItem=>({...link(id,label,'departures',context),href:`${root}/departures?view=${view}#admin-nav=${context}`});
  const groups:AdminNavGroup[]=[
-  {id:'overview',label:'Home',icon:'info',items:[link('overview','Today’s overview','overview')]},
+  {id:'overview',label:'Home',icon:'info',items:[link('overview','Home','overview')]},
   {id:'bookings',label:'Bookings',icon:'ticket',items:[link('bookings','Reservations','bookings')]},
   {id:'tours',label:'Tours',icon:'van',items:[
    tour('today','Today','today'),
