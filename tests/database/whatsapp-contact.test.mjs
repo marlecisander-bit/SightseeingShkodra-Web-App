@@ -58,10 +58,11 @@ test('public cannot write configuration and unauthorized staff cannot use its ex
  await db.query("update staff_profiles set role='operations' where id=$1",[actor]);
  await assert.rejects(db.query("select save_website_content_v1($1,$2,$3,null,'publish')",[op,actor,initialWebsiteContent]),e=>e.code==='42501');
 });
-test('dock moves above sticky booking action, avoids map, and hides without safe space',()=>{
+test('dock stays at the bottom and hides only when controls overlap',()=>{
  const rect={left:320,right:372,top:750,bottom:802};
  assert.equal(whatsappDock(rect,[],90),750);
- assert.equal(whatsappDock(rect,[{left:0,right:390,top:740,bottom:844}],90),676);
- assert.equal(whatsappDock(rect,[{left:0,right:390,top:250,bottom:810}],90),186);
+ assert.equal(whatsappDock(rect,[{left:0,right:100,top:740,bottom:844}],90),750);
+ assert.equal(whatsappDock(rect,[{left:0,right:390,top:740,bottom:844}],90),null);
+ assert.equal(whatsappDock(rect,[{left:0,right:390,top:250,bottom:810}],90),null);
  assert.equal(whatsappDock(rect,[{left:0,right:390,top:90,bottom:844}],90),null);
 });

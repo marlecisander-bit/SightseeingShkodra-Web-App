@@ -22,13 +22,9 @@ export function whatsappLink(content:Record<string,string>):string|null{
  return `https://wa.me/${number}${message?'?text='+encodeURIComponent(message):''}`;
 }
 export type DockRect={left:number;right:number;top:number;bottom:number};
-/** Move above visible interactive obstacles, or hide when no unobstructed slot fits. */
+/** Retain the bottom anchor, or hide briefly when an interactive control overlaps. */
 export function whatsappDock(rect:DockRect,obstacles:DockRect[],minimumTop:number):number|null{
- const height=rect.bottom-rect.top;let top=rect.top;
- for(let pass=0;pass<=obstacles.length;pass++){
-  const hit=obstacles.find(o=>rect.left<o.right+12&&rect.right>o.left-12&&top<o.bottom+12&&top+height>o.top-12);
-  if(!hit)return top>=minimumTop?top:null;
-  top=hit.top-height-12;if(top<minimumTop)return null;
- }
- return null;
+ if(rect.top<minimumTop)return null;
+ const overlaps=obstacles.some(o=>rect.left<o.right+12&&rect.right>o.left-12&&rect.top<o.bottom+12&&rect.bottom>o.top-12);
+ return overlaps?null:rect.top;
 }

@@ -16,7 +16,6 @@ export function WhatsAppContact({href,label,desktop,mobile,excludePaths=[]}:{hre
   let frame=0;
   const measure=()=>{
    frame=0;
-   node.style.setProperty('--whatsapp-clearance','0px');
    node.style.visibility='';
    const phoneHero=window.matchMedia('(max-width:599px)').matches&&!!document.querySelector('#home-hero #experiences');
    const heroControls=phoneHero?'#home-hero [aria-label="Choose experience"] button,#home-hero [data-product-details]>summary':'';
@@ -28,18 +27,8 @@ export function WhatsAppContact({href,label,desktop,mobile,excludePaths=[]}:{hre
     const position=getComputedStyle(element).position;
     return element.matches('[data-product-booking]')||(phoneHero&&element.matches(heroControls))||position==='fixed'||position==='sticky';
    }).map(element=>element.getBoundingClientRect()).filter(r=>r.width>0&&r.height>0&&r.bottom>0&&r.top<viewportHeight&&rect.left<r.right+12&&rect.right>r.left-12).sort((a,b)=>b.top-a.top);
-   if(phoneHero){
-    const top=whatsappDock(rect,blockers,(document.querySelector('.p-header')?.getBoundingClientRect().bottom??0)+8);
-    node.style.visibility=top===null?'hidden':'';
-    node.style.setProperty('--whatsapp-clearance',`${top===null?0:rect.top-top}px`);return;
-   }
-   let clearance=0;
-   for(const blocker of blockers){
-    if(rect.top-clearance<blocker.bottom+12&&rect.bottom-clearance>blocker.top-12){
-     clearance=Math.max(clearance,rect.bottom-blocker.top+12);
-    }
-   }
-   node.style.setProperty('--whatsapp-clearance',`${clearance}px`);
+   // Keep the fixed bottom anchor; never move the contact up the page.
+   node.style.visibility=whatsappDock(rect,blockers,(document.querySelector('.p-header')?.getBoundingClientRect().bottom??0)+8)===null?'hidden':'';
   };
   const queue=()=>{if(!frame)frame=requestAnimationFrame(measure);};
   const carouselScroll=(event:Event)=>{if(window.matchMedia('(max-width:599px)').matches&&event.target instanceof Element&&event.target.closest('#home-hero'))queue();};

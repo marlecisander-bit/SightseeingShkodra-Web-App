@@ -1,0 +1,14 @@
+import {notFound} from 'next/navigation';
+import {readFile} from 'node:fs/promises';
+import {validateWebsiteContent} from '@/modules/content/website-schema';
+import {BookingProvider,Header} from '@/components/public/booking';
+import {HomepageHero} from '@/components/public/homepage-hero';
+import {ProductBookingCards} from '@/components/public/product-booking-cards';
+import {WhatsAppContact} from '@/components/public/whatsapp-contact';
+import '../../(public)/public.css';
+export default async function Page({searchParams}:{searchParams:Promise<Record<string,string|undefined>>}){
+ if(process.env.NODE_ENV!=='development')notFound();
+ const query=await searchParams,snapshot=JSON.parse(await readFile('docs/evidence/floating-booking-20261104/current-public-cms.json','utf8'));
+ const content=validateWebsiteContent(snapshot.content),count=Number(query.count)||2,products=Array.from({length:count},(_,i)=>i<2?snapshot.products[i]:({...snapshot.products[i%2],id:`local-layout-${i}`,title:`${snapshot.products[i%2].title} ${i+1}`}));
+ return <div className="public-site"><BookingProvider content={content} product={products[0]}><Header content={content} previewPathname="/"/><main className="p-home"><HomepageHero content={content}><ProductBookingCards embedded content={content} products={products}/></HomepageHero><section className="p-section p-container"><p>Local CMS review. No checkout mutations.</p><div style={{height:800}}/></section></main><WhatsAppContact href={`https://wa.me/${content['whatsapp.number'].replace(/\D/g,'')}`} label={content['whatsapp.label']} mobile desktop/></BookingProvider></div>;
+}
