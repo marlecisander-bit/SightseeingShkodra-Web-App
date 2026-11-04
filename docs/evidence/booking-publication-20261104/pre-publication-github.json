@@ -1,0 +1,28 @@
+{
+  "/deployments/7460847879/statuses": [
+    {
+      "state": "success",
+      "environment_url": "https://sightseeing-shkodra-web-nwi1mnlr4-aleksander-marleci.vercel.app",
+      "log_url": "https://sightseeing-shkodra-web-nwi1mnlr4-aleksander-marleci.vercel.app",
+      "created_at": "2026-10-31T15:54:47Z"
+    }
+  ],
+  "/commits/f221bfd9dbc0c358778359480242cc9354f65e7f/check-runs": [
+    {
+      "name": "Verify project",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/marlecisander-bit/SightseeingShkodra-Web-App/actions/runs/41217072118/job/124583729912"
+    }
+  ],
+  "/environments": [
+    {
+      "name": "Preview",
+      "protection_rules": []
+    },
+    {
+      "name": "Production",
+      "protection_rules": []
+    }
+  ]
+}

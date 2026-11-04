@@ -1578,3 +1578,30 @@ body:has(.p-booking-dialog[open]) {
 .public-site .p-header.p-header-home{border-bottom:0;background-repeat:no-repeat;}
 /* Homepage mobile booking belongs to the navigation drawer, not a second banner action. */
 @media(max-width:1100px){.public-site .p-header.p-header-home .p-header-book{display:none;}}
+
+/* Responsive booking presentation; availability and checkout remain shared. */
+.public-site .p-booking-product{font-size:16px;color:var(--ss-primary);}
+.public-site .p-booking-back{min-height:48px;flex-shrink:0;}
+.public-site .p-booking-dialog .p-flow-layout>aside{top:0;}
+.public-site .p-flow .p-booking-fields:has(.p-booking-party > fieldset){grid-template-columns:1fr;}
+.public-site .p-flow .p-booking-fields:has(.p-booking-party > fieldset) .p-availability-status{margin-top:8px;}
+@media(max-width:767px){
+ .public-site .p-flow .p-progress{display:flex;flex-wrap:nowrap;justify-content:space-between;gap:8px;font-size:13px;}
+ .public-site .p-flow .p-progress li{gap:5px;}
+ .public-site .p-flow .p-flow-layout>aside{order:0;}
+ .public-site .p-flow-main{min-width:0;}
+ .public-site .p-booking-action{border-top:1px solid var(--ss-input-border);gap:10px;flex-wrap:wrap;}
+ .public-site .p-booking-action .p-action-total{width:100%;display:flex;justify-content:space-between;align-items:baseline;}
+ .public-site .p-booking-action .p-transaction-action{min-width:0;white-space:normal;}
+ .public-site .p-contact-fields:focus-within~.p-booking-action{position:sticky;}
+ .public-site .p-booking-dialog .p-flow-when>h2{display:block;}
+}
+@media(max-width:767px),(max-width:1023px) and (max-height:500px){
+ .public-site .p-book-page{padding-bottom:180px;}
+ .public-site .p-book-page [data-booking-page-footer]{position:fixed;inset:auto 0 0;z-index:30;padding-inline:max(16px,env(safe-area-inset-left)) max(16px,env(safe-area-inset-right));background:var(--p-paper);box-shadow:0 -6px 24px #172b4210;}
+ .public-site .p-book-page [data-booking-page-footer]:empty{display:none;}
+}
+.public-site .p-booking-action .p-booking-back{margin:0;min-width:56px;min-height:48px;padding:10px 8px;align-self:center;}
+
+/* Header shading belongs to the global public shell, not a CSS Module. */
+@media(min-width:901px){.public-site:has(#home-hero) .p-header-home:not(.p-header-solid){background:linear-gradient(180deg,rgba(18,25,28,.42),transparent) no-repeat;}}

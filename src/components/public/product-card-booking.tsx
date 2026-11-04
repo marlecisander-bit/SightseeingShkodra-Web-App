@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import {reservationLabel} from '@/modules/booking/products';
 import type {BookableProduct} from '@/modules/booking/products';
 import {productFeatureBadges} from '@/modules/booking/product-features';
 import type {HeroFare} from '@/modules/content/hero-fare';
@@ -12,6 +13,8 @@ export function ProductCardBooking({product,fare,bookingLabel,preview=false}:{pr
  const features=productFeatureBadges(product.card);
  return <div className={styles.body}>
  <h3>{product.title}</h3>
+ {product.card?.description && <p className={styles.description}>{product.card.description}</p>}
+ <p className={styles.duration}>{reservationLabel(product)}</p>
  {features.length>0&&<ul className={styles.badges} aria-label={`${product.title} information`}>
  {features.map(f=><li key={f.key}><AmenityIcon name={f.icon}/>{f.label}</li>)}
  </ul>}

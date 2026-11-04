@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, Children, isValidElement, cloneElement, type ReactNode, type ReactElement } from "react";
+import { createPortal } from "react-dom";
 import type { AvailabilityQuote } from "@/modules/booking/contracts";
 import { ageLabel, passengerKeys, passengerLabels, type PassengerCategories, type PassengerCounts } from "@/modules/booking/passengers";
 import { bookingMoney as displayMoney, passengerCaption, bookingDate, availabilityLabel } from "./booking-presentation";
@@ -8,7 +9,7 @@ import type { PassengerSnapshot } from "@/modules/booking/passengers";
 import styles from "./booking-controls.module.css";
 
 export function BookingProgress({step,complete=false}:{step:number;complete?:boolean}) {
-  return <ol className="p-progress" aria-label="Booking progress">{["When","Details","Confirm"].map((label,index)=>{
+  return <ol className="p-progress" aria-label="Booking progress">{["When","Who","Review"].map((label,index)=>{
     const done=complete||index+1<step;
     return <li key={label} data-complete={done} aria-current={!complete&&index+1===step?"step":undefined}><span aria-hidden="true">{done?"\u2713":index+1}</span>{label}<small className="p-screen-reader-only">{done?" completed":index+1===step?" current step":" upcoming"}</small></li>;
   })}</ol>;
@@ -51,6 +52,12 @@ export function BookingPriceBreakdown({snapshot}:{snapshot:PassengerSnapshot}) {
   return <dl className={styles.breakdown} aria-label="Ticket prices">{snapshot.lines.filter(line=>line.quantity>0).map(line=><div key={line.category}><dt>{passengerCaption(line.category,line.quantity)}{line.offer?.label&&<small>{line.offer.label}</small>}</dt><dd>{line.category==="infant"&&line.total===0?"Free":displayMoney(line.total,snapshot.currency)}</dd></div>)}<div><dt>Total</dt><dd>{displayMoney(snapshot.total,snapshot.currency)}</dd></div></dl>;
 }
 
-export function BookingAction({total,currency,children}:{total?:number;currency:string;children:ReactNode}) {
- return <div className="p-booking-action"><div className="p-action-total" aria-live="polite">{total===undefined?<span>Choose a departure</span>:<><span>Total</span><strong>{displayMoney(total,currency)}</strong></>}</div>{children}</div>;
+export function BookingAction({total,currency,children,form,selectionLabel}:{total?:number;currency:string;children:ReactNode;form?:string;selectionLabel?:string}) {
+ const anchor = useRef<HTMLSpanElement>(null);
+ const [target, setTarget] = useState<Element | null>(null);
+ useEffect(() => {
+   setTarget(anchor.current?.closest("dialog")?.querySelector("[data-booking-footer]") ?? anchor.current?.closest(".p-book-page")?.querySelector("[data-booking-page-footer]") ?? null);
+ }, []);
+ const action = <div className="p-booking-action"><div className="p-action-total" aria-live="polite">{total===undefined?<span>Choose a departure</span>:<><span>{selectionLabel || "Total"}</span><strong>{displayMoney(total,currency)}</strong></>}</div>{Children.map(children, child => isValidElement(child) ? cloneElement(child as ReactElement<{form?:string}>, {form}) : child)}</div>;
+ return <><span ref={anchor} hidden/>{target ? createPortal(action, target) : action}</>;
 }

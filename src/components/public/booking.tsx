@@ -25,6 +25,7 @@ import {
   useState,
   type ReactNode,
   type ComponentProps,
+  type MouseEvent as ReactMouseEvent,
   type Dispatch,
   type SetStateAction,
 } from "react";
@@ -46,7 +47,7 @@ type BookingContextValue = {
   currentMeetingPoint?:MeetingPoint|null;
   selection: BookingSelection;
   setSelection: Dispatch<SetStateAction<BookingSelection>>;
-  open: () => void;
+  open: (trigger?: HTMLElement) => void;
   close: () => void;
   reset: () => void;
   generation: number;
@@ -70,6 +71,7 @@ export function BookingProvider({ children, content = initialWebsiteContent, pre
   const reset = useCallback(() => { clearCheckoutSession(product?.primary?undefined:product?.id); setSelection({...freshBookingSelection(),productId:product?.id}); setGeneration(value=>value+1); }, [product?.id,product?.primary]);
   const dialogTitle=useId();
   const dialog = useRef<HTMLDialogElement>(null);
+  const opener = useRef<HTMLElement | null>(null);
   const [opened, setOpened] = useState(false);
   useEffect(() => {
     if (!opened) return;
@@ -77,6 +79,24 @@ export function BookingProvider({ children, content = initialWebsiteContent, pre
     const previous = {position: document.body.style.position, top: document.body.style.top, width: document.body.style.width};
     Object.assign(document.body.style, {position:"fixed", top:`-${y}px`, width:"100%"});
     return () => { Object.assign(document.body.style, previous); window.scrollTo(0,y); };
+  }, [opened]);
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    const node = dialog.current;
+    if (!opened || !viewport || !node) return;
+    const fit = () => {
+      node.style.setProperty("--booking-viewport-height", `${viewport.height}px`);
+      node.style.setProperty("--booking-viewport-top", `${viewport.offsetTop}px`);
+    };
+    fit();
+    viewport.addEventListener("resize", fit);
+    viewport.addEventListener("scroll", fit);
+    return () => {
+      viewport.removeEventListener("resize", fit);
+      viewport.removeEventListener("scroll", fit);
+      node.style.removeProperty("--booking-viewport-height");
+      node.style.removeProperty("--booking-viewport-top");
+    };
   }, [opened]);
   const availability = useAvailability(preview?'':selection.date, selection.guests,selection.passengers,generation,product?.id);
   return (
@@ -89,8 +109,9 @@ export function BookingProvider({ children, content = initialWebsiteContent, pre
         generation,
         setSelection,
         availability,
-        open: () => {
+        open: (trigger) => {
           if (!dialog.current || dialog.current.open) return;
+          opener.current = trigger ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
           dialog.current.showModal();
           if(!preview)trackBookingEvent('begin_checkout', 'checkout:' + analyticsSessionIdentity());
           setOpened(true);
@@ -102,7 +123,7 @@ export function BookingProvider({ children, content = initialWebsiteContent, pre
       <dialog
         ref={dialog}
         className={`p-booking-dialog ${styles.dialog}`}
-        onClose={() => setOpened(false)}
+        onClose={() => { setOpened(false); opener.current?.focus({preventScroll:true}); }}
         aria-labelledby={opened?dialogTitle:undefined}
         aria-label={opened?undefined:product?`Book ${product.title}`:"Booking"}
         onKeyDown={(event) => {
@@ -131,7 +152,7 @@ function BookingDialogContent({content,preview=false,titleId}: {titleId:string;c
   const {close,currentMeetingPoint}=useBooking();
   const closeButton = useRef<HTMLButtonElement>(null);
   useEffect(() => { closeButton.current?.focus(); }, []);
-  return <><header className={styles.header}><div><BrandLogo light/><h2 id={titleId}>{content["bookingDialog.title"]}</h2></div><button ref={closeButton} type="button" className={styles.close} aria-label="Close booking" onClick={close}>&times;</button></header><div className={styles.content}><p>{content["bookingDialog.text"]}</p><MeetingPointSummary value={currentMeetingPoint}/>{preview ? <p>Saved editorial preview. Booking actions are unavailable here.</p> : <CheckoutFlow />}</div></>;
+  return <><header className={styles.header}><div><BrandLogo light/><h2 id={titleId}>{content["bookingDialog.title"]}</h2></div><button ref={closeButton} type="button" className={styles.close} aria-label="Close booking" onClick={close}>&times;</button></header><div className={styles.content}><p>{content["bookingDialog.text"]}</p><MeetingPointSummary value={currentMeetingPoint}/>{preview ? <p>Saved editorial preview. Booking actions are unavailable here.</p> : <CheckoutFlow />}</div><div data-booking-footer className={styles.footer}/></>;
 }
 
 /** Keep link styling and direct/new-tab access; ordinary booking activation opens the shared dialog. */
@@ -144,7 +165,7 @@ export function PublicBookingLink({ href, onClick, ...props }: ComponentProps<ty
     event.preventDefault();
     // Transfer from the timetable dialog instead of stacking two modal surfaces.
     event.currentTarget.closest<HTMLDialogElement>("dialog[open]")?.close();
-    open();
+    open(event.currentTarget);
   }} />;
 }
 
@@ -161,7 +182,7 @@ export function BookButton({
 }) {
   const { open } = useBooking();
   return (
-    <Button type="button" size="lg" aria-haspopup="dialog" aria-label={ariaLabel} className={`p-button p-button-booking ${className}`} onClick={() => { onClick?.(); open(); }}>
+    <Button type="button" size="lg" aria-haspopup="dialog" aria-label={ariaLabel} className={`p-button p-button-booking ${className}`} onClick={(event) => { onClick?.(); open(event.currentTarget); }}>
       {children}
     </Button>
   );
@@ -171,7 +192,7 @@ export function QuantityStepper({ preserveDeparture = false }: { preserveDepartu
  function change(k:keyof PassengerCounts,n:number){const passengers={...counts,[k]:n};setSelection({...selection,passengers,guests:passengerKeys.reduce((sum,key)=>sum+passengers[key],0),departureId:preserveDeparture?selection.departureId:""});}
  return <PassengerSelector counts={counts} categories={availability.categories} onChange={change} canRemove={k=>!(counts[k]===0 || (k==="adult" && counts.adult===1 && (counts.child>0 || counts.infant>0)))} canAdd={k=>!(selection.guests>=100 || (k!=="adult" && counts.adult===0))}/>;
 }
-export function BookingFields() {
+export function BookingFields({ stage = "all" }: { stage?: "all" | "when" | "who" }) {
   const { selection, setSelection, availability } = useBooking();
   const departures = availability.quote?.departures ?? [];
   const selected = departures.find(
@@ -185,8 +206,8 @@ export function BookingFields() {
   }
   return (
     <div className="p-booking-fields">
-      <div className="p-booking-party"><BookingDateSelector value={selection.date} onChange={updateDate}/><QuantityStepper preserveDeparture /></div>
-      <DepartureSelector departures={departures} value={selected?.id??""} loading={availability.loading} onChange={departureId=>setSelection({...selection,departureId})}/>
+      <div className="p-booking-party">{stage !== "who" && <BookingDateSelector value={selection.date} onChange={updateDate}/>} {stage !== "when" && <QuantityStepper preserveDeparture />}</div>
+      {stage !== "who" && <DepartureSelector departures={departures} value={selected?.id??""} loading={availability.loading} onChange={departureId=>setSelection({...selection,departureId})}/> }
       <AvailabilityStatus />
     </div>
   );
@@ -347,11 +368,11 @@ export function Header({ content: c = initialWebsiteContent, previewPathname }: 
     measure();
     return () => { resize.disconnect();cancelAnimationFrame(frame);window.removeEventListener('scroll',queue);window.removeEventListener('resize',queue); };
   },[pathname]);
-  const bookFromHeader = () => {
+  const bookFromHeader = (event: ReactMouseEvent<HTMLButtonElement>) => {
     setMenu(false);
     const experiences=pathname==='/'?document.getElementById('experiences'):null;
     if(experiences){experiences.scrollIntoView({behavior:'smooth',block:'start'});return;}
-    open();
+    open(window.matchMedia("(max-width:1100px)").matches ? menuToggle.current ?? event.currentTarget : event.currentTarget);
   };
   return (
     <>
@@ -411,7 +432,19 @@ export function Header({ content: c = initialWebsiteContent, previewPathname }: 
     </>
   );
 }
-export function BookingFlow() {
+export function BookingFlow({productHeading=true}: {productHeading?:boolean} = {}) {
   const {generation,currentMeetingPoint} = useBooking();
-  return <><MeetingPointSummary value={currentMeetingPoint}/><CheckoutFlow key={generation} /></>;
+  const footer = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+    const fit = () => {
+      if (footer.current) footer.current.style.bottom = `${Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop)}px`;
+    };
+    fit();
+    viewport.addEventListener("resize", fit);
+    viewport.addEventListener("scroll", fit);
+    return () => { viewport.removeEventListener("resize", fit); viewport.removeEventListener("scroll", fit); };
+  }, []);
+  return <><MeetingPointSummary value={currentMeetingPoint}/><CheckoutFlow key={generation} productHeading={productHeading} /><div ref={footer} data-booking-page-footer/></>;
 }

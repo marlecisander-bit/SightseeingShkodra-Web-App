@@ -1,0 +1,5 @@
+{
+  "status": 200,
+  "configurationUnavailable": true,
+  "note": "No local privileged backend bindings; this checks production startup only, not CMS parity."
+}

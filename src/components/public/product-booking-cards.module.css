@@ -1,5 +1,5 @@
 .section{min-width:0;scroll-margin-top:100px;}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),440px));gap:24px;align-items:stretch;justify-content:center;}
+.grid{display:grid;grid-template-columns:repeat(var(--product-count,2),minmax(0,440px));gap:24px;align-items:stretch;justify-content:center;}
 .card{width:100%;display:flex;flex-direction:column;min-width:0;background:#fff;border:1px solid #e4e1dc;border-radius:20px;overflow:hidden;box-shadow:0 10px 32px #172b4212;}
 .card>:global(.p-media){height:230px;aspect-ratio:auto;flex-shrink:0;border-radius:0;}.card :global(img){object-fit:cover;}.placeholder{height:230px;display:grid;place-items:center;background:#d5e1e4;color:#52627a;}
 .body{display:flex;flex-direction:column;align-items:center;gap:16px;padding:22px;flex:1;text-align:center;min-width:0;}
@@ -9,9 +9,45 @@
 .price{display:grid;gap:5px;justify-items:center;margin-top:auto;padding-top:8px;color:#264654;}.price strong{font-size:27px;line-height:1.2;}.price span{font-size:12px;}
 .book{display:flex;align-items:center;justify-content:center;width:100%;min-height:50px;text-decoration:none;box-sizing:border-box;}
 .card :is(a,button):focus-visible{outline:3px solid var(--ss-primary,#b91546);outline-offset:3px;}
-@media(max-width:600px){.grid{grid-template-columns:minmax(0,400px);gap:20px;}.body{padding:22px;}.body h3{font-size:25px;}}
 
 /* Keep the section in flow; only the hero-adjacent instance overlaps. */
-:global(.public-site .p-home)>.section.overlap{--product-overlap:24px;position:relative;z-index:2;margin-top:calc(-1 * var(--product-overlap));padding-top:0;}
-@media(min-width:601px){:global(.public-site .p-home)>.section.overlap{--product-overlap:40px;}}
-@media(min-width:1024px){:global(.public-site .p-home)>.section.overlap{--product-overlap:64px;}}
+:global(.public-site .p-home)>.section.overlap{--product-overlap:88px;position:relative;z-index:2;margin-top:calc(-1 * var(--product-overlap));padding-top:0;}
+@media(min-width:768px){:global(.public-site .p-home)>.section.overlap{--product-overlap:80px;}}
+@media(min-width:1024px){:global(.public-site .p-home)>.section.overlap{--product-overlap:96px;}}
+
+.description{margin:0;font-size:14px;line-height:1.5;max-width:38ch;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.duration{margin:0;font-size:13px;color:var(--ss-muted);line-height:1.5;}
+.pagination{display:none;}
+@media(max-width:767px){
+ .grid{display:grid;grid-auto-flow:column;grid-auto-columns:86%;grid-template-columns:none;justify-content:start;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;padding:4px 2px 20px;align-items:stretch;}
+ .grid::-webkit-scrollbar{display:none;}
+ .card{scroll-snap-align:start;scroll-snap-stop:normal;}
+ .grid>.card:only-child{grid-column:1;max-width:440px;}
+ .grid:has(>.card:only-child){grid-auto-columns:100%;justify-content:center;}
+ .card>:global(.p-media),.placeholder{height:180px;}
+ .body{padding:18px;gap:12px;}
+ .body h3{font-size:23px;}
+ .pagination{display:flex;justify-content:center;gap:2px;}
+ .pagination button{display:grid;place-items:center;width:44px;height:44px;background:transparent;border:0;padding:0;}
+ .pagination span{width:6px;height:6px;border-radius:50%;background:var(--ss-input-border);}
+ .pagination [aria-current=true] span{width:20px;border-radius:6px;background:var(--ss-primary);}
+ .pagination button:focus-visible{outline:2px solid var(--ss-primary);outline-offset:-4px;}
+}
+
+:global(.public-site) .body h3{margin:0;font-size:clamp(22px,2vw,26px);line-height:1.2;}
+:global(.public-site) .body .description,:global(.public-site) .body .duration{margin:0;}
+
+/* The approved desktop composition pairs each photograph with its offer. */
+@media(min-width:1024px){
+ .grid{grid-template-columns:repeat(var(--product-count,2),minmax(0,1fr));}
+ .card{flex-direction:row;}
+ .card>:global(.p-media),.card>.placeholder{flex:0 0 38%;width:38%;height:auto;min-height:280px;}
+ .body{align-items:flex-start;text-align:left;padding:20px;gap:12px;}
+ :global(.public-site) .body h3{font-size:24px;}
+ .badges{justify-content:flex-start;gap:5px;}
+ .badges li{font-size:11px;padding:5px 6px;gap:5px;}
+ .badges svg{width:16px;height:16px;}
+ .price{justify-items:start;}
+ .price strong{font-size:24px;}
+}
+@media(max-width:767px){.card>:global(.p-media),.placeholder{height:150px;}.body{gap:10px;}}

@@ -11,5 +11,5 @@ export default async function Book({searchParams}:{searchParams:Promise<{product
  if(productId!==undefined&&typeof productId!=='string')notFound();
  const product=productId?await resolveBookableProduct(productId):null;
  if(productId!==undefined&&!product)notFound();
- return <main id="main-content" className="p-subpage p-container p-book-page"><PageIntro content={c} prefix="bookPage"/>{product?<BookingProvider product={product} content={c}><h2>{product.title}</h2>{product.card?.description&&<p>{product.card.description}</p>}<BookingFlow/></BookingProvider>:<BookingFlow/>}</main>;
+ return <main id="main-content" className="p-subpage p-container p-book-page"><PageIntro content={c} prefix="bookPage"/>{product?<BookingProvider product={product} content={c}><h2>{product.title}</h2>{product.card?.description&&<p>{product.card.description}</p>}<BookingFlow productHeading={false}/></BookingProvider>:<BookingFlow/>}</main>;
 }

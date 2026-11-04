@@ -1,0 +1,10 @@
+✔ When/Who preserve selection and Review footer submits its original required form after portalling (141.82ms)
+✔ mobile navigation booking returns focus to the visible menu toggle after closing (15.672375ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1048.891542
