@@ -43,6 +43,7 @@ const CheckoutFlow = dynamic(
 );
 
 type BookingContextValue = {
+  content: WebsiteContent;
   product?: BookableProduct;
   currentMeetingPoint?:MeetingPoint|null;
   selection: BookingSelection;
@@ -59,8 +60,9 @@ export function useBooking() {
   if (!value) throw new Error("BookingProvider is required");
   return value;
 }
-export function BookingProvider({ children, content = initialWebsiteContent, preview = false, currentMeetingPoint, product }: { children: ReactNode; content?: WebsiteContent; preview?:boolean;currentMeetingPoint?:MeetingPoint|null; product?:BookableProduct }) {
+export function BookingProvider({ children, content: suppliedContent, preview = false, currentMeetingPoint, product }: { children: ReactNode; content?: WebsiteContent; preview?:boolean;currentMeetingPoint?:MeetingPoint|null; product?:BookableProduct }) {
   const parent=useContext(BookingContext);
+  const content=suppliedContent??parent?.content??initialWebsiteContent;
   const [selection, setSelection] = useState<BookingSelection>({
     productId: product?.id,
     date: "",
@@ -73,6 +75,45 @@ export function BookingProvider({ children, content = initialWebsiteContent, pre
   const dialog = useRef<HTMLDialogElement>(null);
   const opener = useRef<HTMLElement | null>(null);
   const [opened, setOpened] = useState(false);
+  const [confirmClose,setConfirmClose] = useState(false);
+  const [dialogBusy,setDialogBusy] = useState(false);
+  const [closeNotice,setCloseNotice] = useState("");
+  const dialogState = useRef({dirty:false,busy:false});
+  const beforeClosePrompt = useRef<HTMLElement|null>(null);
+  const requestCloseRef = useRef<() => void>(()=>{});
+  const historyMarker = "ssBookingDialog";
+  const reportDialogState = useCallback((value:{dirty:boolean;busy:boolean})=>{
+    dialogState.current=value;
+    setDialogBusy(value.busy);
+    if(!value.busy)setCloseNotice("");
+  },[]);
+  const finishClose = () => {setConfirmClose(false);dialog.current?.close();};
+  const requestClose = () => {
+    if(dialogState.current.busy){setCloseNotice("Please wait for the current booking request to finish before closing.");return;}
+    if(dialogState.current.dirty){
+      if(!confirmClose)beforeClosePrompt.current=document.activeElement instanceof HTMLElement?document.activeElement:null;
+      setConfirmClose(true);return;
+    }
+    finishClose();
+  };
+  useEffect(()=>{requestCloseRef.current=requestClose;});
+  useEffect(()=>{
+    if(!opened)return;
+    const back=()=>{
+      if(!dialog.current?.open || window.history.state?.[historyMarker]===dialogTitle)return;
+      // Back first removes only the same-URL dialog entry. Restore it while a
+      // discard decision or an in-flight mutation still needs this surface.
+      if(dialogState.current.dirty||dialogState.current.busy)window.history.pushState({...window.history.state,[historyMarker]:dialogTitle},"");
+      requestCloseRef.current();
+    };
+    window.addEventListener("popstate",back);
+    return()=>window.removeEventListener("popstate",back);
+  },[opened,dialogTitle]);
+  useEffect(()=>()=>{
+    if(window.history.state?.[historyMarker]===dialogTitle){
+      const state={...window.history.state};delete state[historyMarker];window.history.replaceState(state,"");
+    }
+  },[dialogTitle]);
   useEffect(() => {
     if (!opened) return;
     const y = window.scrollY;
@@ -103,6 +144,7 @@ export function BookingProvider({ children, content = initialWebsiteContent, pre
     <BookingContext.Provider
       value={{
         selection,
+        content,
         product,
         currentMeetingPoint:currentMeetingPoint===undefined?parent?.currentMeetingPoint:currentMeetingPoint,
         reset,
@@ -112,25 +154,37 @@ export function BookingProvider({ children, content = initialWebsiteContent, pre
         open: (trigger) => {
           if (!dialog.current || dialog.current.open) return;
           opener.current = trigger ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+          const state={...window.history.state,[historyMarker]:dialogTitle};
+          if(window.history.state?.[historyMarker])window.history.replaceState(state,"");
+          else window.history.pushState(state,"");
           dialog.current.showModal();
           if(!preview)trackBookingEvent('begin_checkout', 'checkout:' + analyticsSessionIdentity());
           setOpened(true);
         },
-        close: () => dialog.current?.close(),
+        close: requestClose,
       }}
     >
       {children}
       <dialog
         ref={dialog}
         className={`p-booking-dialog ${styles.dialog}`}
-        onClose={() => { setOpened(false); opener.current?.focus({preventScroll:true}); }}
+        onClose={() => {
+          setOpened(false);setConfirmClose(false);setCloseNotice("");
+          if(window.history.state?.[historyMarker]===dialogTitle)window.history.back();
+          opener.current?.focus({preventScroll:true});
+        }}
+        onCancel={event=>{
+          event.preventDefault();
+          if(confirmClose){setConfirmClose(false);requestAnimationFrame(()=>beforeClosePrompt.current?.focus({preventScroll:true}));}
+          else requestClose();
+        }}
         aria-labelledby={opened?dialogTitle:undefined}
         aria-label={opened?undefined:product?`Book ${product.title}`:"Booking"}
         onKeyDown={(event) => {
           if (event.key !== "Tab") return;
           const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>(
             "button:not(:disabled), input:not(:disabled), select:not(:disabled), a[href]",
-          )).filter(control => control.getClientRects().length > 0);
+          )).filter(control => control.getClientRects().length > 0 && !control.closest("[inert], [hidden]"));
           const first = controls[0];
           const last = controls[controls.length - 1];
           if (event.shiftKey && document.activeElement === first) {
@@ -142,17 +196,32 @@ export function BookingProvider({ children, content = initialWebsiteContent, pre
           }
         }}
       >
-        {opened && <BookingDialogContent titleId={dialogTitle} key={generation} content={content} preview={preview} />}
+        {opened && <BookingDialogContent titleId={dialogTitle} key={generation} content={content} preview={preview} busy={dialogBusy} confirmClose={confirmClose} closeNotice={closeNotice} onStateChange={reportDialogState} onDiscard={finishClose} onKeep={()=>{setConfirmClose(false);requestAnimationFrame(()=>beforeClosePrompt.current?.focus({preventScroll:true}));}} />}
       </dialog>
     </BookingContext.Provider>
   );
 }
 
-function BookingDialogContent({content,preview=false,titleId}: {titleId:string;content: WebsiteContent;preview?:boolean}) {
+function BookingDialogContent({content,preview=false,titleId,busy,confirmClose,closeNotice,onStateChange,onKeep,onDiscard}: {
+  titleId:string;content:WebsiteContent;preview?:boolean;busy:boolean;confirmClose:boolean;closeNotice:string;
+  onStateChange:(value:{dirty:boolean;busy:boolean})=>void;onKeep:()=>void;onDiscard:()=>void;
+}) {
   const {close,currentMeetingPoint}=useBooking();
   const closeButton = useRef<HTMLButtonElement>(null);
+  const keepButton = useRef<HTMLButtonElement>(null);
+  const confirmTitle=useId(),confirmDescription=useId();
   useEffect(() => { closeButton.current?.focus(); }, []);
-  return <><header className={styles.header}><div><BrandLogo light/><h2 id={titleId}>{content["bookingDialog.title"]}</h2></div><button ref={closeButton} type="button" className={styles.close} aria-label="Close booking" onClick={close}>&times;</button></header><div className={styles.content}><p>{content["bookingDialog.text"]}</p><MeetingPointSummary value={currentMeetingPoint}/>{preview ? <p>Saved editorial preview. Booking actions are unavailable here.</p> : <CheckoutFlow />}</div><div data-booking-footer className={styles.footer}/></>;
+  useEffect(()=>{if(confirmClose)keepButton.current?.focus();},[confirmClose]);
+  return <>
+    <header className={styles.header}><div><BrandLogo light/><h2 id={titleId}>{content["bookingDialog.title"]}</h2></div><button ref={closeButton} type="button" className={styles.close} aria-label="Close booking" disabled={busy||confirmClose} onClick={close}>&times;</button></header>
+    {closeNotice&&<p className={styles.closeNotice} role="status">{closeNotice}</p>}
+    {confirmClose&&<section className={styles.discard} role="alertdialog" aria-modal="true" aria-labelledby={confirmTitle} aria-describedby={confirmDescription}>
+      <h3 id={confirmTitle}>Close booking?</h3><p id={confirmDescription}>Your entered contact details will be cleared. Your selected date, departure and passengers will be kept. Closing does not cancel a confirmed booking.</p>
+      <div><button ref={keepButton} type="button" className="p-button p-button-booking" onClick={onKeep}>Keep editing</button><button type="button" className="p-text-button" onClick={onDiscard}>Close and clear details</button></div>
+    </section>}
+    <div className={styles.content} hidden={confirmClose}><p>{content["bookingDialog.text"]}</p><MeetingPointSummary value={currentMeetingPoint}/>{preview?<p>Saved editorial preview. Booking actions are unavailable here.</p>:<CheckoutFlow onDialogStateChange={onStateChange}/>}</div>
+    <div data-booking-footer className={styles.footer} hidden={confirmClose}/>
+  </>;
 }
 
 /** Keep link styling and direct/new-tab access; ordinary booking activation opens the shared dialog. */

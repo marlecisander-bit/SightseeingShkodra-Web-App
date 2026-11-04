@@ -49,3 +49,11 @@
 
 :global(.public-site) .footer :global(.p-booking-action .p-transaction-action){min-height:48px;}
 @media(max-width:767px){.content>p{margin-top:0;}.content :global(.p-flow>h2){font-size:24px;line-height:1.2;margin-block:16px;}.content :global(.p-flow){gap:16px;}}
+
+.content[hidden],.footer[hidden]{display:none;}
+.discard{padding:24px;overflow-y:auto;min-height:0;overscroll-behavior:contain;}
+:global(.public-site) .discard h3{font-size:24px;line-height:1.2;margin:0 0 16px;}
+.discard>div{display:flex;flex-wrap:wrap;gap:12px;align-items:center;}
+.discard button{min-height:48px;min-width:0;max-width:100%;white-space:normal;}
+.closeNotice{padding:12px 24px;margin:0;background:var(--ss-cream);font-size:14px;}
+@media(max-width:767px){.discard>div{flex-direction:column;align-items:stretch;}.discard button{width:100%;}.discard{padding-bottom:max(24px,env(safe-area-inset-bottom));}}

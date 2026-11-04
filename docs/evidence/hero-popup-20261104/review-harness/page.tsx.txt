@@ -1,0 +1,11 @@
+import {notFound} from 'next/navigation';
+import {readFile} from 'node:fs/promises';
+import {validateWebsiteContent} from '@/modules/content/website-schema';
+import type {BookableProduct} from '@/modules/booking/products';
+import {PopupReview} from './review';
+import '../../(public)/public.css';
+export default async function Page(){
+ if(process.env.NODE_ENV!=='development')notFound();
+ const snapshot=JSON.parse(await readFile('docs/evidence/booking-publication-20261104/published-cms-snapshot.json','utf8'));
+ return <PopupReview content={validateWebsiteContent(snapshot.content)} products={snapshot.products as BookableProduct[]}/>;
+}

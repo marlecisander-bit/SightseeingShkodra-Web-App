@@ -47,7 +47,7 @@ const messages: Record<string, string> = {
     "This request was already submitted with different details. Keep your original details when retrying.",
   SESSION_REQUIRED: "Your booking session has ended. Please start again.",
 };
-export function CheckoutFlow({productHeading=true}: {productHeading?:boolean} = {}) {
+export function CheckoutFlow({productHeading=true,onDialogStateChange}: {productHeading?:boolean;onDialogStateChange?:(value:{dirty:boolean;busy:boolean})=>void} = {}) {
   const { selection, setSelection, availability, reset, product } = useBooking();
   const checkoutFormId = useId();
   const storageKey = product&&!product.primary ? `${checkoutStorageKey}:${product.id}` : checkoutStorageKey;
@@ -68,6 +68,8 @@ export function CheckoutFlow({productHeading=true}: {productHeading?:boolean} = 
   const [error, setError] = useState("");
   const [remaining, setRemaining] = useState(0);
   const [restoring, setRestoring] = useState(true);
+  useEffect(()=>{onDialogStateChange?.({dirty:!order&&Boolean(customer.name||customer.email||customer.phone),busy});},[onDialogStateChange,order,customer.name,customer.email,customer.phone,busy]);
+  useEffect(()=>()=>onDialogStateChange?.({dirty:false,busy:false}),[onDialogStateChange]);
   const deadline = useRef(0);
   const heading = useRef<HTMLHeadingElement>(null);
   const step=order||attempt?.hold?3:selectionStep;
