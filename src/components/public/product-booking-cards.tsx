@@ -1,3 +1,4 @@
+import {ProductCarousel} from './product-carousel';
 import type {HeroFare} from '@/modules/content/hero-fare';
 import {ProductCardBooking} from './product-card-booking';
 import {Media} from './ui';
@@ -8,8 +9,8 @@ import styles from './product-booking-cards.module.css';
 export function ProductBookingCards({products,content,preview=false,fares={},overlap=false}:{overlap?:boolean;fares?:Record<string,HeroFare>;products:BookableProduct[];content:WebsiteContent;preview?:boolean}) {
  const visible=products.filter(p=>p.card?.enabled);
  if(!visible.length)return null;
- return <section id="experiences" className={`p-section p-container ${styles.section}${overlap?` ${styles.overlap}`:""}`} aria-label="Book your experience"><h2 className="p-screen-reader-only">Book your experience</h2><div className={styles.grid}>{visible.map(product=><article className={styles.card} key={product.id}>
+ return <section id="experiences" className={`p-section p-container ${styles.section}${overlap?` ${styles.overlap}`:""}`} aria-label="Book your experience"><h2 className="p-screen-reader-only">Book your experience</h2><ProductCarousel titles={visible.map(product=>product.title)}>{visible.map(product=><article className={styles.card} key={product.id}>
  {product.card!.image?<Media src={product.card!.image} alt={product.card!.alt}/>:<div className={styles.placeholder}>Product photo</div>}
  <ProductCardBooking product={product} fare={fares[product.id]} bookingLabel={content["hero.book"]} preview={preview}/>
- </article>)}</div></section>;
+ </article>)}</ProductCarousel></section>;
 }

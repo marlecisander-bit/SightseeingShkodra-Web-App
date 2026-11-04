@@ -1,0 +1,300 @@
+{
+  "layouts": [
+    {
+      "w": 320,
+      "h": 568,
+      "overflow": false,
+      "overlap": 88,
+      "heights": [
+        731.96875,
+        731.96875
+      ],
+      "actions": [
+        1188.96875,
+        1188.96875
+      ],
+      "horizontal": null,
+      "carousel": true
+    },
+    {
+      "w": 375,
+      "h": 667,
+      "overflow": false,
+      "overlap": 88,
+      "heights": [
+        651.96875,
+        651.96875
+      ],
+      "actions": [
+        1108.96875,
+        1108.96875
+      ],
+      "horizontal": null,
+      "carousel": true
+    },
+    {
+      "w": 390,
+      "h": 844,
+      "overflow": false,
+      "overlap": 88,
+      "heights": [
+        651.96875,
+        651.96875
+      ],
+      "actions": [
+        1108.96875,
+        1108.96875
+      ],
+      "horizontal": null,
+      "carousel": true
+    },
+    {
+      "w": 430,
+      "h": 932,
+      "overflow": false,
+      "overlap": 88,
+      "heights": [
+        606.078125,
+        606.078125
+      ],
+      "actions": [
+        1063.078125,
+        1063.078125
+      ],
+      "horizontal": null,
+      "carousel": true
+    },
+    {
+      "w": 768,
+      "h": 1024,
+      "overflow": false,
+      "overlap": 80,
+      "heights": [
+        743.578125,
+        743.578125
+      ],
+      "actions": [
+        1260.578125,
+        1260.578125
+      ],
+      "horizontal": null,
+      "carousel": false
+    },
+    {
+      "w": 1024,
+      "h": 768,
+      "overflow": false,
+      "overlap": 96,
+      "heights": [
+        475.1875,
+        475.1875
+      ],
+      "actions": [
+        978.1875,
+        978.1875
+      ],
+      "horizontal": true,
+      "carousel": false
+    },
+    {
+      "w": 1440,
+      "h": 900,
+      "overflow": false,
+      "overlap": 96,
+      "heights": [
+        385.890625,
+        385.890625
+      ],
+      "actions": [
+        970.890625,
+        970.890625
+      ],
+      "horizontal": true,
+      "carousel": false
+    },
+    {
+      "w": 390,
+      "h": 480,
+      "overflow": false,
+      "overlap": 88,
+      "heights": [
+        651.96875,
+        651.96875
+      ],
+      "actions": [
+        1108.96875,
+        1108.96875
+      ],
+      "horizontal": null,
+      "carousel": true
+    },
+    {
+      "w": 844,
+      "h": 390,
+      "overflow": false,
+      "overlap": 80,
+      "heights": [
+        684.078125,
+        684.078125
+      ],
+      "actions": [
+        1101.078125,
+        1101.078125
+      ],
+      "horizontal": null,
+      "carousel": false
+    }
+  ],
+  "swipe": {
+    "scroll": 255,
+    "current": "Show Sightseeing Loop Tour"
+  },
+  "vertical": 431,
+  "preserved": {
+    "date": "2026-11-05",
+    "departure": "11:00 ✓Available"
+  },
+  "unavailable": {
+    "disabled": true,
+    "canEdit": true
+  },
+  "handoff": [
+    {
+      "action": "session"
+    },
+    {
+      "action": "hold",
+      "productId": "7d7257f2-ee83-43cf-85bf-5dba3bbf5196",
+      "date": "2026-11-05",
+      "guests": 3,
+      "passengers": {
+        "adult": 1,
+        "child": 1,
+        "infant": 1
+      },
+      "departureId": "f4f0c150-d44f-4f58-b14c-1f7147ceb09f",
+      "requestId": "34c2bade-ddf9-4592-a2ad-a6bc3350527b"
+    }
+  ],
+  "required": {
+    "required": 2,
+    "valid": false,
+    "associated": true
+  },
+  "dialog": {
+    "footerBottom": 480,
+    "scroll": 1050,
+    "locked": "fixed"
+  },
+  "dialogLayouts": [
+    {
+      "w": 320,
+      "h": 568,
+      "overflow": false,
+      "footerBottom": 568,
+      "closeRight": 304,
+      "headingRight": 252,
+      "closeLeft": 260
+    },
+    {
+      "w": 375,
+      "h": 667,
+      "overflow": false,
+      "footerBottom": 667,
+      "closeRight": 359,
+      "headingRight": 307,
+      "closeLeft": 315
+    },
+    {
+      "w": 390,
+      "h": 844,
+      "overflow": false,
+      "footerBottom": 844,
+      "closeRight": 374,
+      "headingRight": 308.109375,
+      "closeLeft": 330
+    },
+    {
+      "w": 430,
+      "h": 932,
+      "overflow": false,
+      "footerBottom": 932,
+      "closeRight": 414,
+      "headingRight": 308.109375,
+      "closeLeft": 370
+    },
+    {
+      "w": 768,
+      "h": 1024,
+      "overflow": false,
+      "footerBottom": 983.03125,
+      "closeRight": 728,
+      "headingRight": 365.40625,
+      "closeLeft": 684
+    },
+    {
+      "w": 1024,
+      "h": 768,
+      "overflow": false,
+      "footerBottom": 737.265625,
+      "closeRight": 984,
+      "headingRight": 373.546875,
+      "closeLeft": 940
+    },
+    {
+      "w": 1440,
+      "h": 900,
+      "overflow": false,
+      "footerBottom": 864,
+      "closeRight": 1216,
+      "headingRight": 557.546875,
+      "closeLeft": 1172
+    },
+    {
+      "w": 390,
+      "h": 480,
+      "overflow": false,
+      "footerBottom": 480,
+      "closeRight": 374,
+      "headingRight": 308.109375,
+      "closeLeft": 330
+    },
+    {
+      "w": 844,
+      "h": 390,
+      "overflow": false,
+      "footerBottom": 374.390625,
+      "closeRight": 804,
+      "headingRight": 373.546875,
+      "closeLeft": 760
+    }
+  ],
+  "footer": [
+    {
+      "w": 320,
+      "h": 568,
+      "top": 510,
+      "bottom": 554,
+      "overflow": false
+    },
+    {
+      "w": 390,
+      "h": 480,
+      "top": 422,
+      "bottom": 466,
+      "overflow": false
+    },
+    {
+      "w": 844,
+      "h": 390,
+      "top": 326.78125,
+      "bottom": 370.78125,
+      "overflow": false
+    }
+  ],
+  "limits": [
+    "Published CMS snapshot; availability proxied by GET only",
+    "All checkout writes blocked; contact UI uses a local-only hold response with the real live quote; no real hold/order/payment",
+    "No physical-device or physical keyboard test"
+  ]
+}

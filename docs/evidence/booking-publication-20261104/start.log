@@ -1,0 +1,11 @@
+
+> sightseeing-shkodra@0.1.0 start
+> next start --hostname 127.0.0.1 --port 3001
+
+▲ Next.js 16.4.2
+- Local:         http://127.0.0.1:3001
+- Network:       http://127.0.0.1:3001
+✓ Ready in 107ms
+✓ Running next.config.ts took 57ms
+{"component":"website_publication","reason":"missing_configuration","missing":["PUBLIC_OPERATOR_ID","NEXT_PUBLIC_SUPABASE_URL","SUPABASE_SECRET_KEY"]}
+⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3001". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase

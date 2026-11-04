@@ -1,11 +1,12 @@
 "use client";
 import { trackBookingEvent } from "@/modules/analytics/browser";
+import { bookingDate } from "./booking-presentation";
 import { checkoutStorageKey } from "@/modules/booking/checkout-browser-state";
 
 import { BookingProgress, BookingAction, BookingSummary, BookingPriceBreakdown } from "./booking-controls";
 import { BookingPassCard } from "./booking-pass";
 import { Button } from "@/components/ui/button";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useId } from "react";
 import { BookingFields, useBooking } from "./booking";
 import { Field } from "./ui";
 import type { Hold, PendingOrder } from "@/modules/booking/contracts";
@@ -46,8 +47,9 @@ const messages: Record<string, string> = {
     "This request was already submitted with different details. Keep your original details when retrying.",
   SESSION_REQUIRED: "Your booking session has ended. Please start again.",
 };
-export function CheckoutFlow() {
+export function CheckoutFlow({productHeading=true}: {productHeading?:boolean} = {}) {
   const { selection, setSelection, availability, reset, product } = useBooking();
+  const checkoutFormId = useId();
   const storageKey = product&&!product.primary ? `${checkoutStorageKey}:${product.id}` : checkoutStorageKey;
   const [attempt, setAttempt] = useState<Attempt | null>(null);
   const [order, setOrder] = useState<PendingOrder | null>(null);
@@ -59,6 +61,7 @@ export function CheckoutFlow() {
   }, [order]);
   const [customer, setCustomer] = useState({ name: "", email: "", phone: "" });
   const [review, setReview] = useState(false);
+  const [selectionStep, setSelectionStep] = useState<1 | 2>(1);
   const [submitted, setSubmitted] = useState<typeof customer | null>(null);
   const [busy, setBusy] = useState(false);
   const busyRef = useRef(false);
@@ -67,7 +70,7 @@ export function CheckoutFlow() {
   const [restoring, setRestoring] = useState(true);
   const deadline = useRef(0);
   const heading = useRef<HTMLHeadingElement>(null);
-  const step=order||review?3:attempt?.hold?2:1;
+  const step=order||attempt?.hold?3:selectionStep;
   useEffect(()=>{if(!restoring){heading.current?.focus({preventScroll:true});heading.current?.scrollIntoView({block:"start",behavior:"instant"});}},[step,restoring]);
   function save(value: Attempt | null) {
     setAttempt(value);
@@ -229,13 +232,16 @@ export function CheckoutFlow() {
     setOrder(null);
     setSubmitted(null);
     setReview(false);
+    setSelectionStep(2);
     setRemaining(0);
     availability.refresh();
   }
   const chosen = attempt?.selection ?? selection;
+  const selectionLabel = [chosen.date ? bookingDate(chosen.date) : "", (attempt?.time ?? selected?.startTime)?.slice(0,5)].filter(Boolean).join(" · ");
   if (restoring) return <p role="status">Restoring your selection…</p>;
   return (
     <div className={`p-flow${order ? " p-flow-complete" : !attempt?.hold ? " p-flow-when" : ""}`}>
+      {productHeading && product && <p className="p-booking-product"><strong>{product.title}</strong></p>}
       <BookingProgress step={step} complete={Boolean(order)}/>
       <h2 ref={heading} tabIndex={-1} className={order ? "p-screen-reader-only" : undefined}>
         {order
@@ -245,11 +251,11 @@ export function CheckoutFlow() {
               ? "Your booking was cancelled."
               : "Your order needs attention."
           : attempt?.hold
-            ? review ? "Review and confirm" : "Your details"
-            : "Book your day"}
+            ? review ? "Review and confirm" : "Review your booking"
+            : selectionStep === 1 ? "When would you like to go?" : "Who’s coming?"}
       </h2>
       {!order && <p className="p-preview">
-        {attempt?.hold ? "Reserve online and pay at the meeting point." : "Choose your date, guests and departure."}
+        {attempt?.hold ? "Reserve online and pay at the meeting point." : selectionStep === 1 ? "Choose your date and departure." : "Choose adults, children and infants. Prices and availability update for your group."}
       </p>}
       <div className="p-flow-layout"><div className="p-flow-main">
       {error && <p role="alert">{error}</p>}
@@ -289,7 +295,7 @@ export function CheckoutFlow() {
           {order ? (
             <><BookingPassCard order={order}/><Button className="p-button p-button-booking" onClick={reset}>{order.status === "cancelled" ? "Book another day" : "Book another day"}</Button></>
           ) : active ? (
-            <form
+            <form id={checkoutFormId}
               onSubmit={(event) => {
                 event.preventDefault();
                 if (!review) { setReview(true); requestAnimationFrame(()=>heading.current?.focus()); return; }
@@ -346,7 +352,8 @@ export function CheckoutFlow() {
               </Field>
               </div>}
               {review && <div className="p-review-contact"><h3>Contact details</h3><p>{customer.name}<br/>{customer.email}{customer.phone && <><br/>{customer.phone}</>}</p><Button type="button" className="p-text-button" disabled={busy || Boolean(submitted)} onClick={()=>setReview(false)}>Edit contact details</Button><p>Pay at the meeting point. Online changes and cancellation close 15 minutes before departure.</p></div>}
-              <BookingAction total={attempt.total} currency={attempt.hold.passengerSnapshot?.currency??availability.quote?.currency??"EUR"}><Button className={`p-button p-button-booking p-transaction-action`} disabled={busy || !active}>
+              <BookingAction selectionLabel={selectionLabel} form={checkoutFormId} total={attempt.total} currency={attempt.hold.passengerSnapshot?.currency??availability.quote?.currency??"EUR"}>
+                <Button type="button" className="p-text-button p-booking-back" disabled={busy || Boolean(submitted)} onClick={() => { if(review) setReview(false); else void perform(restart); }}>Back</Button><Button className={`p-button p-button-booking p-transaction-action`} disabled={busy || !active}>
                 {busy
                   ? review ? "Confirming booking…" : "Saving…"
                   : submitted
@@ -367,17 +374,19 @@ export function CheckoutFlow() {
         </>
       ) : (
         <>
-          {!attempt && <BookingFields />}
-          <BookingAction total={attempt?.total??selected?.passengerQuote?.total} currency={availability.quote?.currency??"EUR"}><Button
+          {!attempt && <BookingFields stage={selectionStep === 1 ? "when" : "who"} />}
+          <BookingAction selectionLabel={selectionLabel} total={attempt?.total??selected?.passengerQuote?.total} currency={availability.quote?.currency??"EUR"}>
+          {!attempt && selectionStep === 1 && selection.passengers && <Button type="button" className="p-text-button p-booking-back" onClick={() => setSelectionStep(2)}>Edit passengers</Button>}
+          {!attempt && selectionStep === 2 && <Button type="button" className="p-text-button p-booking-back" onClick={() => setSelectionStep(1)}>Back</Button>}<Button
             className="p-button p-button-booking p-transaction-action"
-            disabled={busy || (!attempt && !selected)}
-            onClick={() => void perform(reserve)}
+            disabled={busy || (!attempt && (!selected || availability.loading || Boolean(availability.error)))}
+            onClick={() => { if (!attempt && selectionStep === 1) setSelectionStep(2); else void perform(reserve); }}
           >
             {busy
               ? "Reserving seats…"
               : attempt
                 ? "Retry reserving these seats"
-                : "Continue to details"}
+                : selectionStep === 1 ? "Continue to passengers" : "Continue to review"}
           </Button></BookingAction>
           {attempt && (
             <p>
@@ -388,7 +397,7 @@ export function CheckoutFlow() {
         </>
       )}
       </div>
-      {!order&&product&&<p><strong>{product.title}</strong></p>}
+
       {!order && <BookingSummary date={chosen.date} time={attempt?.time??selected?.startTime} counts={chosen.passengers??{adult:chosen.guests,child:0,infant:0}} total={attempt?.total??selected?.passengerQuote?.total} currency={availability.quote?.currency}/>}
       </div>
 

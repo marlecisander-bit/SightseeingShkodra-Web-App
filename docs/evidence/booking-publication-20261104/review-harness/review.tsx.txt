@@ -1,0 +1,27 @@
+'use client';
+import {useEffect,useState} from 'react';
+import type {BookableProduct} from '@/modules/booking/products';
+import type {WebsiteContent} from '@/modules/content/website-schema';
+import {BookingProvider,BookingFlow,Header,BookButton} from '@/components/public/booking';
+import {HomepageHero} from '@/components/public/homepage-hero';
+import {ProductBookingCards} from '@/components/public/product-booking-cards';
+export function CmsReview({content,products}:{content:WebsiteContent;products:BookableProduct[]}){
+ const [ready,setReady]=useState(false),[selected,setSelected]=useState<string>();
+ useEffect(()=>{
+  const original=window.fetch;
+  const guarded:typeof fetch=(input,init)=>{
+   const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url,location.origin);
+   if(url.origin===location.origin&&url.pathname==='/api/public/checkout')return Promise.resolve(Response.json({error:'INVALID_REQUEST'},{status:403}));
+   if(url.origin===location.origin&&url.pathname==='/api/public/availability')return original('/dev/booking-cms-review/availability?'+url.searchParams,init);
+   return original(input,init);
+  };
+  window.fetch=guarded;let live=true;queueMicrotask(()=>{if(live)setReady(true)});
+  return()=>{live=false;if(window.fetch===guarded)window.fetch=original};
+ },[]);
+ if(!ready)return <p>Preparing read-only CMS review…</p>;
+ const product=products.find(p=>p.id===selected);
+ return <div className="public-site"><BookingProvider content={content} product={products[0]}>
+ <Header content={content} previewPathname={product?'/book':'/'}/>
+ {product?<main className="p-subpage p-container p-book-page"><button onClick={()=>setSelected(undefined)}>Return to homepage review</button><BookingProvider key={product.id} content={content} product={product}><h2>{product.title}</h2><p>{product.card?.description}</p><BookingFlow/></BookingProvider></main>:<main className="p-home" onClickCapture={event=>{const a=(event.target as HTMLElement).closest('a');if(!a)return;const id=new URL(a.href).searchParams.get('productId');if(id){event.preventDefault();event.stopPropagation();setSelected(id);}}}><HomepageHero content={content}/><ProductBookingCards content={content} products={products} overlap/><section className="p-section p-container"><p>Published CMS snapshot, 4 November 2026. Live availability GET only; checkout writes blocked.</p>{products.map(p=><BookingProvider key={p.id} product={p} content={content}><BookButton>Review {p.title} dialog</BookButton></BookingProvider>)}</section></main>}
+ </BookingProvider></div>;
+}

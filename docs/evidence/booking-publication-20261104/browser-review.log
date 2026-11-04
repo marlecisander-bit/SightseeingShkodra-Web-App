@@ -1,0 +1,5 @@
+footer { w: 320, h: 568, top: 510, bottom: 554, overflow: false }
+footer { w: 390, h: 480, top: 422, bottom: 466, overflow: false }
+footer { w: 844, h: 390, top: 326.78125, bottom: 370.78125, overflow: false }
+dialog { footerBottom: 480, scroll: 1050, locked: 'fixed' }
+{"layouts":9,"swipe":{"scroll":255,"current":"Show Sightseeing Loop Tour"},"preserved":{"date":"2026-11-05","departure":"11:00 ✓Available"},"handoffActions":["session","hold"],"footer":[{"w":320,"h":568,"top":510,"bottom":554,"overflow":false},{"w":390,"h":480,"top":422,"bottom":466,"overflow":false},{"w":844,"h":390,"top":326.78125,"bottom":370.78125,"overflow":false}]}
