@@ -71,3 +71,12 @@
  .mobileDetails>summary:focus-visible{outline:2px solid var(--ss-primary);outline-offset:2px;}
  .embedded .book{min-height:44px;margin-top:2px;}
 }
+
+/* Let enlarged prices and disclosure controls use separate rows before wrapping amounts. */
+@media(max-width:599px){
+ .embedded .purchaseSummary{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 8px;}
+ .embedded .price{flex:1 1 8rem;}
+ .embedded .price strong{white-space:nowrap;}
+ .embedded .mobileDetails{flex:0 1 auto;}
+ .embedded .purchaseSummary:has(.mobileDetails[open]) .mobileDetails{flex-basis:100%;}
+}

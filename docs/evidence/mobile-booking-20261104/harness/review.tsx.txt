@@ -1,0 +1,30 @@
+'use client';
+import {useEffect,useState} from 'react';
+import type {BookableProduct} from '@/modules/booking/products';
+import type {WebsiteContent} from '@/modules/content/website-schema';
+import type {MeetingPoint} from '@/modules/booking/meeting-point';
+import {BookingProvider,Header} from '@/components/public/booking';
+import {HomepageHero} from '@/components/public/homepage-hero';
+import {ProductBookingCards} from '@/components/public/product-booking-cards';
+export function Review({content,point,products}:{content:WebsiteContent;point:MeetingPoint;products:BookableProduct[]}){
+ const [ready,setReady]=useState(false);
+ useEffect(()=>{const original=window.fetch;
+ const state=window as typeof window&{__calls?:unknown[];__lastQuote?:Record<string,unknown>;__hold?:Record<string,unknown>;__order?:Record<string,unknown>;__availabilityMode?:string;__orderDelay?:number};state.__calls=[];
+ window.fetch=async(input,init)=>{const u=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url,location.origin);
+ if(u.origin===location.origin&&u.pathname==='/api/public/availability'){
+  const response=await original('/dev/mobile-booking-review/availability?'+u.searchParams,init),data=await response.clone().json();
+  if(data.quote){if(state.__availabilityMode==='soldout')data.quote.departures=data.quote.departures.map((d:object)=>({...d,remaining:0,available:false}));state.__lastQuote=data.quote;}
+  return state.__availabilityMode==='error'?Response.json({error:'UNAVAILABLE'},{status:503}):Response.json(data,{status:response.status});
+ }
+ if(u.origin===location.origin&&u.pathname==='/api/public/checkout'){
+  const body=JSON.parse(String(init?.body));state.__calls?.push(body);
+  const quote=state.__lastQuote as {date?:string;currency?:string;departures?:{id:string;startTime:string;passengerQuote?:{total:number}}[]}|undefined;
+  if(body.action==='hold'){const departure=quote?.departures?.find(d=>d.id===body.departureId);state.__hold={id:'local-review-no-reservation',departure_id:body.departureId,quantity:body.guests,status:'active',expires_at:new Date(Date.now()+600000).toISOString(),passengerSnapshot:departure?.passengerQuote};return Response.json({hold:state.__hold,serverNow:new Date().toISOString()});}
+  if(body.action==='read')return Response.json({hold:state.__hold,serverNow:new Date().toISOString()});
+  if(body.action==='order'){await new Promise(r=>setTimeout(r,state.__orderDelay??200));const hold=state.__hold!,snapshot=hold.passengerSnapshot as {total:number}|undefined;const departure=quote?.departures?.find(d=>d.id===hold.departure_id);state.__order={version:1,orderId:'local-order',status:'confirmed',bookingStatus:'confirmed',paymentStatus:'due',bookingReference:'LOCAL-MOBILE-REVIEW',currency:'EUR',total:snapshot?.total??0,holdId:hold.id,expiresAt:hold.expires_at,meetingPoint:point,managementToken:'local-review-only',items:[{id:'local-item',productId:body.productId,departureId:hold.departure_id,quantity:hold.quantity,passengerSnapshot:snapshot,total:snapshot?.total??0,status:'confirmed'}],pass:{token:'0'.repeat(64),createdAt:new Date().toISOString(),checkedInAt:null,departures:[{date:quote?.date,time:departure?.startTime??'11:00',guests:hold.quantity}]}};return Response.json({order:state.__order});}
+  return Response.json({ok:true});
+ }
+ return original(input,init);};queueMicrotask(()=>setReady(true));return()=>{window.fetch=original};},[point]);
+ if(!ready)return <p>Preparing local read-only review…</p>;
+ return <div className="public-site"><BookingProvider content={content} currentMeetingPoint={point} product={products[0]}><Header content={content} previewPathname="/"/><main className="p-home"><HomepageHero content={content}><ProductBookingCards embedded content={content} products={products}/></HomepageHero><section className="p-section p-container"><p>Actual CMS and live availability. All reservation responses are local simulations.</p><div style={{height:800}}/></section></main></BookingProvider></div>;
+}

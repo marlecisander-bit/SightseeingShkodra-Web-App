@@ -1,0 +1,11 @@
+{
+  "browser": "Chrome DevTools page 18",
+  "viewport": "375x812",
+  "paginationTarget": [
+    44,
+    44
+  ],
+  "focusOutline": "solid",
+  "enterActivated": "Show Sightseeing Loop Tour",
+  "overflow": false
+}

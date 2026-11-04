@@ -1,0 +1,345 @@
+{
+  "layouts": [
+    {
+      "label": "568x320-empty",
+      "w": 568,
+      "h": 320,
+      "dialog": {
+        "x": 0,
+        "y": 0,
+        "w": 568,
+        "h": 320,
+        "bottom": 320
+      },
+      "header": {
+        "x": 0,
+        "y": 0,
+        "w": 568,
+        "h": 61,
+        "bottom": 61
+      },
+      "content": {
+        "x": 0,
+        "y": 61,
+        "w": 568,
+        "h": 167.609375,
+        "bottom": 228.609375
+      },
+      "footer": {
+        "x": 0,
+        "y": 228.609375,
+        "w": 568,
+        "h": 91.390625,
+        "bottom": 320
+      },
+      "pageOverflow": false,
+      "dialogOverflow": false,
+      "contentOverflow": false,
+      "heading": "Choose your date & time",
+      "product": "Sightseeing Loop Tour",
+      "inputs": [],
+      "action": {
+        "x": 16,
+        "y": 260,
+        "w": 536,
+        "h": 48,
+        "bottom": 308
+      }
+    },
+    {
+      "label": "568x320-when",
+      "w": 568,
+      "h": 320,
+      "dialog": {
+        "x": 0,
+        "y": 0,
+        "w": 568,
+        "h": 320,
+        "bottom": 320
+      },
+      "header": {
+        "x": 0,
+        "y": 0,
+        "w": 568,
+        "h": 61,
+        "bottom": 61
+      },
+      "content": {
+        "x": 0,
+        "y": 61,
+        "w": 568,
+        "h": 157.8125,
+        "bottom": 218.8125
+      },
+      "footer": {
+        "x": 0,
+        "y": 218.8125,
+        "w": 568,
+        "h": 101.1875,
+        "bottom": 320
+      },
+      "pageOverflow": false,
+      "dialogOverflow": false,
+      "contentOverflow": false,
+      "heading": "Choose your date & time",
+      "product": "Sightseeing Loop Tour",
+      "inputs": [],
+      "action": {
+        "x": 16,
+        "y": 260,
+        "w": 536,
+        "h": 48,
+        "bottom": 308
+      }
+    },
+    {
+      "label": "568x320-who",
+      "w": 568,
+      "h": 320,
+      "dialog": {
+        "x": 0,
+        "y": 0,
+        "w": 568,
+        "h": 320,
+        "bottom": 320
+      },
+      "header": {
+        "x": 0,
+        "y": 0,
+        "w": 568,
+        "h": 61,
+        "bottom": 61
+      },
+      "content": {
+        "x": 0,
+        "y": 61,
+        "w": 568,
+        "h": 139,
+        "bottom": 200
+      },
+      "footer": {
+        "x": 0,
+        "y": 200,
+        "w": 568,
+        "h": 120,
+        "bottom": 320
+      },
+      "pageOverflow": false,
+      "dialogOverflow": false,
+      "contentOverflow": false,
+      "heading": "Who's coming?",
+      "product": "Sightseeing Loop Tour",
+      "inputs": [],
+      "action": {
+        "x": 16,
+        "y": 260,
+        "w": 536,
+        "h": 48,
+        "bottom": 308
+      }
+    },
+    {
+      "label": "568x320-contact",
+      "w": 568,
+      "h": 320,
+      "dialog": {
+        "x": 0,
+        "y": 0,
+        "w": 568,
+        "h": 320,
+        "bottom": 320
+      },
+      "header": {
+        "x": 0,
+        "y": 0,
+        "w": 568,
+        "h": 61,
+        "bottom": 61
+      },
+      "content": {
+        "x": 0,
+        "y": 61,
+        "w": 568,
+        "h": 139,
+        "bottom": 200
+      },
+      "footer": {
+        "x": 0,
+        "y": 200,
+        "w": 568,
+        "h": 120,
+        "bottom": 320
+      },
+      "pageOverflow": false,
+      "dialogOverflow": false,
+      "contentOverflow": false,
+      "heading": "Review your booking",
+      "product": "Sightseeing Loop Tour",
+      "inputs": [
+        {
+          "type": "text",
+          "rect": {
+            "x": 16,
+            "y": 663.015625,
+            "w": 536,
+            "h": 52.390625,
+            "bottom": 715.40625
+          }
+        },
+        {
+          "type": "email",
+          "rect": {
+            "x": 16,
+            "y": 753.546875,
+            "w": 536,
+            "h": 52.390625,
+            "bottom": 805.9375
+          }
+        },
+        {
+          "type": "tel",
+          "rect": {
+            "x": 16,
+            "y": 844.078125,
+            "w": 536,
+            "h": 52.390625,
+            "bottom": 896.46875
+          }
+        }
+      ],
+      "action": {
+        "x": 16,
+        "y": 260,
+        "w": 536,
+        "h": 48,
+        "bottom": 308
+      }
+    },
+    {
+      "label": "568x320-review",
+      "w": 568,
+      "h": 320,
+      "dialog": {
+        "x": 0,
+        "y": 0,
+        "w": 568,
+        "h": 320,
+        "bottom": 320
+      },
+      "header": {
+        "x": 0,
+        "y": 0,
+        "w": 568,
+        "h": 61,
+        "bottom": 61
+      },
+      "content": {
+        "x": 0,
+        "y": 61,
+        "w": 568,
+        "h": 139,
+        "bottom": 200
+      },
+      "footer": {
+        "x": 0,
+        "y": 200,
+        "w": 568,
+        "h": 120,
+        "bottom": 320
+      },
+      "pageOverflow": false,
+      "dialogOverflow": false,
+      "contentOverflow": false,
+      "heading": "Review your booking",
+      "product": "Sightseeing Loop Tour",
+      "inputs": [
+        {
+          "type": "text",
+          "rect": {
+            "x": 16,
+            "y": -76.984375,
+            "w": 536,
+            "h": 52.390625,
+            "bottom": -24.59375
+          }
+        },
+        {
+          "type": "email",
+          "rect": {
+            "x": 16,
+            "y": 13.546875,
+            "w": 536,
+            "h": 52.390625,
+            "bottom": 65.9375
+          }
+        },
+        {
+          "type": "tel",
+          "rect": {
+            "x": 16,
+            "y": 104.078125,
+            "w": 536,
+            "h": 52.390625,
+            "bottom": 156.46875
+          }
+        }
+      ],
+      "action": {
+        "x": 16,
+        "y": 260,
+        "w": 536,
+        "h": 48,
+        "bottom": 308
+      }
+    },
+    {
+      "label": "568x320-success",
+      "w": 568,
+      "h": 320,
+      "dialog": {
+        "x": 0,
+        "y": 0,
+        "w": 568,
+        "h": 320,
+        "bottom": 320
+      },
+      "header": {
+        "x": 0,
+        "y": 0,
+        "w": 568,
+        "h": 61,
+        "bottom": 61
+      },
+      "content": {
+        "x": 0,
+        "y": 61,
+        "w": 568,
+        "h": 259,
+        "bottom": 320
+      },
+      "footer": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0,
+        "bottom": 0
+      },
+      "pageOverflow": false,
+      "dialogOverflow": false,
+      "contentOverflow": false,
+      "heading": "Your seats are confirmed.",
+      "product": "Sightseeing Loop Tour",
+      "inputs": [],
+      "action": null
+    }
+  ],
+  "flows": [
+    {
+      "w": 568,
+      "h": 320,
+      "mobile": true,
+      "complete": true
+    }
+  ],
+  "blockedRequests": []
+}

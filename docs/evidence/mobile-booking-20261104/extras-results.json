@@ -1,0 +1,283 @@
+{
+  "calendars": [
+    {
+      "width": 320,
+      "height": 568,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 320,
+        "height": 568
+      },
+      "overflow": false,
+      "buttons": true
+    },
+    {
+      "width": 360,
+      "height": 640,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 360,
+        "height": 640
+      },
+      "overflow": false,
+      "buttons": true
+    },
+    {
+      "width": 375,
+      "height": 667,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 375,
+        "height": 667
+      },
+      "overflow": false,
+      "buttons": true
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 844
+      },
+      "overflow": false,
+      "buttons": true
+    },
+    {
+      "width": 393,
+      "height": 852,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 393,
+        "height": 852
+      },
+      "overflow": false,
+      "buttons": true
+    },
+    {
+      "width": 414,
+      "height": 896,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 414,
+        "height": 896
+      },
+      "overflow": false,
+      "buttons": true
+    },
+    {
+      "width": 430,
+      "height": 932,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 430,
+        "height": 932
+      },
+      "overflow": false,
+      "buttons": true
+    },
+    {
+      "width": 568,
+      "height": 320,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 568,
+        "height": 320
+      },
+      "overflow": false,
+      "buttons": true
+    },
+    {
+      "width": 390,
+      "height": 400,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 400
+      },
+      "overflow": false,
+      "buttons": true
+    }
+  ],
+  "layouts": [
+    {
+      "label": "keyboard-sized-viewport",
+      "w": 390,
+      "h": 400,
+      "dialog": {
+        "x": 0,
+        "y": 0,
+        "w": 390,
+        "h": 400,
+        "bottom": 400
+      },
+      "header": {
+        "x": 0,
+        "y": 0,
+        "w": 390,
+        "h": 61,
+        "bottom": 61
+      },
+      "content": {
+        "x": 0,
+        "y": 61,
+        "w": 390,
+        "h": 219,
+        "bottom": 280
+      },
+      "footer": {
+        "x": 0,
+        "y": 280,
+        "w": 390,
+        "h": 120,
+        "bottom": 400
+      },
+      "pageOverflow": false,
+      "dialogOverflow": false,
+      "contentOverflow": false,
+      "heading": "Review your booking",
+      "product": "Sightseeing Loop Tour",
+      "inputs": [
+        {
+          "type": "text",
+          "rect": {
+            "x": 16,
+            "y": 53.828125,
+            "w": 358,
+            "h": 52.390625,
+            "bottom": 106.21875
+          }
+        },
+        {
+          "type": "email",
+          "rect": {
+            "x": 16,
+            "y": 144.359375,
+            "w": 358,
+            "h": 52.390625,
+            "bottom": 196.75
+          }
+        },
+        {
+          "type": "tel",
+          "rect": {
+            "x": 16,
+            "y": 234.890625,
+            "w": 358,
+            "h": 52.390625,
+            "bottom": 287.28125
+          }
+        }
+      ],
+      "action": {
+        "x": 16,
+        "y": 340,
+        "w": 358,
+        "h": 48,
+        "bottom": 388
+      }
+    },
+    {
+      "label": "enlarged-text",
+      "w": 390,
+      "h": 844,
+      "dialog": {
+        "x": 0,
+        "y": 0,
+        "w": 390,
+        "h": 844,
+        "bottom": 844
+      },
+      "header": {
+        "x": 0,
+        "y": 0,
+        "w": 390,
+        "h": 61,
+        "bottom": 61
+      },
+      "content": {
+        "x": 0,
+        "y": 61,
+        "w": 390,
+        "h": 663,
+        "bottom": 724
+      },
+      "footer": {
+        "x": 0,
+        "y": 724,
+        "w": 390,
+        "h": 120,
+        "bottom": 844
+      },
+      "pageOverflow": false,
+      "dialogOverflow": false,
+      "contentOverflow": false,
+      "heading": "Review your booking",
+      "product": "Sightseeing Loop Tour",
+      "inputs": [
+        {
+          "type": "text",
+          "rect": {
+            "x": 16,
+            "y": 199.4375,
+            "w": 358,
+            "h": 65.59375,
+            "bottom": 265.03125
+          }
+        },
+        {
+          "type": "email",
+          "rect": {
+            "x": 16,
+            "y": 312.25,
+            "w": 358,
+            "h": 65.59375,
+            "bottom": 377.84375
+          }
+        },
+        {
+          "type": "tel",
+          "rect": {
+            "x": 16,
+            "y": 425.0625,
+            "w": 358,
+            "h": 65.59375,
+            "bottom": 490.65625
+          }
+        }
+      ],
+      "action": {
+        "x": 16,
+        "y": 784,
+        "w": 358,
+        "h": 48,
+        "bottom": 832
+      }
+    }
+  ],
+  "zoom": {
+    "scale": 1.5,
+    "viewportWidth": 260,
+    "dialogWidth": 260,
+    "actionWidth": 228,
+    "actionLeft": 32,
+    "actionRight": 260,
+    "viewportLeft": 16
+  },
+  "blockedRequests": [],
+  "calendarRecovery": true,
+  "contactPreservation": true,
+  "dirtyDismissal": true,
+  "pendingEscapeAndBack": true,
+  "duplicateOrderPrevented": true
+}
