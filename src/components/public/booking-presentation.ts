@@ -19,10 +19,10 @@ export function lowestQuotedFare(amounts:readonly number[]) {
  return minimum;
 }
 
-export function bookingDate(value:string) {
+export function bookingDate(value:string,compact=false) {
  if(!/^\d{4}-\d{2}-\d{2}$/.test(value))return "Choose a date";
  const date=new Date(value+"T12:00:00Z");
- return Number.isNaN(date.getTime())?"Choose a date":new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"long",year:"numeric",timeZone:"UTC"}).format(date);
+ return Number.isNaN(date.getTime())?"Choose a date":new Intl.DateTimeFormat("en-GB",compact?{day:"numeric",month:"short",timeZone:"UTC"}:{weekday:"short",day:"numeric",month:"long",year:"numeric",timeZone:"UTC"}).format(date);
 }
 
 // Scarcity affects wording only; remaining and availability are supplied by the engine.

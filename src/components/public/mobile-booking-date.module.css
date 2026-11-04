@@ -1,26 +1,17 @@
-.root{min-width:0;}
-.label{display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:650;font-size:14px;}
-.label button{min-height:44px;border:0;background:none;color:var(--brand-red);font:inherit;cursor:pointer;}
-.strip{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;padding:4px 2px 8px;scrollbar-width:thin;overscroll-behavior-x:contain;}
-.strip button{flex:0 0 62px;min-height:84px;display:grid;align-content:center;gap:3px;border:1px solid var(--ss-input-border);border-radius:12px;background:#fff;color:var(--ss-charcoal);scroll-snap-align:start;font:inherit;}
-.strip button span{font-size:12px;}.strip button strong{font-size:22px;}
-.strip button[aria-pressed=true]{background:var(--brand-red);color:#fff;border-color:var(--brand-red);}
-.calendar{position:fixed;inset:var(--booking-viewport-top,0px) auto auto var(--booking-viewport-left,0px);margin:0;width:var(--booking-viewport-width,100%);max-width:none;height:100vh;max-height:100vh;height:var(--booking-viewport-height,100dvh);max-height:var(--booking-viewport-height,100dvh);padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);border:0;border-radius:0;background:#fff;color:var(--ss-charcoal);box-sizing:border-box;}
-.calendar[open]{display:flex;flex-direction:column;}
-.calendar::backdrop{background:#17212b88;}
-.calendar header{display:flex;flex:none;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid var(--ss-input-border);gap:12px;}
-.calendar header h3{font-size:20px!important;line-height:1.25;margin:0!important;min-width:0;}
-.calendar header button{border:0;background:none;font-size:28px;min-width:44px;min-height:44px;}
-.calendarContent{overflow-y:auto;min-height:0;min-width:0;padding:12px max(12px,env(safe-area-inset-right)) 20px max(12px,env(safe-area-inset-left));}
-.month{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;}
-.month button{min-width:44px;min-height:44px;border:1px solid var(--ss-input-border);border-radius:10px;background:#fff;font-size:24px;color:var(--brand-red);}
-.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;max-width:480px;margin-inline:auto;}
-.days>span{text-align:center;font-size:11px;padding-block:6px;}
-.days button{min-width:0;min-height:44px;border:1px solid var(--ss-input-border);border-radius:8px;background:#fff;font:inherit;color:var(--ss-charcoal);}
-.days button[aria-current=date]{background:var(--brand-red);color:white;}
-.days button[aria-busy=true]{outline:2px solid var(--brand-red);}
-.days button:disabled,.month button:disabled{opacity:.4;}
-.calendarContent p{font-size:14px;line-height:1.5;overflow-wrap:anywhere;}
-.root button:focus-visible,.calendar button:focus-visible{outline:3px solid var(--brand-focus);outline-offset:-3px;}
-
-.month strong{min-width:0;overflow-wrap:anywhere;text-align:center;}
+.root{min-width:0;color:var(--ss-charcoal);}
+.month{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;}
+.month strong{font-size:17px;line-height:1.3;min-width:0;overflow-wrap:anywhere;}
+.month>div{display:flex;gap:4px;flex-shrink:0;}
+.month button{display:grid;place-items:center;width:44px;min-height:44px;padding:0;border:0;border-radius:50%;background:#f3f3f5;font-size:26px;line-height:1;color:#25232a;}
+.weekdays,.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));}
+.weekdays span{text-align:center;font-size:11px;line-height:1.4;padding:0 0 8px;}
+.days{border:1px solid #e6e6e9;border-radius:9px;overflow:hidden;}
+.days button{min-width:0;min-height:34px;aspect-ratio:1.2;border:0;border-bottom:1px solid #eeeeef;border-radius:0;padding:2px;background:white;color:#25232a;font:inherit;font-size:14px;}
+.days button:nth-last-child(-n+7){border-bottom:0;}
+.days button[aria-pressed=true]{border-radius:7px;background:#B60F46;color:white;font-weight:650;}
+.days button[aria-busy=true]{box-shadow:inset 0 0 0 2px #B60F46;}
+.days button:disabled{color:#aaa;opacity:1;}
+.days button[aria-pressed=true]:disabled{background:#eee;color:#888;}
+.month button:disabled{opacity:.35;}
+.root p{font-size:12px;line-height:1.4;margin:8px 0 0;overflow-wrap:anywhere;}
+.root button:focus-visible{outline:2px solid var(--brand-focus);outline-offset:-3px;}

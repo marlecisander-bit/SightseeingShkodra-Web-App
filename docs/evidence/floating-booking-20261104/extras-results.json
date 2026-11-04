@@ -1,0 +1,297 @@
+{
+  "calendars": [
+    {
+      "w": 320,
+      "h": 568,
+      "x": 12,
+      "y": 22.7265625,
+      "width": 296,
+      "height": 522.546875,
+      "bottom": 545.2734375,
+      "logoVisible": false,
+      "headingOutline": "none",
+      "calendarCellCount": 42,
+      "calendarOverflow": false,
+      "pageOverflow": false,
+      "dialogs": 1
+    },
+    {
+      "w": 360,
+      "h": 640,
+      "x": 12,
+      "y": 25.6015625,
+      "width": 336,
+      "height": 588.796875,
+      "bottom": 614.3984375,
+      "logoVisible": false,
+      "headingOutline": "none",
+      "calendarCellCount": 42,
+      "calendarOverflow": false,
+      "pageOverflow": false,
+      "dialogs": 1
+    },
+    {
+      "w": 375,
+      "h": 667,
+      "x": 12,
+      "y": 26.6875,
+      "width": 351,
+      "height": 613.625,
+      "bottom": 640.3125,
+      "logoVisible": false,
+      "headingOutline": "none",
+      "calendarCellCount": 42,
+      "calendarOverflow": false,
+      "pageOverflow": false,
+      "dialogs": 1
+    },
+    {
+      "w": 390,
+      "h": 844,
+      "x": 12,
+      "y": 68.21875,
+      "width": 366,
+      "height": 707.5625,
+      "bottom": 775.78125,
+      "logoVisible": false,
+      "headingOutline": "none",
+      "calendarCellCount": 42,
+      "calendarOverflow": false,
+      "pageOverflow": false,
+      "dialogs": 1
+    },
+    {
+      "w": 414,
+      "h": 896,
+      "x": 12,
+      "y": 85.640625,
+      "width": 390,
+      "height": 724.71875,
+      "bottom": 810.359375,
+      "logoVisible": false,
+      "headingOutline": "none",
+      "calendarCellCount": 42,
+      "calendarOverflow": false,
+      "pageOverflow": false,
+      "dialogs": 1
+    },
+    {
+      "w": 430,
+      "h": 932,
+      "x": 12,
+      "y": 97.921875,
+      "width": 406,
+      "height": 736.15625,
+      "bottom": 834.078125,
+      "logoVisible": false,
+      "headingOutline": "none",
+      "calendarCellCount": 42,
+      "calendarOverflow": false,
+      "pageOverflow": false,
+      "dialogs": 1
+    },
+    {
+      "w": 568,
+      "h": 320,
+      "x": 12,
+      "y": 12.8046875,
+      "width": 544,
+      "height": 294.390625,
+      "bottom": 307.1953125,
+      "logoVisible": false,
+      "headingOutline": "none",
+      "calendarCellCount": 42,
+      "calendarOverflow": false,
+      "pageOverflow": false,
+      "dialogs": 1
+    },
+    {
+      "w": 390,
+      "h": 400,
+      "x": 12,
+      "y": 16,
+      "width": 366,
+      "height": 368,
+      "bottom": 384,
+      "logoVisible": false,
+      "headingOutline": "none",
+      "calendarCellCount": 42,
+      "calendarOverflow": false,
+      "pageOverflow": false,
+      "dialogs": 1
+    }
+  ],
+  "layouts": [
+    {
+      "label": "keyboard-sized-viewport",
+      "w": 390,
+      "h": 400,
+      "dialog": {
+        "x": 12,
+        "y": 16,
+        "w": 366,
+        "h": 368,
+        "bottom": 384
+      },
+      "header": {
+        "x": 13,
+        "y": 17,
+        "w": 364,
+        "h": 60,
+        "bottom": 77
+      },
+      "content": {
+        "x": 13,
+        "y": 77,
+        "w": 364,
+        "h": 186.8125,
+        "bottom": 263.8125
+      },
+      "footer": {
+        "x": 13,
+        "y": 263.8125,
+        "w": 364,
+        "h": 119.1875,
+        "bottom": 383
+      },
+      "pageOverflow": false,
+      "dialogOverflow": false,
+      "contentOverflow": false,
+      "heading": "Review your booking",
+      "product": "Hop On Hop Off · Daily Ticket",
+      "inputs": [
+        {
+          "type": "text",
+          "rect": {
+            "x": 29,
+            "y": 53.3125,
+            "w": 332,
+            "h": 52.390625,
+            "bottom": 105.703125
+          }
+        },
+        {
+          "type": "email",
+          "rect": {
+            "x": 29,
+            "y": 143.84375,
+            "w": 332,
+            "h": 52.390625,
+            "bottom": 196.234375
+          }
+        },
+        {
+          "type": "tel",
+          "rect": {
+            "x": 29,
+            "y": 234.375,
+            "w": 332,
+            "h": 52.390625,
+            "bottom": 286.765625
+          }
+        }
+      ],
+      "action": {
+        "x": 25,
+        "y": 323,
+        "w": 340,
+        "h": 48,
+        "bottom": 371
+      }
+    },
+    {
+      "label": "200-percent-text",
+      "w": 390,
+      "h": 844,
+      "dialog": {
+        "x": 12,
+        "y": 33.765625,
+        "w": 366,
+        "h": 776.46875,
+        "bottom": 810.234375
+      },
+      "header": {
+        "x": 13,
+        "y": 34.765625,
+        "w": 364,
+        "h": 60,
+        "bottom": 94.765625
+      },
+      "content": {
+        "x": 13,
+        "y": 94.765625,
+        "w": 364,
+        "h": 595.28125,
+        "bottom": 690.046875
+      },
+      "footer": {
+        "x": 13,
+        "y": 690.046875,
+        "w": 364,
+        "h": 119.1875,
+        "bottom": 809.234375
+      },
+      "pageOverflow": false,
+      "dialogOverflow": false,
+      "contentOverflow": false,
+      "heading": "Review your booking",
+      "product": "Hop On Hop Off · Daily Ticket",
+      "inputs": [
+        {
+          "type": "text",
+          "rect": {
+            "x": 29,
+            "y": 71.21875,
+            "w": 332,
+            "h": 78.796875,
+            "bottom": 150.015625
+          }
+        },
+        {
+          "type": "email",
+          "rect": {
+            "x": 29,
+            "y": 206.3125,
+            "w": 332,
+            "h": 78.796875,
+            "bottom": 285.109375
+          }
+        },
+        {
+          "type": "tel",
+          "rect": {
+            "x": 29,
+            "y": 341.40625,
+            "w": 332,
+            "h": 78.796875,
+            "bottom": 420.203125
+          }
+        }
+      ],
+      "action": {
+        "x": 25,
+        "y": 749.234375,
+        "w": 340,
+        "h": 48,
+        "bottom": 797.234375
+      }
+    }
+  ],
+  "animation": {
+    "opacity": "1",
+    "transition": "opacity, transform, display, overlay"
+  },
+  "notch": {
+    "left": 44,
+    "right": 12,
+    "top": 12,
+    "bottom": 21
+  },
+  "unavailableDateRejected": true,
+  "recovery": true,
+  "contactPreserved": true,
+  "meetingPoint": true,
+  "pendingDismissalGuard": true,
+  "oneOrder": true,
+  "checkoutRequests": []
+}
