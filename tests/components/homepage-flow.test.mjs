@@ -35,9 +35,10 @@ test('missing product, operational route and schedule never fabricate a price, f
 test('retired service section stays absent with either saved visibility setting',()=>{
  for(const flag of ['true','false']) {
   const html=render({...c,'live.showOnHomepage':flag,'departures.showOnHomepage':flag});
-  for(const value of ['p-home-service','More time here.','Less time waiting.','Show live map here','TODAY, AT A GLANCE','<iframe'])assert.equal(html.includes(value),false,value);
+  for(const value of ['p-home-service','More time here.','Less time waiting.','Show live map here','TODAY, AT A GLANCE'])assert.equal(html.includes(value),false,value);
   assert.ok(html.includes('id="home-hero"'));
   assert.ok(html.includes('Actual boarding point'));
+  assert.equal((html.match(/<iframe/g)||[]).length,1);assert.match(html,/data-journey-source="true"/);assert.match(html,/loading="eager"/);
  }
 });
 
@@ -61,3 +62,6 @@ test('stale CMS promotion flags cannot restore the section or its spacing wrappe
  assert.ok(html.includes('id="home-hero"'));assert.ok(html.includes('/book?productId='));assert.ok(html.includes('Book your day'));
  }
 });
+
+
+test('saved homepage previews do not acquire live map data',()=>{const html=renderToStaticMarkup(React.createElement(BookingProvider,null,React.createElement(HomepageView,{home,content:c,planner,places:[],preview:true})));assert.ok(!html.includes('<iframe'));});

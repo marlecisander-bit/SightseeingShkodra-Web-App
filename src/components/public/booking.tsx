@@ -117,8 +117,10 @@ export function BookingProvider({ children, content: suppliedContent, preview = 
   useEffect(() => {
     if (!opened) return;
     const y = window.scrollY;
+    // Preserve the current border-box; the root gutter is already accounted for.
+    const width = document.body.getBoundingClientRect().width;
     const previous = {position: document.body.style.position, top: document.body.style.top, width: document.body.style.width};
-    Object.assign(document.body.style, {position:"fixed", top:`-${y}px`, width:"100%"});
+    Object.assign(document.body.style, {position:"fixed", top:`-${y}px`, width:`${width}px`});
     return () => { Object.assign(document.body.style, previous); window.scrollTo(0,y); };
   }, [opened]);
   useEffect(() => {

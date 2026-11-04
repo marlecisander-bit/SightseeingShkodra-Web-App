@@ -1,0 +1,44 @@
+{
+  "keyboardDetails": true,
+  "features": {
+    "visible": 3,
+    "all": 8
+  },
+  "nativeSwipe": true,
+  "pagination": true,
+  "selectedProductPopup": true,
+  "focusRestored": true,
+  "dock": [
+    {
+      "y": 0,
+      "visible": true,
+      "hit": false,
+      "bottom": 828,
+      "top": 776
+    },
+    {
+      "y": 120,
+      "visible": true,
+      "hit": false,
+      "bottom": 828,
+      "top": 776
+    },
+    {
+      "y": 250,
+      "visible": true,
+      "hit": false,
+      "bottom": 828,
+      "top": 776
+    },
+    {
+      "y": 400,
+      "visible": true,
+      "hit": false,
+      "bottom": 828,
+      "top": 776
+    }
+  ],
+  "enlargedText": true,
+  "futureProductCount": 4,
+  "checkoutRequests": []
+}

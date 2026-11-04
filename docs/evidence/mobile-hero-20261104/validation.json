@@ -1,0 +1,55 @@
+{
+  "localOnly": true,
+  "mobileBreakpoint": "max-width:599px",
+  "testsPassed": 675,
+  "lint": "passed",
+  "typescript": "passed",
+  "normalProductionBuild": "passed",
+  "nativeBrowserInteractions": "passed",
+  "desktopTabletGeometry": "identical",
+  "desktopTabletPixelComparison": [
+    {
+      "width": 600,
+      "height": 900,
+      "geometryEqual": true,
+      "differentPixels": 36,
+      "bounds": {
+        "minX": 334,
+        "minY": 358,
+        "maxX": 418,
+        "maxY": 526
+      },
+      "maximumChannelDifference": 1
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "geometryEqual": true,
+      "differentPixels": 0,
+      "bounds": null,
+      "maximumChannelDifference": 0
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "geometryEqual": true,
+      "differentPixels": 0,
+      "bounds": null,
+      "maximumChannelDifference": 0
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "geometryEqual": true,
+      "differentPixels": 0,
+      "bounds": null,
+      "maximumChannelDifference": 0
+    }
+  ],
+  "realCMS": true,
+  "checkoutRequests": 0,
+  "physicalDeviceTesting": false,
+  "temporaryHarnessRemoved": true,
+  "committed": false,
+  "deployed": false
+}

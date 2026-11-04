@@ -1,0 +1,19 @@
+{
+  "localOnly": true,
+  "baseCommit": "39bbf5bfedf30401788edc3af115d9fe339edd30",
+  "branch": "work/homepage-journey-20261104",
+  "testsPassed": 673,
+  "lint": "passed",
+  "typescript": "passed",
+  "normalProductionBuild": "passed",
+  "realNetlifyBrowser": "passed",
+  "viewportChecks": 6,
+  "childRequestMethods": {
+    "GET": 346,
+    "OPTIONS": 6
+  },
+  "productionMutationRequests": 0,
+  "temporaryReviewRouteRemoved": true,
+  "physicalDeviceTesting": false,
+  "deployed": false
+}

@@ -121,3 +121,7 @@
 .embed .statusPanel{width:fit-content;max-width:min(300px,100%);margin-left:auto;flex-direction:column;align-items:flex-start}
 .embed .statusCopy,.embed .statusTiming,.embed .statusProgress{flex:none;max-width:100%}
 .embed .statusProgress{width:236px;grid-template-columns:repeat(5,44px);gap:4px}
+
+/* One eager presentation bridge for the homepage, independent of map visibility.
+   Keep a nonzero child viewport; do not display:none/lazy-load the data source. */
+.embed.background{position:fixed;top:0;left:0;width:min(320px,100vw);height:260px;overflow:hidden;clip-path:inset(50%);opacity:0;pointer-events:none;contain:strict;z-index:-1;}

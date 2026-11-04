@@ -1,0 +1,17 @@
+import {notFound} from 'next/navigation';
+import {readFile} from 'node:fs/promises';
+import Link from 'next/link';
+import {validateWebsiteContent} from '@/modules/content/website-schema';
+import {emptyHomepage} from '@/modules/content/homepage';
+import {HomepageView} from '@/components/public/homepage-view';
+import {RouteJourney} from '@/components/public/route-journey';
+import {BookingProvider,Header} from '@/components/public/booking';
+import '../../(public)/public.css';
+export default async function Page({searchParams}:{searchParams:Promise<Record<string,string|undefined>>}){
+ if(process.env.NODE_ENV!=='development'&&process.env.LOCAL_JOURNEY_REVIEW!=='1')notFound();
+ const query=await searchParams,snapshot=JSON.parse(await readFile('docs/evidence/booking-publication-20261104/published-cms-snapshot.json','utf8'));
+ const journeyProps=JSON.parse(await readFile('docs/evidence/homepage-journey-20261104/published-journey-props.json','utf8'));
+ const planner=JSON.parse(await readFile('docs/evidence/homepage-journey-20261104/day-planner.json','utf8'));
+ const content=validateWebsiteContent({...snapshot.content,'live.showOnHomepage':query.map==='on'?'true':'false'}),places=journeyProps.places;
+ return <div className="public-site"><BookingProvider content={content} product={snapshot.products[0]}><Header content={content} previewPathname={query.view==='route'?'/route':'/'}/><nav aria-label="Local review"><Link href="?view=home&map=off">Home map disabled</Link>{' · '}<Link href="?view=home&map=on">Home saved map flag enabled</Link>{' · '}<Link href="?view=route">Route review</Link></nav>{query.view==='route'?<RouteJourney content={content} initial={planner} places={places}/>:<HomepageView content={content} home={emptyHomepage('ready')} products={snapshot.products} planner={planner} places={places}/>}</BookingProvider></div>;
+}

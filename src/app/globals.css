@@ -1,3 +1,5 @@
+/* Preserve the viewport gutter when overlays lock the document scroll. */
+html { scrollbar-gutter: stable; }
 :root { --background: var(--ss-cream); --ink: var(--ss-charcoal); --accent: var(--brand-text); }
 * { box-sizing: border-box; }
 input[type="checkbox"], input[type="radio"], progress { accent-color: var(--brand-red); }

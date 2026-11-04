@@ -2,6 +2,7 @@
 import {useEffect,useRef,useSyncExternalStore} from 'react';
 import {createPortal} from 'react-dom';
 import {usePathname} from 'next/navigation';
+import {whatsappDock} from '@/modules/content/whatsapp';
 import styles from './whatsapp-contact.module.css';
 
 const subscribe=()=>()=>{};
@@ -16,14 +17,22 @@ export function WhatsAppContact({href,label,desktop,mobile,excludePaths=[]}:{hre
   const measure=()=>{
    frame=0;
    node.style.setProperty('--whatsapp-clearance','0px');
+   node.style.visibility='';
+   const phoneHero=window.matchMedia('(max-width:599px)').matches&&!!document.querySelector('#home-hero #experiences');
+   const heroControls=phoneHero?'#home-hero [aria-label="Choose experience"] button,#home-hero [data-product-details]>summary':'';
    const rect=node.getBoundingClientRect();
    const viewportHeight=document.documentElement.clientHeight;
    // Clear sticky checkout actions and the product card price/booking controls.
    // Other ordinary page sections do not affect the floating contact.
-   const blockers=Array.from(document.querySelectorAll(bookingControls)).filter(element=>{
+   const blockers=Array.from(document.querySelectorAll([bookingControls,heroControls].filter(Boolean).join(','))).filter(element=>{
     const position=getComputedStyle(element).position;
-    return element.matches('[data-product-booking]')||position==='fixed'||position==='sticky';
+    return element.matches('[data-product-booking]')||(phoneHero&&element.matches(heroControls))||position==='fixed'||position==='sticky';
    }).map(element=>element.getBoundingClientRect()).filter(r=>r.width>0&&r.height>0&&r.bottom>0&&r.top<viewportHeight&&rect.left<r.right+12&&rect.right>r.left-12).sort((a,b)=>b.top-a.top);
+   if(phoneHero){
+    const top=whatsappDock(rect,blockers,(document.querySelector('.p-header')?.getBoundingClientRect().bottom??0)+8);
+    node.style.visibility=top===null?'hidden':'';
+    node.style.setProperty('--whatsapp-clearance',`${top===null?0:rect.top-top}px`);return;
+   }
    let clearance=0;
    for(const blocker of blockers){
     if(rect.top-clearance<blocker.bottom+12&&rect.bottom-clearance>blocker.top-12){
@@ -33,10 +42,12 @@ export function WhatsAppContact({href,label,desktop,mobile,excludePaths=[]}:{hre
    node.style.setProperty('--whatsapp-clearance',`${clearance}px`);
   };
   const queue=()=>{if(!frame)frame=requestAnimationFrame(measure);};
+  const carouselScroll=(event:Event)=>{if(window.matchMedia('(max-width:599px)').matches&&event.target instanceof Element&&event.target.closest('#home-hero'))queue();};
+  document.addEventListener('scroll',carouselScroll,true);
   const resize=new ResizeObserver(queue);resize.observe(document.body);
   const mutation=new MutationObserver(queue);mutation.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['open','class']});
   window.addEventListener('scroll',queue,{passive:true});window.addEventListener('resize',queue);window.visualViewport?.addEventListener('resize',queue);queue();
-  return()=>{cancelAnimationFrame(frame);resize.disconnect();mutation.disconnect();window.removeEventListener('scroll',queue);window.removeEventListener('resize',queue);window.visualViewport?.removeEventListener('resize',queue);};
+  return()=>{document.removeEventListener('scroll',carouselScroll,true);cancelAnimationFrame(frame);resize.disconnect();mutation.disconnect();window.removeEventListener('scroll',queue);window.removeEventListener('resize',queue);window.visualViewport?.removeEventListener('resize',queue);};
  },[href,excluded,path,desktop,mobile,label,mounted]);
  if(!href||excluded||!desktop&&!mobile)return null;
  const contact=<a ref={link} className={styles.contact} data-desktop={desktop} data-mobile={mobile} href={href} target="_blank" rel="noopener noreferrer" aria-label="Contact Sightseeing Shkodra on WhatsApp" title="Chat with us on WhatsApp">

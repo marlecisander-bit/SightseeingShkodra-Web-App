@@ -41,3 +41,8 @@ test('removed hero strip controls retain stored compatibility without active edi
  const validated=validateWebsiteContent(saved),html=render(saved);
  for(const key of keys){assert.equal(fields.some(f=>f.key===key),false);assert.equal(validated[key],saved[key]);assert.equal(html.includes(saved[key]),false);}
 });
+
+test('phone image falls back to the CMS desktop photograph without changing copy or saved focal settings',()=>{
+ const html=render({'hero.mobile':'','hero.desktop':'/images/castle.webp','hero.mobilePosition':'right bottom'});
+ assert.match(html,/media="\(max-width:599px\)"/);assert.match(html,/castle.webp/);assert.match(html,/--hero-phone-position:right bottom/);
+});

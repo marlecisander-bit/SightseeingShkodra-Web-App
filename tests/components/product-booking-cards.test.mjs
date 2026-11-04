@@ -41,3 +41,9 @@ test('product contexts isolate selection, inherit meeting-point settings and use
   const ids=dialogs.map(d=>d.getAttribute('aria-labelledby'));assert.equal(new Set(ids).size,2);for(const dialog of dialogs){assert.equal(document.getElementById(dialog.getAttribute('aria-labelledby')),dialog.querySelector('h2'));assert.equal(dialog.querySelector('h2').textContent,'Saved CMS booking heading');}
  }finally{await act(()=>root.unmount());dom.window.close();for(const [name,value]of saved){if(value)Object.defineProperty(globalThis,name,value);else delete globalThis[name];}}
 });
+
+test('compact homepage cards keep complete CMS details and direct product booking links',()=>{
+ const product={...loop,adultPrice:1200,card:{...loop.card,features:['audio_guide','wifi','air_conditioning','walking']}};
+ const dom=new JSDOM(renderToStaticMarkup(React.createElement(ProductBookingCards,{products:[product],content:initialWebsiteContent,embedded:true}))),d=dom.window.document;
+ try{const details=d.querySelector('details[data-product-details]');assert.ok(details);assert.equal(details.open,false);assert.equal(details.querySelector('summary').textContent,'View details');assert.match(details.querySelector('summary').getAttribute('aria-label'),/Sightseeing Loop Tour/);assert.match(details.textContent,/Published loop description/);assert.match(details.textContent,/selected departure/);for(const text of ['Audio guide','Wi-Fi','Air conditioned','Walking included'])assert.ok(details.textContent.includes(text));assert.equal(d.querySelector('a[aria-haspopup=dialog]').getAttribute('href'),`/book?productId=${loop.id}`);assert.match(d.querySelector('[data-product-booking]').textContent,/12.00/);}finally{dom.window.close();}
+});
