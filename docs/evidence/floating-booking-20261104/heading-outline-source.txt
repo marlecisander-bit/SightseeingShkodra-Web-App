@@ -1,0 +1,302 @@
+Emulating viewport: {"deviceScaleFactor":1,"isMobile":true,"hasTouch":true,"isLandscape":false,"width":390,"height":844}
+Emulating prefers-reduced-motion: reduce
+Showing 1-35 of 35 (Page 1 of 1).
+Styles for h2 (uid: "27_11"):
+
+  @media (max-width: 767px) {
+    .public-site ._5LI8la_dialog ._5LI8la_content [data-mobile-booking]>h2 (1294pmpn9dkmo.css:8) {
+      color: var(--brand-red);
+      letter-spacing: -.025em;
+      margin: 2px 0 0;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .public-site .p-booking-dialog .p-flow-when>h2 (2qr9mrcjp53ln.css:2) {
+      display: block;
+    }
+  }
+
+  .public-site .p-booking-dialog .p-flow-when>h2 (2qr9mrcjp53ln.css:2) {
+    [overloaded] display: none;
+  }
+
+  .public-site .p-flow>h2 (2qr9mrcjp53ln.css:2) {
+    scroll-margin-top: 90px;
+  }
+
+  @media (max-width: 700px) {
+    .public-site .p-booking-dialog h2 (2qr9mrcjp53ln.css:2) {
+      [overloaded] margin-top: 10px;
+      [overloaded] font-size: 34px;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .public-site .p-flow h2 (2qr9mrcjp53ln.css:2) {
+      [overloaded] font-size: 24px;
+    }
+  }
+
+  .public-site .p-booking-dialog h2 (2qr9mrcjp53ln.css:2) {
+    [overloaded] font-size: 39px;
+  }
+
+  .public-site .p-flow h2 (2qr9mrcjp53ln.css:2) {
+    [overloaded] margin: 0;
+    [overloaded] font-size: clamp(24px,3vw,32px);
+  }
+
+  @media (max-width: 767px) {
+    ._5LI8la_content .p-flow>h2 (1294pmpn9dkmo.css:8) {
+      margin-block: 16px;
+      [overloaded] font-size: 24px;
+      [overloaded] line-height: 1.2;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .public-site h2 (2qr9mrcjp53ln.css:2) {
+      [overloaded] font-size: 36px;
+    }
+  }
+
+  .public-site h2 (2qr9mrcjp53ln.css:2) {
+    [overloaded] font-size: var(--ss-h2);
+    white-space: pre-line;
+  }
+
+  .public-site :is(h1,h2,h3) (2qr9mrcjp53ln.css:2) {
+    font-family: var(--p-display);
+    [overloaded] letter-spacing: -.045em;
+    [overloaded] margin: 0 0 1.5rem;
+    font-weight: 700;
+    [overloaded] line-height: 1.08;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .public-site * (2qr9mrcjp53ln.css:2) {
+      scroll-behavior: auto !important;
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+
+  .public-site * (2qr9mrcjp53ln.css:2) {
+    box-sizing: border-box;
+  }
+
+  * (0vs_8v8xzds3u.css:1) {
+    [overloaded] box-sizing: border-box;
+  }
+
+  :focus-visible (user agent stylesheet) {
+    outline: -webkit-focus-ring-color auto 1px;
+  }
+
+  h2 (user agent stylesheet) {
+    [overloaded] display: block;
+    [overloaded] font-size: 1.5em;
+    [overloaded] margin-block-start: 0.83em;
+    [overloaded] margin-block-end: 0.83em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    [overloaded] font-weight: bold;
+    unicode-bidi: isolate;
+  }
+
+  Inherited from ._5LI8la_content:
+    ._5LI8la_content (1294pmpn9dkmo.css:8) {
+      overflow-wrap: anywhere;
+    }
+
+  Inherited from dialog.p-booking-dialog._5LI8la_dialog (uid: "26_0"):
+    element.style {
+      --booking-viewport-height: 844px;
+      --booking-viewport-top: 0px;
+      --booking-viewport-width: 390px;
+      --booking-viewport-left: 0px;
+    }
+
+  Inherited from dialog.p-booking-dialog._5LI8la_dialog (uid: "26_0"):
+    .public-site .p-booking-dialog (2qr9mrcjp53ln.css:2) {
+      [overloaded] color: var(--p-ink);
+    }
+
+  Inherited from dialog.p-booking-dialog._5LI8la_dialog (uid: "26_0"):
+    .public-site dialog (0vs_8v8xzds3u.css:4) {
+      [overloaded] overflow-wrap: anywhere;
+    }
+
+  Inherited from dialog.p-booking-dialog._5LI8la_dialog (uid: "26_0"):
+    dialog:-internal-dialog-in-top-layer (user agent stylesheet) {
+      user-select: text;
+      visibility: visible;
+    }
+
+  Inherited from dialog.p-booking-dialog._5LI8la_dialog (uid: "26_0"):
+    dialog:where(:modal) (user agent stylesheet) {
+      interactivity: auto;
+    }
+
+  Inherited from dialog.p-booking-dialog._5LI8la_dialog (uid: "26_0"):
+    dialog (user agent stylesheet) {
+      [overloaded] color: canvastext;
+    }
+
+  Inherited from article.RcNPfq_card:
+    .RcNPfq_card (359qycvzvj8y2.css:8) {
+      [overloaded] color: var(--ss-charcoal);
+    }
+
+  Inherited from ._XtaCa_visual:
+    ._XtaCa_visual (359qycvzvj8y2.css:9) {
+      [overloaded] color: var(--ss-white);
+    }
+
+  Inherited from section#home-hero:
+    element.style {
+      --hero-desktop-position: center center;
+      --hero-mobile-position: center center;
+      --hero-phone-position: center 75%;
+      --hero-wide-position: center bottom;
+      --hero-header-offset: 68px;
+    }
+
+  Inherited from section#home-hero:
+    .public-site ._XtaCa_hero (359qycvzvj8y2.css:9) {
+      [overloaded] color: var(--ss-charcoal);
+    }
+
+  Inherited from .public-site:
+    @media (max-width: 700px) {
+      .public-site (2qr9mrcjp53ln.css:2) {
+        --p-gutter: 16px;
+        --p-header-height: 68px;
+      }
+    }
+
+  Inherited from .public-site:
+    @media (max-width: 700px) {
+      .public-site (2qr9mrcjp53ln.css:2) {
+        [overloaded] --p-gutter: 22px;
+        --p-section: 64px;
+      }
+    }
+
+  Inherited from .public-site:
+    .public-site (2qr9mrcjp53ln.css:2) {
+      --p-paper: var(--ss-white);
+      --p-ink: var(--ss-charcoal);
+      --p-red: var(--brand-red);
+      --p-muted: var(--ss-muted);
+      --p-line: var(--ss-border);
+      --p-surface: var(--ss-cream);
+      --p-display: var(--ss-font);
+      --p-ui: var(--ss-font);
+      --p-container: var(--ss-container);
+      --p-radius: var(--ss-radius-control);
+      --p-shadow: var(--ss-shadow-dialog);
+      [overloaded] --p-gutter: var(--ss-gutter);
+      [overloaded] --p-header-height: 76px;
+      [overloaded] --p-section: var(--ss-section);
+      [overloaded] color: var(--p-ink);
+      font: 16px/1.65 var(--p-ui);
+      [overloaded] overflow-wrap: break-word;
+    }
+
+  Inherited from body:
+    body (0vs_8v8xzds3u.css:1) {
+      [overloaded] color: var(--ink);
+      [overloaded] font-family: var(--ss-font);
+    }
+
+  Inherited from html:
+    :root (0vs_8v8xzds3u.css:4) {
+      --button-height-sm: 44px;
+      --button-height-md: 48px;
+      --button-height-lg: 52px;
+      --button-padding-x: 20px;
+      --button-padding-y: 10px;
+    }
+
+  Inherited from html:
+    :root (0vs_8v8xzds3u.css:2) {
+      --ss-primary: #b91546;
+      --ss-primary-hover: #9d103a;
+      --ss-primary-active: #800d30;
+      --ss-primary-soft: #fbeaf0;
+      --ss-primary-border: #e4aec0;
+      --color-booking-primary: var(--ss-yellow);
+      --color-booking-hover: var(--ss-yellow-hover);
+      --color-booking-active: var(--ss-yellow-active);
+      --ss-yellow: #f6c928;
+      --ss-yellow-hover: #e4b718;
+      --ss-yellow-active: #cea410;
+      --ss-turquoise: #18afc1;
+      --ss-turquoise-ink: #076978;
+      --ss-green: #78b82a;
+      --ss-green-ink: #365d13;
+      --ss-purple: #7351a3;
+      --ss-cream: #fff8ee;
+      --ss-sand: #f2eadf;
+      --ss-charcoal: #25232a;
+      --ss-white: #fff;
+      --ss-muted: #625d65;
+      --ss-border: #ded5cb;
+      --ss-input-border: #8d858e;
+      --ss-success-soft: #eff6e7;
+      --ss-warning-soft: #fff5cf;
+      --ss-warning-ink: #705500;
+      --ss-overlay: #11231f66;
+      --ss-overlay-light: #11231f55;
+      --ss-overlay-final: #111e1766;
+      --ss-backdrop: #16201888;
+      --ss-inverse-border: #ffffff70;
+      --ss-heading-shadow: 0 1px 12px #17251b20;
+      --ss-focus: #076978;
+      --ss-shadow: 0 4px 20px #25232a0a;
+      --ss-shadow-dialog: 0 16px 48px #25232a26;
+      --ss-radius: 16px;
+      --ss-radius-control: 10px;
+      --ss-space-1: 4px;
+      --ss-space-2: 8px;
+      --ss-space-3: 12px;
+      --ss-space-4: 16px;
+      --ss-space-6: 24px;
+      --ss-space-8: 32px;
+      --ss-button-height: 48px;
+      --ss-touch: 44px;
+      --ss-container: 1320px;
+      --ss-admin-container: 78rem;
+      --ss-gutter: clamp(16px,5vw,80px);
+      --ss-section: clamp(56px,8vw,112px);
+      --ss-font: Arial,Helvetica,sans-serif;
+      --ss-h1: clamp(2.5rem,5.5vw,5.5rem);
+      --ss-h2: clamp(2rem,4vw,3.75rem);
+      --ss-h3: clamp(1.4rem,2.5vw,2rem);
+      --ss-body: 1rem;
+      --ss-small: .875rem;
+      --ss-destination-lake: var(--ss-turquoise);
+      --ss-destination-castle: var(--ss-yellow);
+      --ss-destination-centre: var(--ss-primary);
+      --ss-destination-bridge: var(--ss-green);
+      --ss-route: var(--ss-turquoise);
+      --brand-red: var(--ss-primary);
+      --brand-red-hover: var(--ss-primary-hover);
+      --brand-red-active: var(--ss-primary-active);
+      --brand-red-soft: var(--ss-primary-soft);
+      --brand-red-border: var(--ss-primary-border);
+      --brand-on-red: var(--ss-white);
+      --brand-text: var(--ss-primary);
+      --brand-focus: var(--ss-focus);
+    }
+
+  Inherited from html:
+    :root (0vs_8v8xzds3u.css:1) {
+      --background: var(--ss-cream);
+      --ink: var(--ss-charcoal);
+      --accent: var(--brand-text);
+    }

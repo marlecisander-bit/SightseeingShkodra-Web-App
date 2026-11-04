@@ -239,11 +239,11 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
     availability.refresh();
   }
   const chosen = attempt?.selection ?? selection;
-  const selectionLabel = [chosen.date ? bookingDate(chosen.date) : "", (attempt?.time ?? selected?.startTime)?.slice(0,5)].filter(Boolean).join(" · ");
+  const selectionLabel = [chosen.date ? bookingDate(chosen.date,mobileDialog) : "", (attempt?.time ?? selected?.startTime)?.slice(0,5)].filter(Boolean).join(" · ");
   if (restoring) return <p role="status">Restoring your selection…</p>;
   return (
     <div data-mobile-booking={mobileDialog||undefined} data-step={step} className={`p-flow${order ? " p-flow-complete" : !attempt?.hold ? " p-flow-when" : ""}`}>
-      {productHeading && product && <p className="p-booking-product"><strong>{product.title}</strong></p>}
+      {productHeading && product && <p className="p-booking-product"><strong>{mobileDialog?product.title.replace(/ - /g," · "):product.title}</strong></p>}
       <BookingProgress step={step} complete={Boolean(order)}/>
       <h2 ref={heading} tabIndex={-1} className={order ? "p-screen-reader-only" : undefined}>
         {order
@@ -254,7 +254,7 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
               : "Your order needs attention."
           : attempt?.hold
             ? mobileDialog ? "Review your booking" : review ? "Review and confirm" : "Review your booking"
-            : selectionStep === 1 ? mobileDialog?"Choose your date & time":"When would you like to go?" : mobileDialog?"Who's coming?":"Who’s coming?"}
+            : selectionStep === 1 ? mobileDialog?"Choose your date":"When would you like to go?" : mobileDialog?"Who's coming?":"Who’s coming?"}
       </h2>
       {!order && <p className="p-preview">
         {attempt?.hold ? "Reserve online and pay at the meeting point." : selectionStep === 1 ? "Choose your date and departure." : "Choose adults, children and infants. Prices and availability update for your group."}
@@ -389,7 +389,7 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
               ? "Reserving seats…"
               : attempt
                 ? "Retry reserving these seats"
-                : selectionStep === 1 ? "Continue to passengers" : "Continue to review"}
+                : mobileDialog ? "Continue" : selectionStep === 1 ? "Continue to passengers" : "Continue to review"}
           </Button></BookingAction>
           {attempt && (
             <p>

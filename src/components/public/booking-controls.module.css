@@ -59,3 +59,12 @@
  :global([data-mobile-booking]) .summary dd{font-size:14px;}
  :global([data-mobile-booking]) .summary p{font-size:12px;line-height:1.5;}
 }
+@media(max-width:767px){
+ :global([data-mobile-booking]) .grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;}
+ :global(.public-site) :global([data-mobile-booking]) .grid button{position:relative;display:flex;align-items:center;justify-content:center;min-height:44px;padding:8px 2px;border:1px solid transparent;border-radius:9px;background:#f1f1f3;color:#25232a;}
+ :global(.public-site) :global([data-mobile-booking]) .grid button[aria-pressed=true]{background:#fff0b7;border-color:#efbd00;color:#25232a;}
+ :global([data-mobile-booking]) .grid button strong{font-size:14px;line-height:1.2;}
+ :global([data-mobile-booking]) .grid button strong span{display:none;}
+ :global([data-mobile-booking]) .grid button>span{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
+ :global([data-mobile-booking]) .departures legend{font-size:17px;margin-bottom:10px;}
+}

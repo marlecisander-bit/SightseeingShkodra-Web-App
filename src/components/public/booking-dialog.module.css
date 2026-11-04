@@ -98,3 +98,51 @@
  :global(.public-site) .dialog .footer :global(.p-booking-back){grid-column:2;grid-row:1;min-width:48px;min-height:44px;padding:6px;}
  :global(.public-site) .dialog .footer :global(.p-transaction-action){grid-column:1/-1;grid-row:2;width:100%;min-width:0;min-height:48px;font-size:15px;line-height:1.3;white-space:normal;}
 }
+
+/* Approved floating phone popup. Non-interactive step headings retain focus
+   for announcements without the browser's rectangular focus ring. */
+.dialog :global(.p-flow>h2[tabindex="-1"]:focus){outline:none;}
+@media(max-width:767px){
+ :global(.public-site) .dialog.dialog{--booking-safe-top:max(12px,env(safe-area-inset-top));--booking-safe-bottom:max(12px,env(safe-area-inset-bottom));--booking-safe-left:max(12px,env(safe-area-inset-left));--booking-safe-right:max(12px,env(safe-area-inset-right));inset:calc(var(--booking-viewport-top,0px) + (var(--booking-viewport-height,100dvh) + var(--booking-safe-top) - var(--booking-safe-bottom))/2) auto auto calc(var(--booking-viewport-left,0px) + (var(--booking-viewport-width,100%) + var(--booking-safe-left) - var(--booking-safe-right))/2);transform:translate(-50%,-50%);width:calc(var(--booking-viewport-width,100%) - var(--booking-safe-left) - var(--booking-safe-right));height:auto;max-height:92vh;max-height:min(calc(var(--booking-viewport-height,100dvh)*.92),calc(var(--booking-viewport-height,100dvh) - var(--booking-safe-top) - var(--booking-safe-bottom)));padding:0;border:1px solid #ffffff70;border-radius:22px;background:#fff;box-shadow:0 16px 48px #0005;animation:none;}
+ .dialog::backdrop{background:rgb(0 0 0/.42);}
+ .header{padding:8px 16px;background:#B60F46;border:0;}
+ :global(.public-site) .dialog .header img,:global(.public-site) .dialog .header svg{display:none;}
+ :global(.public-site) .dialog .header h2{font-size:18px;line-height:1.3;font-weight:700;}
+ .content{flex:0 1 auto;padding:12px 16px 14px;scroll-padding-block:12px;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking]){gap:12px;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-booking-product){font-size:13px;font-weight:650;line-height:1.35;color:#B60F46;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-progress){gap:4px;font-size:12px;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-progress li){display:flex;align-items:center;justify-content:center;gap:4px;padding:6px 5px;border-radius:999px;line-height:1.2;color:#777;background:none;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-progress span){display:inline;width:auto;height:auto;flex:none;border:0;background:none;color:inherit;border-radius:0;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-progress span::after){content:" ·";}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-progress li[aria-current=step]){background:#B60F46;color:#fff;font-weight:600;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-progress li[data-complete=true]){background:#f9edf1;color:#97123f;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking]>h2){font-size:20px;line-height:1.25;color:#232126;margin:2px 0 0;letter-spacing:-.02em;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-booking-fields){gap:14px;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-flow-layout>aside){padding:12px;background:#f5f5f6;border:0;border-radius:12px;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking][data-step="2"] .p-flow-layout>aside){display:none;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking][data-step="3"] .p-booking-summary-product),
+ :global(.public-site) .dialog .content :global([data-mobile-booking][data-step="3"] aside>h3),
+ :global(.public-site) .dialog .content :global([data-mobile-booking][data-step="3"] aside>p:not(:has(a))){display:none;}
+ .footer{padding:0 12px 12px;border:0;background:white;}
+ :global(.public-site) .dialog .footer :global(.p-booking-action){gap:10px 8px;padding:0;border:0;grid-template-columns:minmax(0,1fr) auto;background:white;}
+ :global(.public-site) .dialog .footer :global(.p-action-total){grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px;border-radius:12px;background:#f2f2f4;width:auto;}
+ :global(.public-site) .dialog .footer :global(.p-action-total>span){font-size:12px;line-height:1.4;}
+ :global(.public-site) .dialog .footer :global(.p-action-total strong){font-size:21px;white-space:nowrap;}
+ :global(.public-site) .dialog .footer :global(.p-booking-back){grid-column:2;grid-row:1;justify-self:start;min-height:36px;padding:4px 8px;border:0;}
+ :global(.public-site) .dialog .footer :global(.p-transaction-action){grid-column:1/-1;grid-row:2;min-height:48px;border-radius:12px;background:#FACC25;color:#242126;font-size:17px;font-weight:700;border:0;}
+ .discard{padding:16px;}
+}
+@media(max-width:767px) and (prefers-reduced-motion:no-preference){
+ :global(.public-site) .dialog.dialog{opacity:0;transform:translate(-50%,calc(-50% + 8px)) scale(.98);transition:opacity 160ms ease,transform 160ms ease,display 160ms allow-discrete,overlay 160ms allow-discrete;}
+ :global(.public-site) .dialog.dialog[open]{opacity:1;transform:translate(-50%,-50%) scale(1);}
+ @starting-style{:global(.public-site) .dialog.dialog[open]{opacity:0;transform:translate(-50%,calc(-50% + 8px)) scale(.98);}}
+}
+@media(max-width:767px){
+ :global(.public-site) .dialog .footer :global(.p-action-total>span){display:flex;align-items:center;gap:8px;}
+ :global(.public-site) .dialog .footer :global(.p-action-total>span::before){content:"";width:18px;height:18px;flex:0 0 18px;background:center/contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23B60F46' stroke-width='2'%3E%3Crect x='3' y='5' width='18' height='16' rx='3'/%3E%3Cpath d='M7 2v6M17 2v6M3 10h18'/%3E%3C/svg%3E");}
+}
+
+@media(max-width:767px){
+ :global(.public-site) .dialog .footer :global(.p-booking-action:has(.p-booking-back) .p-action-total){grid-column:1;}
+}
