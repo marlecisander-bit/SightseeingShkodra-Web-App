@@ -1,0 +1,18 @@
+"use client";
+import {useEffect,useState} from 'react';
+import type {BookableProduct} from '@/modules/booking/products';
+import type {WebsiteContent} from '@/modules/content/website-schema';
+import {BookingProvider,Header} from '@/components/public/booking';
+import {HomepageHero} from '@/components/public/homepage-hero';
+import {ProductBookingCards} from '@/components/public/product-booking-cards';
+export function PopupReview({content,products}:{content:WebsiteContent;products:BookableProduct[]}){
+ const [count,setCount]=useState(2),[ready,setReady]=useState(false);
+ useEffect(()=>{const original=window.fetch;
+ window.fetch=(input,init)=>{const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url,location.origin);
+ if(url.origin===location.origin&&url.pathname==='/api/public/checkout')return Promise.resolve(Response.json({error:'INVALID_REQUEST'},{status:403}));
+ if(url.origin===location.origin&&url.pathname==='/api/public/availability')return original('/dev/hero-popup-review/availability?'+url.searchParams,init);
+ return original(input,init);};queueMicrotask(()=>setReady(true));return()=>{window.fetch=original};},[]);
+ if(!ready)return <p>Preparing local review…</p>;
+ const offers=Array.from({length:count},(_,i)=>i<2?products[i]:({...products[i%2],id:`local-variant-${i}`,title:`${products[i%2].title} variant ${i+1}`}));
+ return <div className="public-site"><BookingProvider content={content} product={products[0]}><Header content={content} previewPathname="/"/><main className="p-home"><HomepageHero content={content}><ProductBookingCards embedded content={content} products={offers}/></HomepageHero><section className="p-section p-container"><p>Local CMS snapshot review. Checkout writes blocked. Extra products are layout variants only.</p>{[1,2,4].map(n=><button key={n} onClick={()=>setCount(n)}>Show {n} products</button>)}</section></main></BookingProvider></div>;
+}
