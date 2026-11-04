@@ -11,7 +11,7 @@ Work uses the existing `SightseeingShkodra-Web-App` directory, explicitly author
 - Product-specific `/book?productId=…` links retain the existing booking behavior. The hero CTA buttons and retired below-hero text strip were already absent and remain absent. Other navigation/Live Map access remains intact.
 - Shared booking presentation now follows **When → Who → Review**. When selects the date/departure; Who retains the existing passenger rules and live quote hook; Review retains required name/email, optional phone, the existing review/confirm action, seat holds, idempotent retry and confirmation lifecycle.
 - Phone dialogs fill the available viewport with independently scrolling content and actions outside the scroll region. Desktop dialogs retain separated fields and summary, constrained height and internal scrolling. Form-associated footer controls preserve native required-field validation. The full booking page keeps its footer visible on phones and short landscape screens.
-- The footer includes the selected date/time and actual total. Explicit focus restoration, native Escape handling, focus trapping, safe areas, reduced motion and visual-viewport keyboard handling remain in place. Full booking pages avoid duplicating their existing product heading.
+- The footer includes the selected date/time and actual total. Explicit focus restoration, native Escape handling, focus trapping, safe areas, reduced motion and visual-viewport keyboard handling remain in place. Mobile navigation booking returns focus to the visible menu toggle after the navigation drawer closes. Full booking pages avoid duplicating their existing product heading.
 - A real over-capacity test exposed a navigation trap: Back to When could prevent returning to Who to reduce an unavailable group. An explicit **Edit passengers** action now permits recovery without discarding the selection.
 
 The calendar remains the existing native date control. The mockup's illustrative wording, photographs, dates, departure examples and red CTA styling were not imported. The current brand palette, published CMS text/media, actual service data and selected feature badges are retained.
@@ -30,7 +30,7 @@ After removing the temporary real-CMS review route, stale generated Webpack rout
 
 Evidence directory: `docs/evidence/booking-publication-20261104/`.
 
-- Fresh full `npm test`: **669 passed, 0 failed** — 165 components, 24 identity, 228 integrations, 217 disposable database, 28 PostgreSQL and 7 CMS verification tests. [Final log](evidence/booking-publication-20261104/tests-final.log).
+- Fresh full `npm test`: **670 passed, 0 failed** — 166 components, 24 identity, 228 integrations, 217 disposable database, 28 PostgreSQL and 7 CMS verification tests. [Final log](evidence/booking-publication-20261104/tests-final.log).
 - **`npm run check` passes**: zero-warning lint, Next type generation/TypeScript and the normal production build. [Final log](evidence/booking-publication-20261104/check-final.log).
 - Diagnostic Webpack production compilation also passes; see [build log](evidence/booking-publication-20261104/webpack-final.log).
 - Production dependency audit: **0 vulnerabilities**. Package/lock files are unchanged. [Audit log](evidence/booking-publication-20261104/audit.log).
@@ -75,7 +75,7 @@ This report, a scoped phase-status entry and selected release evidence accompany
 
 ## Publication and rollback
 
-Existing workflow: feature branch push → Vercel Preview and PR CI → merge to `main` → Vercel Production. Before publication, GitHub's current main status is successful for Vercel and Verify project; its latest Production deployment maps to `f221bfd9dbc0c358778359480242cc9354f65e7f` in the expected `aleksander-marleci/sightseeing-shkodra-web-app` project. Existing deployment URL: `https://sightseeing-shkodra-web-nwi1mnlr4-aleksander-marleci.vercel.app`. See [baseline evidence](evidence/booking-publication-20261104/pre-publication-github.json).
+Observed workflow: feature branch push and PR CI → merge to `main` → Vercel Production. The current Vercel ignored-build rule cancels feature-branch builds; the first pushed candidate received `Canceled by Ignored Build Step`, with no Preview deployment created. This setting is preserved. No Preview acceptance is claimed; pre-merge content/interaction checks use the read-only real-CMS review described above. Before publication, GitHub's current main status is successful for Vercel and Verify project; its latest Production deployment maps to `f221bfd9dbc0c358778359480242cc9354f65e7f` in the expected `aleksander-marleci/sightseeing-shkodra-web-app` project. Existing deployment URL: `https://sightseeing-shkodra-web-nwi1mnlr4-aleksander-marleci.vercel.app`. See [baseline evidence](evidence/booking-publication-20261104/pre-publication-github.json).
 
 Do not change Vercel/DNS/backend/map configuration. Preserve the previous production identity for rollback. A material release regression must restore the previous application through the existing deployment workflow; without direct Vercel dashboard access, a normal Git revert restores the prior source without rewriting main history. No schema reversal is required because this release has no migration.
 

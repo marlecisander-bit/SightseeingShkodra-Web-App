@@ -11,12 +11,12 @@ registerHooks({load(url,c,next){
 const require=createRequire(import.meta.url);
 const availabilityPath=require.resolve('../../src/components/public/use-availability.ts');
 require(availabilityPath);require.cache[availabilityPath].exports={useAvailability:()=>globalThis.redesignAvailability,displayMoney:v=>String(v)};
-const {BookingProvider,useBooking}=await import('../../src/components/public/booking.tsx');
+const {BookingProvider,useBooking,Header}=await import('../../src/components/public/booking.tsx');
 const {CheckoutFlow}=await import('../../src/components/public/checkout-flow.tsx');
 
 test('When/Who preserve selection and Review footer submits its original required form after portalling',async()=>{
  const dom=new JSDOM('<div id="root"></div>',{url:'http://localhost/'}),saved=new Map();
- for(const name of ['window','document','navigator','HTMLElement','HTMLDialogElement','Node','Event','MouseEvent','KeyboardEvent','sessionStorage','IS_REACT_ACT_ENVIRONMENT']){
+ for(const name of ['window','self','document','navigator','HTMLElement','HTMLDialogElement','Node','Event','MouseEvent','KeyboardEvent','sessionStorage','IS_REACT_ACT_ENVIRONMENT']){
   saved.set(name,Object.getOwnPropertyDescriptor(globalThis,name));Object.defineProperty(globalThis,name,{configurable:true,writable:true,value:name==='IS_REACT_ACT_ENVIRONMENT'?true:dom.window[name]});
  }
  window.scrollTo=()=>{};window.HTMLElement.prototype.scrollIntoView=function(){};
@@ -60,5 +60,27 @@ test('When/Who preserve selection and Review footer submits its original require
  } finally {
   await act(()=>root.unmount());globalThis.fetch=originalFetch;globalThis.requestAnimationFrame=originalRaf;delete globalThis.redesignAvailability;dom.window.close();
   for(const [name,value] of saved){if(value)Object.defineProperty(globalThis,name,value);else delete globalThis[name];}
+ }
+});
+
+
+test('mobile navigation booking returns focus to the visible menu toggle after closing',async()=>{
+ const dom=new JSDOM('<div id="root"></div>',{url:'http://localhost/faq'}),saved=new Map();
+ for(const name of ['window','self','document','navigator','HTMLElement','HTMLDialogElement','Node','Event','MouseEvent','KeyboardEvent','sessionStorage','IS_REACT_ACT_ENVIRONMENT']){
+  saved.set(name,Object.getOwnPropertyDescriptor(globalThis,name));Object.defineProperty(globalThis,name,{configurable:true,writable:true,value:name==='IS_REACT_ACT_ENVIRONMENT'?true:dom.window[name]});
+ }
+ window.scrollTo=()=>{};window.matchMedia=query=>({matches:query.includes('max-width'),addEventListener(){},removeEventListener(){}});
+ window.HTMLDialogElement.prototype.showModal=function(){this.open=true;};window.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new window.Event('close'));};
+ globalThis.redesignAvailability={loading:false,refresh(){},quote:undefined};
+ const {createRoot}=await import('react-dom/client'),root=createRoot(document.getElementById('root'));
+ try{
+  await act(()=>root.render(React.createElement(BookingProvider,{preview:true},React.createElement(Header,{previewPathname:'/faq'}))));
+  const toggle=document.querySelector('.p-menu-toggle');await act(()=>toggle.click());
+  await act(()=>document.querySelector('.p-menu-book').click());assert.ok(document.querySelector('dialog[open]'));
+  await act(()=>document.querySelector('dialog[open] [aria-label="Close booking"]').click());
+  assert.equal(document.activeElement?.className,toggle.className);
+ }finally{
+  await act(()=>root.unmount());delete globalThis.redesignAvailability;dom.window.close();
+  for(const [name,value]of saved){if(value)Object.defineProperty(globalThis,name,value);else delete globalThis[name];}
  }
 });

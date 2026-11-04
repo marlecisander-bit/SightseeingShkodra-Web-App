@@ -25,6 +25,7 @@ import {
   useState,
   type ReactNode,
   type ComponentProps,
+  type MouseEvent as ReactMouseEvent,
   type Dispatch,
   type SetStateAction,
 } from "react";
@@ -367,11 +368,11 @@ export function Header({ content: c = initialWebsiteContent, previewPathname }: 
     measure();
     return () => { resize.disconnect();cancelAnimationFrame(frame);window.removeEventListener('scroll',queue);window.removeEventListener('resize',queue); };
   },[pathname]);
-  const bookFromHeader = () => {
+  const bookFromHeader = (event: ReactMouseEvent<HTMLButtonElement>) => {
     setMenu(false);
     const experiences=pathname==='/'?document.getElementById('experiences'):null;
     if(experiences){experiences.scrollIntoView({behavior:'smooth',block:'start'});return;}
-    open();
+    open(window.matchMedia("(max-width:1100px)").matches ? menuToggle.current ?? event.currentTarget : event.currentTarget);
   };
   return (
     <>

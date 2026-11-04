@@ -678,3 +678,6 @@ User requested publication of completed developments. Isolated candidate preserv
 
 
 VERIFIED LOCAL (4 November 2026): Approved responsive homepage/When-Who-Review booking candidate validated against the shared mockup, exact published CMS props and live GET-only availability. Corrected desktop card composition, unavailable-group passenger recovery and short-landscape footer. Locked reinstall resolves dataless dependency stall; CSS Module scoping repairs pass normal Turbopack and Webpack builds. Final 669 tests, lint/typecheck/build, zero-vulnerability production audit and native Chrome touch/keyboard checks pass. Mutation handoffs intercepted; no real hold/order/payment or communication. Physical devices/keyboards unverified. Publication authorized, pending feature Preview/PR CI/main Production acceptance. See BOOKING-REDESIGN-2026-11-04.md and docs/evidence/booking-publication-20261104/.
+
+
+FOLLOW-UP VERIFIED LOCAL (4 November 2026): Mobile navigation booking now restores focus to the visible menu toggle; the added regression brings the fresh final suite to 670 passed, zero failed. Normal lint/typecheck/production build pass again. PR #51 opened; Vercel existing ignored-build rule skips feature deployments, so no Preview is claimed and configuration remains unchanged. Publication continues through PR CI and the existing main Production integration.
