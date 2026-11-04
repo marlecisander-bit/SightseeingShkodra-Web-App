@@ -25,13 +25,17 @@ test('When/Who preserve selection and Review footer submits its original require
  globalThis.fetch=async(_url,options)=>{const body=JSON.parse(options.body);calls.push(body);return Response.json(body.action==='hold'?{hold,serverNow:new Date().toISOString()}:{ok:true});};
  globalThis.redesignAvailability={loading:false,refresh(){},quote:{date:'2030-06-01',guests:1,currency:'EUR',total:1000,departures:[{id:'open',available:true,startTime:'11:00',remaining:8,passengerQuote:{total:1000,currency:"EUR",lines:[{category:"adult",quantity:1,unitPrice:1000,total:1000}]}}]}};
  let state;function Observe(){state=useBooking();return null;}
+ let productHeading=true;
  const {createRoot}=await import('react-dom/client'),root=createRoot(document.getElementById('root'));
- const render=()=>act(async()=>{root.render(React.createElement('main',{className:'p-book-page'},React.createElement(BookingProvider,{preview:true},React.createElement(Observe),React.createElement(CheckoutFlow),React.createElement('div',{'data-booking-page-footer':true}))));await Promise.resolve();});
+ const render=()=>act(async()=>{root.render(React.createElement('main',{className:'p-book-page'},React.createElement(BookingProvider,{preview:true,product:{id:'10000000-0000-4000-8000-000000000020',primary:true,title:'Selected loop',slug:'loop',mode:'selected_departure',minutes:120}},React.createElement(Observe),React.createElement(CheckoutFlow,{productHeading}),React.createElement('div',{'data-booking-page-footer':true}))));await Promise.resolve();});
  const button=text=>[...document.querySelectorAll('button')].find(b=>b.textContent===text);
  const click=async text=>act(async()=>{button(text).click();await new Promise(r=>setTimeout(r,0));});
  const originalRaf=globalThis.requestAnimationFrame;globalThis.requestAnimationFrame=fn=>{fn();return 1;};
  try{
-  await render();await act(()=>state.setSelection(s=>({...s,date:'2030-06-01',departureId:'open'})));
+  await render();assert.equal(document.querySelector('.p-booking-product').textContent,'Selected loop');
+  productHeading=false;await render();assert.equal(document.querySelector('.p-booking-product'),null);
+  productHeading=true;await render();
+  await act(()=>state.setSelection(s=>({...s,date:'2030-06-01',departureId:'open'})));
   assert.equal(document.querySelector('[aria-current="step"]').textContent.includes('When'),true);
   assert.equal(document.querySelector('[aria-label="Add one adult"]'),null);
   globalThis.redesignAvailability.loading=true;await render();assert.equal(button('Continue to passengers').disabled,true);

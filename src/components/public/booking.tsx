@@ -432,7 +432,7 @@ export function Header({ content: c = initialWebsiteContent, previewPathname }: 
     </>
   );
 }
-export function BookingFlow() {
+export function BookingFlow({productHeading=true}: {productHeading?:boolean} = {}) {
   const {generation,currentMeetingPoint} = useBooking();
   const footer = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -446,5 +446,5 @@ export function BookingFlow() {
     viewport.addEventListener("scroll", fit);
     return () => { viewport.removeEventListener("resize", fit); viewport.removeEventListener("scroll", fit); };
   }, []);
-  return <><MeetingPointSummary value={currentMeetingPoint}/><CheckoutFlow key={generation} productHeading={false} /><div ref={footer} data-booking-page-footer/></>;
+  return <><MeetingPointSummary value={currentMeetingPoint}/><CheckoutFlow key={generation} productHeading={productHeading} /><div ref={footer} data-booking-page-footer/></>;
 }

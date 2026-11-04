@@ -11,7 +11,7 @@ Work uses the existing `SightseeingShkodra-Web-App` directory, explicitly author
 - Product-specific `/book?productId=…` links retain the existing booking behavior. The hero CTA buttons and retired below-hero text strip were already absent and remain absent. Other navigation/Live Map access remains intact.
 - Shared booking presentation now follows **When → Who → Review**. When selects the date/departure; Who retains the existing passenger rules and live quote hook; Review retains required name/email, optional phone, the existing review/confirm action, seat holds, idempotent retry and confirmation lifecycle.
 - Phone dialogs fill the available viewport with independently scrolling content and actions outside the scroll region. Desktop dialogs retain separated fields and summary, constrained height and internal scrolling. Form-associated footer controls preserve native required-field validation. The full booking page keeps its footer visible on phones and short landscape screens.
-- The footer includes the selected date/time and actual total. Explicit focus restoration, native Escape handling, focus trapping, safe areas, reduced motion and visual-viewport keyboard handling remain in place. Mobile navigation booking returns focus to the visible menu toggle after the navigation drawer closes. Full booking pages avoid duplicating their existing product heading.
+- The footer includes the selected date/time and actual total. Explicit focus restoration, native Escape handling, focus trapping, safe areas, reduced motion and visual-viewport keyboard handling remain in place. Mobile navigation booking returns focus to the visible menu toggle after the navigation drawer closes. Product-specific booking pages avoid duplicating their existing product heading, while the generic `/book` entry retains its default product identity.
 - A real over-capacity test exposed a navigation trap: Back to When could prevent returning to Who to reduce an unavailable group. An explicit **Edit passengers** action now permits recovery without discarding the selection.
 
 The calendar remains the existing native date control. The mockup's illustrative wording, photographs, dates, departure examples and red CTA styling were not imported. The current brand palette, published CMS text/media, actual service data and selected feature badges are retained.
@@ -46,6 +46,7 @@ Evidence directory: `docs/evidence/booking-publication-20261104/`.
 ## Files in the application/test change
 
 - `src/app/(public)/public.css`
+- `src/app/(public)/book/page.tsx`
 - `src/app/dev/admin-v2/fixture.module.css` — CSS Module build repair only
 - `src/components/public/booking.tsx`
 - `src/components/public/checkout-flow.tsx`
