@@ -41,3 +41,21 @@
 @media(max-width:430px){.cancel>div{flex-direction:column;}.cancel button{flex:auto;width:100%;}.passenger{flex-wrap:wrap;}.counter{margin-left:auto;}}
 :global(.public-site) .cancel h2{font-size:24px;line-height:1.25;margin:0 0 16px;}
 .cancel{scroll-padding-block:16px;}
+@media(max-width:767px){
+ :global([data-mobile-booking]) .passengers{gap:12px;}
+ :global([data-mobile-booking]) .passengers legend{display:none;}
+ :global([data-mobile-booking]) .passenger{flex-wrap:nowrap;gap:8px;padding:12px;border:1px solid var(--ss-input-border);border-radius:12px;align-items:center;}
+ :global([data-mobile-booking]) .passenger>span{font-size:14px;font-weight:600;min-width:0;}
+ :global([data-mobile-booking]) .passenger small{font-size:11px;font-weight:400;line-height:1.5;}
+ :global([data-mobile-booking]) .counter{flex:0 0 124px;margin:0;}
+ :global([data-mobile-booking]) .counter output{width:36px;}
+ :global([data-mobile-booking]) .counter button{width:44px;min-width:44px;min-height:44px;}
+ :global([data-mobile-booking]) .departures legend{font-size:14px;margin-bottom:10px;}
+ :global([data-mobile-booking]) .grid{gap:8px;}
+ :global([data-mobile-booking]) .grid button{padding:10px;gap:4px;min-height:88px;align-content:start;}
+ :global([data-mobile-booking]) .grid button strong{font-size:19px;}
+ :global([data-mobile-booking]) .grid button>span{font-size:12px;line-height:1.4;overflow-wrap:anywhere;}
+ :global([data-mobile-booking]) .summary dl>div{gap:6px 12px;}
+ :global([data-mobile-booking]) .summary dd{font-size:14px;}
+ :global([data-mobile-booking]) .summary p{font-size:12px;line-height:1.5;}
+}

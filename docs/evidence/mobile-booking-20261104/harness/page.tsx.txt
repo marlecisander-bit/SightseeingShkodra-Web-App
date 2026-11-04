@@ -1,0 +1,11 @@
+import {notFound} from 'next/navigation';
+import {readFile} from 'node:fs/promises';
+import {validateWebsiteContent} from '@/modules/content/website-schema';
+import {Review} from './review';
+import '../../(public)/public.css';
+export default async function Page(){
+ if(process.env.NODE_ENV!=='development')notFound();
+ const cms=JSON.parse(await readFile('docs/evidence/booking-publication-20261104/published-cms-snapshot.json','utf8'));
+ const root=JSON.parse(await readFile('docs/evidence/mobile-booking-20261104/public-root-props.json','utf8'));
+ return <Review content={validateWebsiteContent(root.content)} point={root.meetingPoint} products={cms.products}/>;
+}

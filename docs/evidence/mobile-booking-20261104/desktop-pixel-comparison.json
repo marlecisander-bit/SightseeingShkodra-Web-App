@@ -1,0 +1,92 @@
+[
+  {
+    "size": "768x1024",
+    "step": "when",
+    "changedPixels": 0,
+    "totalPixels": 786432
+  },
+  {
+    "size": "768x1024",
+    "step": "who",
+    "changedPixels": 0,
+    "totalPixels": 786432
+  },
+  {
+    "size": "768x1024",
+    "step": "contact",
+    "changedPixels": 0,
+    "totalPixels": 786432
+  },
+  {
+    "size": "768x1024",
+    "step": "review",
+    "changedPixels": 0,
+    "totalPixels": 786432
+  },
+  {
+    "size": "768x1024",
+    "step": "success",
+    "changedPixels": 0,
+    "totalPixels": 786432
+  },
+  {
+    "size": "1024x768",
+    "step": "when",
+    "changedPixels": 5,
+    "totalPixels": 786432
+  },
+  {
+    "size": "1024x768",
+    "step": "who",
+    "changedPixels": 5,
+    "totalPixels": 786432
+  },
+  {
+    "size": "1024x768",
+    "step": "contact",
+    "changedPixels": 5,
+    "totalPixels": 786432
+  },
+  {
+    "size": "1024x768",
+    "step": "review",
+    "changedPixels": 5,
+    "totalPixels": 786432
+  },
+  {
+    "size": "1024x768",
+    "step": "success",
+    "changedPixels": 5,
+    "totalPixels": 786432
+  },
+  {
+    "size": "1440x900",
+    "step": "when",
+    "changedPixels": 0,
+    "totalPixels": 1296000
+  },
+  {
+    "size": "1440x900",
+    "step": "who",
+    "changedPixels": 0,
+    "totalPixels": 1296000
+  },
+  {
+    "size": "1440x900",
+    "step": "contact",
+    "changedPixels": 0,
+    "totalPixels": 1296000
+  },
+  {
+    "size": "1440x900",
+    "step": "review",
+    "changedPixels": 0,
+    "totalPixels": 1296000
+  },
+  {
+    "size": "1440x900",
+    "step": "success",
+    "changedPixels": 0,
+    "totalPixels": 1296000
+  }
+]

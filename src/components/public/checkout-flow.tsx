@@ -47,8 +47,8 @@ const messages: Record<string, string> = {
     "This request was already submitted with different details. Keep your original details when retrying.",
   SESSION_REQUIRED: "Your booking session has ended. Please start again.",
 };
-export function CheckoutFlow({productHeading=true,onDialogStateChange}: {productHeading?:boolean;onDialogStateChange?:(value:{dirty:boolean;busy:boolean})=>void} = {}) {
-  const { selection, setSelection, availability, reset, product } = useBooking();
+export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogStateChange}: {productHeading?:boolean;mobileDialog?:boolean;onDialogStateChange?:(value:{dirty:boolean;busy:boolean})=>void} = {}) {
+  const { selection, setSelection, availability, reset, product,currentMeetingPoint } = useBooking();
   const checkoutFormId = useId();
   const storageKey = product&&!product.primary ? `${checkoutStorageKey}:${product.id}` : checkoutStorageKey;
   const [attempt, setAttempt] = useState<Attempt | null>(null);
@@ -242,7 +242,7 @@ export function CheckoutFlow({productHeading=true,onDialogStateChange}: {product
   const selectionLabel = [chosen.date ? bookingDate(chosen.date) : "", (attempt?.time ?? selected?.startTime)?.slice(0,5)].filter(Boolean).join(" · ");
   if (restoring) return <p role="status">Restoring your selection…</p>;
   return (
-    <div className={`p-flow${order ? " p-flow-complete" : !attempt?.hold ? " p-flow-when" : ""}`}>
+    <div data-mobile-booking={mobileDialog||undefined} data-step={step} className={`p-flow${order ? " p-flow-complete" : !attempt?.hold ? " p-flow-when" : ""}`}>
       {productHeading && product && <p className="p-booking-product"><strong>{product.title}</strong></p>}
       <BookingProgress step={step} complete={Boolean(order)}/>
       <h2 ref={heading} tabIndex={-1} className={order ? "p-screen-reader-only" : undefined}>
@@ -253,8 +253,8 @@ export function CheckoutFlow({productHeading=true,onDialogStateChange}: {product
               ? "Your booking was cancelled."
               : "Your order needs attention."
           : attempt?.hold
-            ? review ? "Review and confirm" : "Review your booking"
-            : selectionStep === 1 ? "When would you like to go?" : "Who’s coming?"}
+            ? mobileDialog ? "Review your booking" : review ? "Review and confirm" : "Review your booking"
+            : selectionStep === 1 ? mobileDialog?"Choose your date & time":"When would you like to go?" : mobileDialog?"Who's coming?":"Who’s coming?"}
       </h2>
       {!order && <p className="p-preview">
         {attempt?.hold ? "Reserve online and pay at the meeting point." : selectionStep === 1 ? "Choose your date and departure." : "Choose adults, children and infants. Prices and availability update for your group."}
@@ -300,7 +300,7 @@ export function CheckoutFlow({productHeading=true,onDialogStateChange}: {product
             <form id={checkoutFormId}
               onSubmit={(event) => {
                 event.preventDefault();
-                if (!review) { setReview(true); requestAnimationFrame(()=>heading.current?.focus()); return; }
+                if (!review&&!mobileDialog) { setReview(true); requestAnimationFrame(()=>heading.current?.focus()); return; }
                 void perform(async () => {
                   const details = submitted ?? { ...customer };
                   setSubmitted(details);
@@ -313,7 +313,7 @@ export function CheckoutFlow({productHeading=true,onDialogStateChange}: {product
                 });
               }}
             >
-              {!review && <div className="p-contact-fields"><h3>Contact details</h3><p>* Required fields</p><Field label="Full name *">
+              {(!review||mobileDialog) && <div className="p-contact-fields"><h3>Contact details</h3><p>* Required fields</p><Field label="Full name *">
                 <input
                   required
                   maxLength={200}
@@ -353,14 +353,15 @@ export function CheckoutFlow({productHeading=true,onDialogStateChange}: {product
                 />
               </Field>
               </div>}
-              {review && <div className="p-review-contact"><h3>Contact details</h3><p>{customer.name}<br/>{customer.email}{customer.phone && <><br/>{customer.phone}</>}</p><Button type="button" className="p-text-button" disabled={busy || Boolean(submitted)} onClick={()=>setReview(false)}>Edit contact details</Button><p>Pay at the meeting point. Online changes and cancellation close 15 minutes before departure.</p></div>}
+              {mobileDialog&&<p className="p-mobile-confirmation-terms">Pay at the meeting point. Online changes and cancellation close 15 minutes before departure.</p>}
+              {review && !mobileDialog && <div className="p-review-contact"><h3>Contact details</h3><p>{customer.name}<br/>{customer.email}{customer.phone && <><br/>{customer.phone}</>}</p><Button type="button" className="p-text-button" disabled={busy || Boolean(submitted)} onClick={()=>setReview(false)}>Edit contact details</Button><p>Pay at the meeting point. Online changes and cancellation close 15 minutes before departure.</p></div>}
               <BookingAction selectionLabel={selectionLabel} form={checkoutFormId} total={attempt.total} currency={attempt.hold.passengerSnapshot?.currency??availability.quote?.currency??"EUR"}>
-                <Button type="button" className="p-text-button p-booking-back" disabled={busy || Boolean(submitted)} onClick={() => { if(review) setReview(false); else void perform(restart); }}>Back</Button><Button className={`p-button p-button-booking p-transaction-action`} disabled={busy || !active}>
+                <Button type="button" className="p-text-button p-booking-back" disabled={busy || Boolean(submitted)} onClick={() => { if(review&&!mobileDialog) setReview(false); else void perform(restart); }}>Back</Button><Button className={`p-button p-button-booking p-transaction-action`} disabled={busy || !active}>
                 {busy
-                  ? review ? "Confirming booking…" : "Saving…"
+                  ? review||mobileDialog ? "Confirming booking…" : "Saving…"
                   : submitted
                     ? "Retry confirming reservation"
-                    : review ? "Confirm booking" : "Review booking"}
+                    : review||mobileDialog ? "Confirm booking" : "Review booking"}
               </Button></BookingAction>
             </form>
           ) : null}
@@ -376,7 +377,7 @@ export function CheckoutFlow({productHeading=true,onDialogStateChange}: {product
         </>
       ) : (
         <>
-          {!attempt && <BookingFields stage={selectionStep === 1 ? "when" : "who"} />}
+          {!attempt && <BookingFields mobileDialog={mobileDialog} stage={selectionStep === 1 ? "when" : "who"} />}
           <BookingAction selectionLabel={selectionLabel} total={attempt?.total??selected?.passengerQuote?.total} currency={availability.quote?.currency??"EUR"}>
           {!attempt && selectionStep === 1 && selection.passengers && <Button type="button" className="p-text-button p-booking-back" onClick={() => setSelectionStep(2)}>Edit passengers</Button>}
           {!attempt && selectionStep === 2 && <Button type="button" className="p-text-button p-booking-back" onClick={() => setSelectionStep(1)}>Back</Button>}<Button
@@ -400,7 +401,7 @@ export function CheckoutFlow({productHeading=true,onDialogStateChange}: {product
       )}
       </div>
 
-      {!order && <BookingSummary date={chosen.date} time={attempt?.time??selected?.startTime} counts={chosen.passengers??{adult:chosen.guests,child:0,infant:0}} total={attempt?.total??selected?.passengerQuote?.total} currency={availability.quote?.currency}/>}
+      {!order && <BookingSummary experience={mobileDialog&&step===3?product?.title:undefined} meetingPoint={mobileDialog&&step===3?currentMeetingPoint:undefined} date={chosen.date} time={attempt?.time??selected?.startTime} counts={chosen.passengers??{adult:chosen.guests,child:0,infant:0}} total={attempt?.total??selected?.passengerQuote?.total} currency={availability.quote?.currency}/>}
       </div>
 
     </div>

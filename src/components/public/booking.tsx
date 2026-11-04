@@ -23,6 +23,7 @@ import {
   useId,
   useRef,
   useState,
+  useSyncExternalStore,
   type ReactNode,
   type ComponentProps,
   type MouseEvent as ReactMouseEvent,
@@ -35,6 +36,7 @@ import {
 } from "@/modules/public-preview/contracts";
 import { BookingPriceBreakdown, BookingDateSelector, PassengerSelector, DepartureSelector, BookingPriceIndicator } from "./booking-controls";
 import dynamic from "next/dynamic";
+import {MobileBookingDate} from './mobile-booking-date';
 import { useAvailability, displayMoney } from "./use-availability";
 
 const CheckoutFlow = dynamic(
@@ -130,6 +132,8 @@ export function BookingProvider({ children, content: suppliedContent, preview = 
     const fit = () => {
       node.style.setProperty("--booking-viewport-height", `${viewport.height}px`);
       node.style.setProperty("--booking-viewport-top", `${viewport.offsetTop}px`);
+      node.style.setProperty("--booking-viewport-width", `${viewport.width}px`);
+      node.style.setProperty("--booking-viewport-left", `${viewport.offsetLeft}px`);
     };
     fit();
     viewport.addEventListener("resize", fit);
@@ -139,6 +143,8 @@ export function BookingProvider({ children, content: suppliedContent, preview = 
       viewport.removeEventListener("scroll", fit);
       node.style.removeProperty("--booking-viewport-height");
       node.style.removeProperty("--booking-viewport-top");
+      node.style.removeProperty("--booking-viewport-width");
+      node.style.removeProperty("--booking-viewport-left");
     };
   }, [opened]);
   const availability = useAvailability(preview?'':selection.date, selection.guests,selection.passengers,generation,product?.id);
@@ -204,24 +210,26 @@ export function BookingProvider({ children, content: suppliedContent, preview = 
   );
 }
 
+const subscribeMobileBooking=(notify:()=>void)=>{if(typeof window.matchMedia!=='function')return()=>{};const media=window.matchMedia('(max-width:767px)');media.addEventListener('change',notify);return()=>media.removeEventListener('change',notify);};
 function BookingDialogContent({content,preview=false,titleId,busy,confirmClose,closeNotice,onStateChange,onKeep,onDiscard}: {
   titleId:string;content:WebsiteContent;preview?:boolean;busy:boolean;confirmClose:boolean;closeNotice:string;
   onStateChange:(value:{dirty:boolean;busy:boolean})=>void;onKeep:()=>void;onDiscard:()=>void;
 }) {
   const {close,currentMeetingPoint}=useBooking();
+  const mobile=useSyncExternalStore(subscribeMobileBooking,()=>typeof window.matchMedia==='function'&&window.matchMedia('(max-width:767px)').matches,()=>false);
   const closeButton = useRef<HTMLButtonElement>(null);
   const keepButton = useRef<HTMLButtonElement>(null);
   const confirmTitle=useId(),confirmDescription=useId();
   useEffect(() => { closeButton.current?.focus(); }, []);
   useEffect(()=>{if(confirmClose)keepButton.current?.focus();},[confirmClose]);
   return <>
-    <header className={styles.header}><div><BrandLogo light/><h2 id={titleId}>{content["bookingDialog.title"]}</h2></div><button ref={closeButton} type="button" className={styles.close} aria-label="Close booking" disabled={busy||confirmClose} onClick={close}>&times;</button></header>
+    <header className={styles.header}><div><BrandLogo light/><h2 id={titleId}>{mobile?"Book your experience":content["bookingDialog.title"]}</h2></div><button ref={closeButton} type="button" className={styles.close} aria-label="Close booking" disabled={busy||confirmClose} onClick={close}>&times;</button></header>
     {closeNotice&&<p className={styles.closeNotice} role="status">{closeNotice}</p>}
     {confirmClose&&<section className={styles.discard} role="alertdialog" aria-modal="true" aria-labelledby={confirmTitle} aria-describedby={confirmDescription}>
       <h3 id={confirmTitle}>Close booking?</h3><p id={confirmDescription}>Your entered contact details will be cleared. Your selected date, departure and passengers will be kept. Closing does not cancel a confirmed booking.</p>
       <div><button ref={keepButton} type="button" className="p-button p-button-booking" onClick={onKeep}>Keep editing</button><button type="button" className="p-text-button" onClick={onDiscard}>Close and clear details</button></div>
     </section>}
-    <div className={styles.content} hidden={confirmClose}><p>{content["bookingDialog.text"]}</p><MeetingPointSummary value={currentMeetingPoint}/>{preview?<p>Saved editorial preview. Booking actions are unavailable here.</p>:<CheckoutFlow onDialogStateChange={onStateChange}/>}</div>
+    <div className={styles.content} hidden={confirmClose}><p>{content["bookingDialog.text"]}</p><div data-booking-intro-meeting><MeetingPointSummary value={currentMeetingPoint}/></div>{preview?<p>Saved editorial preview. Booking actions are unavailable here.</p>:<CheckoutFlow mobileDialog={mobile} onDialogStateChange={onStateChange}/>}</div>
     <div data-booking-footer className={styles.footer} hidden={confirmClose}/>
   </>;
 }
@@ -258,36 +266,37 @@ export function BookButton({
     </Button>
   );
 }
-export function QuantityStepper({ preserveDeparture = false }: { preserveDeparture?: boolean }) {
+export function QuantityStepper({ preserveDeparture = false,showPrices=false }: { preserveDeparture?: boolean;showPrices?:boolean }) {
  const {selection,setSelection,availability}=useBooking();const counts=selection.passengers??{adult:selection.guests,child:0,infant:0};
  function change(k:keyof PassengerCounts,n:number){const passengers={...counts,[k]:n};setSelection({...selection,passengers,guests:passengerKeys.reduce((sum,key)=>sum+passengers[key],0),departureId:preserveDeparture?selection.departureId:""});}
- return <PassengerSelector counts={counts} categories={availability.categories} onChange={change} canRemove={k=>!(counts[k]===0 || (k==="adult" && counts.adult===1 && (counts.child>0 || counts.infant>0)))} canAdd={k=>!(selection.guests>=100 || (k!=="adult" && counts.adult===0))}/>;
+ const quote=availability.quote?.departures.find(d=>d.id===selection.departureId)?.passengerQuote;
+ return <PassengerSelector showPrices={showPrices} priceLines={quote?.lines} currency={quote?.currency} counts={counts} categories={availability.categories} onChange={change} canRemove={k=>!(counts[k]===0 || (k==="adult" && counts.adult===1 && (counts.child>0 || counts.infant>0)))} canAdd={k=>!(selection.guests>=100 || (k!=="adult" && counts.adult===0))}/>;
 }
-export function BookingFields({ stage = "all" }: { stage?: "all" | "when" | "who" }) {
+export function BookingFields({ stage = "all", mobileDialog=false }: { stage?: "all" | "when" | "who";mobileDialog?:boolean }) {
   const { selection, setSelection, availability } = useBooking();
   const departures = availability.quote?.departures ?? [];
   const selected = departures.find(
     (d) => d.id === selection.departureId && d.available,
   );
-  function updateDate(date: string) {
-    if (date !== selection.date) availability.refresh();
+  function updateDate(date: string,checked=false) {
+    if (date !== selection.date&&!checked) availability.refresh();
     setSelection((current) =>
       current.date === date ? current : { ...current, date, departureId: "" },
     );
   }
   return (
     <div className="p-booking-fields">
-      <div className="p-booking-party">{stage !== "who" && <BookingDateSelector value={selection.date} onChange={updateDate}/>} {stage !== "when" && <QuantityStepper preserveDeparture />}</div>
-      {stage !== "who" && <DepartureSelector departures={departures} value={selected?.id??""} loading={availability.loading} onChange={departureId=>setSelection({...selection,departureId})}/> }
-      <AvailabilityStatus />
+      <div className="p-booking-party">{stage !== "who" && <>{mobileDialog?<MobileBookingDate value={selection.date} onChange={updateDate} quote={availability.quote} checkDate={availability.checkDate}/>:<BookingDateSelector value={selection.date} onChange={updateDate}/>}</>} {stage !== "when" && <QuantityStepper preserveDeparture showPrices={mobileDialog}/>}</div>
+      {stage !== "who" && <DepartureSelector showPrices={mobileDialog} currency={availability.quote?.currency} departures={departures} value={selected?.id??""} loading={availability.loading} onChange={departureId=>setSelection({...selection,departureId})}/> }
+      <AvailabilityStatus compact={mobileDialog}/>
     </div>
   );
 }
 function NoDepartures() {
  const {selection,setSelection,availability}=useBooking();const q=availability.quote;
- return <div><p>{q?.businessDate===selection.date?"No more departures available for today.":"No bookable departures on this date. Choose another day."} Booking closes 15 minutes before departure.</p><button type="button" className="p-text-button" onClick={event=>event.currentTarget.closest(".p-flow")?.querySelector<HTMLInputElement>('input[type="date"]')?.focus()}>Choose another date</button>{q?.nextOperationalDate&&<button type="button" className="p-text-button" onClick={()=>setSelection({...selection,date:q.nextOperationalDate!,departureId:""})}>Next operational date: {q.nextOperationalDate}</button>}</div>;
+ return <div><p>{q?.businessDate===selection.date?"No more departures available for today.":"No bookable departures on this date. Choose another day."} Booking closes 15 minutes before departure.</p><button type="button" className="p-text-button" onClick={event=>event.currentTarget.closest(".p-flow")?.querySelector<HTMLElement>('input[type="date"], [aria-label="Choose booking date"] button')?.focus()}>Choose another date</button>{q?.nextOperationalDate&&<button type="button" className="p-text-button" onClick={()=>setSelection({...selection,date:q.nextOperationalDate!,departureId:""})}>Next operational date: {q.nextOperationalDate}</button>}</div>;
 }
-export function AvailabilityStatus() {
+export function AvailabilityStatus({compact=false}:{compact?:boolean}={}) {
   const { selection, availability } = useBooking();
   const quote = availability.quote;
   const adultPrices=quote?.departures.filter(d=>d.available).flatMap(d=>d.passengerQuote?.lines.filter(l=>l.category==="adult"&&l.quantity===1).map(l=>l.unitPrice)??[])??[];
@@ -302,12 +311,12 @@ export function AvailabilityStatus() {
         <p>{availability.error}</p>
       ) : quote ? (
         <>
-          {!price && quote.guests===1 && adultPrices.length>0 && <BookingPriceIndicator amount={lowestQuotedFare(adultPrices)} date={selection.date}/>}
-          <p>
+          {!compact && !price && quote.guests===1 && adultPrices.length>0 && <BookingPriceIndicator amount={lowestQuotedFare(adultPrices)} date={selection.date}/>}
+          {!compact&&<p>
             <strong>{price?`Total: ${displayMoney(price.total,quote.currency)}`:"Select a departure to see your total"}</strong>{" "}
             for {quote.guests} {quote.guests === 1 ? "guest" : "guests"}. Times shown in local Shkodra time.
-          </p>
-          {price&&<BookingPriceBreakdown snapshot={price}/>}
+          </p>}
+          {!compact&&price&&<BookingPriceBreakdown snapshot={price}/>}
           {quote.departures.length === 0 ? (
             <NoDepartures />
           ) : !quote.departures.some((d) => d.available) ? (
@@ -323,10 +332,10 @@ export function AvailabilityStatus() {
                 Your selected departure no longer has enough seats or is no longer bookable. Please choose another departure.
               </p>
             )}
-          <p>Availability refreshes automatically. No seats are held.</p>
+          {!compact&&<p>Availability refreshes automatically. No seats are held.</p>}
         </>
       ) : null}
-      {selection.date && (
+      {selection.date && (!compact||availability.error) && (
         <button
           type="button"
           className="p-text-button"

@@ -57,3 +57,44 @@
 .discard button{min-height:48px;min-width:0;max-width:100%;white-space:normal;}
 .closeNotice{padding:12px 24px;margin:0;background:var(--ss-cream);font-size:14px;}
 @media(max-width:767px){.discard>div{flex-direction:column;align-items:stretch;}.discard button{width:100%;}.discard{padding-bottom:max(24px,env(safe-area-inset-bottom));}}
+
+.content [data-booking-intro-meeting]{display:contents;}
+/* The desktop presentation is unchanged; mobile remains one shared checkout. */
+@media(max-width:767px){
+ :global(.public-site) .dialog.dialog{inset:var(--booking-viewport-top,0px) auto auto var(--booking-viewport-left,0px);width:var(--booking-viewport-width,100%);height:100vh;max-height:100vh;height:var(--booking-viewport-height,100dvh);max-height:var(--booking-viewport-height,100dvh);}
+ .header{padding:8px max(12px,env(safe-area-inset-right)) 8px max(12px,env(safe-area-inset-left));border-bottom:1px solid #ffffff30;}
+ .header img,.header svg{width:64px;max-width:64px;}
+ :global(.public-site) .dialog .header h2{font-size:17px;line-height:1.2;font-weight:650;}
+ .content{padding:14px max(16px,env(safe-area-inset-right)) 20px max(16px,env(safe-area-inset-left));scroll-padding-block:16px;}
+ .content>p,.content [data-booking-intro-meeting]{display:none;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking]){display:grid;gap:12px;min-width:0;max-width:100%;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-booking-product){font-size:12px;line-height:1.4;margin:0;color:var(--brand-red);overflow-wrap:anywhere;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-progress){gap:8px;margin:0;padding:0;display:flex;flex-wrap:nowrap;font-size:12px;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-progress li){flex:1;min-width:0;gap:5px;overflow-wrap:anywhere;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-progress span){width:22px;height:22px;flex:0 0 22px;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking]>h2){font-size:22px;line-height:1.2;color:var(--brand-red);margin:2px 0 0;letter-spacing:-.025em;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking]>.p-preview){display:none;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-flow-layout){display:flex;flex-direction:column;gap:12px;min-width:0;max-width:100%;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-flow-main){display:grid;gap:12px;min-width:0;width:100%;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-booking-fields){display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin:0;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-booking-party){display:block;min-width:0;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking][data-step="3"] .p-flow-layout>aside){order:-1;display:block;width:100%;padding:14px;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-flow-layout>aside h3){font-size:16px;margin:0 0 8px;}
+ :global(.public-site) .dialog .content :global(.p-booking-summary-product){font-size:14px;font-weight:650;margin:0 0 12px;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] dl){gap:8px;font-size:14px;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] form){display:grid;gap:12px;min-width:0;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-contact-fields){gap:12px;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-contact-fields h3){font-size:16px;margin:0;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-contact-fields p){font-size:12px;margin:0;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] input){min-height:48px;font-size:16px;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-mobile-confirmation-terms){font-size:12px;line-height:1.5;margin:0;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] p[role=timer]){font-size:12px;margin:0;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-availability-status p){margin:0;font-size:13px;line-height:1.5;}
+ :global(.public-site) .dialog .content :global([data-mobile-booking] .p-flow-main>dl){display:none;}
+ :global(.public-site) .dialog .footer :global(.p-booking-action){display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;padding:8px 0 max(12px,env(safe-area-inset-bottom));}
+ :global(.public-site) .dialog .footer :global(.p-action-total){grid-column:1;grid-row:1;display:flex;flex-wrap:wrap;justify-content:flex-start;align-items:baseline;gap:4px 10px;min-width:0;}
+ :global(.public-site) .dialog .footer :global(.p-action-total>span){font-size:11px;line-height:1.4;overflow-wrap:anywhere;}
+ :global(.public-site) .dialog .footer :global(.p-action-total strong){font-size:21px;line-height:1.2;}
+ :global(.public-site) .dialog .footer :global(.p-booking-back){grid-column:2;grid-row:1;min-width:48px;min-height:44px;padding:6px;}
+ :global(.public-site) .dialog .footer :global(.p-transaction-action){grid-column:1/-1;grid-row:2;width:100%;min-width:0;min-height:48px;font-size:15px;line-height:1.3;white-space:normal;}
+}
