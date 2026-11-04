@@ -38,3 +38,36 @@
  .badges li{font-size:12px;}
  .badges svg{width:18px;height:18px;}
 }
+
+/* Extra disclosure markup has no tablet/desktop layout footprint. */
+.purchaseSummary{display:contents;}
+.mobileDetails{display:none;}
+@media(max-width:599px){
+ .embedded .grid{grid-auto-columns:88%;gap:12px;padding-bottom:4px;}
+ .embedded .card{border-radius:18px;}
+ .embedded .card>:global(.p-media),.embedded .placeholder{aspect-ratio:2.9;}
+ .embedded .card>:global(.p-media) :global(img){object-position:center 65%;}
+ .embedded .body{padding:12px;gap:6px;}
+ :global(.public-site) .embedded .body>h3{font-size:clamp(18px,5vw,21px);line-height:1.12;letter-spacing:-.025em;}
+ :global(.public-site) .embedded .body .description{font-size:13px;line-height:1.4;-webkit-line-clamp:2;}
+ .embedded .duration{display:none;}
+ .embedded .badges{gap:4px;}
+ .embedded .badges li{font-size:10.5px;line-height:1.3;padding:4px 5px;gap:4px;}
+ .embedded .badges svg{width:14px;height:14px;}
+ .embedded .badges>li:nth-child(n+4){display:none;}
+ .embedded .purchaseSummary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 8px;align-items:center;margin-top:auto;width:100%;min-width:0;}
+ .embedded .price{margin:0;padding-top:2px;gap:0;}
+ .embedded .price strong{font-size:26px;}
+ .embedded .price span{font-size:11px;line-height:1.4;}
+ .embedded .mobileDetails{display:block;min-width:0;}
+ .mobileDetails>summary{display:flex;align-items:center;justify-content:flex-end;min-height:44px;font-size:12px;text-decoration:underline;cursor:pointer;list-style:none;}
+ .mobileDetails>summary::-webkit-details-marker{display:none;}
+ .mobileDetails>div{font-size:13px;line-height:1.5;overflow-wrap:anywhere;}
+ :global(.public-site) .mobileDetails p{font-size:13px;line-height:1.5;margin:0 0 8px;}
+ .mobileDetails ul{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0 0 8px;padding:0;}
+ .mobileDetails li{display:flex;align-items:center;gap:5px;}
+ .mobileDetails li svg{width:16px;height:16px;}
+ .embedded .purchaseSummary:has(.mobileDetails[open]){grid-template-columns:minmax(0,1fr);}
+ .mobileDetails>summary:focus-visible{outline:2px solid var(--ss-primary);outline-offset:2px;}
+ .embedded .book{min-height:44px;margin-top:2px;}
+}

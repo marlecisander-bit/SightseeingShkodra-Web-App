@@ -1,0 +1,210 @@
+{
+  "records": [
+    {
+      "name": "desktop",
+      "cycle": 0,
+      "product": 0,
+      "before": {
+        "innerWidth": 1710,
+        "clientWidth": 1695,
+        "scrollY": 120,
+        "bodyTop": "",
+        "bodyWidth": "",
+        "bodyPosition": "",
+        "bodyRect": {
+          "x": 0,
+          "y": -120,
+          "width": 1695,
+          "height": 1798.828125
+        },
+        "rootGutter": "auto",
+        "hero": {
+          "x": 0,
+          "y": -120,
+          "width": 1695,
+          "height": 824.4375
+        },
+        "image": {
+          "x": -10.16998291015625,
+          "y": -124.94662475585938,
+          "width": 1715.33984375,
+          "height": 834.330810546875
+        },
+        "heading": {
+          "x": 167.5,
+          "y": 201.953125,
+          "width": 454.140625,
+          "height": 235.3125
+        },
+        "header": {
+          "x": 0,
+          "y": 0,
+          "width": 1695,
+          "height": 76
+        },
+        "content": {
+          "x": 669.640625,
+          "y": -12,
+          "width": 857.859375,
+          "height": 676.4375
+        },
+        "bodyInline": {
+          "position": "",
+          "top": "",
+          "width": ""
+        }
+      },
+      "during": {
+        "innerWidth": 1710,
+        "clientWidth": 1710,
+        "scrollY": 0,
+        "bodyTop": "-120px",
+        "bodyWidth": "100%",
+        "bodyPosition": "fixed",
+        "bodyRect": {
+          "x": 0,
+          "y": -120,
+          "width": 1710,
+          "height": 1798.828125
+        },
+        "rootGutter": "auto",
+        "hero": {
+          "x": 0,
+          "y": -120,
+          "width": 1710,
+          "height": 824.4375
+        },
+        "image": {
+          "x": -10.25994873046875,
+          "y": -124.94662475585938,
+          "width": 1730.52001953125,
+          "height": 834.330810546875
+        },
+        "heading": {
+          "x": 175,
+          "y": 201.953125,
+          "width": 454.140625,
+          "height": 235.3125
+        },
+        "header": {
+          "x": 0,
+          "y": 0,
+          "width": 1710,
+          "height": 76
+        },
+        "content": {
+          "x": 677.140625,
+          "y": -12,
+          "width": 857.859375,
+          "height": 676.4375
+        },
+        "bodyInline": {
+          "position": "fixed",
+          "top": "-120px",
+          "width": "100%"
+        }
+      },
+      "locked": {
+        "innerWidth": 1710,
+        "clientWidth": 1710,
+        "scrollY": 0,
+        "bodyTop": "-120px",
+        "bodyWidth": "100%",
+        "bodyPosition": "fixed",
+        "bodyRect": {
+          "x": 0,
+          "y": -120,
+          "width": 1710,
+          "height": 1798.828125
+        },
+        "rootGutter": "auto",
+        "hero": {
+          "x": 0,
+          "y": -120,
+          "width": 1710,
+          "height": 824.4375
+        },
+        "image": {
+          "x": -10.25994873046875,
+          "y": -124.94662475585938,
+          "width": 1730.52001953125,
+          "height": 834.330810546875
+        },
+        "heading": {
+          "x": 175,
+          "y": 201.953125,
+          "width": 454.140625,
+          "height": 235.3125
+        },
+        "header": {
+          "x": 0,
+          "y": 0,
+          "width": 1710,
+          "height": 76
+        },
+        "content": {
+          "x": 677.140625,
+          "y": -12,
+          "width": 857.859375,
+          "height": 676.4375
+        },
+        "bodyInline": {
+          "position": "fixed",
+          "top": "-120px",
+          "width": "100%"
+        }
+      },
+      "after": {
+        "innerWidth": 1710,
+        "clientWidth": 1695,
+        "scrollY": 120,
+        "bodyTop": "",
+        "bodyWidth": "",
+        "bodyPosition": "",
+        "bodyRect": {
+          "x": 0,
+          "y": -120,
+          "width": 1695,
+          "height": 1798.828125
+        },
+        "rootGutter": "auto",
+        "hero": {
+          "x": 0,
+          "y": -120,
+          "width": 1695,
+          "height": 824.4375
+        },
+        "image": {
+          "x": -10.16998291015625,
+          "y": -124.94662475585938,
+          "width": 1715.33984375,
+          "height": 834.330810546875
+        },
+        "heading": {
+          "x": 167.5,
+          "y": 201.953125,
+          "width": 454.140625,
+          "height": 235.3125
+        },
+        "header": {
+          "x": 0,
+          "y": 0,
+          "width": 1695,
+          "height": 76
+        },
+        "content": {
+          "x": 669.640625,
+          "y": -12,
+          "width": 857.859375,
+          "height": 676.4375
+        },
+        "bodyInline": {
+          "position": "",
+          "top": "",
+          "width": ""
+        }
+      }
+    }
+  ],
+  "blockedRequests": []
+}

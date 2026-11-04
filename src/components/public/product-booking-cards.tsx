@@ -11,6 +11,6 @@ export function ProductBookingCards({products,content,preview=false,fares={},emb
  if(!visible.length)return null;
  return <section id="experiences" className={`${embedded?styles.embedded:"p-section p-container"} ${styles.section}`} aria-label="Book your experience"><h2 className="p-screen-reader-only">Book your experience</h2><ProductCarousel titles={visible.map(product=>product.title)}>{visible.map(product=><article className={styles.card} key={product.id}>
  {product.card!.image?<Media src={product.card!.image} alt={product.card!.alt}/>:<div className={styles.placeholder}>Product photo</div>}
- <ProductCardBooking product={product} fare={fares[product.id]} bookingLabel={content["hero.book"]} preview={preview}/>
+ <ProductCardBooking compactMobile={embedded} product={product} fare={fares[product.id]} bookingLabel={content["hero.book"]} preview={preview}/>
  </article>)}</ProductCarousel></section>;
 }

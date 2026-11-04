@@ -1,0 +1,1840 @@
+{
+  "freshDirectLoad": true,
+  "actualNetlify": true,
+  "initial": {
+    "at": 1793801199877,
+    "phase": "UNKNOWN",
+    "kind": "unavailable",
+    "position": "unavailable",
+    "observed": null,
+    "movement": "Service finished for today"
+  },
+  "layouts": [
+    {
+      "w": 360,
+      "h": 800,
+      "overflow": false,
+      "frames": 1,
+      "status": false,
+      "icons": true
+    },
+    {
+      "w": 390,
+      "h": 844,
+      "overflow": false,
+      "frames": 1,
+      "status": false,
+      "icons": true
+    },
+    {
+      "w": 768,
+      "h": 1024,
+      "overflow": false,
+      "frames": 1,
+      "status": true,
+      "icons": true
+    },
+    {
+      "w": 1024,
+      "h": 768,
+      "overflow": false,
+      "frames": 1,
+      "status": true,
+      "icons": true
+    },
+    {
+      "w": 1440,
+      "h": 1000,
+      "overflow": false,
+      "frames": 1,
+      "status": true,
+      "icons": true
+    },
+    {
+      "w": 844,
+      "h": 390,
+      "overflow": false,
+      "frames": 1,
+      "status": true,
+      "icons": true
+    }
+  ],
+  "visibilityIndependent": true,
+  "navigation": true,
+  "activeSocketsAfterNavigation": 0,
+  "transportRecovery": true,
+  "onlineRecovery": true,
+  "final": {
+    "at": 1793801252612,
+    "phase": "UNKNOWN",
+    "kind": "unavailable",
+    "position": "unavailable",
+    "observed": null,
+    "movement": "Service finished for today"
+  },
+  "childRequests": [
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/shared.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/page-layout.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/map-information.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/map-buttons.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/stops-panel.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/map-markers.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/notifications.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/leaflet-adjustments.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/mobile-layout.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/tourist-layout.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/widget-controls.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/responsive-presentation.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/tourist-card.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/final-tourist.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://unpkg.com",
+      "path": "/leaflet@1.9.4/dist/leaflet.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://unpkg.com",
+      "path": "/leaflet@1.9.4/dist/leaflet.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://cdn.jsdelivr.net",
+      "path": "/npm/@supabase/supabase-js@2.112.3"
+    },
+    {
+      "method": "GET",
+      "origin": "https://cdn.jsdelivr.net",
+      "path": "/npm/@turf/turf@7.3.5/turf.min.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/app-config.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/map-content-safety.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/stop-design-defaults.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/stop-design.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/tracking-realtime.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/tracking-state.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/service-hours.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/gps-source.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/stop-design.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/assets/brand/sightseeing-shkodra-red.svg"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/app-settings.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/vehicle-icon.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/connect-to-database.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/project-context.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/create-map.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/app-state.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/map-buttons.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/map-icons.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/load-published-map.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/build-route-contexts.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/prepare-route-data.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/route-movement-calculations.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/marker-motion.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/calculate-arrivals.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/load-vehicle-progress.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/tourist-state.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/tourist-schedule.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/tourist-view.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/public-presentation.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/journey-route.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/journey-framing.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/update-route-progress.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/stops-panel.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/map-popups.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/track-bus.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/track-user.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/display-full-route.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/format-display-values.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/automatic-refresh.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/notifications.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/connect-page-actions.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/responsive-presentation.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/stop-marker-layout.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/start-live-map.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/tracking-diagnostics.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/assets/brand/bus-front.svg"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/projects"
+    },
+    {
+      "method": "OPTIONS",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/projects"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4539/3038.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4540/3038.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4539/3039.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4540/3039.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/live_map_settings"
+    },
+    {
+      "method": "OPTIONS",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/live_map_settings"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/tracking_pipeline_capabilities"
+    },
+    {
+      "method": "OPTIONS",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/tracking_pipeline_capabilities"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/map_versions"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/vehicle_service_hours"
+    },
+    {
+      "method": "OPTIONS",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/map_versions"
+    },
+    {
+      "method": "OPTIONS",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/vehicle_service_hours"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/map_versions"
+    },
+    {
+      "method": "OPTIONS",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/map_versions"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/shared.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/page-layout.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/map-information.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/map-buttons.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/stops-panel.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/map-markers.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/notifications.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/leaflet-adjustments.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/mobile-layout.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/tourist-layout.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/widget-controls.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/responsive-presentation.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/tourist-card.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/final-tourist.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://unpkg.com",
+      "path": "/leaflet@1.9.4/dist/leaflet.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://unpkg.com",
+      "path": "/leaflet@1.9.4/dist/leaflet.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://cdn.jsdelivr.net",
+      "path": "/npm/@supabase/supabase-js@2.112.3"
+    },
+    {
+      "method": "GET",
+      "origin": "https://cdn.jsdelivr.net",
+      "path": "/npm/@turf/turf@7.3.5/turf.min.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/app-config.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/map-content-safety.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/stop-design-defaults.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/stop-design.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/tracking-realtime.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/tracking-state.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/service-hours.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/gps-source.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/stop-design.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/assets/brand/sightseeing-shkodra-red.svg"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/app-settings.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/vehicle-icon.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/connect-to-database.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/project-context.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/create-map.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/app-state.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/map-buttons.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/map-icons.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/load-published-map.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/build-route-contexts.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/prepare-route-data.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/route-movement-calculations.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/marker-motion.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/calculate-arrivals.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/load-vehicle-progress.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/tourist-state.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/tourist-schedule.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/tourist-view.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/public-presentation.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/journey-route.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/journey-framing.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/update-route-progress.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/stops-panel.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/map-popups.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/track-bus.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/track-user.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/display-full-route.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/format-display-values.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/automatic-refresh.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/notifications.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/connect-page-actions.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/responsive-presentation.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/stop-marker-layout.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/start-live-map.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/tracking-diagnostics.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/assets/brand/bus-front.svg"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/projects"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4539/3038.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4540/3038.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4539/3039.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4540/3039.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4539/3037.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4540/3037.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4538/3038.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4541/3038.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4538/3039.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4541/3039.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4539/3040.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4540/3040.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4538/3037.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4541/3037.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4538/3040.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4541/3040.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4537/3038.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4542/3038.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4537/3039.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4542/3039.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4537/3037.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4542/3037.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4537/3040.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4542/3040.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/live_map_settings"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/tracking_pipeline_capabilities"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/map_versions"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/vehicle_service_hours"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/map_versions"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/12/2269/1519.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/12/2270/1519.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/12/2269/1518.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/12/2270/1518.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/12/2269/1520.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/12/2270/1520.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/12/2268/1519.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/12/2271/1519.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/12/2268/1518.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/12/2271/1518.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/12/2268/1520.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/12/2271/1520.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://www.sightseeingshkodra.com",
+      "path": "/_next/image"
+    },
+    {
+      "method": "GET",
+      "origin": "https://www.sightseeingshkodra.com",
+      "path": "/_next/image"
+    },
+    {
+      "method": "GET",
+      "origin": "https://www.sightseeingshkodra.com",
+      "path": "/_next/image"
+    },
+    {
+      "method": "GET",
+      "origin": "https://www.sightseeingshkodra.com",
+      "path": "/_next/image"
+    },
+    {
+      "method": "GET",
+      "origin": "https://www.sightseeingshkodra.com",
+      "path": "/_next/image"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/12/2267/1519.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/12/2272/1519.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/12/2267/1518.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/12/2272/1518.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/12/2267/1520.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/12/2272/1520.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/shared.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/page-layout.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/map-information.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/map-buttons.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/stops-panel.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/map-markers.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/notifications.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/leaflet-adjustments.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/mobile-layout.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/tourist-layout.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/widget-controls.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/responsive-presentation.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/tourist-card.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/final-tourist.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://unpkg.com",
+      "path": "/leaflet@1.9.4/dist/leaflet.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://unpkg.com",
+      "path": "/leaflet@1.9.4/dist/leaflet.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://cdn.jsdelivr.net",
+      "path": "/npm/@supabase/supabase-js@2.112.3"
+    },
+    {
+      "method": "GET",
+      "origin": "https://cdn.jsdelivr.net",
+      "path": "/npm/@turf/turf@7.3.5/turf.min.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/app-config.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/map-content-safety.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/stop-design-defaults.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/stop-design.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/tracking-realtime.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/tracking-state.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/service-hours.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/gps-source.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/stop-design.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/assets/brand/sightseeing-shkodra-red.svg"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/app-settings.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/vehicle-icon.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/connect-to-database.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/project-context.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/create-map.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/app-state.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/map-buttons.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/map-icons.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/load-published-map.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/build-route-contexts.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/prepare-route-data.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/route-movement-calculations.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/marker-motion.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/calculate-arrivals.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/load-vehicle-progress.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/tourist-state.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/tourist-schedule.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/tourist-view.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/public-presentation.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/journey-route.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/journey-framing.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/update-route-progress.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/stops-panel.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/map-popups.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/track-bus.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/track-user.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/display-full-route.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/format-display-values.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/automatic-refresh.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/notifications.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/connect-page-actions.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/responsive-presentation.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/stop-marker-layout.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/start-live-map.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/tracking-diagnostics.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/assets/brand/bus-front.svg"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/projects"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4539/3038.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4540/3038.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4539/3039.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4540/3039.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/live_map_settings"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/tracking_pipeline_capabilities"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/map_versions"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/vehicle_service_hours"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/map_versions"
+    },
+    {
+      "method": "GET",
+      "origin": "https://www.sightseeingshkodra.com",
+      "path": "/_next/image"
+    },
+    {
+      "method": "GET",
+      "origin": "https://www.sightseeingshkodra.com",
+      "path": "/_next/image"
+    },
+    {
+      "method": "GET",
+      "origin": "https://www.sightseeingshkodra.com",
+      "path": "/_next/image"
+    },
+    {
+      "method": "GET",
+      "origin": "https://www.sightseeingshkodra.com",
+      "path": "/_next/image"
+    },
+    {
+      "method": "GET",
+      "origin": "https://www.sightseeingshkodra.com",
+      "path": "/_next/image"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/map_versions"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/shared.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/page-layout.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/map-information.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/map-buttons.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/stops-panel.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/map-markers.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/notifications.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/leaflet-adjustments.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/mobile-layout.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/tourist-layout.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/widget-controls.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/responsive-presentation.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/tourist-card.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/live-map/final-tourist.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://unpkg.com",
+      "path": "/leaflet@1.9.4/dist/leaflet.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://unpkg.com",
+      "path": "/leaflet@1.9.4/dist/leaflet.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://cdn.jsdelivr.net",
+      "path": "/npm/@supabase/supabase-js@2.112.3"
+    },
+    {
+      "method": "GET",
+      "origin": "https://cdn.jsdelivr.net",
+      "path": "/npm/@turf/turf@7.3.5/turf.min.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/app-config.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/map-content-safety.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/stop-design-defaults.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/stop-design.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/tracking-realtime.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/tracking-state.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/service-hours.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/gps-source.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/css/stop-design.css"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/assets/brand/sightseeing-shkodra-red.svg"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/app-settings.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/shared/vehicle-icon.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/connect-to-database.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/project-context.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/create-map.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/app-state.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/map-buttons.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/map-icons.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/load-published-map.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/build-route-contexts.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/prepare-route-data.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/route-movement-calculations.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/marker-motion.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/calculate-arrivals.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/load-vehicle-progress.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/tourist-state.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/tourist-schedule.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/tourist-view.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/public-presentation.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/journey-route.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/journey-framing.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/update-route-progress.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/stops-panel.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/map-popups.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/track-bus.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/track-user.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/display-full-route.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/format-display-values.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/automatic-refresh.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/notifications.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/connect-page-actions.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/responsive-presentation.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/stop-marker-layout.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/start-live-map.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/js/live-map/tracking-diagnostics.js"
+    },
+    {
+      "method": "GET",
+      "origin": "https://sightseeingshkodralivetrackingapp.netlify.app",
+      "path": "/assets/brand/bus-front.svg"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/projects"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4539/3038.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4540/3038.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4539/3039.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://tile.openstreetmap.org",
+      "path": "/13/4540/3039.png"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/live_map_settings"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/tracking_pipeline_capabilities"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/map_versions"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/vehicle_service_hours"
+    },
+    {
+      "method": "GET",
+      "origin": "https://dmqdiazosamyrnkmbtcd.supabase.co",
+      "path": "/rest/v1/map_versions"
+    },
+    {
+      "method": "GET",
+      "origin": "https://www.sightseeingshkodra.com",
+      "path": "/_next/image"
+    }
+  ],
+  "activeSocketsAfterRecovery": 0,
+  "blockedMutations": [],
+  "localParentRequests": 58
+}

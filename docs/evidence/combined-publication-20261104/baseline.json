@@ -1,0 +1,18 @@
+{
+  "main": "39bbf5bfedf30401788edc3af115d9fe339edd30",
+  "repository": "https://github.com/marlecisander-bit/SightseeingShkodra-Web-App",
+  "deployments": [
+    {
+      "id": 7547546609,
+      "sha": "39bbf5bfedf30401788edc3af115d9fe339edd30",
+      "environment": "Production",
+      "states": [
+        {
+          "state": "success",
+          "environment_url": "https://sightseeing-shkodra-web-bxfoajr3z-aleksander-marleci.vercel.app",
+          "log_url": "https://sightseeing-shkodra-web-bxfoajr3z-aleksander-marleci.vercel.app"
+        }
+      ]
+    }
+  ]
+}

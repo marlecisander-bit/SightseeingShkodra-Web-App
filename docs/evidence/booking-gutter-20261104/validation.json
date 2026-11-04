@@ -1,0 +1,26 @@
+{
+  "localOnly": true,
+  "testsPassed": 676,
+  "lint": "passed",
+  "typescript": "passed",
+  "normalProductionBuild": "passed",
+  "cycles": 16,
+  "animationFramesChecked": 393,
+  "maximumBackgroundGeometryDeltaPx": 0,
+  "viewports": [
+    "desktop",
+    "mobile",
+    "mobile-short",
+    "wide-gutter"
+  ],
+  "bothProductButtons": true,
+  "nativeEscapeCloseBack": true,
+  "focusTrapAndRestoration": true,
+  "scrollRestoration": true,
+  "inlineStylesRestored": true,
+  "dialogInternalScroll": true,
+  "checkoutRequests": 0,
+  "temporaryReviewRouteRemoved": true,
+  "physicalDevices": false,
+  "deployed": false
+}

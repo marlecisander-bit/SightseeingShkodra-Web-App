@@ -1,0 +1,18 @@
+{
+  "cycles": 16,
+  "animationFramesChecked": 393,
+  "maximumBackgroundGeometryDeltaPx": 0,
+  "viewports": [
+    "desktop",
+    "mobile",
+    "mobile-short",
+    "wide-gutter"
+  ],
+  "bothProductButtons": true,
+  "nativeEscapeCloseBack": true,
+  "focusTrapAndRestoration": true,
+  "scrollRestoration": true,
+  "inlineStylesRestored": true,
+  "dialogInternalScroll": true,
+  "checkoutRequests": 0
+}

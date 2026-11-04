@@ -16,7 +16,7 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
   const destinations = places ?? websitePlaces(c);
   const offers=products.length?products:home.product?[{id:home.product.id,title:home.product.title,slug:home.product.slug,mode:'selected_departure' as const,minutes:120}]:[];
   const cards=offers.map(p=>p.id===home.product?.id&&!p.card?{...p,card:{image:c['hero.desktop'],alt:c['hero.alt'],description:c['hero.description']??'',order:0,enabled:true}}:p);
-  return <HomepageJourneyProvider><main id="main-content" className={`p-home${homepageVisible(c,"hero") ? "" : " p-home-no-hero"}`}>
+  return <HomepageJourneyProvider enabled={!preview&&homepageVisible(c,"route")}><main id="main-content" className={`p-home${homepageVisible(c,"hero") ? "" : " p-home-no-hero"}`}>
     {!homepageVisible(c,"hero") && <h1 className="p-screen-reader-only">{home.product?.title ?? c["seo.title"]}</h1>}
     {homepageVisible(c,"hero") ? <HomepageHero content={c}>
       <ProductBookingCards embedded products={cards} content={c} preview={preview} fares={home.product&&home.heroFare?{[home.product.id]:home.heroFare}:{}}/>

@@ -27,7 +27,7 @@ test('selection survives tracking advances and expired transport; keyboard and m
   const count=scrolls.length;
   await render(2);assert.equal(scrolls.length,count,'live advance cannot interrupt browsing');
   assert.equal(document.querySelector('[aria-pressed=true]').getAttribute('aria-label'),'Stop 5: Stop 5');
-  await render(3,true);assert.ok(!document.querySelector('[data-state="current"]'));assert.match(document.body.textContent,/stale/);
+  await render(3,true);assert.ok(!document.querySelector('[data-state="current"]'));assert.match(document.body.textContent,/connection interrupted/);
   assert.equal(document.querySelector('[aria-pressed=true]').getAttribute('aria-label'),'Stop 5: Stop 5');
   await act(async()=>document.querySelector('[aria-pressed=true]').dispatchEvent(new dom.window.KeyboardEvent('keydown',{key:'Home',bubbles:true})));
   assert.equal(document.activeElement.getAttribute('aria-label'),'Stop 1: Stop 1');

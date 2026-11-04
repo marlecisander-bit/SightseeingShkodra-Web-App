@@ -45,3 +45,11 @@ export function presentationTtl(d:Pick<JourneySnapshot,'movement'|'phase'|'statu
  if(presentationMessage(d,now)===null)return 0;
  return Math.max(0,Math.min(45000,Date.parse(d.statusValidUntil??'')-now));
 }
+
+/** Connection health does not make a historical GPS observation live. */
+export function hasLiveJourneyPosition(journey?:JourneySnapshot|null,now=Date.now()):boolean {
+ if(!journey||journey.unavailable||journey.confidence?.position!=='live'||journey.phase==='UNKNOWN')return false;
+ if(journey.presentationKind&&journey.presentationKind!=='fresh'&&journey.presentationKind!=='reported_stopped')return false;
+ const age=now-Date.parse(journey.lastObservationAt??'');
+ return age>=-60000&&age<=90000&&presentationMessage(journey,now)!==null;
+}

@@ -25,3 +25,10 @@ test('every recognized arrival and multiple confirmed departures remain authorit
 });
 
 test('Route page can keep editorial destinations without a duplicate status summary',()=>{const html=render({showStatus:false});assert(!html.includes('aria-label="Live journey status"'));assert.match(html,/CMS lake/);assert.match(html,/Choose a destination/);});
+
+
+test('historical or old GPS never illuminates LIVE even when transport is connected',()=>{
+ const now=Date.now();const live={...journey,phase:'EN_ROUTE',presentationKind:'fresh',movement:'Travelling',confidence:{position:'live'},lastObservationAt:new Date(now-1000).toISOString(),statusValidUntil:new Date(now+10000).toISOString()};
+ assert.match(render({journey:live}),/data-live="true"/);
+ for(const value of [{...live,phase:'UNKNOWN',presentationKind:'historical_location',confidence:{position:'delayed'}},{...live,lastObservationAt:new Date(now-100000).toISOString()},{...live,statusValidUntil:new Date(now-1).toISOString()},{...live,phase:'UNKNOWN'}])assert.doesNotMatch(render({journey:value}),/data-live="true"/);
+});

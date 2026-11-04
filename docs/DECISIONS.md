@@ -234,3 +234,8 @@ User requested database-backed reservation deletion and explicitly included paid
 ## 31 October 2026 — completed-development publication authorization
 
 User requested publication of completed developments. Isolated candidate preserves already released fixes and pending IDE work. Migration20261030000400 applied before code:34 bookings unchanged,34 retained registry identities,0 deletions; security and source checks passed. Final candidate664 tests plus lint/typecheck/build and clean audit. Public external Live Map status remains disabled pending real companion acceptance. Release evidence and rollback: `docs/releases/all-completed-20261030/README.md`; final deployment receipt follows publication.
+
+
+## 4 November 2026 — publish all completed homepage changes
+
+The owner subsequently requested publication of all completed changes: the independent homepage journey source, phone-only hero/cards and WhatsApp clearance, and stable booking-dialog background width. This supersedes their earlier local-only limits. Publish through the existing GitHub PR/main/Vercel workflow after fresh checks; keep the standalone map, DNS, schemas, GPS services and communications configuration unchanged. Fresh local validation:676 tests, lint, TypeScript, normal production build and zero-vulnerability audit. Exact-head CI and live acceptance remain publication gates. Historical local-only development notes remain provenance.

@@ -681,3 +681,6 @@ VERIFIED LOCAL (4 November 2026): Approved responsive homepage/When-Who-Review b
 
 
 FOLLOW-UP VERIFIED LOCAL (4 November 2026): Mobile navigation booking now restores focus to the visible menu toggle; the added regression brings the fresh final suite to 670 passed, zero failed. Normal lint/typecheck/production build pass again. PR #51 opened; Vercel existing ignored-build rule skips feature deployments, so no Preview is claimed and configuration remains unchanged. Publication continues through PR CI and the existing main Production integration.
+
+
+RELEASE PREPARED (4 November 2026): Owner authorized all three completed homepage changes: journey connection, phone-only hero and booking scrollbar stability. Fresh676 tests, lint/types/normal build and production dependency audit pass. Existing local browser evidence retained; temporary review routes excluded. Release will use the existing PR/main/Vercel integration with exact-head CI and live read-only acceptance. Prior39bbf5b/3QSeuGaiDtL497X9XZBkR5CrPGG7 retained as rollback baseline. No DNS/schema/GPS/companion/communications configuration changes.

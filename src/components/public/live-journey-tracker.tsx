@@ -5,7 +5,7 @@ import {useId} from 'react';
 import {StopSelector} from './stop-selector';
 
 import {sightseeingStops, sightseeingStatus, type StopPlace} from '@/modules/content/sightseeing-stops';
-import type {JourneySnapshot} from '@/modules/tracking/journey-contract';
+import {hasLiveJourneyPosition,type JourneySnapshot} from '@/modules/tracking/journey-contract';
 import styles from './live-journey-tracker.module.css';
 
 function TrackingVanIcon() {
@@ -19,6 +19,7 @@ export function LiveJourneyTracker({stops, places, journey, stale=false, showSta
  learnLabel?:string; mapLabel?:string;
 }) {
  const selectorId=useId();
+ const live=!stale&&hasLiveJourneyPosition(journey);
  const items=sightseeingStops(stops,places,!stale?journey:null);
  const current=items.find(s=>s.state==='current');
  const next=items.find(s=>s.state==='next');
@@ -28,7 +29,7 @@ export function LiveJourneyTracker({stops, places, journey, stale=false, showSta
    <div className={styles.summary}>
     <span className={styles.vehicle}><TrackingVanIcon/></span>
     <div role="status">
-     <p className={styles.eyebrow}><span className={styles.dot} data-live={!!journey&&!journey.unavailable&&!stale&&(!journey.confidence||journey.confidence.position==='live')}/>Live journey</p>
+     <p className={styles.eyebrow}><span className={styles.dot} data-live={live}/>Live journey</p>
      <h3>{!stale&&next&&!current?`Next destination: ${next.name}`:sightseeingStatus(items,journey,stale)}</h3>
      {!stale&&journey&&!journey.unavailable&&next&&<p>Next stop: {next.number} of {items.length}{current?` · ${next.name}`:''}</p>}
      {!stale&&!current&&next?.eta&&<p className={styles.eta}>ETA: {next.eta}</p>}

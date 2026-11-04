@@ -8,7 +8,7 @@ export function sightseeingStops(stops:readonly {id:string;label:string}[],place
  return published.map((stop,index)=>{const matches=places.filter(p=>p.stopId===stop.id);const place=matches.length===1?matches[0]:undefined;const live=presentationAvailable?journey.stops.find(s=>s.id===stop.id):undefined;return {...stop,number:index+1,name:place?.name||stop.label.replace(/^Stop \d+ - /,''),place,state:live?.state??'upcoming',eta:live?.eta??''};});
 }
 export function sightseeingStatus(stops:ReturnType<typeof sightseeingStops>,journey?:JourneySnapshot|null,stale=false){
- if(stale)return 'Live updates are stale. Check the map for the latest information.';
+ if(stale)return 'Live connection interrupted. Reconnecting…';
  if(journey?.phase){const message=presentationMessage(journey);return message??'Location temporarily unavailable';}
  // Fresh location and route continuity are separate upstream facts.
  const age=journey?.lastObservationAt?(Date.now()-Date.parse(journey.lastObservationAt))/1000:Infinity;
