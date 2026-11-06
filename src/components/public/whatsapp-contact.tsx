@@ -17,8 +17,8 @@ export function WhatsAppContact({href,label,desktop,mobile,excludePaths=[]}:{hre
   const measure=()=>{
    frame=0;
    node.style.visibility='';
-   const phoneHero=window.matchMedia('(max-width:599px)').matches&&!!document.querySelector('#home-hero #experiences');
-   const heroControls=phoneHero?'#home-hero [aria-label="Choose experience"] button,#home-hero [data-product-details]>summary':'';
+   const phoneHero=window.matchMedia('(max-width:599px), (max-width:900px) and (max-height:500px) and (orientation:landscape) and (pointer:coarse)').matches&&!!document.querySelector('#home-hero #experiences');
+   const heroControls=phoneHero?'#home-hero [aria-label="Choose experience"] button,#home-hero [data-product-details]>summary,#home-hero [data-all-amenities]':'';
    const rect=node.getBoundingClientRect();
    const viewportHeight=document.documentElement.clientHeight;
    // Clear sticky checkout actions and the product card price/booking controls.
@@ -31,10 +31,10 @@ export function WhatsAppContact({href,label,desktop,mobile,excludePaths=[]}:{hre
    node.style.visibility=whatsappDock(rect,blockers,(document.querySelector('.p-header')?.getBoundingClientRect().bottom??0)+8)===null?'hidden':'';
   };
   const queue=()=>{if(!frame)frame=requestAnimationFrame(measure);};
-  const carouselScroll=(event:Event)=>{if(window.matchMedia('(max-width:599px)').matches&&event.target instanceof Element&&event.target.closest('#home-hero'))queue();};
+  const carouselScroll=(event:Event)=>{if(window.matchMedia('(max-width:599px), (max-width:900px) and (max-height:500px) and (orientation:landscape) and (pointer:coarse)').matches&&event.target instanceof Element&&event.target.closest('#home-hero'))queue();};
   document.addEventListener('scroll',carouselScroll,true);
   const resize=new ResizeObserver(queue);resize.observe(document.body);
-  const mutation=new MutationObserver(queue);mutation.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['open','class']});
+  const mutation=new MutationObserver(queue);mutation.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['open','class','hidden','data-visible-count']});
   window.addEventListener('scroll',queue,{passive:true});window.addEventListener('resize',queue);window.visualViewport?.addEventListener('resize',queue);queue();
   return()=>{document.removeEventListener('scroll',carouselScroll,true);cancelAnimationFrame(frame);resize.disconnect();mutation.disconnect();window.removeEventListener('scroll',queue);window.removeEventListener('resize',queue);window.visualViewport?.removeEventListener('resize',queue);};
  },[href,excluded,path,desktop,mobile,label,mounted]);
