@@ -181,9 +181,9 @@
 
 /* Phone-only composition. The tablet/desktop rules above remain authoritative. */
 @media(max-width:599px){
- .composed .visual{padding-top:calc(var(--hero-header-offset,calc(60px + env(safe-area-inset-top))) + 10px);padding-inline:max(16px,env(safe-area-inset-left)) max(16px,env(safe-area-inset-right));padding-bottom:max(16px,env(safe-area-inset-bottom));}
+ .composed .visual{--hero-copy-drop:clamp(16px,calc(8svh - 36px),24px);padding-top:calc(var(--hero-header-offset,calc(60px + env(safe-area-inset-top))) + 10px + var(--hero-copy-drop));padding-inline:max(16px,env(safe-area-inset-left)) max(16px,env(safe-area-inset-right));padding-bottom:max(16px,env(safe-area-inset-bottom));}
  .composed .visual{display:flex;flex-direction:column;box-sizing:border-box;min-height:100vh;min-height:100svh;min-height:100dvh;}
- .composed .layout{display:flex;flex-direction:column;flex:1;align-items:stretch;gap:clamp(20px,calc(30svh - 174px),92px);}
+ .composed .layout{display:flex;flex-direction:column;flex:1;align-items:stretch;gap:max(12px,calc(clamp(20px,calc(30svh - 174px),92px) - var(--hero-copy-drop)));}
  .composed .layout>:last-child{margin-top:0;}
  :global(.public-site) .composed .eyebrow{display:none;margin:0;padding:0;}
  :global(.public-site) .composed .intro h1{font-size:clamp(28px,8.4vw,36px);line-height:1.06;letter-spacing:-.035em;margin:0 0 10px;overflow-wrap:anywhere;}
@@ -195,3 +195,5 @@
  .composed .media img{filter:blur(.7px);transform:scale(1.16);transform-origin:50% 100%;object-position:var(--hero-phone-position,var(--hero-mobile-position));}
  .composed .visual::after{background:linear-gradient(180deg,rgba(5,22,42,.65),rgba(5,22,42,.56) 38%,rgba(5,22,42,.68) 70%,rgba(5,22,42,.94));}
 }
+
+@media(max-width:599px) and (max-height:700px){.composed .visual{padding-bottom:max(4px,env(safe-area-inset-bottom));}}
