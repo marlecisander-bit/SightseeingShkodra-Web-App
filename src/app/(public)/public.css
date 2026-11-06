@@ -1605,3 +1605,9 @@ body:has(.p-booking-dialog[open]) {
 
 /* Header shading belongs to the global public shell, not a CSS Module. */
 @media(min-width:901px){.public-site:has(#home-hero) .p-header-home:not(.p-header-solid){background:linear-gradient(180deg,rgba(18,25,28,.42),transparent) no-repeat;}}
+
+/* Compact homepage phone header; other routes and desktop keep their geometry. */
+@media(max-width:599px){
+ .public-site:has(#home-hero) .p-header.p-header-home{--p-header-height:60px;height:calc(60px + env(safe-area-inset-top));padding-block:calc(8px + env(safe-area-inset-top)) 8px;}
+ .public-site:has(#home-hero) .p-header .p-brand-logo{width:112px;}
+}
