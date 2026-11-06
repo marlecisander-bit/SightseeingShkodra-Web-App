@@ -107,3 +107,11 @@
 @media(max-width:599px){.embedded .purchaseSummary{margin-top:0;}}
 @media(max-width:599px){.embedded .body:not(:has([data-visible-count])) .purchaseSummary{margin-top:auto;}}
 @media(max-width:900px) and (max-height:500px) and (orientation:landscape) and (pointer:coarse){.embedded .body:has([data-visible-count]) .price{margin-top:0;}}
+
+/* Mouse dragging supplements native touch/trackpad scrolling only when offers overflow. */
+.grid[data-dragging=true]{scroll-snap-type:none;scroll-behavior:auto;user-select:none;}
+.grid[data-dragging=true] *{user-select:none;}
+@media(hover:hover) and (pointer:fine){
+ .carousel[data-overflow=true] .grid{cursor:grab;}
+ .carousel[data-overflow=true] .grid[data-dragging=true],.carousel[data-overflow=true] .grid[data-dragging=true] *{cursor:grabbing;}
+}
