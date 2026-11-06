@@ -9,8 +9,8 @@ import styles from './product-booking-cards.module.css';
 export function ProductBookingCards({products,content,preview=false,fares={},embedded=false}:{embedded?:boolean;overlap?:boolean;fares?:Record<string,HeroFare>;products:BookableProduct[];content:WebsiteContent;preview?:boolean}) {
  const visible=products.filter(p=>p.card?.enabled);
  if(!visible.length)return null;
- return <section id="experiences" className={`${embedded?styles.embedded:"p-section p-container"} ${styles.section}`} aria-label="Book your experience"><h2 className="p-screen-reader-only">Book your experience</h2><ProductCarousel titles={visible.map(product=>product.title)}>{visible.map(product=><article className={styles.card} key={product.id}>
- {product.card!.image?<Media src={product.card!.image} alt={product.card!.alt}/>:<div className={styles.placeholder}>Product photo</div>}
+ return <section id="experiences" className={`${embedded?styles.embedded:"p-section p-container"} ${styles.section}`} aria-label="Book your experience"><h2 className="p-screen-reader-only">Book your experience</h2><ProductCarousel titles={visible.map(product=>product.title)}>{visible.map((product,index)=><article className={styles.card} key={product.id}>
+ {product.card!.image?<Media src={product.card!.image} alt={product.card!.alt} priority={embedded&&index===0}/>:<div className={styles.placeholder}>Product photo</div>}
  <ProductCardBooking compactMobile={embedded} product={product} fare={fares[product.id]} bookingLabel={content["hero.book"]} preview={preview}/>
  </article>)}</ProductCarousel></section>;
 }
