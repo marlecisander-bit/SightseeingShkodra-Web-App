@@ -1,11 +1,13 @@
 'use client';
 import {useState} from 'react';
+import {Media} from '@/components/public/ui';
+import cardStyles from '@/components/public/product-booking-cards.module.css';
 import {MutationForm} from './mutation-form';
 import {SubmitButton} from './submit-button';
 import {saveProductAvailability} from './products-actions';
 import {availabilityLabels,availabilityStates,validateAvailability,type AvailabilityPresentation,type AvailabilityState} from '@/modules/booking/product-availability';
 import {AvailabilityBadge,AvailabilityDetails} from '@/components/public/product-availability-status';
-export function ProductAvailabilityForm({operatorId,id,stamp,active=true,message='',presentation,saveAction}:{operatorId:string;id:string;stamp:string;active?:boolean;message?:string;presentation?:AvailabilityPresentation;saveAction?:(data:FormData)=>Promise<{error:string}|void>}){
+export function ProductAvailabilityForm({operatorId,id,stamp,active=true,message='',presentation,previewCard,saveAction}:{operatorId:string;id:string;stamp:string;active?:boolean;message?:string;presentation?:AvailabilityPresentation;previewCard?:{title:string;image:string;alt:string;description:string};saveAction?:(data:FormData)=>Promise<{error:string}|void>}){
  const [state,setState]=useState<AvailabilityState>(active?'available':presentation?.state&&presentation.state!=='available'?presentation.state:'temporarily_unavailable');
  const [label,setLabel]=useState(presentation?.label??''),[text,setText]=useState(message),[precision,setPrecision]=useState<'none'|'month'|'day'>(presentation?.reopening?.precision??'none'),[date,setDate]=useState(presentation?.reopening?.value??''),[actionLabel,setActionLabel]=useState(presentation?.actionLabel??''),[actionUrl,setActionUrl]=useState(presentation?.actionUrl??'');
  const value:AvailabilityPresentation={state,label,actionLabel,actionUrl,...(precision!=='none'&&date?{reopening:{precision,value:date}}:{})};
@@ -21,7 +23,7 @@ export function ProductAvailabilityForm({operatorId,id,stamp,active=true,message
  {precision!=='none'&&<label>{precision==='month'?'Expected reopening month':'Expected reopening date'}<input type={precision==='month'?'month':'date'} required value={date} onChange={e=>setDate(e.target.value)}/></label>}
  <label>Secondary action destination (optional)<input maxLength={2048} value={actionUrl} onChange={e=>setActionUrl(e.target.value)} placeholder="/route"/></label><p>Use a supported site path, such as /route or /explore/destination, or a full HTTPS URL. Without a destination no action is shown.</p>
  {actionUrl&&<label>Secondary action label (optional)<input maxLength={80} value={actionLabel} onChange={e=>setActionLabel(e.target.value)} placeholder="Explore the route"/></label>}
- <fieldset><legend>Tour-card status preview</legend><div style={{position:'relative',minHeight:60}}><AvailabilityBadge product={{active:false,availability:value,unavailableMessage:text}}/></div><AvailabilityDetails product={{active:false,availability:value,unavailableMessage:text}}/></fieldset>
+ <fieldset><legend>Tour-card status preview</legend><article className={`${cardStyles.card} ${cardStyles.statusPreview}`} data-inactive="true"><AvailabilityBadge product={{active:false,availability:value,unavailableMessage:text}}/>{previewCard?.image?<Media src={previewCard.image} alt={previewCard.alt}/>:<div className={cardStyles.placeholder}>Product photo</div>}<div className={cardStyles.body}>{previewCard&&<><h3>{previewCard.title}</h3><p className={cardStyles.description}>{previewCard.description}</p></>}<AvailabilityDetails product={{active:false,availability:value,unavailableMessage:text}}/></div></article></fieldset>
  </>}
  {error&&<p role="alert">{error}</p>}
  <SubmitButton disabled={!!error}>Save availability</SubmitButton>

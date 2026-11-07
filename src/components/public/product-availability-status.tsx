@@ -8,5 +8,5 @@ export function AvailabilityBadge({product}:{product:StatusProduct}){
 }
 export function AvailabilityDetails({product}:{product:StatusProduct}){
  const status=availabilityPresentation(product);
- return <><div className={styles.statusPanel}><p>{status.message}</p>{status.reopening&&<p>{status.reopening}</p>}</div>{status.actionUrl&&<a className={`${styles.book} ${styles.secondaryAction}`} href={status.actionUrl}>{status.actionLabel}</a>}</>;
+ return <><div className={styles.statusPanel}>{status.reopening&&<p className={styles.reopeningHeadline}>{status.reopening}</p>}<p>{status.message}</p></div>{status.actionUrl&&<a className={`${styles.book} ${styles.secondaryAction}`} href={status.actionUrl}>{status.actionLabel}</a>}</>;
 }

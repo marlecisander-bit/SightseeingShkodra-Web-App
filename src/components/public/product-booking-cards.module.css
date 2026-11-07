@@ -116,8 +116,7 @@
  .carousel[data-overflow=true] .grid[data-dragging=true],.carousel[data-overflow=true] .grid[data-dragging=true] *{cursor:grabbing;}
 }
 
-/* Ribbon occupies its own row: long messages never cover media, titles or prices. */
-/* Status overlays do not alter the common photo dimensions or colour. */
+/* Only the photo is filtered: cream status elements retain their colour. */
 .card{position:relative;}
 .statusBadge{position:absolute;z-index:1;top:12px;left:12px;max-width:calc(100% - 24px);display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:8px;background:#FFF4D6;color:#704900;font-size:12px;font-weight:600;line-height:1.4;overflow-wrap:anywhere;}
 .statusBadge svg{width:15px;height:15px;flex-shrink:0;}
@@ -125,3 +124,10 @@
 .statusPanel p{margin:0;font-size:13px;line-height:1.5;}
 .statusPanel p+p{margin-top:6px;}
 .secondaryAction{border:1px solid #d6c7a6;border-radius:10px;color:#704900;background:#fffdf7;font-weight:600;min-height:44px;}
+
+.card[data-inactive=true]{background:#f1f2f3;border-color:#c7cbcf;box-shadow:0 8px 24px #172b4218;}
+.card[data-inactive=true]>:global(.p-media){filter:grayscale(1);}
+.card[data-inactive=true] .badges li{background:#e4e7e9;color:#39434d;}
+.card[data-inactive=true] .duration,.card[data-inactive=true] .price span{color:#515b65;}
+.statusPanel .reopeningHeadline{font-weight:700;font-size:14px;}
+.statusPreview{max-width:440px;width:100%;margin:0;}

@@ -1,6 +1,6 @@
 # Unavailable tour-card redesign — 7 November 2026
 
-Implemented locally; no production content edits, hosted migration or deployment in this task. Existing shared changes preserved in the authorized fallback repository (documented canonical directory remains absent).
+Published through PR #63 at main a6f9185850f56e662142e04b5736318a52e19ab3. Vercel Production Ready: AXZjQ7v1Zv7dFR8YhFA74VmY8FfZ. Migration 20261107000300 applied and recorded; no production content edits. Existing shared changes preserved in the authorized fallback repository (documented canonical directory remains absent).
 
 Products retain the existing operational `active` flag and `unavailable_message`. One nullable JSONB column, `availability_presentation`, stores validated state, optional badge label, structured reopening `{precision: "month" | "day", value: "YYYY-MM" | "YYYY-MM-DD"}`, and optional secondary-action label/destination. Existing values are not backfilled or overwritten. Legacy inactive products retain their explanatory message and use the temporary-unavailability label. Available products retain their booking flow; dates never change their active flag.
 
@@ -19,3 +19,7 @@ Shared `product-availability.ts` handles types, defaults, dates and URL validati
 Validation includes disposable-database persistence/public projections, state/date/URL rejection, role/stale guards and existing direct quote/hold/checkout tests; component tests for old records, normal booking links and new secondary actions. Real Chromium at 390×844 and 1440×1000 showed no horizontal overflow, equal image heights and full colour. Local admin fixture saves updated the visible card; missing dates/links rendered cleanly. The fixture is development-only and creates no production records.
 
 `npm run check` passed lint, generated types and production build. Full `npm test`: **708 passed, zero failed**. Enhanced persistence/projection checks and existing booking restrictions were rerun after the final test fixture adjustment. Logs: `evidence/tour-status-20261107/`.
+
+## Gray unavailable-card amendment
+
+User override: visible unavailable tours retain grayscale photos and muted gray card surfaces. The cream badge and panel remain in colour, with reopening headline first and explanatory message beneath it immediately before any secondary action. Admin preview uses the same styling and saved photo/title/description. Hidden-card filtering and available booking flow are unchanged. This amendment is local only pending publication; no migration or content changes are required.
