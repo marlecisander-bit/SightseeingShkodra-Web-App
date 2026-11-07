@@ -19,11 +19,12 @@ export async function getEmailAdmin(operatorId: string, filter?: string, recipie
       if(event) query=query.eq('event_type',event);
       const result=await query; if(result.error) throw Error('Email activity unavailable'); return result.count ?? 0;
     };
-    const [rows, accepted, failed, pending, events] = await Promise.all([
+    const [rows, accepted, failed, pending, events, queueFailures] = await Promise.all([
       history, base().eq('status','accepted').order('sent_at',{ascending:false}).limit(1),
       base().in('delivery_state',['failed','uncertain','bounced','suppressed','complained']).order('updated_at',{ascending:false}).limit(1),
       count(deliveryGroups.pending),
       Promise.all(emailEvents.map(async event=>({...event,pending:await count(deliveryGroups.pending,event.type),sent:await count(deliveryGroups.sent,event.type),failed:await count(deliveryGroups.failed,event.type)}))),
+      count(['failed','uncertain']),
     ]);
     if(rows.error || accepted.error || failed.error) throw Error('Email activity unavailable');
     const ids=[...new Set((rows.data??[]).filter(r=>r.status==='failed'||r.status==='uncertain').map(r=>r.booking_id))];
@@ -31,6 +32,6 @@ export async function getEmailAdmin(operatorId: string, filter?: string, recipie
     const providerEvents=await client.from('email_provider_events').select('delivery_id,kind,event_at,created_at,reason,source').eq('operator_id',operatorId).order('event_at',{ascending:false}).limit(500);
     const bookings=ids.length?await client.from('bookings').select('id').eq('operator_id',operatorId).eq('status','confirmed').in('id',ids):{data:[],error:null};
     if(bookings.error) throw Error('Email activity unavailable');
-    return {health:health.error?null:health.data as {providerFailures:number;delayed:number;missingOutcome:number;oldestPending:string|null;lastProviderEvent:string|null}|null,providerEvents:providerEvents.error?[]:providerEvents.data??[],config,heartbeat:heartbeat.error?null:heartbeat.data as WorkerEvidence|null,heartbeatAvailable:!heartbeat.error,rows:rows.data??[],events,pending,lastAccepted:accepted.data?.[0]?.sent_at??accepted.data?.[0]?.updated_at??null,lastFailed:failed.data?.[0]?.updated_at??null,resendable:(bookings.data??[]).map(b=>b.id)};
+    return {queueFailures,health:health.error?null:health.data as {providerFailures:number;delayed:number;missingOutcome:number;oldestPending:string|null;lastProviderEvent:string|null}|null,providerEvents:providerEvents.error?[]:providerEvents.data??[],config,heartbeat:heartbeat.error?null:heartbeat.data as WorkerEvidence|null,heartbeatAvailable:!heartbeat.error,rows:rows.data??[],events,pending,lastAccepted:accepted.data?.[0]?.sent_at??accepted.data?.[0]?.updated_at??null,lastFailed:failed.data?.[0]?.updated_at??null,resendable:(bookings.data??[]).map(b=>b.id)};
   });
 }

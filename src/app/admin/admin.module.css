@@ -453,3 +453,6 @@
 .shell .homeLink:hover {background:var(--admin-hover);}
 .shell .homeLink[aria-current="page"] {background:var(--admin-primary-soft);color:var(--admin-primary);}
 .shell .homeLink[aria-current="page"] > svg {color:var(--admin-primary);}
+
+/* These workspaces own their headings and surfaces. */
+.shell .panel:has([data-products-workspace]),.shell .panel:has([data-email-workspace]){background:transparent;border:0;padding:0;box-shadow:none}.shell .panel:has([data-products-workspace])>.pageTrail,.shell .panel:has([data-products-workspace])>.sectionMenu,.shell .panel:has([data-email-workspace])>.pageTrail,.shell .panel:has([data-email-workspace])>.sectionMenu{display:none}

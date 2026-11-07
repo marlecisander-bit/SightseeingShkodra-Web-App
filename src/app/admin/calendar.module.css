@@ -123,3 +123,8 @@
  .editorFooter[data-active=true]{position:fixed;left:12px;right:12px;bottom:calc(70px + env(safe-area-inset-bottom));z-index:50;border:1px solid var(--ss-border);border-radius:12px;padding:10px 12px;box-shadow:0 -4px 18px #00000012;}
  .editor:has(.editorFooter[data-active=true]){padding-bottom:130px;}
 }
+
+/* Keep public section spacing out of the admin schedule. */
+.operatingWorkspace{padding:0}.operatingWorkspace .serviceToolbar{margin:8px 0;gap:8px}.operatingWorkspace .serviceToolbar label,.operatingWorkspace .dateSelector label{display:grid;margin:0;gap:6px}.operatingWorkspace .serviceToolbar select,.operatingWorkspace .dateSelector input{margin:0}.operatingWorkspace .calendarNote{padding:0}.operatingWorkspace .departureCard{scroll-margin-top:90px}.operatingWorkspace .salesNotice{padding:12px}.operatingWorkspace .servicePeriod{margin:8px 0}.operatingWorkspace>details>summary{min-height:44px;display:flex;align-items:center}
+
+@media(max-width:767px){.monthPicker:not([data-expanded=true]) .monthNavigation,.monthPicker:not([data-expanded=true]) .legend,.monthPicker:not([data-expanded=true])>.calendarNote{display:none}.monthPicker{padding:10px}.monthActions{margin-top:0}.operatingWorkspace .workspace{margin-top:8px}}

@@ -34,14 +34,14 @@ export function AdminNavigation({groups,section,account}:{groups:AdminNavGroup[]
  const area=groups.find(group=>group.items.some(item=>item.id===active?.id))?.id;
  return <>
   <aside className={styles.desktopNavigation}>
-   <nav aria-label="Admin navigation" className={styles.taskNavigation}>{groups.map(group=>(group.id==='overview'||group.id==='bookings')?<Link key={group.id} className={styles.homeLink} prefetch={false} href={group.items[0].href} onClick={navigateAdminContext} aria-current={area===group.id?'page':undefined}><AdminIcon name={adminPrimaryIcons[group.id]}/><span>{group.label}</span><NavigationHint/></Link>:<div key={group.id}>{group.id==='tours'&&group.items.some(item=>item.id==='availability')&&<Link className={styles.homeLink} prefetch={false} href={group.items[0].href} onClick={navigateAdminContext} aria-current={active?.id==='availability'?'page':undefined}><AdminIcon name="calendar-check"/><span>Operating calendar</span><NavigationHint/></Link>}<details className={styles.taskGroup} key={group.id+':'+(area===group.id)} open={area===group.id}>
-    <summary><AdminIcon name={adminPrimaryIcons[group.id]}/><span>{group.label}</span><span className={styles.chevron}><AdminIcon name="chevron-down" size={16}/></span></summary>
+   <nav aria-label="Admin navigation" className={styles.taskNavigation}>{groups.map(group=>(group.id==='overview'||group.id==='bookings')?<Link key={group.id} className={styles.homeLink} prefetch={false} href={group.items[0].href} onClick={navigateAdminContext} aria-current={area===group.id?'page':undefined}><AdminIcon name={adminPrimaryIcons[group.id]}/><span>{group.label}</span><NavigationHint/></Link>:<div key={group.id}>{group.id==='tours'&&group.items.some(item=>item.id==='availability')&&<Link className={styles.homeLink} prefetch={false} href={group.items[0].href} onClick={navigateAdminContext} aria-current={active?.id==='availability'?'page':undefined}><AdminIcon name="calendar-check"/><span>Calendar</span><NavigationHint/></Link>}<details className={styles.taskGroup} key={group.id+':'+(area===group.id)} open={area===group.id}>
+    <summary><AdminIcon name={adminPrimaryIcons[group.id]}/><span>{group.id==='tours'?'Tour operations':group.label}</span><span className={styles.chevron}><AdminIcon name="chevron-down" size={16}/></span></summary>
     <TaskItems items={group.id==='tours'?group.items.filter(item=>item.id!=='availability'):group.items} activeId={active?.id}/>
    </details></div>)}</nav>
    <details className={styles.accountMenu}><summary>Account</summary>{account}</details>
   </aside>
   <nav className={styles.bottomNavigation} aria-label="Primary admin navigation" style={{gridTemplateColumns:`repeat(${groups.length},minmax(0,1fr))`}}>
-   {groups.map(group=><Link key={group.id} prefetch={false} href={group.items[0].href} onClick={navigateAdminContext} aria-current={area===group.id?'page':undefined}><span className={styles.primaryIcon}><AdminIcon name={adminPrimaryIcons[group.id]}/></span><span>{group.label}</span><NavigationHint/></Link>)}
+   {groups.map(group=><Link key={group.id} prefetch={false} href={group.items[0].href} onClick={navigateAdminContext} aria-current={area===group.id?'page':undefined}><span className={styles.primaryIcon}><AdminIcon name={group.id==='tours'?'calendar-days':adminPrimaryIcons[group.id]}/></span><span>{group.id==='tours'?'Calendar':group.label}</span><NavigationHint/></Link>)}
   </nav>
  </>;
 }

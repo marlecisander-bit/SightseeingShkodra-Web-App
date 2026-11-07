@@ -10,7 +10,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import { SectionCardHeader } from "./website-section-card";
 import type { WebsiteRecord } from "@/modules/content/website-server";
-import { websiteFields, visibilityScope, websiteEditorGroups, homepageVisible } from "@/modules/content/website-schema";
+import { editableWebsiteSections, websiteFields, visibilityScope, websiteEditorGroups, homepageVisible } from "@/modules/content/website-schema";
 import { WebsiteSectionEditor } from "./website-editor";
 import styles from "./website-editor.module.css";
 import { usePanelHistory } from './use-panel-history';
@@ -30,6 +30,7 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
   const onStateChange = useCallback((id: string, dirty: boolean, pending: boolean) => setStates(current => current[id]?.dirty === dirty && current[id]?.pending === pending ? current : { ...current, [id]: { dirty, pending } }), []);
   if (savedStamp !== record.updated_at) { setSavedStamp(record.updated_at); setValues(record.body.content); setStates({}); }
   const content = record.body.content;
+  const publicationSections=editableWebsiteSections.filter(section=>section.fields.some(field=>values[field.key]!==record.published_body?.content[field.key])).map(section=>ownerFieldLabel(section.title));
   const changed = Object.keys(content).some(key => content[key] !== record.published_body?.content[key]);
   const dirtySection = websiteSections.find(s => s.fields.some(f => values[f.key] !== content[f.key]));
   const unsaved = !!dirtySection;
@@ -91,10 +92,8 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
   if(home)return <section className={styles.cms} data-website-workspace><WebsiteHome operatorId={operatorId} content={content} published={record.published_body?.content} canSensitive={canSensitive} onOpen={openHome}/>{notice&&<p role="alert">{notice}</p>}</section>;
   if(scope==="destinations") return <section className={styles.cms} data-editing={!!active}><Button onClick={()=>{if(window.dispatchEvent(new CustomEvent("admin:before-navigation",{cancelable:true}))){setScope("homepage");setHome(true);}}}>Back to Website</Button>{destinationManager}</section>;
   return <section className={styles.cms} data-website-workspace data-editing={!!active}>
-    <Button type="button" disabled={pending} onClick={()=>{if(unsaved){setNotice('Save or discard your changes before returning to Website.');return;}panelHistory.close();setHome(true);}}>Back to Website</Button>
-    {active&&<div className={styles.editorContext}><p>Website / {({homepage:'Homepage',pages:'Public pages',global:'Shared website',destinations:'Destinations'})[scope]}</p><h1>{ownerFieldLabel(selected.title)}</h1><span>English · Existing shared content</span></div>}
-    {active&&<Button className={styles.backToSections} type="button" disabled={pending} onClick={()=>panelHistory.close()}>Back to website sections</Button>}
-    {active&&<a className={styles.focusedPreview} href={preview} target="_blank" rel="noopener noreferrer">Preview saved draft</a>}
+    <Button type="button" disabled={pending} onClick={()=>{if(unsaved){setNotice('Save or discard your changes before returning to Website.');return;}if(active){panelHistory.close();}else{setHome(true);}}}>{active?'← Website sections':'← Website'}</Button>
+    {active&&<div className={styles.editorContext}><p>Website / {({homepage:'Homepage',pages:'Public pages',global:'Shared website',destinations:'Destinations'})[scope]}</p><h1>{ownerFieldLabel(selected.title)}</h1></div>}
     <header className={styles.toolbar}>
       <div><p className={styles.breadcrumb}>Website / {({homepage:"Homepage",destinations:"Destinations",pages:"Public pages",global:"Global"})[scope]}</p><h1>{({homepage:"Homepage content",destinations:"Destination content",pages:"Public page content",global:"Global website content"})[scope]}</h1><p className={styles.subtitle}>Choose what visitors see, then preview and publish when you’re ready.</p></div>
       <div className={styles.toolbarActions}>
@@ -124,7 +123,7 @@ export function WebsiteWorkspace({ operatorId, record, destinationManager, foote
               {dirtySection?.id === section.id && section.fields.some(f => f.kind === "visibility" && values[f.key] !== content[f.key]) && <small className={styles.helper}>Unsaved visibility. Last saved: {homepageVisible(content, section.id) ? "Visible" : "Hidden"}. Save draft keeps changes private until you publish.</small>}
               {active !== section.id && feedback[section.id] && <span className={styles.notice} role="status">{feedback[section.id]}</span>}
             </summary>
-            {(active===section.id || dirtySection?.id===section.id || (!active&&index===0))&&<WebsiteSectionEditor previewHref={preview} canPublish={canPublish} destinationLinks={destinationLinks} onFeedback={onFeedback} values={values} setValues={setValues} operatorId={operatorId} sectionId={section.id} content={content} stamp={record.updated_at} onStateChange={onStateChange} />}
+            {(active===section.id || dirtySection?.id===section.id || (!active&&index===0))&&<WebsiteSectionEditor key={record.updated_at} publicationSections={publicationSections} previewHref={preview} liveHref={['hero','route','live','departures','reviews','partners','seo','navigation','footer','whatsapp'].includes(section.id)?'/':({routePage:'/route',explorePage:'/explore',bookPage:'/book',dayPage:'/your-day',faq:'/faq',legalprivacy:'/privacy-policy',legalterms:'/terms-and-conditions'} as Record<string,string>)[section.id]??'/tour'} canPublish={canPublish} destinationLinks={destinationLinks} onFeedback={onFeedback} values={values} setValues={setValues} operatorId={operatorId} sectionId={section.id} content={content} stamp={record.updated_at} onStateChange={onStateChange} />}
             {active===section.id&&section.id==="footer"&&footerGoogleEditor}
           </details>;
         })}

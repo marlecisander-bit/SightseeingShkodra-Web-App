@@ -23,10 +23,11 @@ export function BookingsWorkspace({operatorId,today,day,email,selectedBooking,en
   {selectedBooking&&<Link prefetch={false} className={styles.back} href={day?`${base}?date=${day}`:base}>← Back to bookings</Link>}
   {!selectedBooking&&serverSearch?<Form action={base} prefetch={false} className={styles.controls} key={[serverSearch.query,serverSearch.status,day,email].join(':')}>
    <label className={styles.search}><span>Search all bookings</span><input name="q" type="search" maxLength={200} defaultValue={serverSearch.query} placeholder="Name, reference, email or phone"/></label>
-   <label>Departure date<input type="date" name="date" defaultValue={day}/></label>
+   <nav className={styles.filters} aria-label="Booking date filters"><Link prefetch={false} aria-current={day===today?'page':undefined} href={`${base}?date=${today}`}>Today</Link><Link prefetch={false} aria-current={!day?'page':undefined} href={base}>All bookings</Link><Link prefetch={false} href={`${root}/departures?view=calendar${day?'&date='+day:''}`}>Calendar</Link></nav>
+   <details className={styles.lookup} open={!!(day||email||serverSearch.status!=='all')}><summary>Filters{day||email||serverSearch.status!=='all'?' · Applied':''}</summary><label>Departure date<input type="date" name="date" defaultValue={day}/></label>
    {email&&<input type="hidden" name="email" value={email}/>}
    <label>Status<select name="status" defaultValue={serverSearch.status}>{bookingStatuses.map(value=><option key={value} value={value}>{value==='all'?'All statuses':ownerStatus(value)}</option>)}</select></label>
-   <div className={styles.filterActions}><button type="submit">Find bookings</button><Link prefetch={false} href={base}>Clear filters</Link><Link prefetch={false} href={`${base}?date=${today}`}>Today</Link></div>
+   <div className={styles.filterActions}><button type="submit">Find bookings</button><Link prefetch={false} href={base}>Clear filters</Link></div></details><button type="submit">Search bookings</button>
   </Form>:!selectedBooking&&<div className={styles.controls}>
    <label className={styles.search}><AdminIcon name="users" size={18}/><span className={styles.sr}>Search these results</span><input type="search" disabled={!ready} placeholder="Search these results" value={search} onChange={e=>setSearch(e.target.value)} aria-describedby="booking-search-scope"/></label>
    <nav className={styles.filters} aria-label="Booking date filters"><Link prefetch={false} aria-current={day===today?'page':undefined} href={`${base}?date=${today}`}>Today</Link><Link prefetch={false} aria-current={!day&&!selectedBooking&&!email?'page':undefined} href={base}>All bookings</Link><Link prefetch={false} href={`${root}/departures?fromBookings=1${day?'&date='+day:''}`}>Calendar</Link></nav>
@@ -44,6 +45,6 @@ export function BookingsWorkspace({operatorId,today,day,email,selectedBooking,en
   </div>
   {pagination("Booking result pages, bottom")}
   {!visible.length&&<section className={styles.empty}><AdminIcon name="ticket"/><h2>{serverSearch?'No bookings on this page':entries.length?'No loaded bookings match':'No bookings found'}</h2><p>{serverSearch?'Try a different search or clear the filters.':entries.length?'Try a different search or status.':'Try a different departure date or exact email lookup.'}</p>{!serverSearch&&(search||status!=='all')&&<button type="button" onClick={()=>{setSearch('');setStatus('all');}}>Reset loaded filters</button>}</section>}
-  <p className={styles.scope}>Only full meeting-point payment collection is supported here. Paid cancellations request refund review; no refund is issued. Amendments use the existing customer workflow and are not added to this staff interface.</p>
+  <details className={styles.lookup}><summary>Payment, changes &amp; cancellation help</summary><p>Collect the full balance at the meeting point. Paid cancellations request refund review; they do not issue a refund. Booking changes use the customer’s existing booking management link.</p></details>
  </div>;
 }

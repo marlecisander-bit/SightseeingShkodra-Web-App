@@ -6,6 +6,7 @@ export default function EmailReliabilityPreview(){
  if(process.env.NODE_ENV!=='development')notFound();
  const statuses=['delivered','suppressed','delivery_delayed','bounced','complained','failed','sent',null];
  const data:Parameters<typeof EmailPanelView>[0]['data']={
+  queueFailures:0,
   config:{bound:true,enabled:true,ready:true,siteConfigured:true,apiKeyConfigured:true,cronConfigured:true,senderName:'Sightseeing Shkodra',senderEmail:'tickets@example.invalid',expectedSenderDomain:'sightseeingshkodra.com',senderDomainMatches:false,senderDomain:'example.invalid',replyTo:'help@example.invalid',ownerEmail:'owner@example.invalid',testRecipient:'',startConfigured:true,webhookConfigured:true,statusKeyConfigured:true},
   heartbeat:{started_at:new Date().toISOString(),finished_at:new Date().toISOString(),last_success_at:new Date().toISOString(),status:'live',processed:0},heartbeatAvailable:true,
   health:{providerFailures:4,delayed:1,missingOutcome:2,oldestPending:null,lastProviderEvent:new Date().toISOString()},

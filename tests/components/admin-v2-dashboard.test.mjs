@@ -19,10 +19,10 @@ test('dashboard preserves unavailable vs zero, local service date and useful gua
  assert.equal(d.querySelectorAll('section.metric').length,4);
  assert.equal(d.querySelectorAll('strong[aria-label="Unavailable"]').length,4);
  assert.match(d.body.textContent,/Saturday,? 24 October/);
- assert.deepEqual([...d.querySelectorAll('section.metric h2')].map(x=>x.textContent),['Passengers today','Booked revenue','Departures today','Need attention']);
- assert.equal(d.querySelector('h3').textContent,'Next departure');
+ assert.deepEqual([...d.querySelectorAll('section.metric h2')].map(x=>x.textContent),['Passengers today','Booked revenue','Departures today','Unread notifications']);
+ assert.equal(d.querySelector('h3').textContent,'Next scheduled departure');
  assert.match(d.body.textContent,/Schedule summary unavailable/);
- assert.ok(d.querySelector(`a[href="/admin/${op}/departures?date=2026-10-24"]`));
+ assert.ok(d.querySelector(`a[href="/admin/${op}/departures?view=calendar&date=2026-10-24"]`));
  assert.ok(d.querySelector(`a[href="/admin/${op}/bookings?date=2026-10-24"]`));
  assert.equal(d.querySelector('a[href*="live-map.html"]').target,'_blank');
  assert.doesNotMatch(d.body.textContent,/€180|5 \/ 8|0 passengers|No departures/);
@@ -38,7 +38,7 @@ test('content editor has no operational KPI, booking/create or calendar actions'
  assert.match(d.body.textContent,/Open page editor/);assert.doesNotMatch(d.body.textContent,/Needs attention/);
  dom.window.close();
 });
-for(const [role,expected] of [['owner',['Home','Bookings','Tours','Products','Website','More']],['admin',['Home','Bookings','Tours','Products','Website','More']],['operations',['Home','Bookings','Tours','Products','More']],['content_editor',['Home','Products','Website','More']]])test(`${role} primary destinations expose only supported capability groups`,()=>{
+for(const [role,expected] of [['owner',['Home','Bookings','Calendar','Products','Website','More']],['admin',['Home','Bookings','Calendar','Products','Website','More']],['operations',['Home','Bookings','Calendar','Products','More']],['content_editor',['Home','Products','Website','More']]])test(`${role} primary destinations expose only supported capability groups`,()=>{
  const g=adminNavigationGroups(op,role);assert.deepEqual(g.map(x=>x.label),expected);
  const items=g.flatMap(x=>x.items);assert.equal(new Set(items.map(x=>x.href)).size,items.length);
  assert.equal(items.some(x=>x.id==='email'),role==='owner');assert.equal(items.some(x=>x.id==='products'),true);

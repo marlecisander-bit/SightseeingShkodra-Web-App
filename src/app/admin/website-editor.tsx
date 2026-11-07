@@ -14,8 +14,12 @@ import styles from "./website-editor.module.css";
 import { NavigationPreview } from "./navigation-preview";
 import { prepareWebsiteImage } from "@/modules/content/image-upload";
 
-export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, values, setValues, onStateChange, onFeedback, canPublish = false, destinationLinks = [], previewHref }: { previewHref?:string; canPublish?:boolean; destinationLinks?:{value:string;label:string}[]; operatorId: string; sectionId: string; content: WebsiteContent; stamp: string; values: WebsiteContent; setValues: Dispatch<SetStateAction<WebsiteContent>>; onStateChange?: (id: string, dirty: boolean, pending: boolean) => void; onFeedback?: (id: string, message: string) => void }) {
+export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, values, setValues, onStateChange, onFeedback, canPublish = false, destinationLinks = [], previewHref, liveHref, publicationSections=[] }: { liveHref?:string; publicationSections?:string[]; previewHref?:string; canPublish?:boolean; destinationLinks?:{value:string;label:string}[]; operatorId: string; sectionId: string; content: WebsiteContent; stamp: string; values: WebsiteContent; setValues: Dispatch<SetStateAction<WebsiteContent>>; onStateChange?: (id: string, dirty: boolean, pending: boolean) => void; onFeedback?: (id: string, message: string) => void }) {
   const section = editableWebsiteSections.find(section => section.id === sectionId)!;
+  const [reviewed, setReviewed] = useState<string|null>(null);
+  const reviewSignature=JSON.stringify([stamp,values,publicationSections]);
+  const review=reviewed===reviewSignature;
+  function setReview(value:boolean){setReviewed(value?reviewSignature:null);}
   const [message, setMessage] = useState("");
   const [pending, start] = useTransition();
   const router = useRouter();
@@ -32,9 +36,12 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
     window.addEventListener("beforeunload", warn);
     return () => window.removeEventListener("beforeunload", warn);
   }, [dirty]);
-  return <form id={`cms-form-${sectionId}`} className={styles.editor} onSubmit={event => {
+  return <form id={`cms-form-${sectionId}`} className={styles.editor} onChange={()=>setReview(false)} onSubmit={event => {
     event.preventDefault();
     const data = new FormData(event.currentTarget, (event.nativeEvent as SubmitEvent).submitter);
+    if(data.get('confirm_publication')==='yes')data.set('operation','publish');
+    if(data.get('operation')==='publish'&&(data.get('confirm_publication')!=='yes'||!review)){setReview(true);return;}
+    setReview(false);
     start(async () => {
       const result = await saveWebsiteSection(operatorId, sectionId, data);
       setMessage(result.error ?? result.saved ?? "");
@@ -42,7 +49,7 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
       if (!result.error) router.refresh();
     });
   }}>
-    <p>Used on: {sectionConsumers[sectionId] ?? "Shared public content"}.</p>
+    <p>Used on: {sectionConsumers[sectionId] ?? "Shared public content"}. {liveHref&&<a href={liveHref} target="_blank" rel="noopener noreferrer">View live page ↗</a>}</p>
     {sectionId === "partners" && <p><a href={`/admin/${operatorId}/partners`}>Manage partners, logos and display order</a>. Only active partners with logos appear. The section stays hidden when empty.</p>}
     {sectionId === "reviews" && <p><a href={`/admin/${operatorId}/reviews`}>Manage guest reviews and ordering</a>. This section is hidden until a review is published.</p>}
     {sectionId==='footer'&&<p>Leave a social link empty to hide it. Manage your Google Reviews link below.</p>}
@@ -52,12 +59,12 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
     {sectionId==='whatsapp'&&<p>Use your WhatsApp Business number with its country code. Save draft keeps changes private; Publish updates the website. Leave the button label empty to show only the icon.</p>}
     {sectionId==='navigation'&&<p>Desktop and mobile share these links. Route and Live map lead to the combined Route &amp; Live Map page. If several links lead to the same page, the first link supplies its label. Edit that first label to customize it; the original Route and Live map labels use the combined page name.</p>}
     {sectionId.startsWith('legal')&&<p>Plain text only. Add your approved legal wording, set Published, then publish. Unpublished pages show a neutral availability notice.</p>}
-    <p>Save your changes as a draft or publish them when you’re ready.</p>
+
     {sectionId === "faq" && <p>Save a draft to preview; publish to update the public FAQ. Questions below appear on the dedicated FAQ page. <a href={`/admin/${operatorId}/website-preview?page=faq`}>Preview saved FAQ draft</a></p>}
     {sectionId === "departures" && <p><a href={`/admin/${operatorId}/catalog`}>Products & suppliers</a> | <a href={`/admin/${operatorId}/departures`}>Calendar & Pricing</a>. Stops and live vehicle information are managed from Live Map.</p>}
     <input type="hidden" name="updated_at" value={stamp} />
     {sectionId === "navigation" && <NavigationPreview content={values}/>}
-    {sectionId === "hero" && <p>Desktop crop: at widths of 1600px and above, a centered vertical position is displayed from the bottom. Other desktop positions and the mobile setting are preserved. The editor image does not reproduce every screen crop.</p>}
+    {sectionId === "hero" && <details><summary>Image display help</summary><p>Desktop crop: at widths of 1600px and above, a centered vertical position is displayed from the bottom. Other desktop positions and the mobile setting are preserved. The editor image does not reproduce every screen crop.</p></details>}
     <fieldset disabled={pending}>
       {section.fields.filter(f=>f.kind==="visibility").map(f=><input key={f.key} type="hidden" name={f.key} value={values[f.key]}/>)}
       {groups.filter(group=>group.fields.length).map(group=><fieldset className={styles.fieldGroup} key={group.title}><legend>{group.title}</legend><div className={styles.fieldGrid}>{group.fields.map(field => {
@@ -97,13 +104,14 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
         </div>;
       })}</div></fieldset>)}
       {section.fields.some(f=>f.kind === "image") && <details><summary>Technical details</summary><p>For support: replace an existing image link without uploading a new file.</p>{section.fields.filter(f=>f.kind === "image").map(f=><label key={f.key}>{ownerFieldLabel(f.label)} link<input maxLength={f.max} value={values[f.key]} onChange={e=>setValues(v=>({...v,[f.key]:e.target.value}))}/></label>)}</details>}
-      <EditorActions dirty={dirty} pending={pending} scope="Publish applies this section and all previously saved website drafts.">
+      <EditorActions dirty={dirty} pending={pending} scope="Save draft keeps changes private. Review changes before publishing.">
         <Button className={styles.textButton} type="button" disabled={!dirty} onClick={() => {setValues(current => ({...current, ...Object.fromEntries(section.fields.map(f => [f.key, content[f.key]]))})); setMessage("Unsaved changes discarded.");}}>Discard</Button>
         <Button className={styles.secondary} name="operation" value="draft">{pending ? "Saving…" : "Save draft"}</Button>
         {previewHref&&(!dirty?<a href={previewHref} target="_blank" rel="noopener noreferrer">Preview saved draft</a>:<span>Save draft to preview your changes</span>)}
-        <Button className={styles.primary} name="operation" value="publish" disabled={!canPublish}>Publish website changes</Button>
+        <Button className={styles.primary} name="operation" value="publish" disabled={!canPublish}>Review &amp; publish</Button>
       </EditorActions>
     </fieldset>
+    {review&&<section className={styles.publishReview} role="region" aria-label="Review website publication" tabIndex={-1} ref={node=>{node?.focus();node?.scrollIntoView({block:'nearest'});}}><h2>Publish these website changes?</h2><p>This updates the live website with this form and all saved website drafts:</p><ul>{(publicationSections.length?publicationSections:[section.title]).map(title=><li key={title}>{ownerFieldLabel(title)}</li>)}</ul><p>Product publication is managed separately in Products.</p><Button name="confirm_publication" value="yes" disabled={pending}>Publish these changes</Button><Button type="button" disabled={pending} onClick={()=>setReview(false)}>Keep editing</Button></section>}
     {message && <p className={styles.notice} role="status">{message}</p>}
   </form>;
 }

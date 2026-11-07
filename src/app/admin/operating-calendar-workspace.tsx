@@ -18,10 +18,10 @@ export function OperatingCalendarWorkspace({operatorId,calendars,products,select
   <p className={styles.servicePeriod}>Operating period: {current.schedule.start_date} – {current.schedule.end_date} · {timeZone}</p>
   <div className={styles.salesNotice} data-paused={product?.active===false||current.schedule.status!=='active'}>
    <strong>{product?.active===false?`Product sales paused — ${availability?.label}`:current.schedule.status!=='active'?'Usual schedule paused':'Product sales enabled'}</strong>
-   <p>{product?.active===false?'Opening a date does not lift this product pause. Change availability in Products when you are ready to accept bookings.':current.schedule.status!=='active'?'Activate the usual schedule in Products before accepting bookings.':'Date closures, prices, remaining seats and booking cutoff still apply.'}</p>
+   <p>{product?.active===false?'Dates below keep their settings. Resume product sales in Products.':current.schedule.status!=='active'?'Activate the usual schedule in Products before accepting bookings.':'Date closures, prices, remaining seats and booking cutoff still apply.'}</p>
    {product?.active===false&&<Link prefetch={false} href={`/admin/${operatorId}/products?product=${product.id}&tab=schedule`}>Review product availability</Link>}
   </div>
-  {offers.length>1&&<p className={styles.calendarNote}>Shared schedule and van seats: {offers.map(p=>p.title).join(', ')}. Schedule changes affect these offers; their product sales switches remain separate.</p>}
-  <OperationsCalendar key={current.schedule.id+month+selectedDate} operatorId={operatorId} schedule={current.schedule} days={current.days} initialDate={selectedDate} month={month} today={today} timeZone={timeZone} canPrice={canPrice} fromBookings={fromBookings}/>
+  {offers.length>1&&<details className={styles.calendarNote}><summary>Offers sharing this schedule</summary><p>Shared schedule and van seats: {offers.map(p=>p.title).join(', ')}. Schedule changes affect these offers; their product sales switches remain separate.</p></details>}
+  <OperationsCalendar key={current.schedule.id+month+selectedDate} operatorId={operatorId} schedule={current.schedule} days={current.days} initialDate={selectedDate} month={month} today={today} timeZone={timeZone} salesPaused={product?.active===false||current.schedule.status!=='active'} canPrice={canPrice} fromBookings={fromBookings}/>
  </section>;
 }

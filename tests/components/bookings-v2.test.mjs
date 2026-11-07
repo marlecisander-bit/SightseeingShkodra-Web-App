@@ -37,7 +37,7 @@ test('canonical detail reuses BookingCard with organized sections, existing cale
  assert(d.window.document.querySelector(`details#booking-${booking}[open]`));
  assert.deepEqual([...d.window.document.querySelectorAll('h3')].map(e=>e.textContent),['Guest','Tour & passengers','Payment','Communications','Booking pass','Reservation actions']);
  assert.match(d.window.document.body.textContent,/3 passengers · 2 occupied seats/);assert.match(d.window.document.body.textContent,/breakdown unavailable/);
- assert.equal(d.window.document.querySelector('a[href*="departures"]').getAttribute('href'),`/admin/${op}/departures?date=2026-10-24&fromBookings=1`);
+ assert.equal(d.window.document.querySelector('a[href*="departures"]').getAttribute('href'),`/admin/${op}/departures?view=calendar&date=2026-10-24&fromBookings=1#departure-11:00`);
  assert.equal(d.window.document.querySelectorAll('button').length,0);assert.doesNotMatch(d.window.document.body.textContent,/Issue refund|Amend booking/);d.window.close();
 });
 test('workspace makes scope and limits explicit, omits unsupported Upcoming and never claims a global count',()=>{
