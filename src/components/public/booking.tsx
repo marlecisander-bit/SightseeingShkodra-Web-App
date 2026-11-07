@@ -160,7 +160,7 @@ export function BookingProvider({ children, content: suppliedContent, preview = 
         setSelection,
         availability,
         open: (trigger) => {
-          if (!dialog.current || dialog.current.open) return;
+          if (product?.active===false || !dialog.current || dialog.current.open) return;
           opener.current = trigger ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
           const state={...window.history.state,[historyMarker]:dialogTitle};
           if(window.history.state?.[historyMarker])window.history.replaceState(state,"");
@@ -236,8 +236,9 @@ function BookingDialogContent({content,preview=false,titleId,busy,confirmClose,c
 
 /** Keep link styling and direct/new-tab access; ordinary booking activation opens the shared dialog. */
 export function PublicBookingLink({ href, onClick, ...props }: ComponentProps<typeof Link>) {
-  const { open } = useBooking();
+  const { open,product } = useBooking();
   const booking = href === "/book";
+  if(booking&&product?.active===false)return <span className={props.className} aria-disabled="true">Booking unavailable</span>;
   return <Link {...props} className={`${props.className ?? ""}${booking && props.className?.includes("p-button") ? " p-button-booking" : ""}`} href={href} aria-haspopup={booking ? "dialog" : props["aria-haspopup"]} onClick={event => {
     onClick?.(event);
     if (!booking || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || (props.target && props.target !== "_self") || props.download) return;
@@ -259,9 +260,9 @@ export function BookButton({
   ariaLabel?: string;
   onClick?: () => void;
 }) {
-  const { open } = useBooking();
+  const { open,product } = useBooking();
   return (
-    <Button type="button" size="lg" aria-haspopup="dialog" aria-label={ariaLabel} className={`p-button p-button-booking ${className}`} onClick={(event) => { onClick?.(); open(event.currentTarget); }}>
+    <Button type="button" size="lg" disabled={product?.active===false} aria-haspopup="dialog" aria-label={product?.active===false?"Booking unavailable":ariaLabel} className={`p-button p-button-booking ${className}`} onClick={(event) => { onClick?.(); open(event.currentTarget); }}>
       {children}
     </Button>
   );
@@ -367,7 +368,7 @@ export function Header({ content: c = initialWebsiteContent, previewPathname }: 
   const pathname = previewPathname ?? currentPathname;
   const inBooking = pathname === "/book" || pathname.startsWith("/booking/");
   const [heroVisible, setHeroVisible] = useState(true);
-  const { open } = useBooking();
+  const { open,product } = useBooking();
   const [hash, setHash] = useState("");
   const headerRef = useRef<HTMLElement>(null);
   const [mobileHeadlineCovered,setMobileHeadlineCovered]=useState(false);
@@ -492,10 +493,10 @@ export function Header({ content: c = initialWebsiteContent, previewPathname }: 
           aria-label="Main navigation"
         >
           {links.map((href,i)=>visibleWebsiteLink(href,c) ? <PublicBookingLink key={i} href={href} aria-current={active===i ? (href.includes("#") ? "location" : "page") : undefined} onClick={()=>{if(menu)menuToggle.current?.focus();setMenu(false);setHash(href.includes("#")?"#"+href.split("#")[1]:"");}}><span className="p-nav-label">{items[i].label}</span></PublicBookingLink> : null)}
-          {inBooking ? <Link className="p-menu-back" href="/" onClick={() => setMenu(false)}>Back to website</Link> : <Button type="button" size="lg" className="p-button p-button-booking p-menu-book" onClick={bookFromHeader}>{c["nav.book"]}</Button>}
+          {inBooking ? <Link className="p-menu-back" href="/" onClick={() => setMenu(false)}>Back to website</Link> : <Button type="button" size="lg" className="p-button p-button-booking p-menu-book" disabled={pathname!=="/"&&product?.active===false} onClick={bookFromHeader}>{c["nav.book"]}</Button>}
         </nav>
         <span className="p-language" title="More languages coming soon" aria-label="English; more languages coming soon">EN</span>
-        {inBooking ? <Link className="p-header-back" href="/">Back to website</Link> : <Button type="button" size="lg" className="p-button p-button-booking p-header-book" aria-label={c["nav.book"]} onClick={bookFromHeader}><span className="p-header-book-full">{c["nav.book"]}</span><span className="p-header-book-compact" aria-hidden="true">Book</span></Button>}
+        {inBooking ? <Link className="p-header-back" href="/">Back to website</Link> : <Button type="button" size="lg" className="p-button p-button-booking p-header-book" disabled={pathname!=="/"&&product?.active===false} aria-label={c["nav.book"]} onClick={bookFromHeader}><span className="p-header-book-full">{c["nav.book"]}</span><span className="p-header-book-compact" aria-hidden="true">Book</span></Button>}
         <button
           ref={menuToggle}
           className="p-menu-toggle"
@@ -513,7 +514,7 @@ export function Header({ content: c = initialWebsiteContent, previewPathname }: 
   );
 }
 export function BookingFlow({productHeading=true}: {productHeading?:boolean} = {}) {
-  const {generation,currentMeetingPoint} = useBooking();
+  const {generation,currentMeetingPoint,product} = useBooking();
   const footer = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const viewport = window.visualViewport;
@@ -526,5 +527,6 @@ export function BookingFlow({productHeading=true}: {productHeading?:boolean} = {
     viewport.addEventListener("scroll", fit);
     return () => { viewport.removeEventListener("resize", fit); viewport.removeEventListener("scroll", fit); };
   }, []);
+  if(product?.active===false)return <p role="status">Unavailable for booking · {product.unavailableMessage||"Temporarily unavailable"}</p>;
   return <><MeetingPointSummary value={currentMeetingPoint}/><CheckoutFlow key={generation} productHeading={productHeading} /><div ref={footer} data-booking-page-footer/></>;
 }

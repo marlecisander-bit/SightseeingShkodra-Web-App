@@ -83,3 +83,22 @@ Do not change Vercel/DNS/backend/map configuration. Preserve the previous produc
 ## Verification limits
 
 Physical iOS/Android devices, physical on-screen keyboards and real seat/order/payment creation are **not tested**. Responsive Chrome/touch emulation, live read-only queries, native keyboard events and intercepted mutation handoffs are distinguished above. No email/QR receipt or financial end-to-end success is claimed. Production acceptance must stop before creating a reservation; post-publication results and final immutable URL belong in the publication receipt.
+
+
+## Published acceptance
+
+PR #51 merged as **e47473289f93ffbc3301eedf7924a34c2c403783**. Vercel Production **FrDXzdsSgQTbC8WeGSEZ7cnXwuCb** is successful at `https://sightseeing-shkodra-web-69ag3pcs7-aleksander-marleci.vercel.app`. PR and main CI pass; the deployed source tree is identical to the validated final candidate.
+
+Actual `.app` and `www.sightseeingshkodra.com` browser checks each pass nine homepage and nine dialog layouts, native touch swiping, real availability/prices/passenger rules, unavailable-group recovery, generic/product-specific booking identity, fixed phone/landscape actions, keyboard focus, Escape and preserved selection on reopening. Both record **zero checkout requests**. The existing non-www `.com` redirect resolves to the working www site. No material regression was found; rollback was not needed. Previous production identity is retained in the receipt.
+
+- [Release receipt](evidence/booking-publication-20261104/publication-receipt.json)
+- [Main CI/deployment status](evidence/booking-publication-20261104/production-status.json)
+- [Published .app browser results](evidence/booking-publication-20261104/published-browser-results.json)
+- [Published www browser results](evidence/booking-publication-20261104/www-published-browser-results.json)
+- [Published desktop homepage](evidence/booking-publication-20261104/www-published-home-1440.png)
+- [Published desktop cards](evidence/booking-publication-20261104/www-published-cards-1440.png)
+- [Published mobile homepage](evidence/booking-publication-20261104/www-published-home-390.png)
+- [Published mobile booking](evidence/booking-publication-20261104/www-published-booking-mobile.png)
+- [Published mobile dialog](evidence/booking-publication-20261104/www-published-dialog-mobile.png)
+
+Physical devices/on-screen keyboards remain unverified. Live production checks stop before reservation creation; pre-publication contact/confirmation verification uses the intercepted local hold response described above. Post-publication receipts/screenshots are retained locally rather than triggering a documentation-only production deployment. Unrelated working-tree changes remain preserved. No DNS, schema, GPS, delivery configuration or separate Live Map deployment changed.

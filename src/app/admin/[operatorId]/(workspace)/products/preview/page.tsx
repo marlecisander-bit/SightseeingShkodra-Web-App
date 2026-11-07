@@ -13,6 +13,6 @@ export default async function Page(props:SectionProps){
  const ctx=await sectionAccess('products',props),id=(await props.searchParams).product;
  const product=await withOperatorService(ctx.operatorId,'catalog.read',async client=>{const {data}=await client.from('products').select('*').eq('operator_id',ctx.operatorId).eq('id',id??'').maybeSingle();return data as WorkspaceProduct|null;});
  if(!product)notFound();const d=productDraft(product);
- const preview:BookableProduct={id:product.id,title:d.title,slug:product.slug,mode:product.seat_reservation_mode as BookableProduct['mode'],minutes:product.reservation_minutes,card:{...d.card,enabled:true}};
+ const preview:BookableProduct={active:product.active,unavailableMessage:product.unavailable_message,displayOrder:product.display_order,id:product.id,title:d.title,slug:product.slug,mode:product.seat_reservation_mode as BookableProduct['mode'],minutes:product.reservation_minutes,card:{...d.card,enabled:true}};
  return <><Link href={`/admin/${ctx.operatorId}/products?product=${product.id}`}>← Back to product</Link><p>Private saved draft preview. Availability, checkout and booking writes are disabled. Missing photos appear as placeholders.</p><SavedPreviewBoundary><div className="public-site"><ProductBookingCards products={[preview]} content={await getPublishedWebsite()} preview/></div></SavedPreviewBoundary></>;
 }

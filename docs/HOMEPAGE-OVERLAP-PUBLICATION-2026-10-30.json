@@ -1,0 +1,78 @@
+{
+  "published_at": "2026-10-30T19:27:22.186066+00:00",
+  "pr": "https://github.com/marlecisander-bit/SightseeingShkodra-Web-App/pull/42",
+  "source_commit": "55b67b91a16216f984a434e48beeb17abc25b1a9",
+  "production_commit": "1fbab26e9a7157eee2e284aa3acfdbaa3943d903",
+  "vercel_deployment": "5FfgPjEGvPY4vFnr22pqQhYoqUSw",
+  "github_deployment": 7446971172,
+  "deployment_state": "success",
+  "validation": {
+    "local_full_suite": 633,
+    "additional_retirement_regression": "passed",
+    "lint_types_build": "passed",
+    "production_audit_vulnerabilities": 0,
+    "pr_ci_run": 41114600818,
+    "pr_ci": "success",
+    "http": [
+      {
+        "url": "https://www.sightseeingshkodra.com/",
+        "status": 200,
+        "hero_cta_absent": true,
+        "strip_absent": true,
+        "section_accessible": true,
+        "booking_links": [
+          "/book?productId=d0fb66d4-f290-405b-9362-30a4f5c16e27",
+          "/book?productId=7d7257f2-ee83-43cf-85bf-5dba3bbf5196"
+        ],
+        "overlap_css_present": true
+      },
+      {
+        "url": "https://www.sightseeingshkodra.com/book?productId=d0fb66d4-f290-405b-9362-30a4f5c16e27",
+        "status": 200,
+        "selected_product_id_present": true
+      },
+      {
+        "url": "https://www.sightseeingshkodra.com/book?productId=7d7257f2-ee83-43cf-85bf-5dba3bbf5196",
+        "status": 200,
+        "selected_product_id_present": true
+      },
+      {
+        "url": "https://sightseeingshkodra.app/",
+        "status": 200,
+        "hero_cta_absent": true,
+        "strip_absent": true,
+        "section_accessible": true,
+        "booking_links": [
+          "/book?productId=d0fb66d4-f290-405b-9362-30a4f5c16e27",
+          "/book?productId=7d7257f2-ee83-43cf-85bf-5dba3bbf5196"
+        ],
+        "overlap_css_present": true
+      },
+      {
+        "url": "https://sightseeingshkodra.app/book?productId=d0fb66d4-f290-405b-9362-30a4f5c16e27",
+        "status": 200,
+        "selected_product_id_present": true
+      },
+      {
+        "url": "https://sightseeingshkodra.app/book?productId=7d7257f2-ee83-43cf-85bf-5dba3bbf5196",
+        "status": 200,
+        "selected_product_id_present": true
+      }
+    ],
+    "main_ci": [
+      {
+        "name": "Verify project",
+        "status": "completed",
+        "conclusion": "success",
+        "details_url": "https://github.com/marlecisander-bit/SightseeingShkodra-Web-App/actions/runs/41115123844/job/124267219912"
+      }
+    ]
+  },
+  "limits": [
+    "No real booking or communications sent.",
+    "No physical-device validation or complete manual Tab traversal.",
+    "Local production start serves configuration-unavailable shell without backend bindings; live HTTP checks performed separately."
+  ],
+  "schema": "No database migration or stored Website schema change; obsolete strip fields retained as compatibility data, removed only from active admin editor.",
+  "rollback_commit": "7fd0bd0788bc1cb86861ad46ccdc8bb75b5a500e"
+}

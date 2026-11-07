@@ -11,7 +11,7 @@ const id = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 const tables = ['email_provider_events','partners','meeting_point_versions','operators', 'staff_profiles', 'suppliers', 'products', 'stops',
   'departures', 'customers', 'orders', 'booking_items', 'bookings', 'booking_record_registry', 'payments',
   'payment_events', 'refunds', 'vehicles', 'vehicle_positions', 'reviews', 'review_settings',
-  'content_pages', 'redirects', 'api_keys', 'domain_events', 'audit_logs', 'inventory_holds', 'notification_deliveries', 'service_schedules', 'schedule_exceptions', 'email_worker_status','admin_notifications','admin_notification_receipts','admin_notification_preferences','admin_push_subscriptions','admin_push_deliveries','admin_notification_sources'];
+  'content_pages', 'redirects', 'api_keys', 'domain_events', 'audit_logs', 'inventory_holds', 'notification_deliveries', 'service_schedules', 'schedule_exceptions', 'email_worker_status','admin_push_worker_status','admin_notifications','admin_notification_receipts','admin_notification_preferences','admin_push_subscriptions','admin_push_deliveries','admin_notification_sources'];
 
 before(async () => {
   // Only the Supabase platform prerequisites are stubbed. Application SQL is unmodified.
@@ -166,7 +166,7 @@ test('all tables enable RLS, deny client writes and grant only intended authenti
       const privileges = await db.query(`select has_table_privilege($1, $2, 'INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') as allowed`, [role, `public.${table}`]);
       assert.equal(privileges.rows[0].allowed, false, `${role}: ${table}`);
       const reads = await db.query(`select has_table_privilege($1, $2, 'SELECT') as allowed`, [role, `public.${table}`]);
-      assert.equal(reads.rows[0].allowed, (table === 'partners' || role === 'authenticated') && !['api_keys','domain_events','payment_events','review_settings','admin_push_subscriptions','admin_push_deliveries','admin_notification_sources','meeting_point_versions','booking_record_registry'].includes(table));
+      assert.equal(reads.rows[0].allowed, (table === 'partners' || role === 'authenticated') && !['admin_push_worker_status','api_keys','domain_events','payment_events','review_settings','admin_push_subscriptions','admin_push_deliveries','admin_notification_sources','meeting_point_versions','booking_record_registry'].includes(table));
     }
     await db.exec(`set role ${role}`);
     try {
@@ -423,7 +423,7 @@ for (const staff of staffFixtures) {
       assert.equal(rows.length > 0, hasPermission(staff.role, permission), `${staff.role}/${table}`);
       assert(rows.every((r) => r.operator_id === staff.operator_id), `tenant leak in ${table}`);
     }
-    for (const table of ['api_keys','domain_events','payment_events']) await invalid(`select * from ${table}`, '42501');
+    for (const table of ['admin_push_worker_status','api_keys','domain_events','payment_events']) await invalid(`select * from ${table}`, '42501');
     for (const table of tables) {
       await invalid(`update ${table} set created_at=created_at`, '42501');
       await invalid(`insert into ${table} default values`, '42501');

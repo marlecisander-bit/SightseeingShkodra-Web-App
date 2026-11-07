@@ -47,3 +47,22 @@ test('compact homepage cards keep complete CMS details and direct product bookin
  const dom=new JSDOM(renderToStaticMarkup(React.createElement(ProductBookingCards,{products:[product],content:initialWebsiteContent,embedded:true}))),d=dom.window.document;
  try{const details=d.querySelector('details[data-product-details]');assert.ok(details);assert.equal(details.open,false);assert.equal(details.querySelector('summary').textContent,'View details');assert.match(details.querySelector('summary').getAttribute('aria-label'),/Sightseeing Loop Tour/);assert.match(details.textContent,/Published loop description/);assert.match(details.textContent,/selected departure/);const amenities=d.querySelector('ul[aria-label="Sightseeing Loop Tour information"]');for(const text of ['Audio guide','Wi-Fi','Air conditioned','Walking included'])assert.ok(amenities.textContent.includes(text));assert.equal(details.querySelector('ul'),null);assert.equal(d.querySelector('[data-all-amenities]').getAttribute('aria-haspopup'),'dialog');assert.equal(d.querySelector('[data-all-amenities]').textContent,'All amenities');assert.equal(d.querySelector('a[aria-haspopup=dialog]').getAttribute('href'),`/book?productId=${loop.id}`);assert.match(d.querySelector('[data-product-booking]').textContent,/12.00/);}finally{dom.window.close();}
 });
+
+test('inactive products keep order and information, escape custom messages and omit all booking links; reactivation hides ribbon',()=>{
+ const message='<img src=x onerror=alert(1)> Coming soon — së shpejti';
+ const disabled={...loop,active:false,displayOrder:0,unavailableMessage:message,adultPrice:1000};
+ const enabled={...loop,id:source.id,displayOrder:1,title:'Available ticket',active:true};
+ const render=products=>new JSDOM(renderToStaticMarkup(React.createElement(ProductBookingCards,{products,content:initialWebsiteContent,embedded:true})));
+ const dom=render([enabled,disabled]),cards=[...dom.window.document.querySelectorAll('article')];
+ assert.equal(cards[0].querySelector('h3').textContent,loop.title);assert.equal(cards[0].dataset.inactive,'true');assert.equal(cards[0].querySelectorAll('a,dialog').length,0);assert(cards[0].querySelector('button[disabled]'));assert.match(cards[0].textContent,/Unavailable for booking/);assert(cards[0].textContent.includes(message));assert.equal(cards[0].querySelectorAll('img').length,1);assert(cards[0].querySelector('details'));assert.equal(cards[1].querySelector('a').getAttribute('href'),`/book?productId=${source.id}`);dom.window.close();
+ const active=render([{...disabled,active:true}]);assert.equal(active.window.document.querySelector('[data-inactive]'),null);assert(!active.window.document.body.textContent.includes(message));assert(active.window.document.querySelector('a'));active.window.close();
+});
+
+test('primary homepage fallback retains product-owned inactive state when the directory is unavailable',async()=>{
+ const {HomepageView}=await import('../../src/components/public/homepage-view.tsx');
+ const {emptyHomepage}=await import('../../src/modules/content/homepage.ts');
+ const home={...emptyHomepage('ready'),product:{id:loop.id,slug:loop.slug,title:loop.title,description:null,stops:[],active:false,unavailableMessage:'Maintenance',displayOrder:2}};
+ const {BookingProvider}=await import('../../src/components/public/booking.tsx');
+ const dom=new JSDOM(renderToStaticMarkup(React.createElement(BookingProvider,{preview:true},React.createElement(HomepageView,{home,content:initialWebsiteContent,products:[]}))));
+ const card=dom.window.document.querySelector('#experiences article');assert.equal(card.dataset.inactive,'true');assert.match(card.textContent,/Maintenance/);assert.equal(card.querySelector('a'),null);dom.window.close();
+});

@@ -1,3 +1,13 @@
+## Published and verified — 31 October 2026
+
+PR #48 released main `d4a2613108142442534f79e934147a23626f6192` through Vercel Production `6p8ZCUL5TQeCrnn3zVqHPPAuagde` (https://sightseeing-shkodra-web-eqq1z6vqs-aleksander-marleci.vercel.app). Homepage and /route are live. All 665 tests, lint/typecheck/build, PR CI and main CI pass. CMS lifecycle probes were updated to exercise the persistent card while retaining label propagation and stale-copy rejection. Fourteen scoped files published; unrelated work and development fixtures excluded.
+
+Direct public acceptance: 16 Home/Route responsive layouts, all five destination clicks (HTTP 200), all five real existing v1 map selection commands/correct Leaflet popups, Find Van, selection through updates, no homepage iframe, and touch-emulated mobile swiping/tapping. Original photographs/colours and single-card layout verified; mobile/desktop public screenshots inspected. No source overlays. Aggregate PASS: `docs/evidence/stops-simplification-20261031/publication-acceptance.json`; receipt: `publication.json`. Physical Safari/Android remains untested; no GPS accuracy claim.
+
+Browser sampling corrections are recorded rather than hidden: initial immediate selected-state reads raced React; an early DOM-content-loaded Route run preceded settled iframe/page layout; a Leaflet popup lookup matched both old and new nodes during fade. Final checks wait for rendered selection/page load and verify the selected marker’s own popup. Selected mobile photography was additionally checked after image decoding; the final screenshot matches the selected Historic Centre. No application change was necessary for these runner corrections. Raw diagnostic logs/screenshots are retained. Sixteen completed layout checks plus the targeted command/link/touch continuation constitute the final acceptance.
+
+Prior release ded362c / deployment DHkTKpHDWHdNuzzUsLzCxhFmzpzi retained as rollback baseline. No database, hosting configuration or companion modification. Local main matches the released commit, with unrelated work preserved. The following sections are historical implementation/approval evidence.
+
 ## Publication authorized — 31 October 2026
 
 The owner explicitly requested publication after the mobile audit. Release scopes the eight public component/style files, three regression-test files, two CMS-verification helpers and this report. Local development review fixtures and unrelated work remain outside the release. Vercel main triggers Production with automatic domain assignment; feature pushes may trigger Preview. Existing main ded362c is the rollback baseline. The local-only statements below describe the preceding implementation step.

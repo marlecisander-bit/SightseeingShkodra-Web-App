@@ -1,3 +1,5 @@
+import {adminSiteOrigin} from "../identity/admin-origin";
+import {adminAlertSubject,adminAlertHeaders} from "./admin-operational-email";
 import { bookingEmailAttachments } from "./booking-email-attachments";
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -51,7 +53,7 @@ export async function processBookingEmails(store: EmailStore, config: EmailConfi
   for (; processed < 4 && Date.now() < startDeadline; processed++) {
     const claimed = await store.claim(config.operatorId, config.since);
     if (!claimed) break;
-    const job = await store.prepare(claimed, { version: 2, ...(claimed.event_type === "BOOKING_CREATED" && claimed.recipient_type === "customer" ? {customerConfirmationDesign: 3 as const} : {}), ...(claimed.event_type === "BOOKING_CREATED" && claimed.recipient_type === "owner" ? {ownerNewBookingDesign: 1 as const} : {}), from: config.from, owner: config.owner, replyTo: config.replyTo, siteUrl: config.siteUrl, testRecipient: config.testRecipient });
+    const job = await store.prepare(claimed, { version: 2, ...(claimed.recipient_type === "owner" ? {adminOperationalAlerts: 1 as const,adminOrigin:adminSiteOrigin({...process.env,NEXT_PUBLIC_SITE_URL:config.siteUrl})} : {}), ...(claimed.event_type === "BOOKING_CREATED" && claimed.recipient_type === "customer" ? {customerConfirmationDesign: 3 as const} : {}), ...(claimed.event_type === "BOOKING_CREATED" && claimed.recipient_type === "owner" ? {ownerNewBookingDesign: 1 as const} : {}), from: config.from, owner: config.owner, replyTo: config.replyTo, siteUrl: config.siteUrl, testRecipient: config.testRecipient });
     const audit = { event: job.event_type, reference: job.booking_reference, recipient: job.recipient_type, manual: job.manual };
     if (job.status === "skipped") { log({ ...audit, status: "skipped" }); continue; }
     // A saved production job must never escape into live delivery on a development host.
@@ -62,7 +64,11 @@ export async function processBookingEmails(store: EmailStore, config: EmailConfi
     if (!validEmail(originalTo)) {
       await store.finish(job, "skipped", "recipient_email_invalid"); log({ ...audit, status: "skipped", code: "recipient_email_invalid" }); continue;
     }
-    const template = bookingEmailTemplate(job.event_type, job.recipient_type, job.send_snapshot, job.envelope, job.operator_id, job.booking_id);
+    const rendered = bookingEmailTemplate(job.event_type, job.recipient_type, job.send_snapshot, job.envelope, job.operator_id, job.booking_id);
+    // The marker is frozen in the queue envelope. Old retries keep their original payload.
+    const template = job.recipient_type === 'owner' && job.envelope.adminOperationalAlerts === 1
+      ? {...rendered, subject: adminAlertSubject(job.event_type,job.send_snapshot.reference,Boolean(job.envelope.testRecipient)), headers: adminAlertHeaders}
+      : rendered;
     const attachments = await bookingEmailAttachments(job.event_type, job.recipient_type, job.send_snapshot, job.envelope);
     const result = await send(`booking-email/${job.id}`, { from: job.envelope.from, to: [job.envelope.testRecipient ?? originalTo], reply_to: job.envelope.replyTo, ...template, ...(attachments ? { attachments } : {}) });
     const outcome = result.outcome === "retry" && job.attempt_count >= 5 ? "uncertain" : result.outcome;

@@ -1,5 +1,7 @@
 ﻿# Sightseeing Shkodra web app
 
+Permanent working folder: `/Users/aleksandermarleci/Desktop/Projects Dev/SightseeingShkodra-Web-App-canonical`. Use branches here; see [working-folder audit](docs/PERMANENT-WORKING-FOLDER-2026-10-31.md) and [AGENTS.md](AGENTS.md).
+
 Fresh Next.js App Router and TypeScript project following Roadmap V4 and the user-approved decision to build without legacy imports.
 
 ## Run locally

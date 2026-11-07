@@ -155,3 +155,7 @@ The owner approved the complete single-workspace Products concept: details, phot
 
 
 30 October 2026 — Owner moved all amenity controls to Products, with selectable service/ticket badges and per-amenity icon choices. Hero strip/defaults and old Website amenity editor removed; persisted hero data retained only for compatibility. 2-hour/full-day labels are exclusive and do not mutate seat occupancy. Local validation: 633 tests, lint/typecheck/build pass; no hosted write or redesign deployment. See UNIFIED-PRODUCTS-2026-10-30.md.
+
+## 7 November 2026 — Product availability and display order (local only)
+
+Products owns `products.active`, `products.unavailable_message` and `products.display_order`. Availability is independent of editorial publication; inactive published cards remain visible with information, a custom red ribbon and no new booking. Move up/Move down replaces the old numeric card-order editor. Existing `card.*.order` is compatibility data and does not override the product column. Directory, homepage fallback, private preview, desktop/mobile cards and booking enforcement consume the same product record. Existing English-only text conventions are retained; Unicode is supported, but no separate translation catalog is introduced. See PRODUCT-AVAILABILITY-ORDER-2026-11-07.md for migration and verification evidence. No hosted changes.

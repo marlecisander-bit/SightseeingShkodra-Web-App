@@ -282,3 +282,7 @@ All six generated variants were inspected for overflow/images at 320px and 600px
 | Duplicate protection | PASS | Event/recipient uniqueness, leases, frozen retry payloads and manual request identity verified. |
 | Security | PASS | Server-only provider calls, existing booking authorization, owner/operator checks, no secret output; local scoped validation. |
 | End-to-end test | BLOCKED | Isolated simulated A–E lifecycle passed. Real Resend and mail-client acceptance intentionally deferred by owner decision. |
+
+## 7 November 2026 — local admin importance and subject amendment
+
+Newly prepared owner/admin event alerts carry Importance=high, X-Priority=1 and X-MSMail-Priority=High through Resend's custom message headers and an event/reference subject. The existing saved envelope gains adminOperationalAlerts=1; historical prepared retries and customer emails remain unchanged. These hints cannot force phone alerts, sound or bypass Focus. The explicit owner test uses the same headers. Current `.app` public SPF/DKIM/DMARC records were inspected, but local provider credentials/connector and a physical iPhone were unavailable; current authenticated provider outcomes and received-message alignment remain unverified. Existing provider status/history/reconciliation is preserved. See ADMIN-BOOKING-ALERTS-2026-11-07.md for local evidence and exact device setup. No real mail, hosted changes or activation.

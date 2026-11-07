@@ -1,3 +1,7 @@
+PUBLISHED: owner-reported device acceptance received; PR #46 / main 81aa7fb / Vercel Fg6EJWJ1LdwAH74TfF7VC2vQeadY. Public gate=true; direct public browser acceptance PASS (28 checks). Gate-false deployment retained and rollback available. [Final report](LIVE-MAP-WEBSITE-RELEASE-2026-10-31.md) supersedes historical HOLD notes below.
+
+Current release continuation: [31 October acceptance report](LIVE-MAP-WEBSITE-RELEASE-2026-10-31.md) supersedes historical companion stop/deployment blockers below. Revised companion public bytes verified; actual gate-true Next candidate browser checks pass. Physical-device acceptance still pending; source/public gate=false and no website publication.
+
 # Live Map website integration — companion handoff
 
 Status: WEBSITE SIDE LOCAL ONLY. Public activation is OFF. No commit, push, deployment, hosted database update or companion workspace modification in this continuation. The earlier companion patch may already exist locally: inspect and reuse it before editing. Historical evidence is in LIVE-MAP-EMBEDDED-REDESIGN-2026-10-30.md; this document is the current integration handoff.
@@ -162,3 +166,9 @@ Read project instructions and inspect existing work, including any prior compani
 Reuse the existing `shkodra:journey` v1 protocol and additive `embeddedDisplay` v1 exactly as documented. Activate embedded-only panel hiding only when framed with `embed=1&websiteStatus=external-v1`, plus a valid version1 `shkodra:request-journey` carrying `embeddedDisplayVersion:1` from an allowed parent origin/source. Send the existing computed display state on readiness and subsequent updates with explicit target origins; no raw GPS or new subscriptions/polling/state calculations. Preserve upstream freshness/parking/ETA/progress decisions.
 
 Keep default/standalone appearance, copied top-level opt-in URLs, route/coordinates/assets/van/toolbar/permissions unchanged. Update only embedded card visibility and reserved framing space. Validate origin/source/version, lifecycle and projection parity, run relevant tests/lint/typecheck/build, and capture representative standalone/embedded evidence. Report exact changed files and any compatibility blockers. Website public activation must remain off until paired testing and separate release authorization. Do not claim end-to-end completion without connecting and testing both real applications.
+
+## 31 October paired audit update
+
+See [paired audit](LIVE-MAP-PAIRED-AUDIT-2026-10-31.md) for actual Next.js + canonical companion browser evidence. Verdict PARTIALLY CONNECTED; public gate remains false. The fixed development-only NEXT_PUBLIC_LOCAL_MAP_PREVIEW=1 flag permits actual Route pairing on the existing 127.0.0.1:4199 child binding. External readiness now requires embeddedDisplay. Current HomepageView has no map after the homepage section removal; earlier homepage-inline-map claims are historical. Companion stop-message selection must disable followVan like its existing selectJourneyStop helper; no companion source change was made. Hosted/device checks remain pending.
+
+Permanent-folder consolidation (31 October 2026): active Web App source and all paired browser runners/evidence now reside in SightseeingShkodra-Web-App-canonical. Run commands from that folder. The sibling companion remains ../live-tracking-app-release; fixed origins, contract and public gate=false are unchanged. Historical release-folder paths in dated reports describe where evidence was originally produced.

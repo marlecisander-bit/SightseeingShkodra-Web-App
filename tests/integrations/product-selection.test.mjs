@@ -15,10 +15,13 @@ test('availability passes only a bounded product selector; mismatch/unpublished 
 test('public directory resolver fixes operator binding and rejects arbitrary unpublished product IDs',async()=>{
  const previous={fetch:globalThis.fetch,...Object.fromEntries(['PUBLIC_OPERATOR_ID','NEXT_PUBLIC_SUPABASE_URL','SUPABASE_SECRET_KEY','PUBLIC_HOMEPAGE_PRODUCT_SLUG'].map(k=>[k,process.env[k]]))};
  Object.assign(process.env,{PUBLIC_OPERATOR_ID:op,NEXT_PUBLIC_SUPABASE_URL:'https://synthetic.supabase.co',SUPABASE_SECRET_KEY:'synthetic-test-server-key',PUBLIC_HOMEPAGE_PRODUCT_SLUG:'loop'});
- const requests=[];globalThis.fetch=async(url,init)=>{requests.push({url:String(url),body:JSON.parse(init.body)});return Response.json([{id:product,title:'Loop',slug:'loop',mode:'selected_departure',minutes:120}]);};
+ let active=true;
+ const requests=[];globalThis.fetch=async(url,init)=>{requests.push({url:String(url),body:JSON.parse(init.body)});return Response.json([{id:product,title:'Loop',slug:'loop',mode:'selected_departure',minutes:120,active,unavailableMessage:active?'':'Coming soon',displayOrder:0}]);};
  try {
   assert.equal((await resolveBookableProduct(product)).id,product);assert.equal((await resolveBookableProduct()).id,product);assert.equal(await resolveBookableProduct(op),null);
   assert.equal(await resolveBookableProduct('bad'),null);
+  active=false;assert.equal(await resolveBookableProduct(product),null);assert.equal(await resolveBookableProduct(),null);assert.equal((await resolveBookableProduct(product,true)).unavailableMessage,'Coming soon');
+  active=true;assert.equal((await resolveBookableProduct(product)).id,product);
   assert(requests.every(r=>r.url.endsWith('/rpc/read_public_products_v1')&&r.body.p_operator===op));
  }finally{globalThis.fetch=previous.fetch;for(const [key,value]of Object.entries(previous)){if(key==='fetch')continue;if(value===undefined)delete process.env[key];else process.env[key]=value;}}
 });

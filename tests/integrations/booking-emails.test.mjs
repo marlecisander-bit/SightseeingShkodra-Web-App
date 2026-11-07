@@ -187,7 +187,7 @@ test('v2 ticket lifecycle uses canonical passenger seats and QR, reliable before
  let n=sent.length;await run();const pair=sent.slice(n);assert.equal(pair.length,2);
  const customer=pair.find(m=>m.attachments);assert(customer);const png=PNG.sync.read(Buffer.from(customer.attachments[0].content,'base64'));
  assert.equal(jsQR(new Uint8ClampedArray(png.data),png.width,png.height)?.data,b.qr_token);
- assert(customer.text.includes('4 passengers (2 adults, 1 child, 1 infant)'));assert(!customer.text.includes('Selected service day'));assert(!customer.text.includes('EUR 25.00'));const owner=pair.find(m=>!m.attachments);assert(owner.text.includes('€25.00'));assert(owner.text.includes('3 seats'));assert(owner.text.includes('2 adults · 1 child · 1 infant (no seats)'));assert(!owner.text.includes('Selected service day'));assert(owner.subject.includes('3 seats'));
+ assert(customer.text.includes('4 passengers (2 adults, 1 child, 1 infant)'));assert(!customer.text.includes('Selected service day'));assert(!customer.text.includes('EUR 25.00'));const owner=pair.find(m=>!m.attachments);assert(owner.text.includes('€25.00'));assert(owner.text.includes('3 seats'));assert(owner.text.includes('2 adults · 1 child · 1 infant (no seats)'));assert(!owner.text.includes('Selected service day'));assert(owner.subject.includes(b.booking_reference));assert.equal(owner.headers?.Importance,'high');
  assert(customer.html.includes('cid:booking-qr'));assert(customer.text.includes('/booking/manage#token='+b.management_token));
  assert(!pair.find(m=>!m.attachments).text.includes(b.management_token));
  const user=(await db.query('select auth_user_id from staff_profiles where id=$1',[staff])).rows[0].auth_user_id;
@@ -217,7 +217,7 @@ test('selected-recipient resend preserves event, does not fan out, is idempotent
  for(let i=0;i<2;i++)await db.query('select request_booking_email_recipient_v1($1,$2,$3,$4)',[op,staff,source.id,req]);
  await assert.rejects(db.query('select request_booking_email_recipient_v1($1,$2,$3,$4)',[op,staff,source.id,randomUUID()]),/five minutes/);
  await assert.rejects(db.query('select request_booking_email_recipient_v1($1,$2,$3,$4)',[other,staff,source.id,randomUUID()]),/Permission/);
- await run();await run();assert.equal(sent.length-n,1);assert.match(sent[n].subject,/BOOKING CANCELLED/);
+ await run();await run();assert.equal(sent.length-n,1);assert.match(sent[n].subject,/BOOKING CANCELLED/i);
  assert.equal((await jobs(b)).filter(j=>j.manual).length,1);
  const stale=(await jobs(b)).find(j=>j.event_type==='BOOKING_CREATED');await db.query("select record_email_provider_event_v1($1,$2,$3,'failed',clock_timestamp(),'provider_failed')",[op,randomUUID(),stale.provider_reference]);await assert.rejects(db.query('select request_booking_email_recipient_v1($1,$2,$3,$4)',[op,staff,stale.id,randomUUID()]),/current booking/);
  for(const role of ['anon','authenticated']){await db.exec('set role '+role);try{await assert.rejects(db.query('select request_booking_email_recipient_v1($1,$2,$3,$4)',[op,staff,source.id,randomUUID()]),e=>e.code==='42501');}finally{await db.exec('reset role');}}

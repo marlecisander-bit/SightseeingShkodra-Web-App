@@ -1,0 +1,50 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import {createTestDatabase,loadDevelopmentFixtures} from '../helpers/database.mjs';
+test('availability and ordering: persisted controls, validation, tenant/role/stale guards, direct holds/checkout and existing reservations',async()=>{
+ const db=await createTestDatabase({now:'2030-06-10T04:00:00Z'});
+ try{
+ await loadDevelopmentFixtures(db);
+ const op='10000000-0000-4000-8000-000000000001',van='10000000-0000-4000-8000-000000000030',session='availability-tests-session-1234567890123456';
+ const uid=(await db.query('insert into auth.users values(gen_random_uuid()) returning id')).rows[0].id;
+ const actor=(await db.query("insert into staff_profiles(operator_id,auth_user_id,role) values($1,$2,'owner') returning id",[op,uid])).rows[0].id;
+ const products=[];
+ for(const title of ['Offer A','Offer B','Offer C'])products.push((await db.query(`insert into products(operator_id,type,title,slug,status,pricing_rules,capacity_rules,passenger_pricing,card_published) values($1,'van_tour',$2,gen_random_uuid()::text,'published','{"version":1,"model":"per_guest","currency":"EUR","unit_price":1000}','{"version":1,"model":"departure_seats"}','{"adult":{"min":13,"max":null,"price":1000},"child":{"min":3,"max":12,"price":500},"infant":{"min":0,"max":2,"price":0}}','{"image":"/images/lake.webp","alt":"Lake","description":"Preserved content","enabled":true,"order":0}') returning id`,[op,title])).rows[0].id);
+ const [source,offer,other]=products;
+ const stamp=async id=>(await db.query('select updated_at from products where id=$1',[id])).rows[0].updated_at;
+ const directory=async()=>(await db.query('select read_public_products_v1($1) d',[op])).rows[0].d;
+ const save=async(id,active,message='',s)=>db.query('select save_product_availability_v1($1,$2,$3,$4,$5,$6)',[op,actor,id,s??await stamp(id),active,message]);
+ await db.query(`select save_service_schedule_v1($1,$2,$3,'2030-06-10','2030-06-30',array[1,2,3,4,5,6,7],'[{"time":"09:00"},{"time":"11:00"}]',8,$4,'active',null)`,[op,actor,source,van]);
+ for(const p of [offer,other])await db.query("select save_product_booking_v1($1,$2,$3,$4,'selected_departure',120,$5)",[op,actor,p,source,await stamp(p)]);
+ assert((await directory()).every(p=>p.active));
+ const counts={adult:1,child:0,infant:0};
+ const quote=(await db.query("select read_passenger_availability_v1($1,$2,'2030-06-10',$3) d",[op,offer,counts])).rows[0].d;
+ const hold=async(id)=> (await db.query('select * from create_product_hold_v1($1,$2,$3,$4,1,$5,$6)',[op,quote.departures[0].id,session,randomUUID(),counts,id])).rows[0];
+ const existing=await hold(offer);
+ const booking=(await db.query("select create_meeting_point_booking_v1($1,$2,$3,'Synthetic','synthetic@example.invalid') d",[op,existing.id,session])).rows[0].d;
+ const pending=await hold(offer);
+ const before=(await db.query('select b.*,i.passenger_snapshot,i.reservation_snapshot,i.total_price from bookings b join booking_items i on i.order_id=b.order_id where b.order_id=$1',[booking.orderId])).rows[0];
+ for(const blank of ['   ','\n\t'])await assert.rejects(save(offer,false,blank),e=>e.code==='22023');
+ await assert.rejects(save(offer,false,'x'.repeat(161)),e=>e.code==='22023');
+ const old=await stamp(offer);await save(offer,false,'Coming soon — së shpejti');
+ await assert.rejects(save(offer,true,'',old),e=>e.code==='PT409');
+ const home=(await db.query('select read_public_homepage_v1($1,(select slug from products where id=$2)) d',[op,offer])).rows[0].d;assert.equal(home.product.active,false);assert.equal(home.product.unavailable_message,'Coming soon — së shpejti');
+ const inactive=(await directory()).find(p=>p.id===offer);assert.equal(inactive.active,false);assert.equal(inactive.unavailableMessage,'Coming soon — së shpejti');assert.equal(inactive.card.description,'Preserved content');assert.equal(inactive.adultPrice,1000);
+ await assert.rejects(hold(offer),e=>e.code==='P0002');
+ await assert.rejects(db.query("select create_meeting_point_booking_v1($1,$2,$3,'Synthetic','synthetic@example.invalid')",[op,pending.id,session]),e=>e.code==='P0002');
+ assert.equal((await db.query("select read_passenger_availability_v1($1,$2,'2030-06-10',$3) d",[op,offer,counts])).rows[0].d,null);
+ assert.deepEqual((await db.query('select b.*,i.passenger_snapshot,i.reservation_snapshot,i.total_price from bookings b join booking_items i on i.order_id=b.order_id where b.order_id=$1',[booking.orderId])).rows[0],before);
+ await save(source,false,'Maintenance');await hold(other); // shared schedule remains usable
+ const original=(await directory()).map(p=>p.id),i=original.indexOf(offer),neighbor=original[i===0?1:i-1];
+ const move=async(a,b,s,ns)=>db.query('select move_product_v1($1,$2,$3,$4,$5,$6)',[op,actor,a,s??await stamp(a),b,ns??await stamp(b)]);
+ const os=await stamp(offer),ns=await stamp(neighbor);await move(offer,neighbor,os,ns);
+ const expected=[...original];[expected[i],expected[i===0?1:i-1]]=[expected[i===0?1:i-1],expected[i]];assert.deepEqual((await directory()).map(p=>p.id),expected);
+ await assert.rejects(move(offer,neighbor,os,ns),e=>e.code==='PT409');await move(offer,neighbor);assert.deepEqual((await directory()).map(p=>p.id),original);
+ await save(offer,true,'Coming soon — së shpejti');await hold(offer);assert.equal((await directory()).find(p=>p.id===offer).active,true);
+ await assert.rejects(db.query('select save_product_availability_v1(gen_random_uuid(),$1,$2,$3,false,\'No\')',[actor,offer,await stamp(offer)]),e=>e.code==='42501');
+ await db.query("update staff_profiles set role='content_editor' where id=$1",[actor]);
+ await assert.rejects(save(offer,false,'No'),e=>e.code==='42501');await assert.rejects(move(offer,neighbor),e=>e.code==='42501');
+ for(const role of ['anon','authenticated'])for(const fn of ['save_product_availability_v1(uuid,uuid,uuid,timestamptz,boolean,text)','move_product_v1(uuid,uuid,uuid,timestamptz,uuid,timestamptz)'])assert.equal((await db.query('select has_function_privilege($1,$2,\'execute\') allowed',[role,'public.'+fn])).rows[0].allowed,false);
+ }finally{await db.close();}
+});

@@ -16,3 +16,25 @@ export async function saveProductWorkspace(operatorId:string,productId:string|nu
  const tab=form.get('tab')==='website'?'website':'details';
  redirect(`/admin/${operatorId}/products?product=${saved}&tab=${tab}&result=${operation}`);
 }
+
+export async function saveProductAvailability(operatorId:string,productId:string,form:FormData){
+ try{
+  if(!['true','false'].includes(String(form.get('active'))))throw Error('Choose Active or Inactive.');
+  await withOperatorService(operatorId,'catalog.manage',async(client,ctx)=>{
+   const {error}=await client.rpc('save_product_availability_v1',{p_operator:ctx.operatorId,p_actor:ctx.staffProfileId,p_product:productId,p_stamp:form.get('updated_at'),p_active:form.get('active')==='true',p_message:form.get('unavailable_message')});
+   if(error)throw Error(['PT409','22023'].includes(error.code)?error.message:'Availability could not be saved. Check your access and retry.');
+  });
+ }catch(error){return {error:error instanceof Error?error.message:'Availability could not be saved.'};}
+ revalidatePath('/','layout');
+ redirect(`/admin/${operatorId}/products?result=availability`);
+}
+export async function moveProduct(operatorId:string,productId:string,neighborId:string,stamp:string,neighborStamp:string){
+ try{
+  await withOperatorService(operatorId,'catalog.manage',async(client,ctx)=>{
+   const {error}=await client.rpc('move_product_v1',{p_operator:ctx.operatorId,p_actor:ctx.staffProfileId,p_product:productId,p_stamp:stamp,p_neighbor:neighborId,p_neighbor_stamp:neighborStamp});
+   if(error)throw Error(error.code==='PT409'?error.message:'Product order could not be saved. Reload and retry.');
+  });
+ }catch(error){return {error:error instanceof Error?error.message:'Order could not be saved.'};}
+ revalidatePath('/','layout');
+ redirect(`/admin/${operatorId}/products?result=order`);
+}

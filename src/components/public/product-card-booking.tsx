@@ -27,6 +27,6 @@ export function ProductCardBooking({product,fare,bookingLabel,preview=false,comp
 
  </div></details>}
  </div>
- {preview?<button className={`p-button p-button-booking ${styles.book}`} type="button" disabled>{bookingLabel}</button>:<ProductBookingLink product={product} data-product-booking className={`p-button p-button-booking ${styles.book}`} >{bookingLabel}</ProductBookingLink>}
+ {product.active===false?<><p className={styles.unavailable} role="status">Unavailable for booking</p><button className={`p-button ${styles.book}`} type="button" disabled>Booking unavailable</button></>:preview?<button className={`p-button p-button-booking ${styles.book}`} type="button" disabled>{bookingLabel}</button>:<ProductBookingLink product={product} data-product-booking className={`p-button p-button-booking ${styles.book}`} >{bookingLabel}</ProductBookingLink>}
  </div>;
 }

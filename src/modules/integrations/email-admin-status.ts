@@ -22,6 +22,8 @@ export function emailAdminStatus(operatorId: string, env: NodeJS.ProcessEnv = pr
     cronConfigured: bound && (env.CRON_SECRET?.length ?? 0) >= 32,
     senderName: match?.[1].trim() ?? '', senderEmail: validEmail(address) ? address : '',
     senderDomain: validEmail(address) ? address.split('@')[1] : '',
+    expectedSenderDomain:'sightseeingshkodra.com',
+    senderDomainMatches:bound&&validEmail(address)&&address.toLowerCase().endsWith('@sightseeingshkodra.com'),
     replyTo: bound && validEmail(env.BOOKING_REPLY_TO_EMAIL) ? env.BOOKING_REPLY_TO_EMAIL : '',
     ownerEmail: bound && validEmail(env.BOOKING_OWNER_EMAIL) ? env.BOOKING_OWNER_EMAIL : '',
     testRecipient: bound && validEmail(env.EMAIL_TEST_RECIPIENT) ? env.EMAIL_TEST_RECIPIENT : '',

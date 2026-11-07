@@ -55,6 +55,9 @@ test("public projection selects the configured tenant/product, external-map stop
     [],
   );
   assert.deepEqual(Object.keys(data.product).sort(), [
+    "active",
+    "display_order",
+    "unavailable_message",
     "description",
     "inclusions",
     "meta_title",

@@ -1,9 +1,14 @@
 import 'server-only';
+import {automaticBookingHealth} from './delivery-health';
+import {adminSiteOrigin} from '../identity/admin-origin';
+import {PushRegistrationError} from './registration-errors';
 import { sendTestPush } from './test-push';
 import { notificationStatus } from './config';
 import { hasPermission } from '@/modules/identity/roles';
 import { withOperatorService } from '@/modules/identity/operator-service';
 import { notificationTypes, uuid, validPushSubscription, type Inbox, type InboxItem, type Preference } from './contracts';
+
+
 
 export async function readInbox(operatorId:string,filter='all',cursor?:string):Promise<Inbox> {
  return withOperatorService(operatorId,'bookings.read',async(client,context)=>{
@@ -23,10 +28,19 @@ export async function readNotificationSettings(operatorId:string) {
  return withOperatorService(operatorId,'bookings.read',async(client,c)=>{
   const [devices,prefs]=await Promise.all([client.from('admin_push_subscriptions').select('id,device_name,enabled,created_at,last_used_at').eq('operator_id',c.operatorId).eq('user_id',c.userId).order('created_at',{ascending:false}).limit(50),client.from('admin_notification_preferences').select('type,in_app,push').eq('operator_id',c.operatorId).eq('user_id',c.userId)]);
   if(devices.error||prefs.error)throw Error('Settings unavailable');
+  const status=notificationStatus();
   const ids=(devices.data??[]).map(d=>d.id);
   const history=ids.length?await client.from('admin_push_deliveries').select('id,status,attempts,error_code,created_at,notification:admin_notifications(title,message)').eq('operator_id',c.operatorId).in('subscription_id',ids).order('created_at',{ascending:false}).limit(25):{data:[],error:null};
   if(history.error)throw Error('Delivery history unavailable');
-  return {history:history.data??[],canManageEmail:hasPermission(c.role,'integrations.manage'),devices:devices.data,preferences:notificationTypes.map(type=>(prefs.data as Preference[]).find(p=>p.type===type)??{type,in_app:true,push:true}),publicKey:notificationStatus().pushEnabled?process.env.VAPID_PUBLIC_KEY??'':'',...notificationStatus()};
+  const since=process.env.ADMIN_NOTIFICATIONS_START_AT??'';
+  const cutoff=new Date(Date.now()-180000).toISOString();
+  const [heartbeat,overdue,failed]=await Promise.all([
+   client.from('admin_push_worker_status').select('status,started_at,last_success_at').eq('operator_id',c.operatorId).maybeSingle(),
+   client.from('admin_push_deliveries').select('id',{count:'exact',head:true}).eq('operator_id',c.operatorId).in('status',['pending','sending']).lt('next_attempt_at',cutoff),
+   client.from('admin_push_deliveries').select('id',{count:'exact',head:true}).eq('operator_id',c.operatorId).in('status',['failed','uncertain']).gte('created_at',new Date(Date.now()-86400000).toISOString())
+  ]);
+  const automaticDelivery=automaticBookingHealth({...status,paused:status.paused||process.env.ADMIN_PUSH_ENABLED!=='true',startValid:/^\d{4}-\d{2}-\d{2}T.*(?:Z|[+-]\d{2}:\d{2})$/.test(since)&&Number.isFinite(Date.parse(since))&&Date.parse(since)<=Date.now(),worker:heartbeat.data,unavailable:Boolean(heartbeat.error||overdue.error||failed.error),queueIssue:Boolean(overdue.count||failed.count)});
+  return {automaticDelivery,history:history.data??[],canManageEmail:hasPermission(c.role,'integrations.manage'),devices:devices.data,preferences:notificationTypes.map(type=>(prefs.data as Preference[]).find(p=>p.type===type)??{type,in_app:true,push:true}),siteOrigin:adminSiteOrigin(),publicKey:status.registrationEnabled?process.env.VAPID_PUBLIC_KEY??'':'',...status};
  });
 }
 export async function changeNotification(operatorId:string,action:unknown) {
@@ -43,15 +57,18 @@ export async function changeNotification(operatorId:string,action:unknown) {
    if(!notificationTypes.some(t=>t===a.type)||typeof a.in_app!=='boolean'||typeof a.push!=='boolean')throw Error('Invalid preference');
    if((await client.from('admin_notification_preferences').upsert({operator_id:c.operatorId,user_id:c.userId,type:a.type,in_app:a.in_app,push:a.push})).error)throw Error('Unable to save preference');
   }else if(a.kind==='subscribe'){
-   if(process.env.ADMIN_PUSH_ENABLED!=='true'||!validPushSubscription(a.subscription)||typeof a.name!=='string'||!a.name.trim()||a.name.length>60)throw Error('Push subscription unavailable or unsupported');
+   if(!notificationStatus().registrationEnabled)throw new PushRegistrationError('PUSH_DISABLED');
+   if(!validPushSubscription(a.subscription)||typeof a.name!=='string'||!a.name.trim()||a.name.length>60)throw new PushRegistrationError('SUBSCRIPTION_INVALID');
    const s=a.subscription;
-   const existing=await client.from('admin_push_subscriptions').select('id,user_id,operator_id').eq('endpoint',s.endpoint).maybeSingle();
-   if(existing.error||existing.data&&(existing.data.user_id!==c.userId||existing.data.operator_id!==c.operatorId))throw Error('This browser is registered to another workspace or account. Disable its previous subscription first.');
-   const {count,error}=await client.from('admin_push_subscriptions').select('id',{count:'exact',head:true}).eq('operator_id',c.operatorId).eq('user_id',c.userId);
-   if(error||(!existing.data&&(count??0)>=50))throw Error('Device limit reached');
+   const existing=await client.from('admin_push_subscriptions').select('id,user_id,operator_id,enabled').eq('endpoint',s.endpoint).maybeSingle();
+   if(existing.error)throw new PushRegistrationError('REGISTRATION_UNSAVED');
+   if(existing.data&&(existing.data.user_id!==c.userId||existing.data.operator_id!==c.operatorId))throw new PushRegistrationError('DEVICE_ACCOUNT');
+   const {count,error}=await client.from('admin_push_subscriptions').select('id',{count:'exact',head:true}).eq('operator_id',c.operatorId).eq('user_id',c.userId).eq('enabled',true);
+   if(error)throw new PushRegistrationError('REGISTRATION_UNSAVED');
+   if((!existing.data||!existing.data.enabled)&&(count??0)>=50)throw new PushRegistrationError('DEVICE_LIMIT');
    const row={operator_id:c.operatorId,user_id:c.userId,endpoint:s.endpoint,p256dh:s.keys.p256dh,auth:s.keys.auth,device_name:a.name.trim(),enabled:true,updated_at:new Date().toISOString()};
    const result=existing.data?await client.from('admin_push_subscriptions').update(row).eq('id',existing.data.id).eq('user_id',c.userId):await client.from('admin_push_subscriptions').insert(row);
-   if(result.error)throw Error('Unable to register device');
+   if(result.error)throw new PushRegistrationError('REGISTRATION_UNSAVED');
   }else if(a.kind==='device'){
    if(typeof a.id!=='string'||!uuid.test(a.id))throw Error('Invalid device');
    const q=a.remove===true?client.from('admin_push_subscriptions').delete():client.from('admin_push_subscriptions').update({enabled:false,updated_at:new Date().toISOString()});

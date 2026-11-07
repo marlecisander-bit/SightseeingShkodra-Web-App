@@ -26,3 +26,12 @@ export async function resendRecipientEmail(operatorId: string, deliveryId: strin
   revalidatePath(path);
   redirect(`${path}?result=email_queued`);
 }
+
+export async function sendConfiguredAdminEmail(operatorId:string,_previous:{message:string;ok:boolean},_form:FormData){
+ void _previous;void _form;
+ try{
+  const {sendConfiguredAdminTest}=await import('@/modules/integrations/configured-admin-test');
+  const result=await sendConfiguredAdminTest(operatorId);
+  return {ok:true,message:`Provider accepted the test to ${result.to}. From: ${result.from}. Reply-To: ${result.replyTo}. Provider ID: ${result.providerId}. Delivery, received authentication headers and inbox placement still need verification. Repeated requests within five minutes are deduplicated.`};
+ }catch{return {ok:false,message:'The admin test was not accepted or could not be verified. Check owner access, the sender/API key, and the configured admin recipient. No booking was created.'};}
+}

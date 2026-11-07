@@ -8,6 +8,7 @@ import {BookingProvider, useBooking} from "./booking";
 type Props = Omit<ComponentProps<typeof Link>, "href"> & {product:BookableProduct};
 /** Preserve direct/new-tab URLs while ordinary product activation stays on this page. */
 export function ProductBookingLink({product,...props}: Props) {
+  if(product.active===false)return <span className={props.className} aria-disabled="true">Booking unavailable</span>;
   return <BookingProvider product={product}><ProductDialogLink {...props} product={product}/></BookingProvider>;
 }
 function ProductDialogLink({product,onClick,...props}: Props) {

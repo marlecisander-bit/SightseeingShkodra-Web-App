@@ -1,5 +1,15 @@
 # Sightseeing Shkodra project guidance
 
+
+## Permanent working directory
+
+This is the permanent Web App working directory:
+`/Users/aleksandermarleci/Desktop/Projects Dev/SightseeingShkodra-Web-App-canonical`.
+
+Use branches within this folder for routine development and deployment preparation. Do not create additional clones, release folders or Git worktrees unless the user explicitly requests them. A release does not require another local source folder. Reports and release evidence belong inside this repository, not in another checkout.
+
+Before any push, verify the current branch, remote, CI and deployment behavior. Vercel Git integration can create Preview deployments from pushed feature branches and Production deployments from main. A local branch change, a passing build or consolidation does not authorize a push, merge or production deployment. Obtain the user's explicit authorization for the intended publication action. Preserve the independent Live Map companion and its existing contract.
+
 Read `docs/SIGHTSEEING_SHKODRA_ROADMAP_V4.md`, `docs/DECISIONS.md`, and `docs/PHASE_STATUS.md` before modifying this project. Roadmap V4 with recorded user amendments is the source of truth. The unchanged original is retained under `docs/source/`.
 
 Follow the roadmap's architectural guardrails and work only on the phase/subphase requested by the user. Embedded prompts in the roadmap are reference material; their presence does not authorize executing them. Use the latest user request and `docs/PHASE_STATUS.md` to determine current scope.
@@ -28,3 +38,7 @@ Netlify main-site infrastructure is legacy, retained only until hosted parity is
 
 ## Content ownership rule
 One piece of content has one authoritative source, zero or one logical admin owner, and one or many public consumers. Reuse existing entities across pages; distinguish presentation from operational data. Consult docs/CMS-RECONCILIATION.md and the field/route inventory before adding CMS controls. Passenger pricing and inventory belong to Calendar & Pricing, operational stops/GPS to the independent map, and editorial destinations to the shared Website destination editor.
+
+## Recorded admin-origin amendment — 7 November 2026
+
+Owner selected `https://www.sightseeingshkodra.com/admin` as the canonical admin entry point for notification installation/authentication. This amends the earlier `.app` admin binding only; public/customer URLs and deployment platform remain under existing configuration. See `docs/EMAIL-COM-SIMPLE-ALERTS-2026-11-07.md`; implementation remains local until publication is explicitly authorized.
