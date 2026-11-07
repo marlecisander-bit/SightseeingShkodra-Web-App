@@ -159,3 +159,7 @@ The owner approved the complete single-workspace Products concept: details, phot
 ## 7 November 2026 — Product availability and display order (local only)
 
 Products owns `products.active`, `products.unavailable_message` and `products.display_order`. Availability is independent of editorial publication; inactive published cards remain visible with information, a custom red ribbon and no new booking. Move up/Move down replaces the old numeric card-order editor. Existing `card.*.order` is compatibility data and does not override the product column. Directory, homepage fallback, private preview, desktop/mobile cards and booking enforcement consume the same product record. Existing English-only text conventions are retained; Unicode is supported, but no separate translation catalog is introduced. See PRODUCT-AVAILABILITY-ORDER-2026-11-07.md for migration and verification evidence. No hosted changes.
+
+## 7 November 2026 — Tour status presentation
+
+Products owns `active`, `unavailable_message` and nullable `availability_presentation` (state, label, structured reopening precision/value, secondary label/destination). Admin Products is the single editor; shared public product cards and homepage fallback consume the same projection. Website content does not duplicate these controls. Calendar capacity and operating schedules remain operational sources; displayed reopening information never schedules sales. See TOUR-STATUS-DESIGN-2026-11-07.md.

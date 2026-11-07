@@ -1,4 +1,5 @@
 'use server';
+import {validateAvailability} from '@/modules/booking/product-availability';
 import {redirect} from 'next/navigation';
 import {revalidatePath} from 'next/cache';
 import {withOperatorService} from '@/modules/identity/operator-service';
@@ -19,9 +20,11 @@ export async function saveProductWorkspace(operatorId:string,productId:string|nu
 
 export async function saveProductAvailability(operatorId:string,productId:string,form:FormData){
  try{
-  if(!['true','false'].includes(String(form.get('active'))))throw Error('Choose Active or Inactive.');
+  const presentation=validateAvailability(JSON.parse(String(form.get('availability')??'null')));
+  const message=String(form.get('unavailable_message')??'').trim();
+  if(message.length>160)throw Error('Use an explanatory message of at most 160 characters.');
   await withOperatorService(operatorId,'catalog.manage',async(client,ctx)=>{
-   const {error}=await client.rpc('save_product_availability_v1',{p_operator:ctx.operatorId,p_actor:ctx.staffProfileId,p_product:productId,p_stamp:form.get('updated_at'),p_active:form.get('active')==='true',p_message:form.get('unavailable_message')});
+   const {error}=await client.rpc('save_product_availability_v2',{p_operator:ctx.operatorId,p_actor:ctx.staffProfileId,p_product:productId,p_stamp:form.get('updated_at'),p_presentation:presentation,p_message:message});
    if(error)throw Error(['PT409','22023'].includes(error.code)?error.message:'Availability could not be saved. Check your access and retry.');
   });
  }catch(error){return {error:error instanceof Error?error.message:'Availability could not be saved.'};}

@@ -1,7 +1,8 @@
+import type {AvailabilityPresentation} from './product-availability';
 import type {ProductFeatureKey,ProductFeatureIcons} from './product-features';
 /** Public offer metadata only. Prices and inventory come from the booking engine. */
 export type BookableProduct = {
-  id: string; title: string; slug: string; primary?:boolean; active?:boolean; unavailableMessage?:string; displayOrder?:number;
+  id: string; title: string; slug: string; primary?:boolean; active?:boolean; availability?:AvailabilityPresentation; unavailableMessage?:string; displayOrder?:number;
   mode: 'selected_departure' | 'whole_day'; minutes: number; adultPrice?:number|null;
   card?: {description: string; image: string; alt: string; enabled: boolean; order: number;features?:ProductFeatureKey[];feature_icons?:ProductFeatureIcons};
 };
