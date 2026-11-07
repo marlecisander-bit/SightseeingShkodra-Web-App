@@ -45,9 +45,9 @@ export function ScheduleEditor({operatorId, schedule, products, vehicles,workspa
     <fieldset className={styles.weekdays}><legend>Operating days</legend>{['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map((day,i)=><label key={day}><input name="weekdays" type="checkbox" value={i+1} defaultChecked={schedule ? schedule.weekdays.includes(i+1) : true}/>{day}</label>)}</fieldset>
     <div className={styles.pair}><label>Usual maximum seats per departure<input type="number" name="default_capacity" min="1" max="2147483647" step="1" required defaultValue={schedule?.default_capacity ?? 8}/></label><label>Default vehicle<select name="vehicle_id" defaultValue={schedule?.vehicle_id ?? ''}><option value="">Unassigned</option>{vehicles.map(v=><option key={v.id} value={v.id}>{v.label}</option>)}</select></label></div>
     <Times initial={schedule?.departure_times ?? []} vehicles={vehicles}/>
-    <label>Status<select name="status" defaultValue={schedule?.status ?? 'active'}><option value="active">Active</option><option value="paused">Paused</option></select></label>
+    <label>Usual schedule status<select name="status" defaultValue={schedule?.status ?? 'active'}><option value="active">Active</option><option value="paused">Paused</option></select></label>
     <p>Changes affect future departures. Existing reservations must be resolved before closing a departure or lowering capacity below reserved seats.</p>
-    <SubmitButton disabled={!products.length}>Save Schedule</SubmitButton>
+    <SubmitButton disabled={!products.length}>Save usual schedule</SubmitButton>
   </MutationForm>;
 }
 

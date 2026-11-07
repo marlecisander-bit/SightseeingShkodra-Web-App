@@ -97,3 +97,29 @@
 .service form{min-width:0;}
 @media(max-width:767px){.service{padding:12px;}.grid:not([data-expanded=true]){display:none;}.mobileMonth{display:block;min-height:44px;width:100%;font-size:12px;}.legend{font-size:10px;gap:5px 8px;}.day{min-height:48px!important;}.editor{padding:12px;}.calendarNote{font-size:11px;}}
 @media(min-width:1100px){.editor{margin:0;}.workspace{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);}.editor .prices{grid-template-columns:1fr;}}
+
+/* One service at a time; daily edits and recurring defaults have distinct entry points. */
+.operatingWorkspace{min-width:0;max-width:100%;}
+.serviceToolbar{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:20px 0 10px;}
+.serviceToolbar label{display:grid;gap:6px;flex:1;min-width:0;font-size:13px;font-weight:600;}
+.serviceToolbar select{width:100%;min-height:46px;font-size:16px;padding:10px;border:1px solid var(--ss-border);border-radius:10px;background:white;}
+.serviceToolbar a{min-height:44px;display:inline-flex;align-items:center;}
+.salesNotice{padding:14px 16px;border:1px solid #cbded1;background:#f1f8f3;border-radius:10px;}
+.salesNotice[data-paused=true]{border-color:#e8d5a5;background:#fff8e7;}
+.salesNotice p{font-size:13px;margin:6px 0;line-height:1.5;}
+.changeReview{border:1px solid #d6dce5;border-radius:10px;background:#f8f9fb;padding:12px;margin-top:12px;}
+.changeReview p{font-size:13px;overflow-wrap:anywhere;}
+.editorFooter{position:static;bottom:0;z-index:2;background:white;border-top:1px solid var(--ss-border);padding:10px 0 max(10px,env(safe-area-inset-bottom));margin-top:12px;}
+.editorFooter[data-active=true]{position:sticky;box-shadow:0 -8px 16px #fff;}
+.editorFooter>span{font-size:12px;color:var(--ss-muted);}
+.editorFooter .toolbar{justify-content:flex-start;margin:8px 0 0;}
+.monthActions{gap:10px;flex-wrap:wrap;}
+.operatingWorkspace .workspace{margin-bottom:20px;}
+@media(max-width:767px){.editorFooter{bottom:70px;}.editorFooter button{flex:1;min-width:120px;}.serviceToolbar{align-items:stretch;}.serviceToolbar label{flex-basis:100%;}.operatingWorkspace .editor{border-radius:12px;padding:14px;}.departureCard summary{grid-template-columns:1fr 1fr;}}
+.operatingWorkspace button.mobileMonth{display:none!important;}
+@media(max-width:767px){.operatingWorkspace button.mobileMonth{display:flex!important;}}
+.editorFooter[data-active=true]{position:static;}
+@media(max-width:767px){
+ .editorFooter[data-active=true]{position:fixed;left:12px;right:12px;bottom:calc(70px + env(safe-area-inset-bottom));z-index:50;border:1px solid var(--ss-border);border-radius:12px;padding:10px 12px;box-shadow:0 -4px 18px #00000012;}
+ .editor:has(.editorFooter[data-active=true]){padding-bottom:130px;}
+}
