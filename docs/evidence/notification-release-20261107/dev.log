@@ -1,0 +1,26 @@
+
+> sightseeing-shkodra@0.1.0 dev
+> next dev --port 3100
+
+▲ Next.js 16.4.2 (Turbopack)
+- Local:         http://localhost:3100
+- Network:       http://192.168.100.206:3100
+✓ Ready in 192ms
+✓ Running next.config.ts took 42ms
+Creating turbopack project {
+  dir: '/Users/aleksandermarleci/Desktop/Projects Dev/SightseeingShkodra-Web-App',
+  testMode: true
+}
+- Experiments (use with caution):
+  · serverActions
+
+ GET /dev/booking-alerts 200 in 172ms (next.js: 95ms, application-code: 77ms)
+ GET /dev/booking-alerts 200 in 24ms (next.js: 1.2ms, application-code: 23ms)
+ GET /dev/booking-alerts?state=registered 200 in 37ms (next.js: 1.6ms, application-code: 36ms)
+ GET /dev/booking-alerts?state=registered 200 in 41ms (next.js: 1.7ms, application-code: 39ms)
+ GET /dev/booking-alerts?state=install 200 in 26ms (next.js: 1.4ms, application-code: 25ms)
+ GET /dev/booking-alerts?state=denied 200 in 21ms (next.js: 0.8ms, application-code: 20ms)
+ GET /dev/booking-alerts?state=denied 200 in 19ms (next.js: 0.6ms, application-code: 18ms)
+ GET /dev/booking-alerts?state=registered 200 in 18ms (next.js: 0.4ms, application-code: 17ms)
+ GET /dev/booking-alerts?state=ready 200 in 29ms (next.js: 3ms, application-code: 26ms)
+[?25h

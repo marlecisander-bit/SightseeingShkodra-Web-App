@@ -1,0 +1,14 @@
+{
+  "candidate-check": {
+    "exitCode": 0,
+    "seconds": 16.4
+  },
+  "candidate-tests": {
+    "exitCode": 0,
+    "seconds": 38.7
+  },
+  "candidateTreeTested": "36959a7d43bed71487632f6cae46df027a14c3b2",
+  "runtimeTestMigrationSourcesMatched": true,
+  "excludedFilesRestoredByteIdentically": true,
+  "conflicts": []
+}

@@ -1,0 +1,10 @@
+✔ canonical redirect terminates before auth; refresh writes all cookies with no-store and leaves canonical URLs unchanged (2.786167ms)
+✔ old .app and new .com worker clicks retain exact booking through the candidate redirect and sign-in return allowlist (2.631458ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 118.973417

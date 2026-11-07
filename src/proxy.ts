@@ -1,9 +1,15 @@
+import {canonicalAdminRedirect} from "./modules/identity/admin-origin";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseConfig } from "./modules/identity/supabase-config";
 
 // Session refresh only. Authorization must run again in each protected handler.
 export async function proxy(request: NextRequest) {
+  const destination=canonicalAdminRedirect(request.url,request.method);
+  if(destination){const redirected=NextResponse.redirect(destination,307);redirected.headers.set("Cache-Control","private, no-store");return redirected;}
+  // Public PWA bootstrap must not depend on an authenticated refresh or auth availability.
+  // Protected handlers/pages still authorize every read and write.
+  if (["/admin/sw.js", "/admin/manifest.webmanifest"].includes(request.nextUrl.pathname)) return NextResponse.next();
   let response = NextResponse.next({ request });
   response.headers.set("Cache-Control", "private, no-store");
   try {

@@ -1,0 +1,47 @@
+✔ canonical redirect terminates before auth; refresh writes all cookies with no-store and leaves canonical URLs unchanged (2.8805ms)
+✔ old .app and new .com worker clicks retain exact booking through the candidate redirect and sign-in return allowlist (2.677292ms)
+✔ saved creation/modification/cancellation independently send admin email and two device pushes once; provider failures preserve bookings (1066.37775ms)
+✔ heartbeat persists empty completion, rejects public writes and ignores superseded run completions (920.746541ms)
+✔ successful committed booking sends exactly one customer and one owner email; repeat worker does not resend (57.181625ms)
+✔ meaningful repeated modifications send pairs; no-op retry emits no duplicate; changes in one transaction coalesce (47.476042ms)
+✔ cancel retry sends one pair, shows real cancellation and no refund promise; booking remains cancelled (20.676542ms)
+✔ rolled-back mutation emits no event and no email (14.342667ms)
+✔ booking-wide resend is disabled and cannot duplicate unresolved acceptance (24.9885ms)
+✔ provider failure preserves reservation, retry payload and key are identical after booking data changes (22.184292ms)
+✔ uncertain sends stop before provider idempotency expires; redaction retains dedupe tombstones (14.2715ms)
+✔ public roles cannot enqueue, claim, request or mutate email jobs (1.394333ms)
+✔ all six email variants escape malicious content, omit absent optional fields, include plain text (0.2765ms)
+✔ missing or malformed customer email skips guest only; owner still receives notification (0.346916ms)
+✔ disabled mode never accesses storage or provider; development requires test address (0.309584ms)
+✔ Resend acceptance, timeout, outage, API validation and concurrency responses are classified safely (1.594708ms)
+✔ a cancelled booking is skipped before confirmation attempts, including a saved retry (18.057958ms)
+✔ customer booking retries cannot emit another creation event (12.034125ms)
+✔ worker route rejects unauthorized calls before reading bookings or provider configuration (2.87475ms)
+✔ activation excludes historical events and prequeued history while including events exactly at or after boundary (32.076417ms)
+✔ v2 ticket lifecycle uses canonical passenger seats and QR, reliable before/after and cancellation invalidation (83.527292ms)
+✔ selected-recipient resend preserves event, does not fan out, is idempotent and supports cancellations (24.488125ms)
+✔ frozen version-one retries keep original rendering and no new QR attachment (11.211166ms)
+✔ production rejects Resend sandbox sender and Vercel diagnostics reflect the delivery pause (1.417375ms)
+✔ Catalog retirement preserves historical email copy and frozen prepared messages (7.314625ms)
+✔ saved version-two confirmation retries remain byte-identical after compact design activation (17.759625ms)
+✔ owner design marker freezes only newly prepared owner-created jobs; old owner retry bytes and identity survive (15.387833ms)
+✔ new owner compact retry keeps its frozen marker, contact snapshot, body and Resend identity (30.471625ms)
+✔ admin canonical origin is .com independently of public customer links and safe login query survives alias redirects (0.390834ms)
+✔ public bookings, customer management, existing worker identities, APIs and mutations are not redirected (0.09625ms)
+✔ iPhone Home Screen and secure-context requirements are explained before permission requests (0.906583ms)
+✔ explicit enable requests permission before async worker setup and verifies persistence (0.185167ms)
+✔ denial, dismissed prompt, unsupported browsers and missing server keys never register (0.145ms)
+✔ rotated keys and expired or explicitly replaced device subscriptions are renewed (0.294542ms)
+✔ failed persistence and provider subscription errors cannot produce a registered success (0.176125ms)
+✔ service worker activation race is handled and unrelated worker is not removed (0.540875ms)
+✔ lock screen includes only booking reference and count/date grammar, never contacts, notes or totals (0.509416ms)
+✔ server-disabled expired subscriptions are replaced instead of re-enabling a dead endpoint (0.116708ms)
+✔ valid persisted subscriptions survive repeated enable calls without subscribe, storage rewrites or duplicates (0.119417ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1645.589875

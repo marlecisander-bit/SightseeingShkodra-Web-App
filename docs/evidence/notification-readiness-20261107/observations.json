@@ -1,0 +1,18 @@
+{
+  "source": "Manually transcribed authenticated UI and read-only SQL evidence, no secrets or customer fields",
+  "processingCheckedAt": "2026-11-07T17:28:05.817144Z",
+  "scheduler": {"count": 1, "active": true, "expression": "* * * * *", "latestStartUtc": "2026-11-07T17:28:00.014294Z", "succeeded24h": 1440, "failed24h": 0},
+  "http10minutes": {"responses200": 20, "emailLiveBodies": 10, "pushBodies": 10},
+  "emailHeartbeat": {"status": "live", "startedAt": "2026-11-07T17:28:00.544965Z", "lastSuccessAt": "2026-11-07T17:28:01.777554Z"},
+  "queues": {"emailAccepted": 54, "pushAccepted": 19, "otherStates": 0, "emailStaleLeases": 0, "pushStaleLeases": 0},
+  "productionSenderAfterReload": "tickets@sightseeingshkodra.app",
+  "authenticatedCanonicalSessionReload": "passed; no forced expiry or password submission",
+  "rawActivationTimestampValues": "not revealed; Vercel verification gate, owner chose to continue with limitation recorded",
+  "publicUrlEnvironmentValue": "not revealed; same gate",
+  "deployedMain": "7daae3f2ea254b2469946cd8fd665340a740511a",
+  "readyProductionDeployment": "4m5L1q7p66tmu1Lp1iw7dFqLhRse",
+  "baselineCi": {"run": 129, "id": "42256129090", "conclusion": "completed successfully"},
+  "candidateCi": "not run; candidate unpublished",
+  "hostedSettingsChanged": false,
+  "realSends": false
+}
