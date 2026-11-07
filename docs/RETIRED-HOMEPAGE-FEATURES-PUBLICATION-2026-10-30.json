@@ -1,0 +1,85 @@
+{
+  "published_at": "2026-10-30T17:06:57.909129+00:00",
+  "pr": "https://github.com/marlecisander-bit/SightseeingShkodra-Web-App/pull/39",
+  "commit": "4f8637cb07c05f47386b39be7f3811a6be3d6356",
+  "vercel_deployment": "BxNYTGnWaSZSLb1s9rdEqT74wGjt",
+  "github_deployment": 7444225703,
+  "environment": "Production",
+  "state": "success",
+  "pr_ci": "success",
+  "main_ci": "success",
+  "local_tests": 604,
+  "checks": [
+    "clean install",
+    "lint",
+    "typecheck",
+    "production build",
+    "production audit: zero vulnerabilities"
+  ],
+  "hosted": [
+    {
+      "url": "https://www.sightseeingshkodra.com/",
+      "status": 200,
+      "retired_sections": 0,
+      "business_footer_count": 1
+    },
+    {
+      "url": "https://www.sightseeingshkodra.com/route",
+      "status": 200,
+      "retired_sections": 0,
+      "business_footer_count": 1
+    },
+    {
+      "url": "https://www.sightseeingshkodra.com/explore",
+      "status": 200,
+      "retired_sections": 0,
+      "business_footer_count": 1
+    },
+    {
+      "url": "https://www.sightseeingshkodra.com/faq",
+      "status": 200,
+      "retired_sections": 0,
+      "business_footer_count": 1
+    },
+    {
+      "url": "https://sightseeingshkodra.app/",
+      "status": 200,
+      "retired_sections": 0,
+      "business_footer_count": 1
+    },
+    {
+      "url": "https://sightseeingshkodra.app/route",
+      "status": 200,
+      "retired_sections": 0,
+      "business_footer_count": 1
+    },
+    {
+      "url": "https://sightseeingshkodra.app/explore",
+      "status": 200,
+      "retired_sections": 0,
+      "business_footer_count": 1
+    },
+    {
+      "url": "https://sightseeingshkodra.app/faq",
+      "status": 200,
+      "retired_sections": 0,
+      "business_footer_count": 1
+    }
+  ],
+  "retired": [
+    "The local notebook",
+    "Final booking invitation"
+  ],
+  "preserved": [
+    "Explore and shared destinations",
+    "route/stops",
+    "booking controls",
+    "business/legal/social footer",
+    "stored compatibility keys and shared media"
+  ],
+  "visual_acceptance": "Chrome host unavailable; no visual/authenticated hosted-admin screenshot pass claimed",
+  "shared_product_development": "not published; local candidate reconciled, 148 component +7 CMS tests and typecheck pass; booking/API and untracked feature files verified against safety checkpoint",
+  "direct_database_or_configuration_changes": false,
+  "rollback_commit": "e16802fa6692394b84c000277d6ce93d095470be",
+  "rollback_vercel": "2JyJ82XgBMN73Q6ovDsYYsQZWBVX"
+}

@@ -24,6 +24,9 @@ export type Homepage = {
   adultFares?: {time:string;amount:number}[];
   state: "ready" | "empty" | "unconfigured" | "unavailable";
   product: {
+    active?: boolean;
+    unavailableMessage?: string;
+    displayOrder?: number;
     id: string;
     slug: string;
     title: string;
@@ -142,6 +145,7 @@ export async function loadHomepage(
       if (product.slug !== config.productSlug || !Array.isArray(product.stops))
         throw new Error("Wrong product");
       model.product = {
+        ...(typeof product.active==='boolean'?{active:product.active,unavailableMessage:typeof product.unavailable_message==='string'?product.unavailable_message:'',displayOrder:typeof product.display_order==='number'?product.display_order:0}:{}),
         id: identifier(product.id),
         title: text(product.title, 200),
         slug: config.productSlug,

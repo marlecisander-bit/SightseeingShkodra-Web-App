@@ -1,0 +1,56 @@
+{
+  "published_at": "2026-10-30T16:09:19.027321+00:00",
+  "pr": "https://github.com/marlecisander-bit/SightseeingShkodra-Web-App/pull/38",
+  "commit": "e16802fa6692394b84c000277d6ce93d095470be",
+  "vercel_deployment": "2JyJ82XgBMN73Q6ovDsYYsQZWBVX",
+  "github_deployment": 7442985984,
+  "environment": "Production",
+  "state": "success",
+  "pr_ci": "success",
+  "main_ci": "success",
+  "tests": 604,
+  "hosted_checks": [
+    {
+      "url": "https://www.sightseeingshkodra.com/",
+      "status": 200,
+      "section_present": false,
+      "old_heading_present": true,
+      "hero_present": true,
+      "route_map_present": false,
+      "retired_heading_in_dom_text": false
+    },
+    {
+      "url": "https://www.sightseeingshkodra.com/route",
+      "status": 200,
+      "section_present": false,
+      "old_heading_present": true,
+      "hero_present": false,
+      "route_map_present": true
+    },
+    {
+      "url": "https://sightseeingshkodra.app/",
+      "status": 200,
+      "section_present": false,
+      "old_heading_present": true,
+      "hero_present": true,
+      "route_map_present": false,
+      "retired_heading_in_dom_text": false
+    },
+    {
+      "url": "https://sightseeingshkodra.app/route",
+      "status": 200,
+      "section_present": false,
+      "old_heading_present": true,
+      "hero_present": false,
+      "route_map_present": true
+    }
+  ],
+  "visual_acceptance": "No Chrome visual pass claimed; HTTP/DOM verification only",
+  "unchanged": [
+    "database",
+    "production configuration",
+    "map service deployment"
+  ],
+  "rollback_commit": "06c74b7e5034b6f0df5b56ab05218602363facb6",
+  "rollback_vercel": "9DHex8Laz8kkCixZin2kRdmUQZa5"
+}

@@ -236,6 +236,81 @@ User requested database-backed reservation deletion and explicitly included paid
 User requested publication of completed developments. Isolated candidate preserves already released fixes and pending IDE work. Migration20261030000400 applied before code:34 bookings unchanged,34 retained registry identities,0 deletions; security and source checks passed. Final candidate664 tests plus lint/typecheck/build and clean audit. Public external Live Map status remains disabled pending real companion acceptance. Release evidence and rollback: `docs/releases/all-completed-20261030/README.md`; final deployment receipt follows publication.
 
 
+## 31 October 2026 - Permanent local Web App directory
+
+The owner designated SightseeingShkodra-Web-App-canonical as the permanent source folder. Routine development and release preparation use branches within this folder. Additional clones, release source folders or worktrees require an explicit user request. A release needs no extra source directory. Before any authorized push, verify remote, branch and Vercel Git deployment behavior; local branch changes do not authorize Production deployment. Existing linked worktrees remain until separate removal authorization. Consolidation is local only; no push, deployment or database operation. See PERMANENT-WORKING-FOLDER-2026-10-31.md.
+
+
+## 4 November 2026 — revised hero and complete popup, local only
+
+The owner requested the revised portrait-card composition (headline left, cards right inside the hero; headline above native swipe cards on mobile/tablet) and the complete existing booking flow in a product-selected popup. This supersedes the earlier overlapping-card presentation. Preserve actual CMS imagery/content/pricing and shared booking APIs/transaction rules. Keep direct booking URLs, existing pay-at-meeting-point collection, and external services intact. The latest brief explicitly requires local implementation without publication; previous publication authorization does not apply to this new revision. Verification and remaining hardware/browser limits are recorded in HERO-POPUP-BOOKING-2026-11-04.md.
+
+
+## 4 November 2026 — hero and booking popup publication authorized and verified
+
+The owner subsequently instructed “publish the changes,” superseding the local-only limit for this revision. Publication used the existing repository PR/main/Vercel workflow after fresh checks. PR #52 merged as 39bbf5bfedf30401788edc3af115d9fe339edd30; exact-head PR/main CI, Production deployment and live read-only browser acceptance passed. Unrelated local work and existing infrastructure were preserved. See docs/evidence/hero-popup-publication-20261104/publication-receipt.json.
+
+
+## 4 November 2026 — homepage journey acquisition independent of visible map
+
+The owner requested a local-only repair after production checks found the homepage provider disconnected. Reuse one supported Netlify iframe/validated journey bridge per page, independent of the retired visible map and mobile presentation. Do not add GPS collectors, endpoints, persistence or duplicate subscriptions. Keep /route and standalone map intact. The provider now owns the background source; mobile remains icons-only and desktop retains status. Expired transport is explicitly reconnecting; historical/unavailable GPS retains upstream copy and never shows LIVE. Final checks and actual hosted-child browser evidence are recorded in HOMEPAGE-JOURNEY-CONNECTION-2026-11-04.md. Publication is not authorized for this revision.
+
+
+## 4 November 2026 — phone-only homepage hero refinement
+
+The owner requested the supplied mobile mockup below the existing hero phone breakpoint only, preserving desktop/tablet and shared CMS content. Use max-width599px, actual CMS mobile photograph with desktop fallback, compact cards with three benefits/full native details, existing swipe/booking behavior and WhatsApp collision handling. Do not copy generated scenery or alter booking rules. Implemented locally with before/after tablet/desktop evidence; prior uncommitted journey source repair is retained. No publication authorized. See MOBILE-HERO-REDESIGN-2026-11-04.md.
+
+
+## 4 November 2026 — preserve booking background layout width
+
+Owner requested a local-only minimal fix for the scrollbar-driven booking background expansion. Reserve the root gutter with standard CSS and freeze the body's actual pre-lock width; do not hard-code a scrollbar size or subtract twice. Keep existing scroll/focus/history/keyboard behavior and hero design. Chrome clientWidth can still include the unpainted reserved gutter, so assess actual root/body/header/hero boxes and restored scroll rather than that counter alone. Verification is in BOOKING-SCROLLBAR-FIX-2026-11-04.md. No publication authorized.
+
+
 ## 4 November 2026 — publish all completed homepage changes
 
 The owner subsequently requested publication of all completed changes: the independent homepage journey source, phone-only hero/cards and WhatsApp clearance, and stable booking-dialog background width. This supersedes their earlier local-only limits. Publish through the existing GitHub PR/main/Vercel workflow after fresh checks; keep the standalone map, DNS, schemas, GPS services and communications configuration unchanged. Fresh local validation:676 tests, lint, TypeScript, normal production build and zero-vulnerability audit. Exact-head CI and live acceptance remain publication gates. Historical local-only development notes remain provenance.
+
+
+## 4 November 2026 — combined homepage release verified
+
+Owner-authorized publication completed through PR #53/main602f9432d9974b90d48121bfc5d29ca59270148a and existing Vercel production workflow. Exact-head CI and real-CMS/Live Map desktop/mobile acceptance passed on both domains. Source matches the locally validated tree; unrelated historical edits and development routes remain local. No infrastructure, GPS persistence or real reservation/payment action. Receipt: docs/evidence/combined-publication-20261104/publication-receipt.json.
+
+## 4 November 2026 — local mobile booking popup redesign
+
+Owner requested mobile-only When → Who → Review redesign with viewport containment and existing booking logic. Use the existing 767px popup boundary, shared checkout state/contract, real availability and authoritative pricing; combine mobile contact entry and final Review while preserving desktop's existing preview step. Calendar checks one attempted date and reuses its validated quote, without month prefetch or new endpoints. Maintain native focus/history/dismissal safeguards and extend existing visual-viewport fitting for mobile pinch zoom. New work remains local: no commit/push/deployment authorized by this attachment. Evidence and verification limits: MOBILE-BOOKING-REDESIGN-2026-11-04.md.
+
+## 4 November 2026 — local mobile hero composition
+
+Owner requested bottom-positioned mobile carousel over one full-section CMS photograph, preserving existing card/booking design and desktop. Use existing599px phone breakpoint, viewport-aware minimum height, normal-flow flex column and automatic remaining space; allow content growth rather than fixed spacers/clipping. Keep existing image pipeline, safe-area/header offset, overlay and WhatsApp clearance. Local implementation only. Reference in ChatGPT Mac app cannot be accessed because Computer Use blocks that app; exact mockup comparison and physical-device verification remain unverified. Evidence: MOBILE-HERO-COMPOSITION-2026-11-04.md.
+
+## 4 November 2026 — mobile booking and composition publication
+
+Owner explicitly requested publication after local implementation. Both mobile changes released through PR #54 and existing main/Vercel workflow at c3ab16c0f331edd22d8726815cd623630e2dc802. Exact validated source tree, PR/main CI and real-CMS desktop/mobile acceptance on both public domains passed. No real reservations or infrastructure changes. Preserve unrelated local edits and existing independent map. Physical-device/reference access limits remain; publication receipt: docs/evidence/mobile-publication-20261104/publication-receipt.json.
+
+## 4 November 2026 — approved floating mobile booking mockup
+
+Owner supplied the accessible shared mockup m_6aeb69d97e448191a20f972c826a4b40 and requested local-only implementation. This supersedes the earlier full-screen/date-strip presentation: use a floating rounded white popup with12px/safe-area margins, burgundy logo-free header, active progress pills, inline monthly calendar, four compact time columns, grey summary and yellow Continue. Preserve the existing engine and desktop popup; clear only the non-interactive step heading's browser focus ring. Do not hardcode illustrative dates/prices or invent monthly availability; existing per-date validated API remains authoritative. No commit/push/deploy. See FLOATING-MOBILE-BOOKING-2026-11-04.md.
+
+## 4 November 2026 — floating mobile booking publication
+
+Owner explicitly authorized publication. Approved floating popup, inline calendar and compact steps released through PR #55/main fbe218b853e488e97d522c4496e2d874e24b7fb6 and existing Vercel workflow. Exact validated source tree, PR CI, production-commit CI and both public domains verified. No real bookings or infrastructure/configuration changes. CI queue/metadata inconsistency required one same-commit rerun; existing main workflow dispatch completed successfully after the delayed push job was superseded by normal concurrency. No checks disabled. Receipt: docs/evidence/floating-publication-20261104/publication-receipt.json.
+
+## 4 November 2026 — WhatsApp bottom anchor publication
+
+Owner requested the floating WhatsApp icon remain at the bottom while scrolling and explicitly authorized publication. Remove upward docking; retain safe-area-aware fixed bottom/right positioning and briefly hide on booking-control collisions instead of moving up. Existing contact settings, menu/dialog hiding and footer clearance stay in place. Released through PR #56/main b9480c16e555aad1669cdbcdc6f6bfe2266badd0 with local/CI/live acceptance passed. See WHATSAPP-BOTTOM-2026-11-04.md and its publication receipt.
+
+## 2026-11-07 — Product availability and public ordering
+
+The owner requested local-only Active/Inactive controls, required custom unavailable ribbons, and persistent Move up/Move down ordering. Extend the unified Products entity/workspace: inactive published cards remain visible, muted and unbookable; publication and existing reservations remain independent. Product fields are shared by admin/public/booking, with server-side booking guards and existing cache revalidation. Preserve existing order and default availability on upgrade. No push/publication, hosted migration, communications or independent map change authorized. See PRODUCT-AVAILABILITY-ORDER-2026-11-07.md. Current website language remains English-only; Unicode ribbon copy follows existing CMS conventions rather than inventing a parallel translation system.
+
+## 2026-11-07 — Local admin booking-email and iPhone push repair
+
+Owner requested investigation and local fixes for operational booking alerts and iPhone push, with no publication. Preserve committed booking events, independent email/push queues, transactional capacity/idempotency and existing hosted infrastructure. Add admin-only high-importance message headers and event/reference subjects without changing customer emails or old retry payloads. Repair verified per-device registration, Home Screen/permission guidance, key/expiry/account recovery, safe click handling and private lock-screen content; preserve manifest identity. Device display/sound, Focus and Mail-app settings cannot be overridden by headers. Physical iPhone and current authenticated Resend outcomes were unavailable; report those limits rather than asserting acceptance. No new notification migration, scheduler, hosted changes or publication. See ADMIN-BOOKING-ALERTS-2026-11-07.md.
+
+## 2026-11-07 — Canonical admin origin and .com email verification
+
+Owner explicitly selected https://www.sightseeingshkodra.com/admin for simplified booking alerts, amending the former .app binding for admin/auth links only. Preserve public/customer link configuration, existing manifest identity/subscriptions and independent services. Authenticated audit found .com Verified in Resend but deployed From still tickets@sightseeingshkodra.app. Local warning, safe admin diagnostic and one-next-action device setup implemented; no hosted configuration/DNS/publication authorized. See EMAIL-COM-SIMPLE-ALERTS-2026-11-07.md for evidence and incomplete physical/delivery acceptance.
+
+## 2026-11-07 — Final local notification release preparation
+
+Owner requested canonical www.com completion and actual processing inspection without publication/cloud changes. Fresh read-only audit found the existing single Supabase minute job operating both workers, clear queues and Vercel Hobby; preserve infrastructure and record commercial eligibility separately. Add bounded service-only push-worker heartbeat for truthful Active/Paused/Needs attention, independent of device registration; retain saved preferences. .com sender and missing .com Auth activation allowlist are hosted release actions, not applied here. No key rotation, second scheduler, historical payload rewrite or customer-origin change. See NOTIFICATION-RELEASE-CHECKLIST-2026-11-07.md.

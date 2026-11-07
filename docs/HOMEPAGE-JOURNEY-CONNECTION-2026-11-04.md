@@ -44,3 +44,6 @@ Physical devices, actual mobile keyboards, Safari and Firefox were unavailable. 
 
 
 Publication update — 4 November 2026: the owner subsequently authorized publication of all completed homepage changes. This supersedes the local-only limit above. Fresh combined676-test/lint/type/build/audit validation passed; exact-head PR/main CI and live acceptance are pending. Release evidence: `docs/evidence/combined-publication-20261104/`.
+
+
+Publication verified — 4 November 2026: released with the other completed homepage changes via PR #53, main `602f9432d9974b90d48121bfc5d29ca59270148a`, Vercel `Bgre5qYueujJRN5RAnKqM24yPvbV`. Fresh676 tests, lint/types/build/audit and exact-head PR/main CI pass. Live .app/www acceptance passes10 viewports and8 booking cycles per domain, real journey acquisition/navigation/expiry/online recovery, mobile swipe/details/WhatsApp and zero booking geometry delta, with zero checkout requests. No rollback needed. Local receipt/screenshots: `docs/evidence/combined-publication-20261104/`. No documentation-only redeployment. Hardware/browser verification limits above remain.

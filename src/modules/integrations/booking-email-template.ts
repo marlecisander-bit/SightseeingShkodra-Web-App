@@ -16,7 +16,7 @@ export type EmailBooking = {
   initiatedBy: string | null; reason: string | null;
   items: { title: string; description?: string | null; inclusions?: string | null; date: string | null; time: string | null; timezone: string; guests: number; seats?: number; counts?: { adult: number; child: number; infant: number } | null }[];
 };
-export type EmailEnvelope = { version: 1 | 2; customerConfirmationDesign?: 3; ownerNewBookingDesign?: 1; from: string; owner: string; replyTo: string; siteUrl: string; testRecipient: string | null };
+export type EmailEnvelope = { version: 1 | 2; customerConfirmationDesign?: 3; ownerNewBookingDesign?: 1; adminOperationalAlerts?: 1; adminOrigin?:string; from: string; owner: string; replyTo: string; siteUrl: string; testRecipient: string | null };
 const escape = (v: unknown) => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 const headerText = (v: string) => v.replace(/[\r\n\x00-\x1f\x7f]/g, " ").slice(0, 200);
 const labels = {
@@ -52,7 +52,7 @@ export function bookingEmailTemplate(event: BookingEmailEvent, recipient: Recipi
     ? b.refundReview ? "A refund review has been requested. This does not confirm that a refund has been issued." : "Any applicable refund will be handled according to the booking and payment conditions."
     : event === "BOOKING_MODIFIED" ? "Your booking has been updated. The current booking details are shown below."
     : "Your booking is confirmed. Please keep your booking reference for your visit.";
-  const adminUrl = `${envelope.siteUrl}/admin/${encodeURIComponent(operatorId)}/bookings?booking=${encodeURIComponent(bookingId)}#booking-${encodeURIComponent(bookingId)}`;
+  const adminUrl = `${envelope.adminOrigin??envelope.siteUrl}/admin/${encodeURIComponent(operatorId)}/bookings?booking=${encodeURIComponent(bookingId)}#booking-${encodeURIComponent(bookingId)}`;
   const manageUrl = recipient === "customer" && !cancelled && b.managementToken && /^[a-f0-9]{64}$/.test(b.managementToken) ? `${envelope.siteUrl}/booking/manage#token=${b.managementToken}` : "";
   const testNotice = envelope.testRecipient ? `TEST EMAIL - ${recipient} notification. Redirected to the configured test mailbox.` : "";
   const text = [testNotice, "Sightseeing Shkodra", title.toUpperCase(), instruction, ...rows.map(([k,v]) => `${k}: ${v}`), !cancelled ? `${meetingPoint.label}: ${meetingPoint.url}` : "", recipient === "owner" ? `Open booking: ${adminUrl}` : manageUrl ? `Manage your booking: ${manageUrl}` : "", `Questions? Reply to ${envelope.replyTo}.`].filter(Boolean).join("\n\n");

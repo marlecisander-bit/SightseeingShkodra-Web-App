@@ -115,3 +115,11 @@
  .carousel[data-overflow=true] .grid{cursor:grab;}
  .carousel[data-overflow=true] .grid[data-dragging=true],.carousel[data-overflow=true] .grid[data-dragging=true] *{cursor:grabbing;}
 }
+
+/* Ribbon occupies its own row: long messages never cover media, titles or prices. */
+.ribbon{display:flex;justify-content:flex-end;background:#fff;flex-shrink:0;}
+.ribbon span{max-width:100%;padding:9px 14px;border-radius:0 0 0 12px;background:#b91c1c;color:#fff;font-size:14px;font-weight:700;line-height:1.4;overflow-wrap:anywhere;white-space:normal;}
+.card[data-inactive=true]>:global(.p-media),.card[data-inactive=true]>.body,.card[data-inactive=true]>.placeholder{filter:grayscale(1);}
+.card[data-inactive=true]>.body{background:#f3f4f6;color:#30343b;}
+.card[data-inactive=true] .book{background:#e2e4e7;color:#343840;border:1px solid #757b84;opacity:1;cursor:not-allowed;}
+.unavailable{font-size:13px;line-height:1.5;margin:0;font-weight:600;overflow-wrap:anywhere;}

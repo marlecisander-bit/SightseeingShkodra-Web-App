@@ -1,0 +1,39 @@
+{
+  "released_at": "2026-10-30T15:58:17.918090+00:00",
+  "pr": "https://github.com/marlecisander-bit/SightseeingShkodra-Web-App/pull/37",
+  "source_commit": "a6e67250c6346619e7c2c9458700fdef3b46a006",
+  "production_commit": "06c74b7e5034b6f0df5b56ab05218602363facb6",
+  "vercel_deployment": "9DHex8Laz8kkCixZin2kRdmUQZa5",
+  "github_deployment_id": 7442789473,
+  "environment": "Production",
+  "deployment_state": "success",
+  "public_origin": "https://sightseeingshkodra.app",
+  "pr_ci": "success",
+  "local_tests_passed": 604,
+  "local_checks": [
+    "clean npm ci",
+    "lint",
+    "typecheck",
+    "production build",
+    "production audit: zero vulnerabilities",
+    "production start: homepage and route HTTP 200"
+  ],
+  "hosted_readonly": [
+    "homepage HTTP 200",
+    "route HTTP 200; full iframe and new loading/recovery asset",
+    "your-day HTTP 200; compact iframe"
+  ],
+  "visual_acceptance": "BLOCKED: authorized browser host unavailable; no visual PASS claimed",
+  "unchanged": [
+    "independent map deployment",
+    "database",
+    "environment variables",
+    "scheduler",
+    "communications settings"
+  ],
+  "rollback_commit": "8e1c0fd3fdc50ec47c614905ed293842d18c4d64",
+  "rollback_vercel_deployment": "9saoG5wVWNzwbeV2Xuex6o8nNx62",
+  "main_ci": "success",
+  "main_ci_run": 41085434010,
+  "local_smoke_limit": "HTTP shell only: local CMS/Supabase bindings absent; no local booking or content parity claimed"
+}

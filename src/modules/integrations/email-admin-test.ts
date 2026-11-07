@@ -1,4 +1,5 @@
 import 'server-only';
+import {adminAlertHeaders} from './admin-operational-email';
 import { createHash } from 'node:crypto';
 import { requirePermission } from '../identity/require-permission';
 import { bookingEmailConfig, validEmail } from './booking-email-config';
@@ -19,9 +20,9 @@ export async function sendAdminTestEmail(operatorId: string, recipient: string, 
   if (!config.enabled || !config.testRecipient) throw Error('test_unavailable');
   const template = { ...bookingEmailPreview('BOOKING_CREATED', recipientType, config.siteUrl), subject: '[TEST] Sightseeing Shkodra — Email System Test ? '+recipientType };
   const bucket = Math.floor(dependencies.now() / 300000);
-  const identity = createHash('sha256').update(JSON.stringify([operatorId,recipient,config.from,config.replyTo,template,bucket])).digest('hex');
+  const identity = createHash('sha256').update(JSON.stringify([operatorId,recipient,config.from,config.replyTo,template,...(recipientType==='owner'?[adminAlertHeaders]:[]),bucket])).digest('hex');
   const result = await dependencies.send(config.apiKey, `admin-email-test/${identity}`, {
-    from: config.from, to: [config.testRecipient], reply_to: config.replyTo, ...template,
+    from: config.from, to: [config.testRecipient], reply_to: config.replyTo, ...template, ...(recipientType==='owner'?{headers:adminAlertHeaders}:{}),
   });
   if (result.outcome !== 'accepted') throw Error('test_unavailable');
   return { accepted: true };

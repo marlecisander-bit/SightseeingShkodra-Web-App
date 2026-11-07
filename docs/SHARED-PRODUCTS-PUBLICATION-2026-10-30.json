@@ -1,0 +1,110 @@
+{
+  "published_at": "2026-10-30T17:34:48.069481+00:00",
+  "pull_request": "https://github.com/marlecisander-bit/SightseeingShkodra-Web-App/pull/40",
+  "source_commit": "08af2737db87d40b9f682f7364cb1d448480ea2f",
+  "production_commit": "8ffd230b5dace54950a0b34cf6e76295e4d01385",
+  "vercel_deployment": "9yXqjnQDv4E2BnxtJWfJxb6BXEaD",
+  "github_deployment": 7444835662,
+  "deployment_status": "success",
+  "migration": {
+    "version": "20261030000100",
+    "project": "ybngoppqqiohcduojfyg",
+    "source_md5": "754641645ebe70770e8366d559550dc1",
+    "source_sha256": "9b78ea1340137108646a5802e1125ca3971f0acaec4e6d7ea94d9db6ffcc1253",
+    "preflight": {
+      "current_allocations": 0,
+      "capacity_conflicts": 0,
+      "unassigned_reserved_slots": 0,
+      "baseline_functions_matched": 24
+    },
+    "before_after_integrity_equal": true,
+    "preserved_counts": {
+      "products": 6,
+      "bookings": 34,
+      "booking_items": 36,
+      "holds": 45,
+      "domain_events": 310
+    }
+  },
+  "validation": {
+    "tests_passed": 621,
+    "lint_typecheck_build": "passed",
+    "production_audit_vulnerabilities": 0,
+    "pr_ci_run": 41099233862,
+    "pr_ci": "success",
+    "main_ci_run": 41099715150,
+    "main_ci": "success",
+    "native_admin": "Product cards editor shows both offers; Loop card controls, 120-minute reservation, shared Daily Ticket inventory option and whole operating day option observed. No test booking or communications created.",
+    "hosted_public": [
+      {
+        "url": "https://www.sightseeingshkodra.com/",
+        "status": 200,
+        "bytes": 120730,
+        "response": null,
+        "retired_sections_present": false
+      },
+      {
+        "url": "https://www.sightseeingshkodra.com/api/public/availability?date=2026-10-30&guests=1&productId=not-a-uuid",
+        "status": 400,
+        "bytes": 27,
+        "response": {
+          "error": "INVALID_REQUEST"
+        },
+        "retired_sections_present": false
+      },
+      {
+        "url": "https://www.sightseeingshkodra.com/api/public/availability?date=2026-10-30&guests=1&productId=00000000-0000-4000-8000-000000000000",
+        "status": 404,
+        "bytes": 25,
+        "response": {
+          "error": "NOT_PUBLISHED"
+        },
+        "retired_sections_present": false
+      },
+      {
+        "url": "https://www.sightseeingshkodra.com/api/public/availability?date=2026-10-30&guests=1",
+        "status": 200,
+        "bytes": 434,
+        "response": {
+          "quote": {
+            "version": 1,
+            "productId": "d0fb66d4-f290-405b-9362-30a4f5c16e27",
+            "date": "2026-10-30",
+            "guests": 1,
+            "businessDate": "2026-10-30",
+            "nextOperationalDate": "2026-10-31",
+            "categories": {
+              "adult": {
+                "max": null,
+                "min": 13,
+                "price": 1000
+              },
+              "child": {
+                "max": 12,
+                "min": 3,
+                "price": 800
+              },
+              "infant": {
+                "max": 2,
+                "min": 0,
+                "price": 0
+              }
+            },
+            "asOf": "2026-10-30T17:34:09.108145+00:00",
+            "currency": "EUR",
+            "unitPrice": 1000,
+            "total": 1000,
+            "departures": []
+          },
+          "timezone": "Europe/Tirane"
+        },
+        "retired_sections_present": false
+      }
+    ],
+    "limitations": "No isolated hosted Preview or completed real-booking lifecycle. Loop remains owner-configured; no invented prices/photo/editorial content. Owner may concurrently change configuration through admin."
+  },
+  "rollback": {
+    "app_commit": "4f8637cb07c05f47386b39be7f3811a6be3d6356",
+    "schema": "Retain compatible new schema; do not reverse after shared reservations."
+  }
+}

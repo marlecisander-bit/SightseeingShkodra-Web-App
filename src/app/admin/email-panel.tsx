@@ -1,3 +1,4 @@
+import {ConfiguredAdminTestForm} from './configured-admin-test-form';
 import {emailDeliveryState,emailOutcomeLabel,canRetryEmail} from '@/modules/integrations/email-delivery-status';
 import {AdminStatus} from './admin-status';
 import { randomUUID } from 'node:crypto';
@@ -45,7 +46,7 @@ export function EmailPanelView({operatorId,data,delivery,recipient,booking}:{ope
       <p>Keys, sending switch, sender addresses, activation timestamp and test address are managed in server configuration. Secret values are never displayed. Configured means present; it does not verify provider credentials.</p>
       <h3>Available in admin</h3><p>Inspect activity, filter deliveries, preview templates, test the configured address and request an existing confirmation resend.</p></details>
     </div>
-    <section className={styles.card}><h2>Sender settings</h2><p>Your current sending addresses. Contact your administrator to change them.</p><dl>
+    <section className={styles.card}><h2>Sender settings</h2>{c.senderEmail&&!c.senderDomainMatches&&<p role="status">The configured From address is not at @sightseeingshkodra.com. Verifying the domain does not update RESEND_FROM_EMAIL; the owner must update the hosted sender configuration.</p>}<p>Your current sending addresses. Contact your administrator to change them.</p><dl>
       <dt>Sender name</dt><dd>{c.senderName||'Not configured'}</dd><dt>Sender email</dt><dd>{c.senderEmail||'Not configured'}</dd>
       <dt>Reply-to email</dt><dd>{c.replyTo||'Not configured'}</dd><dt>Owner notification email</dt><dd>{c.ownerEmail||'Not configured'}</dd>
     </dl><p><strong>Sender:</strong> the address customers see. <strong>Reply-to:</strong> where customer replies go. <strong>Owner notification:</strong> where your business receives booking notifications.</p></section>
@@ -63,6 +64,7 @@ export function EmailPanelView({operatorId,data,delivery,recipient,booking}:{ope
           <p>This sends only the selected recipient the current booking information for this event. Wait five minutes between resend requests.</p><SubmitButton>{row.recipient_type==='customer'?'Resend customer email':'Resend owner notification'}</SubmitButton>
         </MutationForm>}
       </li>)}</ul>}<p>Showing up to 100 recent matching messages and 500 recent provider events. Skipped messages appear under All.</p></section>
+    <section className={styles.card}><h2>Test delivery to admin</h2><ConfiguredAdminTestForm operatorId={operatorId} recipient={c.ownerEmail} ready={c.ready&&Boolean(c.ownerEmail)&&(!c.testRecipient||c.testRecipient===c.ownerEmail)}/></section>
     <div className={styles.grid}>
       <details className={styles.card}><summary>Advanced: send a test email</summary><EmailTestForm operatorId={operatorId} recipient={c.testRecipient} ready={c.ready&&Boolean(c.testRecipient)}/><p>Synthetic test sends are not booking-delivery records. Check the result here and the provider dashboard.</p></details>
       <details className={styles.card}><summary>Advanced: automatic sending status</summary><dl><dt>Email worker</dt><dd>{workerHealth(data.heartbeat,enabled)}</dd><dt>Last run started</dt><dd>{date(data.heartbeat?.started_at??null)}</dd><dt>Last run completed</dt><dd>{date(data.heartbeat?.finished_at??null)}</dd><dt>Last successful run</dt><dd>{date(data.heartbeat?.last_success_at??null)}</dd><dt>Pending queue</dt><dd>{data.pending}</dd><dt>Failed / uncertain</dt><dd>{data.events.reduce((sum,e)=>sum+e.failed,0)}</dd></dl>

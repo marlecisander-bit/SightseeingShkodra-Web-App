@@ -7,6 +7,12 @@ Fresh all-44 final schema comparison passed; seven history entries and eleven tr
 
 Official hosting: **Vercel**. Framework: full-stack **Next.js**. Production branch: **main**. Production domain: **sightseeingshkodra.app**. Supabase remains PostgreSQL, Auth, Storage and Realtime. Resend remains the email provider.
 
+## Permanent local source folder
+
+Use `/Users/aleksandermarleci/Desktop/Projects Dev/SightseeingShkodra-Web-App-canonical` for all routine work. Prepare releases on branches in that folder; no extra clone, release folder or worktree is needed. Historical release-folder references in reports are provenance, not instructions to reopen or recreate those folders. See AGENTS.md and docs/PERMANENT-WORKING-FOLDER-2026-10-31.md.
+
+Before pushing, recheck the repository/project binding, target branch and current Vercel Git behavior. Feature pushes may deploy Preview; main pushes/merges may deploy Production. Switching local branches never authorizes publication. Keep isolated development/preview data and communication gates intact.
+
 ## Workflow and current state
 
 Feature branch → Git push → Vercel Preview → test with isolated data → merge to main → Vercel Production. Use the existing Git integration, not a second deployment pipeline. The audited project is `sightseeing-shkodra-web-app` under `aleksander-marleci`; repository `marlecisander-bit/SightseeingShkodra-Web-App`. Production main deployment was verified; a fresh feature-branch deployment still needs acceptance.
@@ -49,3 +55,15 @@ Public/admin manifests use relative icons/start URLs. The admin service worker h
 Run clean install, lint, typecheck, tests and a real production build/start. Verify public pages, booking lifecycle/cutoffs/capacity, auth/admin/CMS/pricing, Supabase, WhatsApp, PWA and the external map at desktop/tablet/mobile sizes. Production workers are active; controlled inbox/device acceptance remains unverified. Do not represent local tests or HTTP shell responses as hosted functional parity. The legacy main URL is currently unavailable; verify an actual rollback target before release; never disable the external map as part of main-site cleanup.
 
 References: [Vercel cron plan limits](https://vercel.com/docs/cron-jobs/usage-and-pricing), [cron authentication and management](https://vercel.com/docs/cron-jobs/manage-cron-jobs), [deployment audit](docs/VERCEL-DEPLOYMENT-AUDIT.md).
+
+### Local admin-alert repair — 7 November 2026
+
+Prepared local changes preserve the existing delivery activation boundary. Device registration can be prepared with configured push keys while automatic processing is paused; it does not enable sending. Keep the matching VAPID pair stable. No new environment variable or notification migration is required; the separate local product-controls migration is unchanged. Before any future authorized acceptance, review the current sender/provider outcomes, the existing scheduler and both worker endpoints, canonical Admin installation origin, device permissions and event preferences. Do not add a second scheduler or infer activation from a successful registration. Live provider verification and physical-iPhone background/locked-screen tests remain pending. See `docs/ADMIN-BOOKING-ALERTS-2026-11-07.md` for evidence and the existing settings checklist. No hosted configuration was changed.
+
+### 7 November local admin-origin amendment (not deployed)
+
+Owner chose https://www.sightseeingshkodra.com/admin. On authorized release, verify Vercel alias direction and Supabase staff recovery allowlist for https://www.sightseeingshkodra.com/auth/activate. Preserve public/customer URL bindings and existing worker/manifest identities. .com is verified at Resend but production still uses tickets@sightseeingshkodra.app; change RESEND_FROM_EMAIL only during an authorized configuration step, then use the configured-admin diagnostic and inspect provider/mailbox evidence separately. No DNS change or infrastructure activation is included. Full checklist: docs/EMAIL-COM-SIMPLE-ALERTS-2026-11-07.md.
+
+### Final notification candidate — 7 November (unpublished)
+
+Use docs/NOTIFICATION-RELEASE-CHECKLIST-2026-11-07.md. Fresh existing Supabase minute scheduler is operational; do not add a second scheduler or claim a current Hobby-cron outage. Hosting commercial eligibility requires owner/provider decision. New service-only admin push-worker heartbeat migration20261107000200 remains unapplied; source safely shows Needs attention before it exists. Approved release would also require sender .com binding and Supabasewww.com/auth/activate allowlist, plus physical/email acceptance. No hosted changes authorized/performed.

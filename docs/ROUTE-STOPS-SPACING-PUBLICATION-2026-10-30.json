@@ -1,0 +1,21 @@
+{
+  "published_at": "2026-10-30T19:38:32.040283+00:00",
+  "pr": 43,
+  "commit": "5ce856450b785ffba3681119d8693e8f6d9750c3",
+  "vercel": "2Zi5ee8t4yAwW4E9HMnsxdWxrTp1",
+  "pr_ci": "success",
+  "live_checks": [
+    {
+      "url": "https://www.sightseeingshkodra.com",
+      "status": 200,
+      "desktop_32px": true,
+      "mobile_tablet_24px": true
+    },
+    {
+      "url": "https://sightseeingshkodra.app",
+      "status": 200,
+      "desktop_32px": true,
+      "mobile_tablet_24px": true
+    }
+  ]
+}

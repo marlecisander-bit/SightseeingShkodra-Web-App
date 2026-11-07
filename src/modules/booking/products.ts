@@ -1,10 +1,13 @@
 import type {ProductFeatureKey,ProductFeatureIcons} from './product-features';
 /** Public offer metadata only. Prices and inventory come from the booking engine. */
 export type BookableProduct = {
-  id: string; title: string; slug: string; primary?:boolean;
+  id: string; title: string; slug: string; primary?:boolean; active?:boolean; unavailableMessage?:string; displayOrder?:number;
   mode: 'selected_departure' | 'whole_day'; minutes: number; adultPrice?:number|null;
   card?: {description: string; image: string; alt: string; enabled: boolean; order: number;features?:ProductFeatureKey[];feature_icons?:ProductFeatureIcons};
 };
+export function unavailableMessage(product: Pick<BookableProduct,'unavailableMessage'>) {
+  return product.unavailableMessage?.trim() || 'Temporarily unavailable';
+}
 export function reservationLabel(product: Pick<BookableProduct,'mode'|'minutes'>) {
   return product.mode === 'whole_day' ? 'Seat reserved all operating day' : `Seat reserved for your selected departure · ${product.minutes%60===0?`${product.minutes/60} ${product.minutes===60?"hour":"hours"}`:`${product.minutes} minutes`}`;
 }

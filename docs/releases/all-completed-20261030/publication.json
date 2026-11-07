@@ -1,0 +1,54 @@
+{
+  "time_utc": "2026-10-30T23:12:38.002098+00:00",
+  "status": "published",
+  "pr": "https://github.com/marlecisander-bit/SightseeingShkodra-Web-App/pull/45",
+  "commit": "807c4f57221a5d8ff7122497eca70f4d23de211c",
+  "candidate": "b623c3f9f2538c570b65b2536e5f36cf65e04b6f",
+  "deployment_id": "CAUqNxB2ktjV5k3B3qsP2RXtWJRh",
+  "deployment_url": "https://sightseeing-shkodra-web-9b9itomiv-aleksander-marleci.vercel.app",
+  "site": "https://sightseeingshkodra.app",
+  "vercel": "success",
+  "pr_ci": "success",
+  "main_ci": "success",
+  "checks": {
+    "tests": 664,
+    "lint": "passed",
+    "typecheck": "passed",
+    "build": "passed",
+    "audit_vulnerabilities": 0,
+    "diff_check": "passed"
+  },
+  "database": {
+    "migration": "20261030000400",
+    "applied_before_application": true,
+    "project": "ybngoppqqiohcduojfyg",
+    "bookings_at_application": 34,
+    "registry_at_application": 34,
+    "deleted_at_application": 0,
+    "business_fingerprints_unchanged_by_migration": true,
+    "security_and_exact_source_verified": true
+  },
+  "post_release": {
+    "homepage": 200,
+    "route": 200,
+    "booking": 200,
+    "com_www_homepage": 200,
+    "development_routes": 404,
+    "authenticated_owner_bookings": "loaded; current results and new deletion feedback visible",
+    "live_map": "route HTML retains existing hosted iframe embed=1&presentation=full; external status gate false",
+    "destructive_release_test": "none",
+    "customer_communications": "none triggered by release checks"
+  },
+  "limits": [
+    "Chrome dashboard timeouts and concurrent tab activity limited final desktop/mobile post-release click-through. Earlier controlled fixture acceptance retained.",
+    "Physical Safari/device acceptance unverified.",
+    "Real Live Map companion connection not accepted; remains publicly disabled.",
+    "Migration counts are application-time evidence, not frozen live totals; subsequent owner activity was visible in admin. No production booking deletion was executed by this release process."
+  ],
+  "rollback": {
+    "commit": "59eb2aba067140971bb941871e93fd8d803110eb",
+    "deployment_id": "7STL7SzgYWL12LASPZUG4x3YBNqa",
+    "database": "retain compatible registry/search migration during application rollback; permanent data deletion requires backup restoration, not SQL downgrade"
+  },
+  "original_workspace_file_hashes_unchanged": true
+}

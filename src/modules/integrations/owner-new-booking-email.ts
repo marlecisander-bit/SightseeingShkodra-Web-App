@@ -56,7 +56,7 @@ export function ownerNewBookingEmail(b:EmailBooking,envelope:EmailEnvelope,opera
  const status=clean(b.status).replaceAll('_',' ')||'Status not recorded';
  const statusLabel=status[0].toUpperCase()+status.slice(1);
  const payment=ownerPaymentLabel(b),total=amount(b),shortTotal=amount(b,true);
- const admin=`${envelope.siteUrl}/admin/${encodeURIComponent(operatorId)}/bookings?booking=${encodeURIComponent(bookingId)}#booking-${encodeURIComponent(bookingId)}`;
+ const admin=`${envelope.adminOrigin??envelope.siteUrl}/admin/${encodeURIComponent(operatorId)}/bookings?booking=${encodeURIComponent(bookingId)}#booking-${encodeURIComponent(bookingId)}`;
  const phone=ownerContactPhone(b.phone),email=customerEmail(b.email);
  const when=single?.date&&single.time?` for ${single.date} at ${single.time}`:'';
  const whatsapp=phone?`https://wa.me/${phone.slice(1)}?text=${encodeURIComponent(`Hello ${clean(b.name)||'there'}, this is Sightseeing Shkodra regarding your booking${when}.`)}`:null;
