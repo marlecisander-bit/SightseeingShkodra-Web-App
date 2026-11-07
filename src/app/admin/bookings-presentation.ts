@@ -6,7 +6,7 @@ export function bookingAmount(minor:number,currency:string){
  if(!Number.isSafeInteger(minor)||minor<0||!/^[A-Z]{3}$/.test(currency))return 'Value unavailable';
  try{const amount=BigInt(minor),hundred=BigInt(100);return new Intl.NumberFormat('en-GB',{style:'currency',currency}).formatToParts(amount/hundred).map(p=>p.type==='fraction'?String(amount%hundred).padStart(2,'0'):p.value).join('');}catch{return 'Value unavailable';}
 }
-export type BookingItemView={product:string;date?:string;time?:string;quantity:number;seats:number;status:string;snapshot:PassengerSnapshot|null};
+export type BookingItemView={product:string;productId?:string;date?:string;time?:string;quantity:number;seats:number;status:string;snapshot:PassengerSnapshot|null};
 export type BookingPaymentView={status:string;amount:number;currency:string};
 export type BookingRecordView={id:string;bookingId?:string;reference:string;name:string;email?:string|null;phone?:string|null;status:string;orderStatus:string;total:number;currency:string;collectionMode:string;items:BookingItemView[];payments:BookingPaymentView[];checkedInAt?:string|null;hasQr:boolean};
 /** Presentation only. Financial eligibility remains in existing server actions/domain functions. */

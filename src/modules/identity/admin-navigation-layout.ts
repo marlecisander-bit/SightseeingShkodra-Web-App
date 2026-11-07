@@ -6,7 +6,7 @@ import type {AmenityIconName} from '@/modules/content/hero-amenities';
 export type AdminArea = 'overview'|'bookings'|'tours'|'products'|'website'|'more';
 export type AdminNavItem = {id:string;label:string;section?:string;context?:string;href:string;external?:boolean;note?:string};
 export type AdminNavGroup = {id:AdminArea;label:string;icon:AmenityIconName;items:AdminNavItem[]};
-export const adminAreaLabels:Record<AdminArea,string>={overview:'Home',bookings:'Bookings',tours:'Tours',products:'Products',website:'Website',more:'More'};
+export const adminAreaLabels:Record<AdminArea,string>={overview:'Home',bookings:'Bookings',tours:'Calendar',products:'Products',website:'Website',more:'More'};
 // Presentation only: every destination and action retains independent server authorization.
 export function adminNavigationGroups(operatorId:string,role:StaffRole):AdminNavGroup[]{
  const root=`/admin/${encodeURIComponent(operatorId)}`;
@@ -16,8 +16,8 @@ export function adminNavigationGroups(operatorId:string,role:StaffRole):AdminNav
  const groups:AdminNavGroup[]=[
   {id:'overview',label:'Home',icon:'info',items:[link('overview','Home','overview')]},
   {id:'bookings',label:'Bookings',icon:'ticket',items:[link('bookings','Bookings','bookings')]},
-  {id:'tours',label:'Tours',icon:'van',items:[
-   tour('availability','Operating calendar','calendar','availability'),
+  {id:'tours',label:'Calendar',icon:'van',items:[
+   tour('availability','Calendar','calendar','availability'),
    tour('today','Today','today'),
    tour('route','Route & stops','route'),
    ...(hasPermission(role,'tracking.manage')?[

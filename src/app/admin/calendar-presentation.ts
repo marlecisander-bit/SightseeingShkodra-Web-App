@@ -18,7 +18,7 @@ export function calendarDayPresentation(day:CalendarDay){
 
 /** Visual cue only; never used to accept/reject a booking or change inventory. */
 export const LIMITED_SEAT_RATIO = 0.25;
-export function calendarDayOverview(day:CalendarDay, today:string, service:{start_date:string;end_date:string;status:string}) {
+export function calendarDayOverview(day:CalendarDay, today:string, service:{start_date:string;end_date:string;status:string},salesPaused=false) {
  const presentation=calendarDayPresentation(day);
  const outside=day.date<service.start_date||day.date>service.end_date;
  const departureClosures=day.exception?.calendar_settings.departures;
@@ -44,6 +44,7 @@ export function calendarDayOverview(day:CalendarDay, today:string, service:{star
  else if(day.date===today){state='neutral';label='Check cutoff';symbol='◷';}
  else if(!priced.some(slot=>slot.remaining>0)){state='unavailable';label='Price unavailable';symbol='×';}
  else if(priced.reduce((sum,slot)=>sum+slot.remaining,0)<=priced.reduce((sum,slot)=>sum+slot.capacity,0)*LIMITED_SEAT_RATIO){state='limited';label='Limited';symbol='◐';}
+ if(salesPaused&&!outside&&day.date>=today&&day.slots.length){state='neutral';label='Sales paused';symbol='Ⅱ';}
  return {...presentation,state,label,symbol,capacity,booked,held,remaining,
   description:`${label}. ${open.length} open of ${day.slots.length} projected departures; ${booked} booked seats, ${held} temporarily held, ${remaining} remaining in open departures.${day.date===today?' Cutoff eligibility is not supplied by this read-only calendar.':''}`};
 }

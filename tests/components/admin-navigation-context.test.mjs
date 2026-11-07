@@ -29,7 +29,7 @@ test('canonical Website context opens real editors; dirty fields survive refused
   assert.equal(document.querySelector('h1').textContent,'Website');
   assert.equal(document.querySelectorAll('form[id^=cms-form]').length,0);
   await act(async()=>{[...document.querySelectorAll('button')].find(b=>b.textContent.includes('Edit Homepage')).click();});assert.ok(document.querySelector('#cms-hero[open]'));
-  await act(async()=>{const returned=new Promise(resolve=>window.addEventListener('hashchange',resolve,{once:true}));[...document.querySelectorAll('button')].find(b=>b.textContent==='Back to Website').click();await returned;});assert.ok(document.querySelector('[data-website-home]'));
+  await act(async()=>{const returned=new Promise(resolve=>window.addEventListener('hashchange',resolve,{once:true}));[...document.querySelectorAll('button')].find(b=>b.textContent==='← Website sections').click();await returned;});assert.ok(!document.querySelector('#cms-hero[open]'));await act(async()=>{[...document.querySelectorAll('button')].find(b=>b.textContent==='← Website').click();});assert.ok(document.querySelector('[data-website-home]'));
   await act(async()=>{await navigate('destinations');});assert.match(document.body.textContent,/Canonical synthetic destinations/);
   await act(async()=>{const returned=new Promise(resolve=>window.addEventListener('hashchange',resolve,{once:true}));window.history.back();await returned;});assert.equal(document.querySelector('h1').textContent,'Website');
   await act(async()=>{await navigate('faq');});assert.ok(document.querySelector('#cms-faq[open]'));assert.equal(window.location.search,'?existing=kept');

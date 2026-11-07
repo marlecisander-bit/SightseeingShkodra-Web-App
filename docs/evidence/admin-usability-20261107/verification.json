@@ -1,0 +1,199 @@
+{
+  "date": "2026-11-07",
+  "status": "local implementation verified; unpublished",
+  "scope": [
+    "compact product list and expandable setup/availability",
+    "compact booking search with expandable filters",
+    "product/date/time context in booking-to-calendar links",
+    "Home reads authorized scheduled service; unread count accurately named",
+    "single Website editor navigation, live-page links, explicit affected-section publication review",
+    "Calendar phone controls and paused-sales presentation",
+    "plain-language communication health with collapsed diagnostics; dated history separated from current sending failures"
+  ],
+  "verification": {
+    "tests": 715,
+    "failed": 0,
+    "component": 183,
+    "identity": 24,
+    "integration": 252,
+    "database": 221,
+    "postgres": 28,
+    "cms": 7,
+    "check": "lint, generated route types, TypeScript and normal production build passed",
+    "responsive": "32 Chromium synthetic layouts at 320, 390, 768, 1440; zero root horizontal overflows",
+    "interaction": "publication review/cancel/edit/confirm; dirty navigation guards; booking filters/pagination; local-time schedule/permission/error cases; paused inventory; current vs historical email evidence"
+  },
+  "limits": [
+    "Browser evidence uses local synthetic fixtures, not authenticated production mutations. Product fixture shares list CSS but does not execute the authenticated product page.",
+    "Physical iPhone, Safari, real notifications, inbox receipt and real booking/payment actions not exercised.",
+    "Home departures describe scheduled service and exclude live boarding and booking eligibility; same authoritative read-only calendar RPC, no schedule materialization.",
+    "Existing notification-only release artifact is not regenerated to include this later usability work.",
+    "No commit, push, deployment, hosted configuration, schema migration, DNS, independent Live Map or message send performed."
+  ],
+  "files": [
+    {
+      "path": "src/app/admin/[operatorId]/(workspace)/overview/page.tsx",
+      "sha256": "1961c9b37496f738ff760171187463fe08d713a98576eabc09bfdda81e5a7ba5"
+    },
+    {
+      "path": "src/app/admin/[operatorId]/(workspace)/products/page.tsx",
+      "sha256": "0c32b82d3ca4d7db2f245fdb1a90a91092b2e7863d1ab12e2367871cb4d8a533"
+    },
+    {
+      "path": "src/app/admin/admin-navigation.tsx",
+      "sha256": "a2a3bfc488f60b93e386bedf34ae98835e310be25b1402271939b327901a9410"
+    },
+    {
+      "path": "src/app/admin/admin.module.css",
+      "sha256": "36b08cdcaef69d1967a0c77ef074f5011d55d36a95e73553fd1addd54031b3e4"
+    },
+    {
+      "path": "src/app/admin/booking-push-device.tsx",
+      "sha256": "bcc4deb5481c302f76ecc67519103820e459078f112fb0c945978cb93ea5e593"
+    },
+    {
+      "path": "src/app/admin/booking-record.tsx",
+      "sha256": "6480d505c8fa3e9706eec70fd35cea1809e684b53813bee48e0a867c0bdc2102"
+    },
+    {
+      "path": "src/app/admin/bookings-panel.tsx",
+      "sha256": "b33fa3f3a5a52ea59e9019952ae4755bcf50cbdd649601f8c4f74f1dc7abbed2"
+    },
+    {
+      "path": "src/app/admin/bookings-presentation.ts",
+      "sha256": "62a1f10367c9a0968b57efd7798dc541ba2cd4bcd88410b80a075e5135bf5eee"
+    },
+    {
+      "path": "src/app/admin/bookings-workspace.tsx",
+      "sha256": "2e93ed2a95addfb70aa65395f94c15f799aed542d7787118b0f69b618795ae96"
+    },
+    {
+      "path": "src/app/admin/bookings.module.css",
+      "sha256": "b609b8adfce465f4b4b405a3cfee55a3b0301b1075a540820fab136ad89d6da9"
+    },
+    {
+      "path": "src/app/admin/calendar-panel.tsx",
+      "sha256": "fc46367e428d51c299cbc8d25cb1dfa3bee1a605bd48151c8f113069bd5b7d69"
+    },
+    {
+      "path": "src/app/admin/calendar-presentation.ts",
+      "sha256": "745a24b32f876ccdd61d1e1b47f2fe4420bdd60830bb64972ffed43453939801"
+    },
+    {
+      "path": "src/app/admin/calendar.module.css",
+      "sha256": "e23d16af9a950bded0e0207a4d17f1adac02075968d938ea133b813db8d06f8b"
+    },
+    {
+      "path": "src/app/admin/editor-actions.module.css",
+      "sha256": "48d3456429d07812e54fb68fefaf2efe0e38c820c225d247b272e2434b6976ef"
+    },
+    {
+      "path": "src/app/admin/email-panel.tsx",
+      "sha256": "90fc235ff1572253d8ba3ddbdb13860dbad16531600ef3d200bd9ae5aeee3521"
+    },
+    {
+      "path": "src/app/admin/meeting-point-panel.tsx",
+      "sha256": "5d0d9bda7aa7e93aecdb85ec2fda11eea28b365db694b3c7011b35fb8c07eaad"
+    },
+    {
+      "path": "src/app/admin/more-panel.tsx",
+      "sha256": "ac5c6a6685bdd6f022b6b6acd4c01088b3c2877895fbb9c76cabe7aa3aee4047"
+    },
+    {
+      "path": "src/app/admin/operating-calendar-workspace.tsx",
+      "sha256": "db83069235639d47a17c5175d405bb63b9096ad047849f4e793ecd334f194227"
+    },
+    {
+      "path": "src/app/admin/operations-calendar.tsx",
+      "sha256": "e2b456f03a0bfb80bda288c69ad046aaf1c9e104e6a2c463ede2e7d3def1138a"
+    },
+    {
+      "path": "src/app/admin/overview-panel.tsx",
+      "sha256": "b82334c9e3d74dd76c4829624b645b21fb2eaf19439d8ee0108e728f08d26980"
+    },
+    {
+      "path": "src/app/admin/products.module.css",
+      "sha256": "3dd7105312510a438a311ca57c1505c3b0469eda1a31a3d4850cbddc2ddc50b4"
+    },
+    {
+      "path": "src/app/admin/tours-workspace.tsx",
+      "sha256": "52ae6443e5d0c119e8a1198656e7b20e2ae606f6b7305ed0b1e43ad404447431"
+    },
+    {
+      "path": "src/app/admin/website-editor.module.css",
+      "sha256": "24f197acd1942bba0423602441afcd108e3c5b2c5bf0578d3ec03f87f9786b65"
+    },
+    {
+      "path": "src/app/admin/website-editor.tsx",
+      "sha256": "d85c809d6cf117fff382795d16b1f8ac12f583cefcb45becaecf73fcb15c304b"
+    },
+    {
+      "path": "src/app/admin/website-home.tsx",
+      "sha256": "5cb3f06881249f1ef8703a3a1f44017f9c3a7a9aef3a078e2ad4443f67203013"
+    },
+    {
+      "path": "src/app/admin/website-workspace.tsx",
+      "sha256": "5d785d972c157a008be550f860ea9203a2fbf35595cb135d3c27b21d09ab55cb"
+    },
+    {
+      "path": "src/app/dev/admin-v2/[section]/page.tsx",
+      "sha256": "7c47b984e1f8dbd30312583f703d8954f07c99aef781daa8c5b17447c149f5b8"
+    },
+    {
+      "path": "src/app/dev/admin-v2/fixture.tsx",
+      "sha256": "8717592ec3e89b79d5b94cf9ea2c868c529bcadc84d4f43454d96ded4c970474"
+    },
+    {
+      "path": "src/app/dev/email-reliability-preview/page.tsx",
+      "sha256": "ee6cbd5bf6ea946f973e486a16b8bccc008a6af8fef7fd96f6b7dd1001906852"
+    },
+    {
+      "path": "src/app/dev/products-preview/page.tsx",
+      "sha256": "c67d6df7c2444e4d54d5578f7a6ce5b5880a45fc5bd2119c7ff8cd1eda0b7a8b"
+    },
+    {
+      "path": "src/modules/dashboard/daily-departures-server.ts",
+      "sha256": "1070d25e2f105088935e64ddb1ab4e74ef4f2de5ecc312ea31cdec44e53d0997"
+    },
+    {
+      "path": "src/modules/dashboard/daily-departures.ts",
+      "sha256": "07817df5c767978fb9450f7b8fd15b8498884d6998dfa7de79b0713c0e831235"
+    },
+    {
+      "path": "src/modules/identity/admin-navigation-layout.ts",
+      "sha256": "7458794822c7b3142a7edb209ef95c13e7f66c8d1fd61a82569a9464c0857cb7"
+    },
+    {
+      "path": "src/modules/integrations/email-admin-server.ts",
+      "sha256": "51ab059a64a30bb6abbcd7caa04c89a258090d467f39227d83b0f425820a71e7"
+    },
+    {
+      "path": "src/modules/integrations/email-processing-summary.ts",
+      "sha256": "187c340039cabc244e3fbf0c9d5f6e5fbe08d29be6b951a3377e46090a6e00b4"
+    },
+    {
+      "path": "tests/components/admin-navigation-context.test.mjs",
+      "sha256": "e3c26beae20441365720b71095194ac35115aec9fcb13ca627b4816381afb3f8"
+    },
+    {
+      "path": "tests/components/admin-navigation-phase-a.test.mjs",
+      "sha256": "480abfbd18deefc97a967ceb1952924dff8231122b1a93b7a78c66bd0a3c7614"
+    },
+    {
+      "path": "tests/components/admin-usability.test.mjs",
+      "sha256": "4bebd24983fb123bbcc128c37f9757acb4bf78d78482125a1a8f27d0cdf90ff1"
+    },
+    {
+      "path": "tests/components/admin-v2-dashboard.test.mjs",
+      "sha256": "c1eac811544a9e2136e088ba7b890b5baf144e79dbba6e5f6426acca025322ac"
+    },
+    {
+      "path": "tests/components/bookings-v2.test.mjs",
+      "sha256": "4594ac8dd9e817daa26bdc9451f47e7b8eaaa2ae34003fb34ef35d4e5c804408"
+    },
+    {
+      "path": "tests/integrations/daily-departures.test.mjs",
+      "sha256": "5519515defc489ddc5db45d82fdbf42f70a9db723976f246e49b74bdca8956d2"
+    }
+  ]
+}

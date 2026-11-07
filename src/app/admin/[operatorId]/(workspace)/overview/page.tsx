@@ -2,11 +2,12 @@ import {Suspense} from 'react';
 import {AdminSectionContext} from '../../../admin-workspace-context';
 import {OverviewPanel} from '../../../overview-panel';
 import {sectionAccess,type SectionProps} from '../../../section-access';
+import {getDailyDepartures} from '@/modules/dashboard/daily-departures-server';
 import {getDailyBookings} from '@/modules/dashboard/daily-bookings-server';
 import {hasPermission,type StaffRole} from '@/modules/identity/roles';
 async function DailyOverview({operatorId,role,now}:{operatorId:string;role:StaffRole;now:Date}){
- const snapshot=await getDailyBookings(operatorId,now);
- return <OverviewPanel operatorId={operatorId} role={role} now={now} snapshot={snapshot}/>;
+ const [snapshot,departures]=await Promise.all([getDailyBookings(operatorId,now),hasPermission(role,'departures.manage')?getDailyDepartures(operatorId,now):undefined]);
+ return <OverviewPanel operatorId={operatorId} role={role} now={now} snapshot={snapshot} departures={departures}/>;
 }
 export default async function Page(props:SectionProps){
  const context=await sectionAccess('overview',props),now=new Date();

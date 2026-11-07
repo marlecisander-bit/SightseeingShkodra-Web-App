@@ -1,0 +1,294 @@
+[
+  {
+    "label": "home",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Good morning, owner"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "home",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Good morning, owner"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "home",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Good morning, owner"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "home",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Good morning, owner"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "bookings",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Bookings"
+    ],
+    "firstResult": 0,
+    "horizontalOverflow": false
+  },
+  {
+    "label": "bookings",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Bookings"
+    ],
+    "firstResult": 596.375,
+    "horizontalOverflow": false
+  },
+  {
+    "label": "bookings",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Bookings"
+    ],
+    "firstResult": 0,
+    "horizontalOverflow": false
+  },
+  {
+    "label": "bookings",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Bookings"
+    ],
+    "firstResult": 533.5859375,
+    "horizontalOverflow": false
+  },
+  {
+    "label": "products",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Products"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "products",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Products"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "products",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Products"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "products",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Products"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "calendar",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Schedule & Departures"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "calendar",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Schedule & Departures"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "calendar",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Schedule & Departures"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "calendar",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Schedule & Departures"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "email",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Booking email delivery"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "email",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Booking email delivery"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "email",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Booking email delivery"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "email",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Booking email delivery"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "notifications",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Notifications"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "notifications",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Notifications"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "notifications",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Notifications"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "notifications",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Notifications"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "website",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "Website"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "website",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "Website"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "website",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "Website"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "website",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "Website"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "more",
+    "width": 320,
+    "scrollWidth": 320,
+    "headings": [
+      "More"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "more",
+    "width": 390,
+    "scrollWidth": 390,
+    "headings": [
+      "More"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "more",
+    "width": 768,
+    "scrollWidth": 768,
+    "headings": [
+      "More"
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "label": "more",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "headings": [
+      "More"
+    ],
+    "horizontalOverflow": false
+  }
+]
