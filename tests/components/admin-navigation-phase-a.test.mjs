@@ -10,7 +10,7 @@ const {AdminNavigation}=await import('../../src/app/admin/admin-navigation.tsx')
 const props={groups:adminNavigationGroups('fixture','owner'),section:'content',account:React.createElement('a',{href:'/admin'},'Switch workspace')};
 test('six direct mobile links share role-filtered desktop groups; canonical URLs and external behavior survive',()=>{
  const dom=new JSDOM(renderToStaticMarkup(React.createElement(AdminNavigation,props))),d=dom.window.document;
- assert.equal(d.querySelectorAll('aside details.taskGroup').length,5);
+ assert.equal(d.querySelectorAll('aside details.taskGroup').length,4);
  const home=d.querySelector('aside nav > a');
  assert.equal(home.textContent,'Home');
  assert.equal(home.getAttribute('href'),'/admin/fixture/overview');
@@ -26,6 +26,19 @@ test('six direct mobile links share role-filtered desktop groups; canonical URLs
  assert.deepEqual(links.map(x=>x.getAttribute('href')),['/admin/fixture/overview','/admin/fixture/bookings','/admin/fixture/departures?view=today#admin-nav=today','/admin/fixture/products','/admin/fixture/content','/admin/fixture/more']);
  assert.equal(d.querySelectorAll('aside [aria-current=page]').length,1);
  assert.equal(d.querySelector('a[href*="netlify.app"]').rel,'noopener noreferrer');
+ const booking=d.querySelector('aside nav > a[href="/admin/fixture/bookings"]');
+ assert.equal(booking.textContent,'Bookings');
+ assert.ok(booking.querySelector('[data-admin-icon="calendar-check"]'));
+ assert.equal(booking.querySelector('[data-admin-icon="chevron-down"]'),null);
+ assert.ok(!d.body.textContent.includes('Reservations'));
+ const products=[...d.querySelectorAll('aside details.taskGroup')].find(x=>x.querySelector('summary').textContent.trim()==='Products');
+ assert.ok(products.querySelector('summary [data-admin-icon="package"]'));
+ assert.deepEqual([...products.querySelectorAll('li a')].map(x=>x.textContent),['All products','Suppliers']);
+ assert.ok(links[1].querySelector('[data-admin-icon="calendar-check"]'));
+ assert.ok(links[3].querySelector('[data-admin-icon="package"]'));
+ const bookings=new JSDOM(renderToStaticMarkup(React.createElement(AdminNavigation,{...props,section:'bookings'})));
+ assert.deepEqual([...bookings.window.document.querySelectorAll('[aria-current="page"]')].map(x=>x.textContent),['Bookings','Bookings']);
+ bookings.window.close();
  assert.equal(d.querySelectorAll('dialog').length,0,'primary destinations do not create temporary history entries');
  dom.window.close();
 });

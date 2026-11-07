@@ -34,7 +34,7 @@ export function AdminNavigation({groups,section,account}:{groups:AdminNavGroup[]
  const area=groups.find(group=>group.items.some(item=>item.id===active?.id))?.id;
  return <>
   <aside className={styles.desktopNavigation}>
-   <nav aria-label="Admin navigation" className={styles.taskNavigation}>{groups.map(group=>group.id==='overview'?<Link key={group.id} className={styles.homeLink} prefetch={false} href={group.items[0].href} onClick={navigateAdminContext} aria-current={area===group.id?'page':undefined}><AdminIcon name={adminPrimaryIcons[group.id]}/><span>{group.label}</span><NavigationHint/></Link>:<details className={styles.taskGroup} key={group.id+':'+(area===group.id)} open={area===group.id}>
+   <nav aria-label="Admin navigation" className={styles.taskNavigation}>{groups.map(group=>(group.id==='overview'||group.id==='bookings')?<Link key={group.id} className={styles.homeLink} prefetch={false} href={group.items[0].href} onClick={navigateAdminContext} aria-current={area===group.id?'page':undefined}><AdminIcon name={adminPrimaryIcons[group.id]}/><span>{group.label}</span><NavigationHint/></Link>:<details className={styles.taskGroup} key={group.id+':'+(area===group.id)} open={area===group.id}>
     <summary><AdminIcon name={adminPrimaryIcons[group.id]}/><span>{group.label}</span><span className={styles.chevron}><AdminIcon name="chevron-down" size={16}/></span></summary>
     <TaskItems items={group.items} activeId={active?.id}/>
    </details>)}</nav>
@@ -53,7 +53,7 @@ export function AdminConnectionStatus(){
 export function AdminPageTrail({groups,section}:{groups:AdminNavGroup[];section:string}){
  const context=useContextHash(section),item=activeAdminItem(groups,section,context),group=groups.find(g=>g.items.some(i=>i.id===item?.id));
  return <>
-  <p className={styles.pageTrail} aria-label="Current location">{group?.label}{item&&group?.id!=='overview'&&<> / {item.label}</>}</p>
+  <p className={styles.pageTrail} aria-label="Current location">{group?.label}{item&&group&&group.items.length>1&&<> / {item.label}</>}</p>
   {group&&group.items.length>1&&section!=='more'&&<details className={styles.sectionMenu} key={section}><summary>{group.label} tools <AdminIcon name="chevron-down" size={16}/></summary><nav aria-label={`${group.label} tools`}><TaskItems items={group.items} activeId={item?.id}/></nav></details>}
  </>;
 }

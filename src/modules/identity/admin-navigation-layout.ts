@@ -15,7 +15,7 @@ export function adminNavigationGroups(operatorId:string,role:StaffRole):AdminNav
  const tour=(id:string,label:string,view:string,context=id):AdminNavItem=>({...link(id,label,'departures',context),href:`${root}/departures?view=${view}#admin-nav=${context}`});
  const groups:AdminNavGroup[]=[
   {id:'overview',label:'Home',icon:'info',items:[link('overview','Home','overview')]},
-  {id:'bookings',label:'Bookings',icon:'ticket',items:[link('bookings','Reservations','bookings')]},
+  {id:'bookings',label:'Bookings',icon:'ticket',items:[link('bookings','Bookings','bookings')]},
   {id:'tours',label:'Tours',icon:'van',items:[
    tour('today','Today','today'),
    tour('availability','Calendar & departures','calendar','availability'),
