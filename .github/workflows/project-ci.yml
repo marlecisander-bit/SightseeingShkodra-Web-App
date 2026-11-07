@@ -38,7 +38,7 @@ jobs:
       - name: Set up supported Node.js
         uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
-          node-version-file: package.json
+          node-version: '24.21.0' # Match the locally verified Node patch; avoid the observed 24.22.2 V8/Wasm crash.
           package-manager-cache: false
       - name: Install locked dependencies
         run: npm ci
