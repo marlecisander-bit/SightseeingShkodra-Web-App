@@ -1,0 +1,22 @@
+{
+  "source": "Authenticated native Chrome UI and BEGIN READ ONLY SQL; manually transcribed redacted observations, not raw secret-bearing dashboard exports",
+  "date": "2026-11-07",
+  "schedulerWindowEndUtc": "17:18",
+  "productionSenderAfterReload": "tickets@sightseeingshkodra.app",
+  "canonicalDomain": "https://www.sightseeingshkodra.com",
+  "apexRedirectStatus": 308,
+  "vercelPlan": "Hobby",
+  "supabasePlan": "Pro",
+  "authSiteUrl": "https://sightseeingshkodra.app",
+  "canonicalActivationAllowlisted": false,
+  "applicationPublicSiteUrlValue": "not revealed; owner email-code verification required",
+  "scheduler": {"count": 1, "active": true, "frequency": "* * * * *", "targetOrigin": "https://sightseeingshkodra.app", "paths": ["/api/internal/booking-emails", "/api/internal/admin-notifications"], "succeeded24h": 1440, "failed24h": 0},
+  "httpLast10Minutes": {"status200": 20, "emailLiveBodies": 10, "pushBodies": 10},
+  "emailHeartbeat": {"status": "live", "startedAtUtc": "2026-11-07T17:18:00.434221Z", "lastSuccessUtc": "2026-11-07T17:18:01.931397Z"},
+  "emailQueue": {"accepted": 54, "otherStatuses": 0, "staleLeases": 0},
+  "pushQueue": {"accepted": 19, "otherStatuses": 0, "latestAcceptedCreatedUtc": "2026-11-07T12:27:00.296458Z"},
+  "enabledDevices": 1,
+  "rawEnvironmentActivationTimestamps": "not exposed; effective live worker validation and configured admin status observed",
+  "hostedChanges": false,
+  "realMessagesSent": false
+}

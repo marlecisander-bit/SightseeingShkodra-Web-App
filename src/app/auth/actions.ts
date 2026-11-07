@@ -1,4 +1,5 @@
 'use server';
+import {adminSiteOrigin} from '@/modules/identity/admin-origin';
 import { safeAdminReturn } from '@/modules/notifications/contracts';
 import { revalidatePath } from 'next/cache';
 import { requestPasswordRecovery } from '../../modules/identity/password-recovery';
@@ -23,6 +24,6 @@ export async function signOut() {
 }
 
 export async function requestRecovery(form:FormData) {
- await requestPasswordRecovery(form.get('email'),process.env.NEXT_PUBLIC_SITE_URL,async(email,redirectTo)=>{const client=await createSessionClient();return client.auth.resetPasswordForEmail(email,{redirectTo});});
+ await requestPasswordRecovery(form.get('email'),adminSiteOrigin(),async(email,redirectTo)=>{const client=await createSessionClient();return client.auth.resetPasswordForEmail(email,{redirectTo});});
  redirect('/auth/forgot-password?sent=1');
 }

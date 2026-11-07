@@ -25,11 +25,23 @@ test('service worker displays push, focuses exact booking and safely handles mal
  const handlers={},shown=[],opened=[],focused=[];let pending;
  const self={addEventListener:(name,fn)=>{handlers[name]=fn;},location:{origin:'https://example.test'},registration:{showNotification:async(title,options)=>shown.push({title,options})},clients:{matchAll:async()=>[{url:'https://example.test/admin',navigate:async url=>opened.push(url),focus:async()=>focused.push(true)}],openWindow:async url=>opened.push(url)}};
  runInNewContext(await readFile(new URL('../../public/admin/sw.js',import.meta.url),'utf8'),{self,URL});
- assert.deepEqual(Object.keys(handlers).sort(),['notificationclick','push']);
+ assert.deepEqual(Object.keys(handlers).sort(),['activate','install','notificationclick','push']);
  const path=bookingTarget(op,booking);handlers.push({data:{json:()=>({body:'New booking',tag:'event-one',url:path})},waitUntil:p=>{pending=p;}});await pending;
  assert.equal(shown[0].options.data.url,path);assert.equal(shown[0].options.tag,'event-one');
  let closed=false;handlers.notificationclick({notification:{data:shown[0].options.data,close:()=>{closed=true;}},waitUntil:p=>{pending=p;}});await pending;
  assert.equal(opened[0],'https://example.test'+path);assert.equal(focused.length,1);assert.equal(closed,true);
  handlers.push({data:{json:()=>{throw Error('bad');}},waitUntil:p=>{pending=p;}});await pending;assert.equal(shown[1].options.data.url,'/admin');
  handlers.push({data:{json:()=>({body:'x'.repeat(1000),url:'https://evil.test'})},waitUntil:p=>{pending=p;}});await pending;assert.equal(shown[2].options.data.url,'/admin');assert.equal(shown[2].options.body.length,500);
+});
+
+test('push-only worker activates updates, rejects unsafe click destinations and falls back when a stale client cannot navigate',async()=>{
+ const handlers={},opened=[];let pending,activated=0;
+ const self={addEventListener:(event,fn)=>{handlers[event]=fn;},skipWaiting:async()=>{activated++;},location:{origin:'https://sightseeingshkodra.app'},clients:{claim:async()=>{activated++;},matchAll:async()=>[{url:'https://sightseeingshkodra.app/administrator',navigate:async()=>assert.fail('Wrong scope')},{url:'https://sightseeingshkodra.app/admin',navigate:async()=>{throw Error('Stale window');},focus:async()=>assert.fail('Stale window')}],openWindow:async url=>opened.push(url)}};
+ runInNewContext(await readFile(new URL('../../public/admin/sw.js',import.meta.url),'utf8'),{self,URL});
+ for(const type of ['install','activate']){handlers[type]({waitUntil:p=>{pending=p;}});await pending;}
+ assert.equal(activated,2);assert(!handlers.fetch);
+ const click=async url=>{handlers.notificationclick({notification:{data:{url},close(){}},waitUntil:p=>{pending=p;}});await pending;};
+ await click(bookingTarget(op,booking));assert.equal(opened[0],'https://sightseeingshkodra.app'+bookingTarget(op,booking));
+ for(const unsafe of ['/admin/../public','//evil.test/admin','https://evil.test/admin','/admin?token=secret'])await click(unsafe);
+ assert(opened.slice(1).every(url=>url==='https://sightseeingshkodra.app/admin'));
 });

@@ -1,0 +1,82 @@
+[
+  {
+    "width": 320,
+    "height": 740,
+    "overflow": false,
+    "hasSetup": true,
+    "noFalseSuccess": true,
+    "buttons": [
+      {
+        "text": "Enable notifications",
+        "disabled": true,
+        "width": 155.4140625
+      },
+      {
+        "text": "Send test notification",
+        "disabled": true,
+        "width": 163.9765625
+      }
+    ],
+    "origin": true
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "overflow": false,
+    "hasSetup": true,
+    "noFalseSuccess": true,
+    "buttons": [
+      {
+        "text": "Enable notifications",
+        "disabled": true,
+        "width": 155.4140625
+      },
+      {
+        "text": "Send test notification",
+        "disabled": true,
+        "width": 163.9765625
+      }
+    ],
+    "origin": true
+  },
+  {
+    "width": 768,
+    "height": 1024,
+    "overflow": false,
+    "hasSetup": true,
+    "noFalseSuccess": true,
+    "buttons": [
+      {
+        "text": "Enable notifications",
+        "disabled": true,
+        "width": 155.4140625
+      },
+      {
+        "text": "Send test notification",
+        "disabled": true,
+        "width": 163.9765625
+      }
+    ],
+    "origin": true
+  },
+  {
+    "width": 1440,
+    "height": 1000,
+    "overflow": false,
+    "hasSetup": true,
+    "noFalseSuccess": true,
+    "buttons": [
+      {
+        "text": "Enable notifications",
+        "disabled": true,
+        "width": 155.4140625
+      },
+      {
+        "text": "Send test notification",
+        "disabled": true,
+        "width": 163.9765625
+      }
+    ],
+    "origin": true
+  }
+]

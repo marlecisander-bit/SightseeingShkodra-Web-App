@@ -1,0 +1,10 @@
+✔ saved creation/modification/cancellation independently send admin email and two device pushes once; provider failures preserve bookings (1031.120708ms)
+✔ automatic health needs fresh worker success as well as flags and activation, independent of registration (0.386ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1219.689042

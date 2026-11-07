@@ -1,0 +1,259 @@
+{
+  "requests": 28,
+  "loops": 0,
+  "errors": 0,
+  "terminal": [
+    {
+      "input": "https://sightseeingshkodra.app/admin",
+      "end": {
+        "url": "https://sightseeingshkodra.app/admin",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-cache, no-store, max-age=0, must-revalidate"
+      }
+    },
+    {
+      "input": "https://www.sightseeingshkodra.app/admin",
+      "end": {
+        "url": "https://sightseeingshkodra.app/admin",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-cache, no-store, max-age=0, must-revalidate"
+      }
+    },
+    {
+      "input": "https://sightseeingshkodra.com/admin",
+      "end": {
+        "url": "https://www.sightseeingshkodra.com/admin",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-cache, no-store, max-age=0, must-revalidate"
+      }
+    },
+    {
+      "input": "https://www.sightseeingshkodra.com/admin",
+      "end": {
+        "url": "https://www.sightseeingshkodra.com/admin",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-cache, no-store, max-age=0, must-revalidate"
+      }
+    },
+    {
+      "input": "https://sightseeingshkodra.app/admin/10000000-0000-4000-8000-000000000001/bookings?booking=10000000-0000-4000-8000-000000000002",
+      "end": {
+        "url": "https://sightseeingshkodra.app/admin/10000000-0000-4000-8000-000000000001/bookings?booking=10000000-0000-4000-8000-000000000002",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-cache, no-store, max-age=0, must-revalidate"
+      }
+    },
+    {
+      "input": "https://www.sightseeingshkodra.app/admin/10000000-0000-4000-8000-000000000001/bookings?booking=10000000-0000-4000-8000-000000000002",
+      "end": {
+        "url": "https://sightseeingshkodra.app/admin/10000000-0000-4000-8000-000000000001/bookings?booking=10000000-0000-4000-8000-000000000002",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-cache, no-store, max-age=0, must-revalidate"
+      }
+    },
+    {
+      "input": "https://sightseeingshkodra.com/admin/10000000-0000-4000-8000-000000000001/bookings?booking=10000000-0000-4000-8000-000000000002",
+      "end": {
+        "url": "https://www.sightseeingshkodra.com/admin/10000000-0000-4000-8000-000000000001/bookings?booking=10000000-0000-4000-8000-000000000002",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-cache, no-store, max-age=0, must-revalidate"
+      }
+    },
+    {
+      "input": "https://www.sightseeingshkodra.com/admin/10000000-0000-4000-8000-000000000001/bookings?booking=10000000-0000-4000-8000-000000000002",
+      "end": {
+        "url": "https://www.sightseeingshkodra.com/admin/10000000-0000-4000-8000-000000000001/bookings?booking=10000000-0000-4000-8000-000000000002",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-cache, no-store, max-age=0, must-revalidate"
+      }
+    },
+    {
+      "input": "https://sightseeingshkodra.app/auth/sign-in?next=%2Fadmin%2F10000000-0000-4000-8000-000000000001%2Fbookings%3Fbooking%3D10000000-0000-4000-8000-000000000002",
+      "end": {
+        "url": "https://sightseeingshkodra.app/auth/sign-in?next=%2Fadmin%2F10000000-0000-4000-8000-000000000001%2Fbookings%3Fbooking%3D10000000-0000-4000-8000-000000000002",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-cache, no-store, max-age=0, must-revalidate"
+      }
+    },
+    {
+      "input": "https://www.sightseeingshkodra.app/auth/sign-in?next=%2Fadmin%2F10000000-0000-4000-8000-000000000001%2Fbookings%3Fbooking%3D10000000-0000-4000-8000-000000000002",
+      "end": {
+        "url": "https://sightseeingshkodra.app/auth/sign-in?next=%2Fadmin%2F10000000-0000-4000-8000-000000000001%2Fbookings%3Fbooking%3D10000000-0000-4000-8000-000000000002",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-cache, no-store, max-age=0, must-revalidate"
+      }
+    },
+    {
+      "input": "https://sightseeingshkodra.com/auth/sign-in?next=%2Fadmin%2F10000000-0000-4000-8000-000000000001%2Fbookings%3Fbooking%3D10000000-0000-4000-8000-000000000002",
+      "end": {
+        "url": "https://www.sightseeingshkodra.com/auth/sign-in?next=%2Fadmin%2F10000000-0000-4000-8000-000000000001%2Fbookings%3Fbooking%3D10000000-0000-4000-8000-000000000002",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-cache, no-store, max-age=0, must-revalidate"
+      }
+    },
+    {
+      "input": "https://www.sightseeingshkodra.com/auth/sign-in?next=%2Fadmin%2F10000000-0000-4000-8000-000000000001%2Fbookings%3Fbooking%3D10000000-0000-4000-8000-000000000002",
+      "end": {
+        "url": "https://www.sightseeingshkodra.com/auth/sign-in?next=%2Fadmin%2F10000000-0000-4000-8000-000000000001%2Fbookings%3Fbooking%3D10000000-0000-4000-8000-000000000002",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-cache, no-store, max-age=0, must-revalidate"
+      }
+    },
+    {
+      "input": "https://sightseeingshkodra.app/auth/forgot-password",
+      "end": {
+        "url": "https://sightseeingshkodra.app/auth/forgot-password",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-cache, no-store, max-age=0, must-revalidate"
+      }
+    },
+    {
+      "input": "https://www.sightseeingshkodra.app/auth/forgot-password",
+      "end": {
+        "url": "https://sightseeingshkodra.app/auth/forgot-password",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-cache, no-store, max-age=0, must-revalidate"
+      }
+    },
+    {
+      "input": "https://sightseeingshkodra.com/auth/forgot-password",
+      "end": {
+        "url": "https://www.sightseeingshkodra.com/auth/forgot-password",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-cache, no-store, max-age=0, must-revalidate"
+      }
+    },
+    {
+      "input": "https://www.sightseeingshkodra.com/auth/forgot-password",
+      "end": {
+        "url": "https://www.sightseeingshkodra.com/auth/forgot-password",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-cache, no-store, max-age=0, must-revalidate"
+      }
+    },
+    {
+      "input": "https://sightseeingshkodra.app/auth/activate",
+      "end": {
+        "url": "https://sightseeingshkodra.app/auth/activate",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-store"
+      }
+    },
+    {
+      "input": "https://www.sightseeingshkodra.app/auth/activate",
+      "end": {
+        "url": "https://sightseeingshkodra.app/auth/activate",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-store"
+      }
+    },
+    {
+      "input": "https://sightseeingshkodra.com/auth/activate",
+      "end": {
+        "url": "https://www.sightseeingshkodra.com/auth/activate",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-store"
+      }
+    },
+    {
+      "input": "https://www.sightseeingshkodra.com/auth/activate",
+      "end": {
+        "url": "https://www.sightseeingshkodra.com/auth/activate",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-store"
+      }
+    },
+    {
+      "input": "https://sightseeingshkodra.app/admin/sw.js",
+      "end": {
+        "url": "https://sightseeingshkodra.app/admin/sw.js",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-store"
+      }
+    },
+    {
+      "input": "https://www.sightseeingshkodra.app/admin/sw.js",
+      "end": {
+        "url": "https://sightseeingshkodra.app/admin/sw.js",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-store"
+      }
+    },
+    {
+      "input": "https://sightseeingshkodra.com/admin/sw.js",
+      "end": {
+        "url": "https://www.sightseeingshkodra.com/admin/sw.js",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-store"
+      }
+    },
+    {
+      "input": "https://www.sightseeingshkodra.com/admin/sw.js",
+      "end": {
+        "url": "https://www.sightseeingshkodra.com/admin/sw.js",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-store"
+      }
+    },
+    {
+      "input": "https://sightseeingshkodra.app/admin/manifest.webmanifest",
+      "end": {
+        "url": "https://sightseeingshkodra.app/admin/manifest.webmanifest",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-store"
+      }
+    },
+    {
+      "input": "https://www.sightseeingshkodra.app/admin/manifest.webmanifest",
+      "end": {
+        "url": "https://sightseeingshkodra.app/admin/manifest.webmanifest",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-store"
+      }
+    },
+    {
+      "input": "https://sightseeingshkodra.com/admin/manifest.webmanifest",
+      "end": {
+        "url": "https://www.sightseeingshkodra.com/admin/manifest.webmanifest",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-store"
+      }
+    },
+    {
+      "input": "https://www.sightseeingshkodra.com/admin/manifest.webmanifest",
+      "end": {
+        "url": "https://www.sightseeingshkodra.com/admin/manifest.webmanifest",
+        "status": 200,
+        "location": null,
+        "cache": "private, no-store"
+      }
+    }
+  ]
+}

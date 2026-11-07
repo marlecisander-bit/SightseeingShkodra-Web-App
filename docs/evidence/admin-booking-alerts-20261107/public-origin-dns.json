@@ -1,0 +1,223 @@
+{
+  "checkedAt": "2026-11-07T16:40:05.865Z",
+  "resources": [
+    {
+      "origin": "https://sightseeingshkodra.app",
+      "path": "/admin/manifest.webmanifest",
+      "status": 200,
+      "finalOrigin": "https://sightseeingshkodra.app",
+      "redirected": false,
+      "type": "application/manifest+json; charset=utf-8",
+      "cache": "private, no-store",
+      "sha256": "34e0ab32ce5f218b3da7ee9402067b11b5384c1bb73082d5901e2b703593e85f",
+      "manifest": {
+        "id": "/admin",
+        "name": "Sightseeing Shkodra Admin",
+        "short_name": "Shkodra Admin",
+        "start_url": "/admin",
+        "scope": "/admin",
+        "display": "standalone",
+        "background_color": "#FFF8EE",
+        "theme_color": "#B91546",
+        "icons": [
+          {
+            "src": "/icons/site-icon-192.png?v=sun-2",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+          },
+          {
+            "src": "/icons/site-icon-512.png?v=sun-2",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+          }
+        ]
+      }
+    },
+    {
+      "origin": "https://sightseeingshkodra.app",
+      "path": "/admin/sw.js",
+      "status": 200,
+      "finalOrigin": "https://sightseeingshkodra.app",
+      "redirected": false,
+      "type": "application/javascript; charset=utf-8",
+      "cache": "private, no-store",
+      "sha256": "0ea6d16cd5408a46596997201b64d5033e9a6d27ab973195a9cf05b312fa2484",
+      "pushHandler": true
+    },
+    {
+      "origin": "https://www.sightseeingshkodra.app",
+      "path": "/admin/manifest.webmanifest",
+      "status": 200,
+      "finalOrigin": "https://sightseeingshkodra.app",
+      "redirected": true,
+      "type": "application/manifest+json; charset=utf-8",
+      "cache": "private, no-store",
+      "sha256": "34e0ab32ce5f218b3da7ee9402067b11b5384c1bb73082d5901e2b703593e85f",
+      "manifest": {
+        "id": "/admin",
+        "name": "Sightseeing Shkodra Admin",
+        "short_name": "Shkodra Admin",
+        "start_url": "/admin",
+        "scope": "/admin",
+        "display": "standalone",
+        "background_color": "#FFF8EE",
+        "theme_color": "#B91546",
+        "icons": [
+          {
+            "src": "/icons/site-icon-192.png?v=sun-2",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+          },
+          {
+            "src": "/icons/site-icon-512.png?v=sun-2",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+          }
+        ]
+      }
+    },
+    {
+      "origin": "https://www.sightseeingshkodra.app",
+      "path": "/admin/sw.js",
+      "status": 200,
+      "finalOrigin": "https://sightseeingshkodra.app",
+      "redirected": true,
+      "type": "application/javascript; charset=utf-8",
+      "cache": "private, no-store",
+      "sha256": "0ea6d16cd5408a46596997201b64d5033e9a6d27ab973195a9cf05b312fa2484",
+      "pushHandler": true
+    },
+    {
+      "origin": "https://sightseeingshkodra.com",
+      "path": "/admin/manifest.webmanifest",
+      "status": 200,
+      "finalOrigin": "https://www.sightseeingshkodra.com",
+      "redirected": true,
+      "type": "application/manifest+json; charset=utf-8",
+      "cache": "private, no-store",
+      "sha256": "34e0ab32ce5f218b3da7ee9402067b11b5384c1bb73082d5901e2b703593e85f",
+      "manifest": {
+        "id": "/admin",
+        "name": "Sightseeing Shkodra Admin",
+        "short_name": "Shkodra Admin",
+        "start_url": "/admin",
+        "scope": "/admin",
+        "display": "standalone",
+        "background_color": "#FFF8EE",
+        "theme_color": "#B91546",
+        "icons": [
+          {
+            "src": "/icons/site-icon-192.png?v=sun-2",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+          },
+          {
+            "src": "/icons/site-icon-512.png?v=sun-2",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+          }
+        ]
+      }
+    },
+    {
+      "origin": "https://sightseeingshkodra.com",
+      "path": "/admin/sw.js",
+      "status": 200,
+      "finalOrigin": "https://www.sightseeingshkodra.com",
+      "redirected": true,
+      "type": "application/javascript; charset=utf-8",
+      "cache": "private, no-store",
+      "sha256": "0ea6d16cd5408a46596997201b64d5033e9a6d27ab973195a9cf05b312fa2484",
+      "pushHandler": true
+    },
+    {
+      "origin": "https://www.sightseeingshkodra.com",
+      "path": "/admin/manifest.webmanifest",
+      "status": 200,
+      "finalOrigin": "https://www.sightseeingshkodra.com",
+      "redirected": false,
+      "type": "application/manifest+json; charset=utf-8",
+      "cache": "private, no-store",
+      "sha256": "34e0ab32ce5f218b3da7ee9402067b11b5384c1bb73082d5901e2b703593e85f",
+      "manifest": {
+        "id": "/admin",
+        "name": "Sightseeing Shkodra Admin",
+        "short_name": "Shkodra Admin",
+        "start_url": "/admin",
+        "scope": "/admin",
+        "display": "standalone",
+        "background_color": "#FFF8EE",
+        "theme_color": "#B91546",
+        "icons": [
+          {
+            "src": "/icons/site-icon-192.png?v=sun-2",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+          },
+          {
+            "src": "/icons/site-icon-512.png?v=sun-2",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+          }
+        ]
+      }
+    },
+    {
+      "origin": "https://www.sightseeingshkodra.com",
+      "path": "/admin/sw.js",
+      "status": 200,
+      "finalOrigin": "https://www.sightseeingshkodra.com",
+      "redirected": false,
+      "type": "application/javascript; charset=utf-8",
+      "cache": "private, no-store",
+      "sha256": "0ea6d16cd5408a46596997201b64d5033e9a6d27ab973195a9cf05b312fa2484",
+      "pushHandler": true
+    }
+  ],
+  "dns": [
+    {
+      "name": "send.sightseeingshkodra.app",
+      "records": [
+        "v=spf1 include:amazonses.com ~all"
+      ]
+    },
+    {
+      "name": "resend._domainkey.sightseeingshkodra.app",
+      "records": [
+        "p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDK3LHPKwk4Jt8XbCGzn477utAsd9KNaTOuff1a9M2DLIFm9FHT8u5EUZifYg7Rwhx7JmmMWk+TYaDka/b+5HPpnJxF+4xPyDs/5yf1fbOFyRufS3xhJORxe8T460fiTnzmZgNx+6EY3LMirLL79rJ0zNw9BKaV7HRCSkzH+u3abwIDAQAB"
+      ]
+    },
+    {
+      "name": "_dmarc.sightseeingshkodra.app",
+      "records": [
+        "v=DMARC1; p=none;"
+      ]
+    },
+    {
+      "name": "send.sightseeingshkodra.com",
+      "records": [
+        "v=spf1 ip4:52.3.252.119 ip4:44.222.39.36 ip4:199.249.231.0/24 ~all"
+      ]
+    },
+    {
+      "name": "resend._domainkey.sightseeingshkodra.com",
+      "records": [
+        "p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDzhwhRAuRG6OeWPKnAW63OJIksgn7pESRnMUMnvfZe1PV1v2VVXZqfFo7c5xx2+xBYOpBx1b5JkK7YfnX6Exq3xKYh0X2v9eFkaeRDD+7fT6wN+cN6d4qDzMyHWjufzvwBuaSuknkY2SJ1eZr6XGqX7fm3hZKeehytWosI1XLCQIDAQAB"
+      ]
+    },
+    {
+      "name": "_dmarc.sightseeingshkodra.com",
+      "records": [],
+      "status": "not resolved"
+    }
+  ],
+  "providerAccount": "Not inspected: no local credentials. DNS presence is not proof of provider verification or SPF/DKIM/DMARC pass on a received email."
+}

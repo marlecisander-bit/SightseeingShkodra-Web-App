@@ -42,7 +42,7 @@ export function bookingEmailTemplateV2(event: BookingEmailEvent, recipient: Reci
   }
   const manage = b.managementToken && /^[a-f0-9]{64}$/.test(b.managementToken) ? `${envelope.siteUrl}/booking/manage#token=${b.managementToken}` : null;
   const links: [string,string][] = recipient === 'owner'
-    ? [['OPEN BOOKING IN ADMIN',`${envelope.siteUrl}/admin/${encodeURIComponent(operatorId)}/bookings?booking=${encodeURIComponent(bookingId)}#booking-${encodeURIComponent(bookingId)}`]]
+    ? [['OPEN BOOKING IN ADMIN',`${envelope.adminOrigin??envelope.siteUrl}/admin/${encodeURIComponent(operatorId)}/bookings?booking=${encodeURIComponent(bookingId)}#booking-${encodeURIComponent(bookingId)}`]]
     : cancelled ? [['BOOK AGAIN',`${envelope.siteUrl}/book`]] : [...(manage ? [['VIEW BOOKING',manage],['MODIFY BOOKING',manage]] as [string,string][] : []),['LIVE MAP',`${envelope.siteUrl}/route`]];
   const qr = recipient === 'customer' && !cancelled && b.status === 'confirmed' && /^[a-f0-9]{64}$/.test(b.qrToken ?? '');
   const notice = cancelled ? 'This booking is cancelled and is no longer a valid ticket. Any applicable refund is handled according to your booking and payment conditions.' : 'Show your booking QR or reference when boarding. Adults and children each occupy one seat. Infants do not occupy seats.';
