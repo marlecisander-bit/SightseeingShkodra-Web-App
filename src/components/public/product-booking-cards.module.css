@@ -117,9 +117,11 @@
 }
 
 /* Ribbon occupies its own row: long messages never cover media, titles or prices. */
-.ribbon{display:flex;justify-content:flex-end;background:#fff;flex-shrink:0;}
-.ribbon span{max-width:100%;padding:9px 14px;border-radius:0 0 0 12px;background:#b91c1c;color:#fff;font-size:14px;font-weight:700;line-height:1.4;overflow-wrap:anywhere;white-space:normal;}
-.card[data-inactive=true]>:global(.p-media),.card[data-inactive=true]>.body,.card[data-inactive=true]>.placeholder{filter:grayscale(1);}
-.card[data-inactive=true]>.body{background:#f3f4f6;color:#30343b;}
-.card[data-inactive=true] .book{background:#e2e4e7;color:#343840;border:1px solid #757b84;opacity:1;cursor:not-allowed;}
-.unavailable{font-size:13px;line-height:1.5;margin:0;font-weight:600;overflow-wrap:anywhere;}
+/* Status overlays do not alter the common photo dimensions or colour. */
+.card{position:relative;}
+.statusBadge{position:absolute;z-index:1;top:12px;left:12px;max-width:calc(100% - 24px);display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:8px;background:#FFF4D6;color:#704900;font-size:12px;font-weight:600;line-height:1.4;overflow-wrap:anywhere;}
+.statusBadge svg{width:15px;height:15px;flex-shrink:0;}
+.statusPanel{box-sizing:border-box;width:100%;padding:12px;border-radius:10px;background:#fff8e8;color:#704900;overflow-wrap:anywhere;}
+.statusPanel p{margin:0;font-size:13px;line-height:1.5;}
+.statusPanel p+p{margin-top:6px;}
+.secondaryAction{border:1px solid #d6c7a6;border-radius:10px;color:#704900;background:#fffdf7;font-weight:600;min-height:44px;}

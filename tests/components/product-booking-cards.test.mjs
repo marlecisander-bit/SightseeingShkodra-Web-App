@@ -54,7 +54,7 @@ test('inactive products keep order and information, escape custom messages and o
  const enabled={...loop,id:source.id,displayOrder:1,title:'Available ticket',active:true};
  const render=products=>new JSDOM(renderToStaticMarkup(React.createElement(ProductBookingCards,{products,content:initialWebsiteContent,embedded:true})));
  const dom=render([enabled,disabled]),cards=[...dom.window.document.querySelectorAll('article')];
- assert.equal(cards[0].querySelector('h3').textContent,loop.title);assert.equal(cards[0].dataset.inactive,'true');assert.equal(cards[0].querySelectorAll('a,dialog').length,0);assert(cards[0].querySelector('button[disabled]'));assert.match(cards[0].textContent,/Unavailable for booking/);assert(cards[0].textContent.includes(message));assert.equal(cards[0].querySelectorAll('img').length,1);assert(cards[0].querySelector('details'));assert.equal(cards[1].querySelector('a').getAttribute('href'),`/book?productId=${source.id}`);dom.window.close();
+ assert.equal(cards[0].querySelector('h3').textContent,loop.title);assert.equal(cards[0].dataset.inactive,'true');assert.equal(cards[0].querySelectorAll('a,dialog').length,0);assert.equal(cards[0].querySelector('button[disabled]'),null);assert.match(cards[0].textContent,/Temporarily unavailable/);assert(cards[0].textContent.includes(message));assert.equal(cards[0].querySelectorAll('img').length,1);assert(cards[0].querySelector('details'));assert.equal(cards[1].querySelector('a').getAttribute('href'),`/book?productId=${source.id}`);dom.window.close();
  const active=render([{...disabled,active:true}]);assert.equal(active.window.document.querySelector('[data-inactive]'),null);assert(!active.window.document.body.textContent.includes(message));assert(active.window.document.querySelector('a'));active.window.close();
 });
 
@@ -66,3 +66,9 @@ test('primary homepage fallback retains product-owned inactive state when the di
  const dom=new JSDOM(renderToStaticMarkup(React.createElement(BookingProvider,{preview:true},React.createElement(HomepageView,{home,content:initialWebsiteContent,products:[]}))));
  const card=dom.window.document.querySelector('#experiences article');assert.equal(card.dataset.inactive,'true');assert.match(card.textContent,/Maintenance/);assert.equal(card.querySelector('a'),null);dom.window.close();
 });
+
+ test('unavailable status uses a compact badge, informational month and safe active secondary action',()=>{
+ const product={...loop,active:false,availability:{state:'seasonal_break',reopening:{precision:'month',value:'2031-04'},actionUrl:'/route'},unavailableMessage:''};
+ const dom=new JSDOM(renderToStaticMarkup(React.createElement(ProductBookingCards,{products:[product],content:initialWebsiteContent})));
+ const d=dom.window.document;assert.equal(d.querySelector('article a').getAttribute('href'),'/route');assert.equal(d.querySelector('article a').textContent,'Explore the route');assert.match(d.body.textContent,/Expected to reopen in April 2031/);assert.equal(d.querySelectorAll('button[disabled]').length,0);assert.equal(d.querySelector('svg').getAttribute('aria-hidden'),'true');assert.doesNotMatch(d.body.textContent,/Booking unavailable|Unavailable for booking/);dom.window.close();
+ });

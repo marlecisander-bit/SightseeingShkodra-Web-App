@@ -314,3 +314,7 @@ Owner explicitly selected https://www.sightseeingshkodra.com/admin for simplifie
 ## 2026-11-07 — Final local notification release preparation
 
 Owner requested canonical www.com completion and actual processing inspection without publication/cloud changes. Fresh read-only audit found the existing single Supabase minute job operating both workers, clear queues and Vercel Hobby; preserve infrastructure and record commercial eligibility separately. Add bounded service-only push-worker heartbeat for truthful Active/Paused/Needs attention, independent of device registration; retain saved preferences. .com sender and missing .com Auth activation allowlist are hosted release actions, not applied here. No key rotation, second scheduler, historical payload rewrite or customer-origin change. See NOTIFICATION-RELEASE-CHECKLIST-2026-11-07.md.
+
+## 2026-11-07 — Distinct tour availability presentation
+
+Owner requested cream photo badges, full-colour photos, reopening panels and optional route actions, with compatible per-tour admin controls. Reuse active/unavailable_message; add nullable validated presentation JSON for reason, label, structured month/day reopening and secondary action. Active remains the booking authority; displayed dates never reopen sales. Existing content is preserved, and old inactive records fall back to temporary unavailability. See TOUR-STATUS-DESIGN-2026-11-07.md. Local implementation only in this task.
