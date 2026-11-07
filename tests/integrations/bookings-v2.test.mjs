@@ -97,10 +97,10 @@ test('Bookings calendar handoff omits materializing inventory subtree and preser
  const {CalendarPanel}=await import('../../src/app/admin/calendar-panel.tsx');
  const contains=(node,name)=>Array.isArray(node)?node.some(n=>contains(n,name)):!!node&&typeof node==='object'&&(node.type?.name===name||contains(node.props?.children,name));
  let f=fixture({allowRpc:true});const safe=await CalendarPanel({operatorId:op,date:'2026-10-24',fromBookings:'1'});
- assert(!contains(safe,'InventoryHistoryPanel'));assert(contains(safe,'OperationsCalendar'));assert(f.calls.some(c=>c.table==='read_operations_calendar_v1'));assert(!f.calls.some(c=>c.table==='ensure_schedule_date_v1'));
+ assert(!contains(safe,'InventoryHistoryPanel'));assert(contains(safe,'OperatingCalendarWorkspace'));assert(f.calls.some(c=>c.table==='read_operations_calendar_v1'));assert(!f.calls.some(c=>c.table==='ensure_schedule_date_v1'));
  f=fixture({allowRpc:true});assert(!contains(await CalendarPanel({operatorId:op,date:'2026-10-24'}),'InventoryHistoryPanel'));assert(contains(await CalendarPanel({operatorId:op,date:'2026-10-24',history:'1'}),'InventoryHistoryPanel'));
  const source=readFileSync(new URL('../../src/app/admin/operations-calendar.tsx',import.meta.url),'utf8');
- assert.match(source,/fromBookings\?'&fromBookings=1':''/);assert(!source.includes('ensure_schedule'));
+ assert.match(source,/if\(fromBookings\)query.set\('fromBookings','1'\)/);assert(!source.includes('ensure_schedule'));
 });
 
 test('sign-in return from the safe calendar handoff stays in read-only Bookings; ordinary calendar return is unchanged',async()=>{

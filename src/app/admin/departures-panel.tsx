@@ -7,7 +7,7 @@ import { saveDeparture,loadDepartureDate } from './departure-actions';
 import { SubmitButton } from './submit-button';
 import Link from 'next/link';
 import { MutationForm } from './mutation-form';
-import { ScheduleEditor, ExceptionEditor, type ServiceSchedule, type ScheduleException } from './schedule-editor';
+import { type ServiceSchedule, type ScheduleException } from './schedule-editor';
 type Departure={id?:string;product_id?:string;vehicle_id?:string|null;service_date?:string;start_time?:string;capacity?:number;status?:string;updated_at?:string};
 type Choice={id:string;label:string};
 function Editor({operatorId,row,products,vehicles}:{operatorId:string;row:Departure;products:Choice[];vehicles:Choice[]}) {
@@ -38,13 +38,12 @@ export async function InventoryHistoryPanel({operatorId,date,result}:{operatorId
   if(departures.error||products.error||vehicles.error||operator.error||schedules.error||exceptions.error)return <p role="alert">The schedule could not be loaded. Refresh the page or contact your administrator.</p>;
   const p=products.data.map(r=>({id:r.id,label:r.title})),v=vehicles.data.map(r=>({id:r.id,label:r.name}));
   const messages:Record<string,string>={prepared:'Scheduled departures loaded.',saved:'Departure saved.',stale:'This departure changed. Review the latest values before saving.',inventory:'Existing seat reservations prevent this change. Review affected bookings before changing the schedule.',error:'Unable to save. Check the date, time, capacity and selected product and vehicle.'};
-  const availableProducts=p.filter(product=>!schedules.data.some(schedule=>schedule.product_id===product.id));
   return <div>{result&&<p role="status">{result==='schedule'?'Service schedule saved.':messages[result]??messages.error}</p>}<h2>Service schedules</h2><p>Set an operating period once. All dates and times use {operator.data.timezone}.</p><p>Seats are reserved for the selected departure. This system does not currently validate all-day reboarding entitlement.</p>
-    <details><summary>Create service schedule</summary><ScheduleEditor operatorId={operatorId} products={availableProducts} vehicles={v}/>{!availableProducts.length&&<p>Create a van-tour product without an existing schedule first.</p>}</details>
+    <p><Link href={`/admin/${operatorId}/products`}>Create or edit usual schedules in Products</Link></p>
     {(schedules.data as ServiceSchedule[]).map(schedule=><details key={`${schedule.id}-${schedule.updated_at}`}><summary>{p.find(item=>item.id===schedule.product_id)?.label ?? 'Product'} · {schedule.start_date} – {schedule.end_date} · {ownerStatus(schedule.status)} · {schedule.departure_times.map(t=>t.time).join(', ')}</summary>
-      <ScheduleEditor operatorId={operatorId} schedule={schedule} products={p} vehicles={v}/>
-      <h3>Date-specific changes</h3><details><summary>+ Change a date</summary><ExceptionEditor operatorId={operatorId} schedule={schedule} vehicles={v}/></details>
-      {(exceptions.data as ScheduleException[]).filter(e=>e.schedule_id===schedule.id).map(exception=><details key={exception.id}><summary>{exception.service_date} · {exception.closed?'Closed':exception.departure_times.map(t=>t.time).join(', ')}</summary><ExceptionEditor operatorId={operatorId} schedule={schedule} exception={exception} vehicles={v}/></details>)}
+      <Link href={`/admin/${operatorId}/products?product=${schedule.product_id}&tab=schedule`}>Edit usual schedule</Link>
+      <h3>Date-specific changes</h3><Link href={`/admin/${operatorId}/departures?view=calendar&schedule=${schedule.id}&date=${day}`}>Open operating calendar</Link>
+      {(exceptions.data as ScheduleException[]).filter(e=>e.schedule_id===schedule.id).map(exception=><details key={exception.id}><summary>{exception.service_date} · {exception.closed?'Closed':exception.departure_times.map(t=>t.time).join(', ')}</summary><Link href={`/admin/${operatorId}/departures?view=calendar&schedule=${schedule.id}&date=${exception.service_date}`}>Manage this date</Link></details>)}
     </details>)}
     <h2>Departure history</h2><BookingConfirmation message="Load scheduled departures for this date? This may create dated inventory from the existing schedule but does not reserve seats."><MutationForm action={loadDepartureDate.bind(null,operatorId)}><label>Prepare service date<input type="date" name="date" defaultValue={day} required/></label><SubmitButton>Load scheduled departures</SubmitButton></MutationForm></BookingConfirmation><p>Choose a date to review departures. To change scheduled departures, edit the schedule or the selected date.</p>
     <form method="get"><input type="hidden" name="view" value="calendar"/><input type="hidden" name="history" value="1"/><label>Browse calendar date<input type="date" name="date" defaultValue={day}/></label><Button>Show departures</Button> <Link prefetch={false} href={`/admin/${operatorId}/departures`}>Clear filter</Link></form>

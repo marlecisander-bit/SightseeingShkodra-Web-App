@@ -17,8 +17,8 @@ export function adminNavigationGroups(operatorId:string,role:StaffRole):AdminNav
   {id:'overview',label:'Home',icon:'info',items:[link('overview','Home','overview')]},
   {id:'bookings',label:'Bookings',icon:'ticket',items:[link('bookings','Bookings','bookings')]},
   {id:'tours',label:'Tours',icon:'van',items:[
+   tour('availability','Operating calendar','calendar','availability'),
    tour('today','Today','today'),
-   tour('availability','Calendar & departures','calendar','availability'),
    tour('route','Route & stops','route'),
    ...(hasPermission(role,'tracking.manage')?[
     {id:'live',label:'Open Live Map',href:publicMapUrl,external:true},
