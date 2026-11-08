@@ -27,7 +27,7 @@ export function CatalogRecordEditor({
       className="catalog-form"
     >
       <input type="hidden" name="id" value={row.id ?? ""} />
-      {entity === "product" && <p>Product name, status and inclusions remain managed here. Public page search titles and social images are managed in Website; product booking cards are managed there too; actual passenger prices are managed in Calendar &amp; Pricing. Existing descriptions remain available to booking emails. Historical presentation values are retained and no longer edited here.</p>}
+      {entity === "product" && <p>Product name, status and inclusions remain managed here. Public page search titles and social images are managed in Website; product booking cards are managed there too; actual passenger prices are managed in Products → Prices. Existing descriptions remain available to booking emails. Historical presentation values are retained and no longer edited here.</p>}
       {entity === "product" && !row.id && <ProductNameFields />}
       {entity === "product" && row.id && <p>Page address and operational type are developer-controlled bindings.</p>}
       {catalogFields[entity].filter(field => !(entity === "product" && row.id && ["slug","type"].includes(field.key))).filter(field => !(entity === "product" && !row.id &&
@@ -154,7 +154,7 @@ export async function CatalogPanel({
               {entity === "product" &&
                 "type" in row &&
                 row.type === "van_tour" && (
-                  <p>Manage passenger prices under Calendar &amp; Pricing.</p>
+                  <p>Manage passenger prices under Products → Prices.</p>
                 )}
               </div>
             </details>
