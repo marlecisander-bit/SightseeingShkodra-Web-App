@@ -13,3 +13,5 @@
 /* Phase 4 compact shared review and partner forms. */
 .form{padding:12px;background:var(--admin-surface,#fff);border-radius:10px;margin:12px 0}.grid{gap:14px}.grid :is(input,select,textarea){font-size:16px;min-height:44px}.actions>*{min-height:44px}.grid .check{min-height:44px}.grid .check input{min-height:20px;width:20px;height:20px}.preview{max-width:100%}
 @media(max-width:767px){.actions{position:sticky;bottom:calc(76px + env(safe-area-inset-bottom));background:white;padding:10px 0;border-top:1px solid #e0e4e8;z-index:4}.actions>*{flex:1 1 110px}}
+
+@media(max-width:767px){.actions{gap:8px;align-items:center}.actions>*{flex:0 1 auto;max-width:100%;margin:0}}

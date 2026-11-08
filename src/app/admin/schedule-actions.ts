@@ -26,7 +26,7 @@ export async function saveServiceSchedule(operatorId: string, form: FormData) {
     });
   } catch { errorMessage = 'Unable to save the schedule. Check your access and entries, then try again.'; }
   if (errorMessage) return { error: errorMessage };
-  revalidatePath(`/admin/${operatorId}/departures`);
+  revalidatePath("/","layout");
   revalidatePath(`/admin/${operatorId}/bookings`);
   revalidatePath('/');
   const product=String(form.get('workspace_product')??'');

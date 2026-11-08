@@ -213,3 +213,13 @@
 @media(max-width:767px){.cms .editor{padding:12px}.cms .editorActions{bottom:calc(76px + env(safe-area-inset-bottom));padding:10px;background:white}.cms .editorContext{scroll-margin-top:80px}}
 
 .publishReview{padding:16px;border:2px solid var(--admin-primary,#b91546);border-radius:12px;background:white;scroll-margin:90px}.publishReview h2{margin-top:0}.publishReview button{margin:6px;min-height:44px}@media(max-width:767px){.cms[data-editing=true] .card[open]>summary :is(.number,.sectionIcon,.cardCopy){display:none}}@media(max-width:767px){.cms{gap:12px}.cms .editorContext{padding:0}.cms .editorContext h1{font-size:22px}.cms .columns{gap:12px}.cms .editor{padding:12px}.cms .editor>p{margin:4px 0 10px}}
+
+@media(max-width:767px){
+ .cms .toolbarActions{display:flex;flex-wrap:wrap;gap:8px;}
+ .cms .toolbarActions>*{width:auto;max-width:100%;margin:0;}
+ .cms .sectionNavigation{display:flex;flex-wrap:wrap;gap:8px;}
+ .cms .sectionNavigation>button{width:auto;flex:0 1 auto;margin:0;}
+ .cms .editorActions>span{grid-column:1/-1;margin:0;}
+ .cms .editorActions>button{align-self:stretch;justify-self:stretch;}
+ .cms .publishReview button{margin:4px 8px 4px 0;}
+}

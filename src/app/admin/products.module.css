@@ -13,3 +13,12 @@
 
 /* Scan products first; open one product to change its settings. */
 .grid{grid-template-columns:minmax(0,1fr)}.card{grid-template-columns:80px minmax(0,1fr);gap:8px 16px;padding:16px}.card>:not(.photo):not(.placeholder){grid-column:2}.card .photo,.card .placeholder{grid-column:1;grid-row:1/6;width:80px;height:80px}.card .button{justify-self:start}.availability,.setupHelp{min-width:0;border:1px solid #dbe2e9;border-radius:12px;padding:0 16px;background:white}.availability>summary,.setupHelp>summary{min-height:48px;display:flex;align-items:center;font-weight:600;cursor:pointer}.availability[open],.setupHelp[open]{padding-bottom:16px}.setupHelp .checklist{border:0;padding:0}.workspace{gap:16px}@media(max-width:600px){.card{grid-template-columns:64px minmax(0,1fr);padding:14px;gap:8px 12px}.card .photo,.card .placeholder{width:64px;height:64px}.card h2{font-size:19px}.card .actions{grid-column:1/-1}.header h1{font-size:26px}.header{gap:8px}}
+
+@media(max-width:600px){
+ .workspace .actions{gap:8px;align-items:center;}
+ .workspace .actions form{margin:0;min-width:0;max-width:100%;}
+ .workspace .actions :is(button,a){margin:0;}
+ .workspace .panel form>button{justify-self:start;}
+ .workspace .tabs{display:flex;flex-wrap:wrap;gap:8px;}
+ .workspace .tabs a{padding:8px 12px;box-sizing:border-box;}
+}

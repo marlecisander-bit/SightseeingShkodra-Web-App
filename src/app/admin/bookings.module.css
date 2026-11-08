@@ -129,7 +129,7 @@
 .header>div{min-width:0;}
 .primary{max-width:100%;white-space:normal;overflow-wrap:anywhere;text-align:center;}
 .primary svg{flex:none;}
-@container(max-width:480px){.workspace form.controls{grid-template-columns:minmax(0,1fr);}.workspace .filterActions>button{width:100%;}.detailTitle,.creationTitle{flex-wrap:wrap;}.tourSummary,.statuses{min-width:0;overflow-wrap:anywhere;}}
+@container(max-width:480px){.workspace form.controls{grid-template-columns:minmax(0,1fr);}.workspace .filterActions>button{width:auto;}.detailTitle,.creationTitle{flex-wrap:wrap;}.tourSummary,.statuses{min-width:0;overflow-wrap:anywhere;}}
 @container(min-width:800px){.workspace form.controls{grid-template-columns:minmax(0,2fr) repeat(2,minmax(0,1fr));}.workspace form.controls .search{grid-column:auto;}}
 
 .controls>.search{margin:0!important}.controls>.search>span{white-space:nowrap}.controls>.filters{flex:1 1 100%}.controls>.lookup{flex:1 1 100%}.controls>.lookup label{max-width:320px}.filterActions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.filterActions a{display:inline-flex;align-items:center}.workspace>.lookup{margin-top:20px}@media(max-width:600px){.controls .search{display:grid!important;grid-template-columns:minmax(0,1fr)}.controls>.lookup{padding:0}.header{margin-bottom:12px}.header .primary{font-size:12px}}

@@ -5,13 +5,14 @@ import {createClient} from '@supabase/supabase-js';
 registerHooks({resolve(s,c,next){if(s==='@/modules/identity/operator-service'&&c.parentURL?.endsWith('/daily-departures-server.ts'))return {url:'data:text/javascript,export const withOperatorService=(...args)=>globalThis.departuresAuthorization(...args)',shortCircuit:true};return next(s,c);},load(url,c,next){if(url.startsWith('data:text/javascript,'))return {format:'module',source:decodeURIComponent(url.slice('data:text/javascript,'.length)),shortCircuit:true};return next(url,c);}});
 const {getDailyDepartures}=await import('../../src/modules/dashboard/daily-departures-server.ts');
 const op='10000000-0000-4000-8000-000000000001';
-function fixture({empty=false,error=false,incomplete=false}={}){
+function fixture({empty=false,error=false,incomplete=false,inactive=false,closed=false,shared=false}={}){
  const calls=[];const client=createClient('https://fixture.invalid','synthetic-not-a-secret',{auth:{persistSession:false},global:{fetch:async(input,init)=>{
   const url=new URL(String(input));calls.push({url,init});let data;
   if(url.pathname.endsWith('/operators'))data={timezone:'Europe/Tirane'};
-  else if(url.pathname.endsWith('/service_schedules'))data=empty?[]:[{id:'schedule',product:{title:'Tour'}}];
-  else data=error?{message:'Synthetic error'}:{days:[{date:'2026-10-25',slots:[{time:'09:00',open:true},{time:'15:00',open:true}]}]};
-  return new Response(JSON.stringify(data),{status:error&&url.pathname.includes('/rpc/')?500:200,headers:{'content-type':'application/json','content-range':`0-0/${incomplete?2:empty?0:1}`}});
+  else if(url.pathname.endsWith('/service_schedules'))data=empty?[]:[{id:'schedule',product_id:'product'}];
+  else if(url.pathname.endsWith('/products'))data=[{id:'product',title:'Tour',active:!inactive,status:'published',inventory_product_id:null},...(shared?[{id:'shared',title:'Active shared tour',active:true,status:'published',inventory_product_id:'product'}]:[])];
+  else data=error?{message:'Synthetic error'}:{days:[{date:'2026-10-25',range:closed?{closed:true}:null,exception:null,slots:[{time:'09:00',open:true},{time:'15:00',open:true}]}]};
+  return new Response(JSON.stringify(data),{status:error&&url.pathname.includes('/rpc/')?500:200,headers:{'content-type':'application/json','content-range':`0-0/${url.pathname.endsWith('/products')?(shared?2:1):incomplete?2:empty?0:1}`}});
  }}});return {calls,client};
 }
 test('Home uses authorized read-only calendar projections, scoped complete schedule reads and local-time next departure',async()=>{
@@ -25,4 +26,13 @@ test('empty schedules are zero; incomplete reads and calendar failures stay unav
   const f=fixture(options);globalThis.departuresAuthorization=async(o,p,read)=>read(f.client,{operatorId:op,staffProfileId:'staff'});const result=await getDailyDepartures(op,new Date('2026-10-25T09:30:00Z'));assert.equal(result.state,state);assert.equal(result.count,count);
  }
  globalThis.departuresAuthorization=async()=>{throw Error('Access denied');};await assert.rejects(()=>getDailyDepartures(op,new Date()),/Access denied/);delete globalThis.departuresAuthorization;
+});
+
+test('Home excludes paused offers and admin closures, but keeps an active shared offer once per physical departure',async()=>{
+ for(const [options,count,title]of [[{inactive:true},0,null],[{closed:true},0,null],[{inactive:true,shared:true},2,'Active shared tour']]){
+  const f=fixture(options);globalThis.departuresAuthorization=async(o,p,read)=>read(f.client,{operatorId:op,staffProfileId:'staff'});
+  const result=await getDailyDepartures(op,new Date('2026-10-25T09:30:00Z'));assert.equal(result.state,'ready');assert.equal(result.count,count);assert.equal(result.next?.title??null,title);
+  if(options.inactive&&!options.shared)assert.equal(f.calls.some(c=>c.url.pathname.includes('/rpc/')),false);
+ }
+ delete globalThis.departuresAuthorization;
 });

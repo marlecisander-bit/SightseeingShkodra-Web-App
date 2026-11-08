@@ -20,7 +20,7 @@ test('dashboard preserves unavailable vs zero, local service date and useful gua
  assert.equal(d.querySelectorAll('strong[aria-label="Unavailable"]').length,4);
  assert.match(d.body.textContent,/Saturday,? 24 October/);
  assert.deepEqual([...d.querySelectorAll('section.metric h2')].map(x=>x.textContent),['Passengers today','Booked revenue','Departures today','Unread notifications']);
- assert.equal(d.querySelector('h3').textContent,'Next scheduled departure');
+ assert.equal(d.querySelector('h3').textContent,'Next operating departure');
  assert.match(d.body.textContent,/Schedule summary unavailable/);
  assert.ok(d.querySelector(`a[href="/admin/${op}/departures?view=calendar&date=2026-10-24"]`));
  assert.ok(d.querySelector(`a[href="/admin/${op}/bookings?date=2026-10-24"]`));

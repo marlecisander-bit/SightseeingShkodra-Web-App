@@ -4,7 +4,7 @@ import {registerHooks,createRequire} from 'node:module';
 import React,{act,useState} from 'react';
 import {JSDOM} from 'jsdom';
 import {initialWebsiteContent} from '../../src/modules/content/website-schema.ts';
-import {summarizeDepartures} from '../../src/modules/dashboard/daily-departures.ts';
+import {summarizeDepartures,operatingSlots,activeScheduleOffers} from '../../src/modules/dashboard/daily-departures.ts';
 import {calendarDayOverview} from '../../src/app/admin/calendar-presentation.ts';
 registerHooks({load(url,c,next){if(url.endsWith('.module.css'))return {format:'module',source:'export default {}',shortCircuit:true};return next(url,c);}});
 const require=createRequire(import.meta.url),saves=[];
@@ -51,4 +51,13 @@ test('email summary separates historical provider issues from current sending he
  assert.equal(emailProcessingSummary({...base,pending:1,health:{...base.health,oldestPending:'2030-01-01T09:50:00Z'}},now),'Needs attention');
  for(const patch of [{queueFailures:1},{queueFailures:undefined},{health:null},{processing:'No recent successful run'},{health:{...base.health,missingOutcome:1}}])assert.equal(emailProcessingSummary({...base,...patch},now),'Needs attention');
  assert.equal(emailProcessingSummary({...base,enabled:false},now),'Paused');
+});
+
+test('operating summaries honor day and per-time closures with exception precedence and independent shared offers',()=>{
+ const slots=[{time:'09:00',open:true},{time:'15:00',open:true},{time:'18:00',open:false}];
+ assert.equal(operatingSlots({slots,range:{closed:true},exception:null}).length,0);
+ assert.equal(operatingSlots({slots,range:{closed:true},exception:{closed:false,calendar_settings:{departures:{'09:00':{closed:true}}}}}).length,1);
+ assert.equal(operatingSlots({slots,range:null,exception:{closed:true,calendar_settings:{}}}).length,0);
+ const products=[{id:'base',title:'Paused',active:false,status:'published'},{id:'offer',title:'Shared',active:true,status:'published',inventory_product_id:'base'},{id:'draft',title:'Draft',active:true,status:'draft',inventory_product_id:'base'}];
+ assert.deepEqual(activeScheduleOffers('base',products).map(p=>p.id),['offer']);
 });

@@ -11,7 +11,7 @@ export async function saveMeetingPoint(operatorId:string, form:FormData) {
       const {error}=await client.rpc("save_meeting_point_v1",{p_operator:operatorId,p_actor:ctx.staffProfileId,p_value:value,p_effective:String(form.get("effective"))+"Z",p_expected:String(form.get("stamp")??"")||null});
       if(error) throw Error("Meeting point could not be saved. Refresh and check the effective time.");
     });
-    revalidatePath(`/admin/${operatorId}/departures`);
+    revalidatePath("/","layout");
     return;
   } catch {return {error:"Unable to save. Owner access, valid details and a future UTC effective time are required. Refresh before retrying."};}
 }
