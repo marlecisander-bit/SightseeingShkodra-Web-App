@@ -13,12 +13,13 @@ import { notificationTypes, uuid, validPushSubscription, type Inbox, type InboxI
 export async function readInbox(operatorId:string,filter='all',cursor?:string):Promise<Inbox> {
  return withOperatorService(operatorId,'bookings.read',async(client,context)=>{
   const base=()=>client.from('admin_notification_receipts').select('id,notification_id,read_at,created_at,notification:admin_notifications!inner(id,type,title,message,booking_id,severity,event_at)').eq('operator_id',context.operatorId).eq('user_id',context.userId).eq('visible',true);
-  let q=base();
+  const recent=new Date(Date.now()-7*86400000).toISOString();
+  let q=base().gte('created_at',recent);
   if(filter==='unread')q=q.is('read_at',null);
   else if(filter==='system')q=q.in('notification.type',['email_delivery_failed','payment_status_changed','booking_status_changed']);
   else if(notificationTypes.some(t=>t===filter))q=q.eq('notification.type',filter);
   if(cursor){const [time,id]=cursor.split('|');if(!uuid.test(id??'')||!/^\d{4}-\d{2}-\d{2}T[\d:.+-]+Z?$/.test(time)||!Number.isFinite(Date.parse(time)))throw Error('Invalid page');q=q.or(`created_at.lt.${time},and(created_at.eq.${time},id.lt.${id})`);}
-  const [list,count]=await Promise.all([q.order('created_at',{ascending:false}).order('id',{ascending:false}).limit(26),client.from('admin_notification_receipts').select('id',{count:'exact',head:true}).eq('operator_id',context.operatorId).eq('user_id',context.userId).eq('visible',true).is('read_at',null)]);
+  const [list,count]=await Promise.all([q.order('created_at',{ascending:false}).order('id',{ascending:false}).limit(26),client.from('admin_notification_receipts').select('id',{count:'exact',head:true}).eq('operator_id',context.operatorId).eq('user_id',context.userId).eq('visible',true).gte('created_at',recent).is('read_at',null)]);
   if(list.error||count.error)throw Error('Notifications unavailable');
   const rows=(list.data??[]) as unknown as InboxItem[];const items=rows.slice(0,25);const last=items.at(-1);
   return {items,unread:count.count??0,next:rows.length>25&&last?`${last.created_at}|${last.id}`:null};
@@ -29,18 +30,15 @@ export async function readNotificationSettings(operatorId:string) {
   const [devices,prefs]=await Promise.all([client.from('admin_push_subscriptions').select('id,device_name,enabled,created_at,last_used_at').eq('operator_id',c.operatorId).eq('user_id',c.userId).order('created_at',{ascending:false}).limit(50),client.from('admin_notification_preferences').select('type,in_app,push').eq('operator_id',c.operatorId).eq('user_id',c.userId)]);
   if(devices.error||prefs.error)throw Error('Settings unavailable');
   const status=notificationStatus();
-  const ids=(devices.data??[]).map(d=>d.id);
-  const history=ids.length?await client.from('admin_push_deliveries').select('id,status,attempts,error_code,created_at,notification:admin_notifications(title,message)').eq('operator_id',c.operatorId).in('subscription_id',ids).order('created_at',{ascending:false}).limit(25):{data:[],error:null};
-  if(history.error)throw Error('Delivery history unavailable');
   const since=process.env.ADMIN_NOTIFICATIONS_START_AT??'';
   const cutoff=new Date(Date.now()-180000).toISOString();
   const [heartbeat,overdue,failed]=await Promise.all([
    client.from('admin_push_worker_status').select('status,started_at,last_success_at').eq('operator_id',c.operatorId).maybeSingle(),
    client.from('admin_push_deliveries').select('id',{count:'exact',head:true}).eq('operator_id',c.operatorId).in('status',['pending','sending']).lt('next_attempt_at',cutoff),
    client.from('admin_push_deliveries').select('id',{count:'exact',head:true}).eq('operator_id',c.operatorId).in('status',['failed','uncertain']).gte('created_at',new Date(Date.now()-86400000).toISOString())
-  ]);
+  ]).catch(()=>[{data:null,error:true},{count:null,error:true},{count:null,error:true}] as const);
   const automaticDelivery=automaticBookingHealth({...status,paused:status.paused||process.env.ADMIN_PUSH_ENABLED!=='true',startValid:/^\d{4}-\d{2}-\d{2}T.*(?:Z|[+-]\d{2}:\d{2})$/.test(since)&&Number.isFinite(Date.parse(since))&&Date.parse(since)<=Date.now(),worker:heartbeat.data,unavailable:Boolean(heartbeat.error||overdue.error||failed.error),queueIssue:Boolean(overdue.count||failed.count)});
-  return {automaticDelivery,history:history.data??[],canManageEmail:hasPermission(c.role,'integrations.manage'),devices:devices.data,preferences:notificationTypes.map(type=>(prefs.data as Preference[]).find(p=>p.type===type)??{type,in_app:true,push:true}),siteOrigin:adminSiteOrigin(),publicKey:status.registrationEnabled?process.env.VAPID_PUBLIC_KEY??'':'',...status};
+  return {automaticDelivery,canManageEmail:hasPermission(c.role,'integrations.manage'),devices:devices.data,preferences:notificationTypes.map(type=>(prefs.data as Preference[]).find(p=>p.type===type)??{type,in_app:true,push:true}),siteOrigin:adminSiteOrigin(),publicKey:status.registrationEnabled?process.env.VAPID_PUBLIC_KEY??'':'',...status};
  });
 }
 export async function changeNotification(operatorId:string,action:unknown) {
@@ -48,7 +46,10 @@ export async function changeNotification(operatorId:string,action:unknown) {
  const a=action as Record<string,unknown>;
  if(a.kind==='test-push'){if(typeof a.id!=='string')throw Error('Invalid device');return sendTestPush(operatorId,a.id);}
  return withOperatorService(operatorId,'bookings.read',async(client,c)=>{
-  if(a.kind==='read'){
+  if(a.kind==='dismiss'){
+   if(typeof a.before!=='string'||!Number.isFinite(Date.parse(a.before))||new Date(a.before).toISOString()!==a.before||Date.parse(a.before)>Date.now()+5000)throw Error('Invalid alert boundary');
+   if((await client.from('admin_notification_receipts').update({visible:false,read_at:new Date().toISOString()}).eq('operator_id',c.operatorId).eq('user_id',c.userId).eq('visible',true).lte('created_at',a.before)).error)throw Error('Unable to clear alerts');
+  }else if(a.kind==='read'){
    if(typeof a.read!=='boolean'||(a.id!=='all'&&(typeof a.id!=='string'||!uuid.test(a.id))))throw Error('Invalid receipt');
    let q=client.from('admin_notification_receipts').update({read_at:a.read?new Date().toISOString():null}).eq('operator_id',c.operatorId).eq('user_id',c.userId);
    if(a.id==='all'){if(!a.read)throw Error('Invalid operation');q=q.eq('visible',true).is('read_at',null);}else q=q.eq('id',a.id);

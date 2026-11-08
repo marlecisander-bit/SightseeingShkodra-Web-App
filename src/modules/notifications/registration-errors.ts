@@ -1,5 +1,5 @@
 const messages:Record<string,string>={
- DELIVERY_PAUSED:'Push delivery is paused or not configured. Registration does not activate delivery; ask the owner to check worker settings.',
+ DELIVERY_PAUSED:'Automatic alerts are paused. Your bookings are still saved.',
  TEST_RATE_LIMIT:'Wait one minute before sending another test notification.',
  DEVICE_UNAVAILABLE:'This device is no longer registered. Enable notifications again or use Repair registration.',
  PUSH_DISABLED:'Push registration is not configured for this environment. Ask the owner to check push settings.',
@@ -14,9 +14,9 @@ const messages:Record<string,string>={
  UNSUPPORTED:'Push is not supported in this browser. Use a supported browser over HTTPS.',
  PERMISSION_DENIED:'Notifications are blocked. Open this app’s notification settings to allow them, then return here. This page cannot override a denial or Focus.',
  PERMISSION_DISMISSED:'Permission was not granted. Tap Enable notifications again when you are ready to allow them.',
- WORKER_FAILED:'The notification service worker could not start. Check your connection, reload Admin and retry.',
+ WORKER_FAILED:'Could not connect alerts. Reload Admin and try again.',
  KEY_CHANGED:'This registration needs refreshing. Enable booking alerts again.',
- SUBSCRIBE_FAILED:'The push service rejected registration. Check iOS/browser updates, network access to Apple’s push service, and tap Retry.',
+ SUBSCRIBE_FAILED:'Could not connect this device. Check your connection and iPhone updates, then try again.',
 };
 export class PushRegistrationError extends Error {
  constructor(public code:string){super(messages[code]??messages.UNAVAILABLE);this.name='PushRegistrationError';}
