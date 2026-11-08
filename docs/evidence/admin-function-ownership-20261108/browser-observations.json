@@ -1,0 +1,16 @@
+{
+  "environment": "local synthetic Chromium, no writes",
+  "viewport": "390x844",
+  "paused": {
+    "operatingDepartures": 0,
+    "existingBookedSeats": 2,
+    "overflow": false
+  },
+  "adminClosed": {
+    "date": "2026-10-26",
+    "operatingDepartures": 0,
+    "overflow": false
+  },
+  "physicalSafari": false,
+  "productionAccountDataChecked": false
+}

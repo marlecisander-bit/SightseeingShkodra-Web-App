@@ -68,9 +68,9 @@ test('content editor is denied before a client read; operations preserves permit
  let f=fixture({role:'content_editor'});await assert.rejects(BookingsPanel({operatorId:op}),/FORBIDDEN/);assert.equal(f.calls.length,0);
  f=fixture({role:'operations'});const view=await BookingsPanel({operatorId:op});assert.equal(view.props.canCreate,true);
 });
-test('original mutation implementations are preserved apart from the explicit purchased-product selector',()=>{
+test('booking mutations preserve their implementation apart from product selection and platform cache invalidation',()=>{
  const source=readFileSync(new URL('../../src/app/admin/booking-actions.ts',import.meta.url),'utf8');
- assert.equal(createHash('sha256').update(source.replace('      productId: get("product_id")||undefined,\n','').split('\n/** Explicit UI preparation')[0]).digest('hex'),'1f98c92bdeb5d186dda447f341f2c885c1888837a5ff2950ac6427c659e2bc54');
+ assert.equal(createHash('sha256').update(source.replaceAll('revalidatePath("/","layout");','revalidatePath(path);').replace('      productId: get("product_id")||undefined,\n','').split('\n/** Explicit UI preparation')[0]).digest('hex'),'1f98c92bdeb5d186dda447f341f2c885c1888837a5ff2950ac6427c659e2bc54');
  const panel=readFileSync(new URL('../../src/app/admin/bookings-panel.tsx',import.meta.url),'utf8');
  assert.doesNotMatch(panel,/prepareServiceDate|ensure_schedule|\.insert\(|\.update\(|\.delete\(/);
  assert.match(source,/await requirePermission\(operatorId,'bookings.create'\)/);assert.match(source,/await prepareServiceDate\(operatorId,day\)/);
@@ -129,6 +129,6 @@ test('Tours incomplete schedule enumeration fails closed instead of presenting a
  for(const capTable of ['service_schedules','products','vehicles']){fixture({allowRpc:true,capTable});const result=await CalendarPanel({operatorId:op,view:'today'});assert.match(result.props.error,/unavailable/i);assert.equal(result.props.projection,undefined);}
 });
 test('departure history reads never prepare service dates and navigation preserves query-based views',()=>{
- const history=readFileSync(new URL('../../src/app/admin/departures-panel.tsx',import.meta.url),'utf8');assert.doesNotMatch(history,/await prepareServiceDate|ensure_schedule_date/);assert.match(history,/action=\{loadDepartureDate/);
+ const history=readFileSync(new URL('../../src/app/admin/departures-panel.tsx',import.meta.url),'utf8');assert.doesNotMatch(history,/await prepareServiceDate|ensure_schedule_date/);assert.doesNotMatch(history,/loadDepartureDate/);assert.match(history,/bookings\?create=1/);
  const navigation=readFileSync(new URL('../../src/app/admin/admin-navigation.tsx',import.meta.url),'utf8');assert.match(navigation,/url.search/);
 });

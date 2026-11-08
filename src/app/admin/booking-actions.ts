@@ -16,7 +16,7 @@ export async function resendConfirmation(operatorId: string, bookingId: string, 
     return { error: "Confirmation could not be requested. Check that email sending is on and the booking is confirmed. Wait five minutes after the last resend before trying again." };
   }
   const path = `/admin/${encodeURIComponent(operatorId)}/bookings`;
-  revalidatePath(path);
+  revalidatePath("/","layout");
   redirect(`${path}?result=email_queued&booking=${encodeURIComponent(bookingId)}#booking-${encodeURIComponent(bookingId)}`);
 }
 export async function manualBooking(operatorId: string, form: FormData) {
@@ -48,7 +48,7 @@ export async function manualBooking(operatorId: string, form: FormData) {
         "Unable to create the booking. Your details and retry ID are preserved. Check the order list after an uncertain result, then verify availability, pricing and customer details before retrying.",
     };
   const path = `/admin/${encodeURIComponent(operatorId)}/bookings`;
-  revalidatePath(path);
+  revalidatePath("/","layout");
   redirect(`${path}?result=${result}`);
 }
 export async function cancelBooking(
@@ -72,7 +72,7 @@ export async function cancelBooking(
         "Cancellation was not completed. Your reason is preserved. Review the current order and your permissions before retrying.",
     };
   const path = `/admin/${encodeURIComponent(operatorId)}/bookings`;
-  revalidatePath(path);
+  revalidatePath("/","layout");
   redirect(`${path}?result=${result}`);
 }
 
@@ -92,7 +92,7 @@ export async function collectPayment(
     };
   }
   const path = `/admin/${encodeURIComponent(operatorId)}/bookings`;
-  revalidatePath(path);
+  revalidatePath("/","layout");
   redirect(`${path}?result=collected`);
 }
 
@@ -108,7 +108,7 @@ export async function loadBookingDepartures(operatorId:string,form:FormData){
     await prepareServiceDate(operatorId,day);
   }catch{return {error:'Departures could not be loaded. Check the service date and your scheduling access before retrying.'};}
   const path=`/admin/${encodeURIComponent(operatorId)}/bookings`;
-  revalidatePath(path);
+  revalidatePath("/","layout");
   redirect(`${path}?date=${day}&create=1&result=departures_ready#new-booking`);
 }
 
@@ -125,6 +125,6 @@ export async function deleteBooking(operatorId:string,bookingId:string,form:Form
   return {error:error instanceof BookingDeletionError&&error.code==='BUSY'?'A payment or message delivery is in progress. Wait for it to finish, then retry.':error instanceof BookingDeletionError&&error.code==='NOT_FOUND'?'The booking reference does not match. Review it and retry.':'Booking was not deleted. Check your owner access, the reference and the latest booking details.'};
  }
  const path=`/admin/${encodeURIComponent(operatorId)}/bookings`;
- revalidatePath(path);revalidatePath(`/admin/${encodeURIComponent(operatorId)}/overview`);revalidatePath(`/admin/${encodeURIComponent(operatorId)}/departures`);
+ revalidatePath("/","layout");revalidatePath(`/admin/${encodeURIComponent(operatorId)}/overview`);revalidatePath(`/admin/${encodeURIComponent(operatorId)}/departures`);
  redirect(`${path}?result=deleted`);
 }

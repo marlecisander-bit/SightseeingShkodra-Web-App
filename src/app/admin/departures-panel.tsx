@@ -2,8 +2,7 @@ import { ownerStatus } from "./presentation";
 import { Button } from "@/components/ui/button";
 import { createSessionClient } from '../../modules/identity/supabase-server';
 import { requirePermission } from '../../modules/identity/require-permission';
-import {BookingConfirmation} from './booking-confirmation';
-import { saveDeparture,loadDepartureDate } from './departure-actions';
+import { saveDeparture } from './departure-actions';
 import { SubmitButton } from './submit-button';
 import Link from 'next/link';
 import { MutationForm } from './mutation-form';
@@ -45,7 +44,7 @@ export async function InventoryHistoryPanel({operatorId,date,result}:{operatorId
       <h3>Date-specific changes</h3><Link href={`/admin/${operatorId}/departures?view=calendar&schedule=${schedule.id}&date=${day}`}>Open operating calendar</Link>
       {(exceptions.data as ScheduleException[]).filter(e=>e.schedule_id===schedule.id).map(exception=><details key={exception.id}><summary>{exception.service_date} · {exception.closed?'Closed':exception.departure_times.map(t=>t.time).join(', ')}</summary><Link href={`/admin/${operatorId}/departures?view=calendar&schedule=${schedule.id}&date=${exception.service_date}`}>Manage this date</Link></details>)}
     </details>)}
-    <h2>Departure history</h2><BookingConfirmation message="Load scheduled departures for this date? This may create dated inventory from the existing schedule but does not reserve seats."><MutationForm action={loadDepartureDate.bind(null,operatorId)}><label>Prepare service date<input type="date" name="date" defaultValue={day} required/></label><SubmitButton>Load scheduled departures</SubmitButton></MutationForm></BookingConfirmation><p>Choose a date to review departures. To change scheduled departures, edit the schedule or the selected date.</p>
+    <h2>Departure history</h2><p>History is read-only for scheduled inventory. Prepare a reservation date in <Link prefetch={false} href={`/admin/${operatorId}/bookings?create=1${day?'&date='+day:''}#new-booking`}>Bookings → New reservation</Link>. Change date closures and times in the operating calendar.</p>
     <form method="get"><input type="hidden" name="view" value="calendar"/><input type="hidden" name="history" value="1"/><label>Browse calendar date<input type="date" name="date" defaultValue={day}/></label><Button>Show departures</Button> <Link prefetch={false} href={`/admin/${operatorId}/departures`}>Clear filter</Link></form>
     {departures.data.length===0&&<p>No departures found.</p>}
     {departures.data.map(row=><details key={row.id}><summary>{row.service_date} · {row.start_time} · {p.find(item=>item.id===row.product_id)?.label ?? 'Product'} · {ownerStatus(row.status)} · {row.capacity} seats</summary>{row.schedule_id?<p>Managed by its service schedule. Edit the selected date to make changes.</p>:<Editor operatorId={operatorId} row={row} products={p} vehicles={v}/>}</details>)}

@@ -27,7 +27,7 @@
 .shell label { display:block; }
 .shell textarea { display:block; width:100%; padding:.85rem; margin:.5rem 0 1.25rem; font:inherit; border:1px solid #777; resize:vertical; }
 .shell :is(select,textarea,summary):focus-visible { outline:3px solid var(--ss-focus); outline-offset:4px; }
-.shell form button { margin:.25rem .5rem .25rem 0; }
+.shell form button { margin:0; }
 .muted { color:var(--ss-muted); }
 .list { padding:0; list-style:none; display:grid; gap:1rem; }
 .list a { display:block; padding:1rem; border:1px solid var(--ss-border); border-radius:var(--ss-radius-control); }
@@ -456,3 +456,14 @@
 
 /* These workspaces own their headings and surfaces. */
 .shell .panel:has([data-products-workspace]),.shell .panel:has([data-email-workspace]){background:transparent;border:0;padding:0;box-shadow:none}.shell .panel:has([data-products-workspace])>.pageTrail,.shell .panel:has([data-products-workspace])>.sectionMenu,.shell .panel:has([data-email-workspace])>.pageTrail,.shell .panel:has([data-email-workspace])>.sectionMenu{display:none}
+
+/* Compact mobile actions: consistent alignment without shrinking touch targets. */
+@media(max-width:767px){
+ .shell .panel :is(button,:global(.ss-button)){box-sizing:border-box;min-width:44px;min-height:44px;padding:8px 12px;font-size:13px;line-height:1.35;vertical-align:middle;}
+ .shell .panel button>svg{vertical-align:middle;}
+}
+
+@media(max-width:767px){
+ .shell .sectionMenu .taskItems,.shell .mobileDrawer .taskItems{gap:2px;}
+ .shell .sectionMenu .taskItems a,.shell .mobileDrawer .taskItems a{padding:8px 10px;gap:2px;min-height:44px;}
+}

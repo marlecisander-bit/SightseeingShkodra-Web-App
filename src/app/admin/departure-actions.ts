@@ -17,16 +17,6 @@ export async function saveDeparture(operatorId:string,form:FormData) {
   } catch {result='error';}
   if(result!=='saved')return {error:result==='stale'?'This departure changed. Your entries are preserved; copy them before reloading the latest departure.':result==='inventory'?'Existing bookings or temporary seat reservations prevent this change. Review the affected bookings first. Your edits are still here.':'Unable to save. Check the date, time, maximum seats, product and vehicle. Your entries are preserved.'};
   const path=`/admin/${encodeURIComponent(operatorId)}/departures`;
-  revalidatePath(path);
+  revalidatePath("/","layout");
   redirect(`${path}?result=${result}`);
-}
-
-/** Explicit UI preparation; read-only browsing never invokes this service. */
-export async function loadDepartureDate(operatorId:string,form:FormData){
- const {validBookingDay}=await import('./bookings-presentation');
- const {prepareServiceDate}=await import('@/modules/booking/schedules-server');
- const raw=form.get('date'),day=typeof raw==='string'?validBookingDay(raw):undefined;
- if(!day)return {error:'Choose a valid service date.'};
- try{await prepareServiceDate(operatorId,day);}catch{return {error:'Scheduled departures could not be loaded. Check your access and the selected date.'};}
- const path=`/admin/${encodeURIComponent(operatorId)}/departures`;revalidatePath(path);redirect(`${path}?view=calendar&history=1&date=${day}&result=prepared`);
 }
