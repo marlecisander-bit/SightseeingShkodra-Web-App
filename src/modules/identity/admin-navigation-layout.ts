@@ -27,13 +27,13 @@ export function adminNavigationGroups(operatorId:string,role:StaffRole):AdminNav
   {id:'products',label:'Products',icon:'ticket',items:[link('products','All products','products'),link('catalog','Suppliers','catalog')]},
   {id:'website',label:'Website',icon:'camera',items:[
    link('content','Page editor','content'),link('route-stops','Route & destination content','route-stops'),
+   ...(hasPermission(role,'content.sensitive')?[link('business','Business profile & footer','content','business'),link('whatsapp','WhatsApp contact','content','whatsapp')]:[]),
    link('media','Images & media','content','media','Photos stay with their page or product.'),
    link('reviews','Guest reviews','reviews'),link('partners','Partners','partners'),
    link('faq','FAQ & policies','content','faq',hasPermission(role,'content.sensitive')?'FAQ, privacy and terms.':'FAQ editor; legal policies remain owner-only.'),
    link('seo','SEO & visibility','content','seo','Search titles and page visibility.')]},
   {id:'more',label:'More',icon:'info',items:[
    link('more','Settings & account','more'),
-   ...(hasPermission(role,'content.sensitive')?[link('business','Business profile','content','business','Public contact, WhatsApp and footer controls.')]:[]),
    link('notifications','Notifications & devices','notifications'),
    link('email','Booking emails','email',undefined,'Delivery history and settings.')]
   },
