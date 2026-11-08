@@ -65,3 +65,9 @@ test('valid persisted subscriptions survive repeated enable calls without subscr
  assert(!f.calls.includes('subscribe'));assert(!f.calls.includes('unsubscribe'));assert(!f.calls.includes('device'));
  assert.equal(f.calls.filter(c=>c==='device-status').length,3);
 });
+
+test('already inactive subscriptions can return false from unsubscribe and still be repaired',async()=>{
+ const f=fixture({permission:'granted'});let old={...f.created,expirationTime:1,unsubscribe:async()=>{old=null;return false;}};
+ f.registration.pushManager.getSubscription=async()=>old;
+ await enableDevicePush(f.input,f.browser);assert(f.calls.includes('subscribe'));
+});

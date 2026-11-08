@@ -5,7 +5,7 @@ export function pushSupport(input:{secure:boolean;ios:boolean;standalone:boolean
  return input.secure&&input.apis?null:'UNSUPPORTED';
 }
 export function deviceEnvironment(){
- return {secure:window.isSecureContext,ios:/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),standalone:window.matchMedia('(display-mode: standalone)').matches||(navigator as Navigator&{standalone?:boolean}).standalone===true,apis:'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window};
+ return {secure:window.isSecureContext,ios:/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),standalone:window.matchMedia?.('(display-mode: standalone)').matches||(navigator as Navigator&{standalone?:boolean}).standalone===true,apis:'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window};
 }
 export function applicationServerKey(value:string):Uint8Array<ArrayBuffer>{
  try{
@@ -52,7 +52,9 @@ export async function enableDevicePush(input:{key:string;name:string;request:Req
  if(sub&&!renew&&stored?.enabled)return stored;
  if(sub&&(renew||stored?.enabled===false)){
   if(stored?.id)await input.request('',{kind:'device',id:stored.id});
-  if(!await sub.unsubscribe())throw new PushRegistrationError('SUBSCRIBE_FAILED');sub=null;
+  const endpoint=sub.endpoint;
+  // An already inactive subscription can return false. Verify removal before renewing.
+  if(!await sub.unsubscribe()&&(await registration.pushManager.getSubscription())?.endpoint===endpoint)throw new PushRegistrationError('SUBSCRIBE_FAILED');sub=null;
  }
  try{sub??=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:key});}
  catch{throw new PushRegistrationError(browser.permission()==='denied'?'PERMISSION_DENIED':'SUBSCRIBE_FAILED');}
