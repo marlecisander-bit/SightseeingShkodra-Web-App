@@ -1,4 +1,5 @@
 "use client";
+import { normalizeCustomerPhone } from "@/modules/booking/customer-phone";
 import { trackBookingEvent } from "@/modules/analytics/browser";
 import { bookingDate } from "./booking-presentation";
 import { checkoutStorageKey } from "@/modules/booking/checkout-browser-state";
@@ -42,6 +43,7 @@ const messages: Record<string, string> = {
     "Your reserved time has ended. Please choose your seats again.",
   NOT_FOUND: "This reservation is no longer available in this browser.",
   NOT_PUBLISHED: "This tour is not available for booking yet.",
+  INVALID_PHONE: "Enter your phone number with + and country code.",
   INVALID_REQUEST: "Please check your details and try again.",
   CONFLICT:
     "This request was already submitted with different details. Keep your original details when retrying.",
@@ -163,7 +165,7 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
         deadline.current = 0;
         setRemaining(0);
       }
-      if (e instanceof Error && e.message === "INVALID_REQUEST")
+      if (e instanceof Error && ["INVALID_REQUEST", "INVALID_PHONE"].includes(e.message))
         setSubmitted(null);
       setError(
         messages[e instanceof Error ? e.message : ""] ??
@@ -300,9 +302,11 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
             <form id={checkoutFormId}
               onSubmit={(event) => {
                 event.preventDefault();
+                const phone = normalizeCustomerPhone(customer.phone);
+                if (!phone) { setError("Enter your phone number with + and country code, for example +355 69 123 4567."); setReview(false); return; }
                 if (!review&&!mobileDialog) { setReview(true); requestAnimationFrame(()=>heading.current?.focus()); return; }
                 void perform(async () => {
-                  const details = submitted ?? { ...customer };
+                  const details = submitted ?? { ...customer, phone };
                   setSubmitted(details);
                   const result = await send({
                     action: "order",
@@ -338,9 +342,12 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
                   }
                 />
               </Field>
-              <Field label="Phone (optional)">
+              <Field label="Phone number *">
                 <input
                   type="tel"
+                  required
+                  pattern={"\\+[1-9][0-9 \\(\\)\\-]{5,48}[0-9]"}
+                  title="Include + and country code, for example +355 69 123 4567"
                   maxLength={50}
                   autoComplete="tel"
                   inputMode="tel"
@@ -351,6 +358,7 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
                     setCustomer({ ...customer, phone: e.target.value })
                   }
                 />
+              <small>Include your country code. Use your WhatsApp number if available so we can contact you about your booking.</small>
               </Field>
               </div>}
               {mobileDialog&&<p className="p-mobile-confirmation-terms">Pay at the meeting point. Online changes and cancellation close 15 minutes before departure.</p>}

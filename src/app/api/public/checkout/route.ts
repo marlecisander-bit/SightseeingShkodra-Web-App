@@ -1,3 +1,4 @@
+import { normalizeCustomerPhone } from "@/modules/booking/customer-phone";
 import { passengerCount, type PassengerCounts } from "@/modules/booking/passengers";
 import { cookies } from "next/headers";
 import {resolveBookableProduct} from "@/modules/booking/products-server";
@@ -175,6 +176,8 @@ export async function POST(request: Request) {
           (typeof customer.phone !== "string" || customer.phone.length > 50))
       )
         return fail("INVALID_REQUEST");
+      const phone = normalizeCustomerPhone(customer.phone);
+      if (!phone) return fail("INVALID_PHONE");
       const order = await createPendingOrder(
         {
           operatorId,
@@ -183,7 +186,7 @@ export async function POST(request: Request) {
           customer: {
             name: customer.name,
             email: customer.email,
-            phone: customer.phone as string | undefined,
+            phone,
           },
         },
         true,

@@ -54,10 +54,10 @@ test('When/Who preserve selection and Review footer submits its original require
   assert.deepEqual(calls.map(c=>c.action),['session','hold']);assert.equal(document.querySelector('[aria-current="step"]').textContent.includes('Review'),true);
   const form=document.querySelector('form'),submit=button('Review booking');
   assert.equal(submit.closest('[data-booking-page-footer]')!==null,true);assert.match(document.querySelector('.p-action-total').textContent,/1 June 2030.*11:00/);assert.equal(submit.form,form);
-  assert.equal(form.querySelectorAll('input[required]').length,2);assert.equal(form.checkValidity(),false);
+  assert.equal(form.querySelectorAll('input[required]').length,3);assert.equal(form.checkValidity(),false);
   await click('Review booking');assert.ok(document.querySelector('.p-contact-fields'));assert.equal(calls.length,2);
   const setter=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set;
-  await act(()=>{const [name,email]=form.querySelectorAll('input');setter.call(name,'Synthetic Guest');name.dispatchEvent(new window.Event('input',{bubbles:true}));setter.call(email,'guest@example.test');email.dispatchEvent(new window.Event('input',{bubbles:true}));});
+  await act(()=>{const [name,email,phone]=form.querySelectorAll('input');setter.call(phone,'+355 69 123 4567');phone.dispatchEvent(new window.Event('input',{bubbles:true}));setter.call(name,'Synthetic Guest');name.dispatchEvent(new window.Event('input',{bubbles:true}));setter.call(email,'guest@example.test');email.dispatchEvent(new window.Event('input',{bubbles:true}));});
   assert.equal(dialogStates.at(-1).dirty,true);assert.equal(dialogStates.at(-1).busy,false);assert.ok(dialogStates.some(s=>s.busy));
   await click('Review booking');assert.ok(document.querySelector('.p-review-contact'));assert.equal(calls.length,2);
   assert.equal(dialogStates.at(-1).dirty,true);

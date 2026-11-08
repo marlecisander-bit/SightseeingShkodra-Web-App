@@ -66,3 +66,9 @@ test('confirmation cancellation prevents the existing mutation handler; acceptin
  const previous=globalThis.FormData;globalThis.FormData=dom.window.FormData;try{await act(async()=>form.dispatchEvent(new dom.window.Event('submit',{bubbles:true,cancelable:true})));assert.equal(calls,1);}finally{globalThis.FormData=previous;}
  });
 });
+
+test('international contact offers a safe WhatsApp link while legacy invalid numbers remain callable only',()=>{
+ const html=renderToStaticMarkup(React.createElement(BookingRecord,{operatorId:op,row:{...row,phone:'+355 69 123 4567'},selected:true}));
+ assert.match(html,/https:\/\/wa.me\/355691234567/);assert.match(html,/Open WhatsApp/);
+ const legacy=renderToStaticMarkup(React.createElement(BookingRecord,{operatorId:op,row,selected:true}));assert.doesNotMatch(legacy,/wa.me/);
+});

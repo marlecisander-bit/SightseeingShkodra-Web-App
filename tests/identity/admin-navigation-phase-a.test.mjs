@@ -34,3 +34,10 @@ test('supplier management belongs with Products and keeps its original permissio
   assert.equal(groups.find(g=>g.id==='more')?.items.some(i=>i.id==='catalog'),false);
  }
 });
+
+test('public contact editors belong only to Website, including active legacy context links',()=>{
+ const groups=adminNavigationGroups('fixture','owner');
+ const website=groups.find(g=>g.id==='website'),more=groups.find(g=>g.id==='more');
+ for(const id of ['business','whatsapp']){assert(website.items.some(i=>i.id===id));assert(!more.items.some(i=>i.id===id));assert.equal(activeAdminItem(groups,'content',id).id,id);}
+ assert(more.items.every(i=>['more','notifications','email'].includes(i.section)));
+});
