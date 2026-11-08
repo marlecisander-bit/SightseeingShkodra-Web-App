@@ -28,11 +28,11 @@ test('admin adult price change EUR10 to EUR12 updates both consumers without hom
  await db.query('select save_passenger_pricing_v1($1,$2,$3,$4,$5)',[op,actor,product,JSON.stringify({...config,adult:{...config.adult,price:1200}}),await stamp('products',product)]);
  const teaser=await fare('2026-09-23');assert.equal(teaser.amount,1200);assert.equal((await quote(request(teaser.date))).departures[0].passengerQuote.total,1200);
 });
-test('seasonal and departure offer prices remain canonical adult quotes',async()=>{
+test('hero and booking both ignore obsolete calendar fare overrides',async()=>{
  await override('2026-10-01','2026-10-15',{prices:{adult:1500,child:100}});
  await override('2026-10-07','2026-10-07',{offer:{name:'Test offer',label:'Local test',type:'percent',values:{adult:20},times:['15:00']}});
  const booking=await quote(request('2026-10-07'));assert.equal(adultHeroFare(booking).amount,1200);
- assert.deepEqual(booking.departures.map(d=>d.passengerQuote.total),[1500,1200]);
+ assert.deepEqual(booking.departures.map(d=>d.passengerQuote.total),[1200,1200]);
 });
 test('closed and sold-out dates are skipped; verified zero is shown and child-only quotes stay excluded',async()=>{
  await override('2026-09-24','2026-09-24',{closed:true});

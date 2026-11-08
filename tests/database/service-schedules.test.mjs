@@ -38,10 +38,10 @@ test('date exception cancels only 25 September 09:00 and can be restored',async(
   for(const day of ['2026-09-24','2026-09-26']) assert.equal((await snapshot(day)).departures.length,4);
   await exception('2026-09-25',{restore:true}); assert.equal((await snapshot('2026-09-25')).departures.length,4);
 });
-test('closed days, extra/changed times, per-time capacity, weekdays and paused schedules',async()=>{
+test('closed days inherit only product times, weekdays and paused schedules',async()=>{
   await exception('2026-09-27',{closed:true,times:[]}); assert.equal((await snapshot('2026-09-27')).departures.length,0);
   await exception('2026-09-28',{times:[{time:'10:00',capacity:12},{time:'11:00'},{time:'17:00'}]});
-  assert.deepEqual((await snapshot('2026-09-28')).departures.map(d=>[d.start_time,d.capacity]),[['10:00:00',12],['11:00:00',8],['17:00:00',8]]);
+  assert.deepEqual((await snapshot('2026-09-28')).departures.map(d=>[d.start_time,d.capacity]),[['11:00:00',8]]);
   await save({days:[1,2,3,4,5]}); assert.equal((await snapshot('2026-10-03')).departures.length,0);
   await save({status:'paused'}); assert.equal((await snapshot('2026-09-24')).departures.length,0);
   await save(); assert.equal((await snapshot('2026-09-24')).departures.length,4);

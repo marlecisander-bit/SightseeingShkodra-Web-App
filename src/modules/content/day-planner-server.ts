@@ -10,16 +10,13 @@ export async function getDayPlanner() {
  try {
   if(!operator||!home.product)throw Error();
   const client=createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,process.env.SUPABASE_SECRET_KEY!,{auth:{persistSession:false},global:{fetch:(input,init)=>fetch(input,{...init,cache:'no-store',signal:AbortSignal.timeout(5000)})}});
-  const [{data,error},cancelled]=await Promise.all([
-   client.from('service_schedules').select('id').eq('operator_id',operator).eq('product_id',home.product.id),
-   client.from('departures').select('start_time').eq('operator_id',operator).eq('product_id',home.product.id).eq('service_date',date).eq('status','cancelled'),
-  ]);
+  if(home.product.active===false){result.times=[];result.fares=[];return result;}
+  const inventory=await client.rpc('inventory_product_v1',{p_product:home.product.id});
+  if(inventory.error||!inventory.data)throw Error('Product schedule unavailable');
+  const {data,error}=await client.from('service_schedules').select('id').eq('operator_id',operator).eq('product_id',inventory.data);
   if(error)throw error;
   const slots=await Promise.all((data??[]).map(async s=>{const r=await client.rpc('effective_schedule_times_v1',{p_schedule_id:s.id,p_date:date});if(r.error)throw r.error;return r.data as {start_time:string}[];}));
   result.times=[...new Set(slots.flat().map(s=>s.start_time.slice(0,5)))].sort();
-  if(cancelled.error)throw cancelled.error;
-  const excluded=new Set((cancelled.data??[]).map(d=>d.start_time.slice(0,5)));
-  result.times=result.times.filter(t=>!excluded.has(t));
  }catch{result.times=null;/* Independent failure: published route and fare remain useful. */}
  return result;
 }

@@ -31,19 +31,19 @@ test('calendar review, reservation confirmation, reopening and discard preserve 
  const button=text=>[...document.querySelectorAll('button')].find(b=>b.textContent===text);
  try{
   await settle(()=>root.render(React.createElement(OperationsCalendar,{operatorId:'test',schedule,days,month:'2026-11-01',today:'2026-11-07',initialDate:'2026-11-08'})));
-  assert.equal(document.querySelectorAll('.departureCard').length,2);assert.equal(document.querySelectorAll('.occupancyRow').length,0);
+  assert.equal(document.querySelectorAll('.departureCard').length,2);assert.doesNotMatch(document.body.textContent,/New departure time|Add Departure|Special prices & offers/);assert.equal(document.querySelectorAll('.occupancyRow').length,0);
   assert.equal(document.querySelector('input[data-confirmation]')?.checked,false);
   await settle(()=>button('Close sales for this date').click());assert.equal(calls.length,0);
   await settle(()=>assert.equal(window.dispatchEvent(new Event('admin:before-navigation',{cancelable:true})),false));
   await settle(()=>button('Review changes').click());assert.match(document.querySelector('[aria-label="Review calendar changes"]').textContent,/Close sales/);assert.equal(calls.length,0);
   await settle(()=>button('Save changes for 2026-11-08').click());assert.equal(calls.length,1);assert.equal(calls[0][3].settings.closed,true);assert.equal(calls[0][3].confirmed,false);
   const confirm=[...document.querySelectorAll('input')].find(i=>i.parentElement.textContent.includes('I confirm closing'));
-  await settle(()=>confirm.click());await settle(()=>button('Save changes for 2026-11-08').click());assert.equal(calls[1][3].confirmed,true);assert.deepEqual(calls[1][3].settings.prices,settings.prices);
+  await settle(()=>confirm.click());await settle(()=>button('Save changes for 2026-11-08').click());assert.equal(calls[1][3].confirmed,true);assert.equal(calls[1][3].settings.prices,undefined);
   await settle(()=>button('Open sales for this date').click());await settle(()=>button('Review changes').click());await settle(()=>button('Save changes for 2026-11-08').click());
-  assert.equal(calls[2][3].settings.closed,false);assert.deepEqual(calls[2][3].settings.offer,settings.offer);assert.deepEqual(calls[2][3].settings.departures['09:00'].prices,{adult:1600});assert.equal(calls[2][3].restore,false);
+  assert.equal(calls[2][3].settings.closed,false);assert.equal(calls[2][3].settings.offer,undefined);assert.equal(calls[2][3].settings.departures['09:00'].prices,undefined);assert.equal(calls[2][3].restore,false);
   await settle(()=>button('Close sales for this date').click());await settle(()=>button('Discard changes').click());assert.equal(window.dispatchEvent(new Event('admin:before-navigation',{cancelable:true})),true);
   await settle(()=>document.querySelector('[aria-label="Next month"]').click());assert.match(routes.at(-1),/schedule=service/);
   await settle(()=>root.render(React.createElement(OperatingCalendarWorkspace,{operatorId:'test',calendars:[{schedule,title:'Daily Ticket',days},{schedule:{...schedule,id:'second',product_id:'second'},title:'Panorama',days}],products:[{id:'ticket',title:'Daily Ticket',active:false,availability_presentation:{state:'seasonal_break'},inventory_product_id:null}],selectedDate:'2026-11-08',month:'2026-11-01',today:'2026-11-07',timeZone:'Europe/Tirane',canPrice:true})));
-  assert.equal(document.querySelectorAll('[aria-label="Monthly availability"]').length,1);assert.match(document.querySelector('.salesNotice').textContent,/Product sales paused — Seasonal break/);
+  assert.equal(document.querySelectorAll('[aria-label="Monthly availability"]').length,1);assert.match(document.querySelector('.salesNotice').textContent,/Product sales paused — Seasonal break/);assert.equal(document.querySelectorAll('.departureCard').length,0);
  }finally{await settle(()=>root.unmount());dom.window.close();delete globalThis.calendarSave;delete globalThis.calendarRouter;for(const [name,value]of saved){if(value)Object.defineProperty(globalThis,name,value);else delete globalThis[name];}}
 });

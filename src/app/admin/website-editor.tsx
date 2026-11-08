@@ -61,7 +61,7 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
     {sectionId.startsWith('legal')&&<p>Plain text only. Add your approved legal wording, set Published, then publish. Unpublished pages show a neutral availability notice.</p>}
 
     {sectionId === "faq" && <p>Save a draft to preview; publish to update the public FAQ. Questions below appear on the dedicated FAQ page. <a href={`/admin/${operatorId}/website-preview?page=faq`}>Preview saved FAQ draft</a></p>}
-    {sectionId === "departures" && <p><a href={`/admin/${operatorId}/catalog`}>Products & suppliers</a> | <a href={`/admin/${operatorId}/departures`}>Calendar & Pricing</a>. Stops and live vehicle information are managed from Live Map.</p>}
+    {sectionId === "departures" && <p><a href={`/admin/${operatorId}/catalog`}>Products & suppliers</a> | <a href={`/admin/${operatorId}/departures`}>Operating calendar</a>. Stops and live vehicle information are managed from Live Map.</p>}
     <input type="hidden" name="updated_at" value={stamp} />
     {sectionId === "navigation" && <NavigationPreview content={values}/>}
     {sectionId === "hero" && <details><summary>Image display help</summary><p>Desktop crop: at widths of 1600px and above, a centered vertical position is displayed from the bottom. Other desktop positions and the mobile setting are preserved. The editor image does not reproduce every screen crop.</p></details>}
