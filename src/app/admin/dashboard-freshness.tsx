@@ -8,7 +8,7 @@ export function DashboardFreshness({snapshot}:{snapshot:DailyBookings}){
  const router=useRouter(),inbox=useContext(NotificationContext);
  const [clock,setClock]=useState(snapshot.checkedAt),[pending,startTransition]=useTransition();
  useEffect(()=>{const timer=setInterval(()=>setClock(new Date().toISOString()),30_000);return()=>clearInterval(timer);},[]);
- useEffect(()=>{const refresh=()=>{if(document.visibilityState==='visible')startTransition(()=>router.refresh());};const timer=setInterval(refresh,60_000);window.addEventListener('focus',refresh);document.addEventListener('visibilitychange',refresh);return()=>{clearInterval(timer);window.removeEventListener('focus',refresh);document.removeEventListener('visibilitychange',refresh);};},[router]);
+ useEffect(()=>{const refresh=()=>{if(document.visibilityState==='visible')startTransition(()=>router.refresh());};const timer=setInterval(refresh,60_000);return()=>{clearInterval(timer);};},[router]);
  const stale=dashboardIsStale(snapshot.checkedAt,snapshot.timeZone,snapshot.serviceDate,new Date(Math.max(Date.parse(clock),Date.parse(snapshot.checkedAt))));
  return <div className={styles.freshness}>
   <span role="status">{pending?'Refreshing…':snapshot.state==='unavailable'?'Daily totals unavailable.':stale?'Snapshot may be stale. Refresh for current totals.':`Snapshot · ${new Intl.DateTimeFormat('en-GB',{timeZone:snapshot.timeZone,hour:'2-digit',minute:'2-digit'}).format(new Date(snapshot.checkedAt))}`}</span>
