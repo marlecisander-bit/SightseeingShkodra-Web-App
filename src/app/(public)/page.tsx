@@ -1,3 +1,4 @@
+import {preloadHomepageHero} from '@/components/public/homepage-hero-images';
 import {getBookableProducts} from '@/modules/booking/products-server';
 import {loadPublicPartners} from '@/modules/content/partners-server';
 import {homepageVisible} from '@/modules/content/website-schema';
@@ -16,6 +17,7 @@ export default async function Home() {
   const publication = await getWebsitePublication();
   if (!publication.published) return <main id="main-content" className="p-section p-container"><p role="alert">Website content is temporarily unavailable. Please try again later.</p></main>;
   const content = publication.content;
+  preloadHomepageHero(content);
   const [home, reviews, planner, places, partners,products] = await Promise.all([getHomepage(), getPublicReviews(), getDayPlanner(), getPublicDestinations(), loadPublicPartners(homepageVisible(content,"partners")),getBookableProducts().catch(()=>[])]);
   return <HomepageView products={products} partners={partners} planner={planner} home={home} content={content} reviews={reviews} places={places.filter(d=>d.showOnHomepage)} />;
 }

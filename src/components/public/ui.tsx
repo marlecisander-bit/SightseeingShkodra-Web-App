@@ -1,5 +1,6 @@
 import { ButtonContent } from "@/components/ui/button";
-import Image from "next/image";
+import Image, {getImageProps} from "next/image";
+import {preload} from "react-dom";
 import { PublicBookingLink as Link } from "./booking";
 import { BrandLogo } from "./brand-logo";
 import { HomeLink } from "./home-link";
@@ -53,6 +54,13 @@ export function Media({
   mobileSrc?: string;
   sizes?: string;
 }) {
+  // The first experience can be the mobile LCP instead of the background.
+  // Share Next's exact candidates so the head hint and img reuse one request.
+  if (priority && !mobileSrc) {
+    const image = getImageProps({src,alt,fill:true,sizes:sizes ?? "(max-width: 700px) 100vw, 50vw",
+      unoptimized:src.startsWith("https://") && !/^https:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\/website-media\/[^?]+$/.test(src)}).props;
+    preload(image.src,{as:'image',imageSrcSet:image.srcSet,imageSizes:image.sizes,fetchPriority:'high'});
+  }
   return (
     <div className={`p-media ${className}`}>
       {mobileSrc ? (

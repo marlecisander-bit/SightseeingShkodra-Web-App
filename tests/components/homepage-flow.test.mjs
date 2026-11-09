@@ -38,7 +38,7 @@ test('retired service section stays absent with either saved visibility setting'
   for(const value of ['p-home-service','More time here.','Less time waiting.','Show live map here','TODAY, AT A GLANCE'])assert.equal(html.includes(value),false,value);
   assert.ok(html.includes('id="home-hero"'));
   assert.ok(html.includes('Actual boarding point'));
-  assert.equal((html.match(/<iframe/g)||[]).length,1);assert.match(html,/data-journey-source="true"/);assert.match(html,/loading="eager"/);
+  assert.equal((html.match(/<iframe/g)||[]).length,0);assert.match(html,/data-map-initialized="false"/);assert.match(html,/data-journey-source="true"/);assert.match(html,/loading="eager"/);
  }
 });
 

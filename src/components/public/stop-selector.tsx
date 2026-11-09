@@ -40,5 +40,5 @@ function MapPin(){return <svg width="20" height="20" viewBox="0 0 24 24" fill="n
 
 function DestinationImage({image,alt}:{image?:string;alt:string}){
  const [failed,setFailed]=useState<string>();
- return <div className={styles.image}>{image&&failed!==image?<Image src={image} alt={alt} width={720} height={450} sizes="(max-width: 700px) 90vw, 40vw" onError={()=>setFailed(image)}/>:<span>Photo coming soon</span>}</div>;
+ return <div className={styles.image}>{image&&failed!==image?<Image src={image} alt={alt} width={720} height={450} sizes="(max-width: 700px) 90vw, (max-width: 1200px) 40vw, 480px" onError={()=>setFailed(image)}/>:<span>Photo coming soon</span>}</div>;
 }

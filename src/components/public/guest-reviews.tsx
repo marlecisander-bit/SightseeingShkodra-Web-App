@@ -6,7 +6,7 @@ import { ExpandableText } from './expandable-text';
 import styles from './guest-reviews.module.css';
 export function ReviewCard({review:r,label="View original"}:{review:GuestReview;label?:string}) {
  return <article className={styles.card} lang={r.language??undefined}>
-  <p className={styles.stars} aria-label={`${r.rating} out of 5 stars`}><span aria-hidden="true">{'\u2605'.repeat(r.rating)}{'\u2606'.repeat(5-r.rating)}</span></p>
+  <p className={styles.stars} ><span className={styles.srOnly}>{r.rating} out of 5 stars</span><span aria-hidden="true">{'\u2605'.repeat(r.rating)}{'\u2606'.repeat(5-r.rating)}</span></p>
   <ExpandableText text={r.body} as="blockquote" className={styles.quote}/>
   <div className={styles.author}>{r.avatar_url&&<Image unoptimized src={r.avatar_url} alt="" width={40} height={40} loading="lazy"/>}<strong>{r.author}</strong></div>
   <p className={styles.source}>{r.source}{r.review_date&&<> | <time dateTime={r.review_date}>{new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeZone:'UTC'}).format(new Date(r.review_date+'T12:00:00Z'))}</time></>}</p>
