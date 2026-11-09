@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, MetadataRoute } from "next";
 export function seoConfig(env = process.env) {
   let origin: string | null = null;
   try {
@@ -12,6 +12,11 @@ export function seoConfig(env = process.env) {
       !url.hash
     )
       origin = url.origin;
+    // Public SEO identity is independent of transactional customer-link bindings.
+    if (origin && url.protocol === "https:" && !url.port && [
+      "sightseeingshkodra.app", "www.sightseeingshkodra.app",
+      "sightseeingshkodra.com", "www.sightseeingshkodra.com",
+    ].includes(url.hostname)) origin = "https://www.sightseeingshkodra.com";
   } catch {}
   const productionOrigin =
     origin &&
@@ -118,3 +123,9 @@ export function websiteMetadata(c: Record<string, string>, published = true): Me
 }
 
 export function editorialMetadata(path:string,prefix:string,c:Record<string,string>,published=true){const m=pageMetadata(path,c[prefix+'.seoTitle'],c[prefix+'.seoDescription'],published);return {...m,openGraph:{...m.openGraph,images:[{url:c[prefix+'.seoImage'],alt:c[prefix+'.seoAlt']}]}};}
+
+/** Production pages remain crawlable so Google can read canonical/noindex signals. */
+export function robotsPolicy(config: ReturnType<typeof seoConfig>): MetadataRoute.Robots {
+  if (!config.index) return { rules: { userAgent: "*", disallow: "/" } };
+  return { rules: { userAgent: "*", allow: "/" }, sitemap: `${config.origin}/sitemap.xml` };
+}
