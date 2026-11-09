@@ -21,7 +21,7 @@ export function HeroBookingWidget({fare,productTitle,bookingLabel,embedded=false
  const quoted=quote?.departures.filter(d=>d.available).flatMap(d=>d.passengerQuote?.lines.filter(l=>l.category==='adult'&&l.quantity>0).map(l=>l.unitPrice)??[])??[];
  const candidate=availability.error||availability.loading?undefined:selection.date?lowestQuotedFare(quoted):date?fare?.amount:undefined;
  const amount=candidate!==undefined&&Number.isSafeInteger(candidate)&&candidate>=0?candidate:undefined;
- const canBook=product?.active!==false&&Boolean(date)&&!availability.loading&&!availability.error&&(!quote||quote.departures.some(d=>d.available));
+ const canBook=product?.active!==false;
  const caption=passengerKeys.filter(k=>counts[k]>0).map(k=>passengerCaption(k,counts[k])).join(', ')||'Choose passengers';
  return <div className={`${styles.card}${embedded?` ${styles.productCard}`:""}`} data-floating-obstacle aria-label={product?`${product.title} availability`:"Daily ticket availability"}>{productTitle?<><div className={styles.ticketHeader}><div><p className={styles.ticket}>{embedded?"Van experience":"Daily Ticket"}</p><h2>{productTitle}</h2></div><div className={styles.mobileFare} aria-live="polite" aria-busy={availability.loading}>{amount===undefined?<span>{availability.loading?'Checking price…':'Check availability'}</span>:<><span>From</span><strong>{bookingMoney(amount,quote?.currency??fare?.currency??'EUR',true)}</strong><small>per adult</small></>}</div></div>
   {product&&<p>{reservationLabel(product)}</p>}

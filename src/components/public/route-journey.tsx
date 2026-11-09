@@ -18,10 +18,10 @@ export function RouteJourney({content,initial,places,preview=false}:{preview?:bo
   if(preview)return;
   const controller=new AbortController();let pending=false;
   const refresh=async()=>{setNow(new Date());if(pending||document.visibilityState==='hidden')return;pending=true;try{const r=await fetch('/api/public/day-planner',{signal:AbortSignal.any([controller.signal,AbortSignal.timeout(12000)]),cache:'no-store'});if(!r.ok)throw Error();setData(await r.json());setScheduleFailed(false);}catch{if(!controller.signal.aborted)setScheduleFailed(true);}finally{pending=false;}};
-  const clock=setTimeout(()=>setNow(new Date()),0);const timer=setInterval(()=>void refresh(),60000);
-  const visible=()=>{if(document.visibilityState==='visible')void refresh();};document.addEventListener('visibilitychange',visible);
-  return()=>{controller.abort();clearTimeout(clock);clearInterval(timer);document.removeEventListener('visibilitychange',visible);};
- },[preview]);
+  const clock=setTimeout(()=>{setData(initial);void refresh();},0);const timer=setInterval(()=>void refresh(),60000);
+  const visible=()=>{if(document.visibilityState==='visible')void refresh();};document.addEventListener('visibilitychange',visible);window.addEventListener('focus',visible);window.addEventListener('pageshow',visible);
+  return()=>{controller.abort();clearTimeout(clock);clearInterval(timer);document.removeEventListener('visibilitychange',visible);window.removeEventListener('focus',visible);window.removeEventListener('pageshow',visible);};
+ },[preview,initial]);
  const stops=data.stops??[];
  const summary=now?plannerSummary(data,now):null;
  const scheduleCurrent=now&&plannerClock(now).date===data.date&&!scheduleFailed;

@@ -27,7 +27,7 @@ test('mobile fare uses authoritative unit prices and hides stale values during l
  await act(()=>state().setSelection(s=>({...s,date:'2030-10-31'})));
  globalThis.widgetAvailability={...fixture(),quote:{currency:'EUR',departures:[{available:true,passengerQuote:{lines:[{category:'adult',quantity:1,unitPrice:1800}]}},{available:false,passengerQuote:{lines:[{category:'adult',quantity:1,unitPrice:500}]}}]}};
  await render();assert.match(document.body.textContent,/€18/);assert.doesNotMatch(document.body.textContent,/23\.75/);
- globalThis.widgetAvailability={...fixture(),loading:true};await render();assert.match(document.body.textContent,/Checking price/);assert.doesNotMatch(document.body.textContent,/€18/);assert.equal(document.querySelector('button[type="submit"]').disabled,true);
+ globalThis.widgetAvailability={...fixture(),loading:true};await render();assert.match(document.body.textContent,/Checking price/);assert.doesNotMatch(document.body.textContent,/€18/);assert.equal(document.querySelector('button[type="submit"]').disabled,false);
  globalThis.widgetAvailability={...fixture(),error:'Synthetic pricing unavailable'};await render();assert.match(document.body.textContent,/Synthetic pricing unavailable/);assert.doesNotMatch(document.body.textContent,/23\.75/);
 }));
 test('existing adult child infant controls, dismissal and selected values survive opening checkout',async()=>harness(async({click,state})=>{

@@ -258,9 +258,7 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
             ? mobileDialog ? "Review your booking" : review ? "Review and confirm" : "Review your booking"
             : selectionStep === 1 ? mobileDialog?"Choose your date":"When would you like to go?" : mobileDialog?"Who's coming?":"Who’s coming?"}
       </h2>
-      {!order && <p className="p-preview">
-        {attempt?.hold ? "Reserve online and pay at the meeting point." : selectionStep === 1 ? "Choose your date and departure." : "Choose adults, children and infants. Prices and availability update for your group."}
-      </p>}
+
       <div className="p-flow-layout"><div className="p-flow-main">
       {error && <p role="alert">{error}</p>}
       {error && attempt?.hold && (
@@ -358,7 +356,7 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
                     setCustomer({ ...customer, phone: e.target.value })
                   }
                 />
-              <small>Include your country code. Use your WhatsApp number if available so we can contact you about your booking.</small>
+              <small>Country code required. WhatsApp preferred.</small>
               </Field>
               </div>}
               {mobileDialog&&<p className="p-mobile-confirmation-terms">Pay at the meeting point. Online changes and cancellation close 15 minutes before departure.</p>}
@@ -401,8 +399,7 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
           </Button></BookingAction>
           {attempt && (
             <p>
-              We are keeping this request unchanged until its result is
-              confirmed, so retrying will not reserve twice.
+              Retry safely without reserving twice.
             </p>
           )}
         </>

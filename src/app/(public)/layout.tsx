@@ -18,7 +18,7 @@ export default async function PublicLayout({
   const [content,reviews,currentMeetingPoint,products] = await Promise.all([getPublishedWebsite(),getPublicReviewSettings(),getCurrentMeetingPoint(),getBookableProducts().catch(()=>[])]);
   return (
     <div className="public-site">
-      <BookingProvider product={products.find(p=>p.slug===process.env.PUBLIC_HOMEPAGE_PRODUCT_SLUG)} content={content} currentMeetingPoint={currentMeetingPoint}>
+      <BookingProvider products={products} product={products.find(p=>p.slug===process.env.PUBLIC_HOMEPAGE_PRODUCT_SLUG)} content={content} currentMeetingPoint={currentMeetingPoint}>
         <a className="p-skip" href="#main-content">
           Skip to content
         </a>

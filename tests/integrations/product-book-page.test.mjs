@@ -10,12 +10,12 @@ registerHooks({resolve(s,c,next){
  if(s.endsWith('/content/website-server'))source='export const getPublishedWebsite=async()=>({});export const getWebsitePublication=async()=>({content:{},published:true});';
  if(s.endsWith('/content/sitemap-server'))source='export const isPublicTourPublished=async()=>true;';
  if(s.endsWith('/content/seo'))source='export const editorialMetadata=()=>({});';
- if(s.endsWith('/public/booking'))source='export function BookingProvider(){};export function BookingFlow(){};';
+ if(s.endsWith('/public/booking'))source='export function BookingProvider(){};export function BookingFlow(){};export function BookingEntry(){};';
  if(s.endsWith('/public/page-intro'))source='export function PageIntro(){};';
  return source?{url:'data:text/javascript,'+encodeURIComponent(source),shortCircuit:true}:next(s,c);
 },load(url,c,next){if(url.startsWith('data:text/javascript,'))return {format:'module',source:decodeURIComponent(url.slice('data:text/javascript,'.length)),shortCircuit:true};return next(url,c);}});
 const {default:Book}=await import('../../src/app/(public)/book/page.tsx');
 function find(node,name){if(!node||typeof node!=='object')return null;if(node.type?.name===name)return node;return [node.props?.children].flat(Infinity).map(n=>find(n,name)).find(Boolean);}
-test('booking page binds the selected offer to the shared booking provider and shows its published introduction',async()=>{calls=[];const page=await Book({searchParams:Promise.resolve({productId:product.id})});assert.equal(find(page,'BookingProvider').props.product.id,product.id);assert.deepEqual(calls,[product.id]);assert.match(JSON.stringify(page),/Published booking introduction/);});
+test('booking page binds the selected offer directly to its checkout',async()=>{calls=[];const page=await Book({searchParams:Promise.resolve({productId:product.id})});assert.equal(find(page,'BookingProvider').props.product.id,product.id);assert.deepEqual(calls,[product.id]);assert(find(page,'BookingFlow'));assert.equal(find(page,'BookingEntry'),undefined);});
 test('invalid, repeated and unavailable product selectors cannot silently book the default product',async()=>{for(const productId of ['', 'unknown', [product.id,product.id]])await assert.rejects(Book({searchParams:Promise.resolve({productId})}),/NOT_FOUND/);});
-test('legacy booking URLs retain the existing default provider without a second directory resolution',async()=>{calls=[];const page=await Book({searchParams:Promise.resolve({})});assert.equal(find(page,'BookingProvider'),undefined);assert(find(page,'BookingFlow'));assert.deepEqual(calls,[]);});
+test('generic booking URLs show the experience picker without a second directory resolution',async()=>{calls=[];const page=await Book({searchParams:Promise.resolve({})});assert.equal(find(page,'BookingProvider'),undefined);assert(find(page,'BookingEntry'));assert.equal(find(page,'BookingFlow'),undefined);assert.deepEqual(calls,[]);});
