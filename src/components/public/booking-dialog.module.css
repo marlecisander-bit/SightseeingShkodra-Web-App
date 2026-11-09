@@ -146,3 +146,12 @@
 @media(max-width:767px){
  :global(.public-site) .dialog .footer :global(.p-booking-action:has(.p-booking-back) .p-action-total){grid-column:1;}
 }
+
+.products{display:grid;gap:12px;max-width:720px;margin-inline:auto;}
+.products h2{margin:0 0 8px;font-size:24px;}
+.products button{display:flex;align-items:center;justify-content:space-between;gap:16px;text-align:left;padding:20px;border:1px solid var(--ss-input-border);border-radius:12px;background:var(--p-paper);color:inherit;min-height:72px;white-space:normal;}
+.products button strong{font-size:18px;}
+.products button span{font-size:14px;}
+.products button:disabled{opacity:.6;cursor:not-allowed;}
+.products button:not(:disabled):hover{border-color:var(--brand-red);}
+@media(max-width:767px){.products button{align-items:flex-start;flex-direction:column;gap:8px;}}

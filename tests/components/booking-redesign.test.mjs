@@ -80,9 +80,12 @@ test('mobile navigation booking returns focus to the visible menu toggle after c
  globalThis.redesignAvailability={loading:false,refresh(){},quote:undefined};
  const {createRoot}=await import('react-dom/client'),root=createRoot(document.getElementById('root'));
  try{
-  await act(()=>root.render(React.createElement(BookingProvider,{preview:true},React.createElement(Header,{previewPathname:'/faq'}))));
+  await act(()=>root.render(React.createElement(BookingProvider,{preview:false,product:{id:'paused',title:'Paused tour',active:false},products:[{id:'paused',title:'Paused tour',active:false},{id:'open',title:'Open tour',active:true}]},React.createElement(Header,{previewPathname:'/faq'}))));
   const toggle=document.querySelector('.p-menu-toggle');await act(()=>toggle.click());
+  assert.equal(document.querySelector('.p-menu-book').disabled,false);
   await act(()=>document.querySelector('.p-menu-book').click());assert.ok(document.querySelector('dialog[open]'));
+  assert.match(document.querySelector('dialog[open]').textContent,/Choose your experience/);
+  const choices=[...document.querySelectorAll('dialog[open] section button')];assert.equal(choices.length,2);assert.equal(choices[0].disabled,true);assert.equal(choices[1].disabled,false);
   await act(()=>document.querySelector('dialog[open] [aria-label="Close booking"]').click());
   assert.equal(document.activeElement?.className,toggle.className);
  }finally{

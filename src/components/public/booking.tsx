@@ -50,7 +50,8 @@ type BookingContextValue = {
   currentMeetingPoint?:MeetingPoint|null;
   selection: BookingSelection;
   setSelection: Dispatch<SetStateAction<BookingSelection>>;
-  open: (trigger?: HTMLElement) => void;
+  open: (trigger?: HTMLElement, chooseProduct?: boolean) => void;
+  products: BookableProduct[];
   close: () => void;
   reset: () => void;
   generation: number;
@@ -62,8 +63,10 @@ export function useBooking() {
   if (!value) throw new Error("BookingProvider is required");
   return value;
 }
-export function BookingProvider({ children, content: suppliedContent, preview = false, currentMeetingPoint, product }: { children: ReactNode; content?: WebsiteContent; preview?:boolean;currentMeetingPoint?:MeetingPoint|null; product?:BookableProduct }) {
+export function BookingProvider({ children, content: suppliedContent, preview = false, currentMeetingPoint, product, products: suppliedProducts }: { children: ReactNode; content?: WebsiteContent; preview?:boolean;currentMeetingPoint?:MeetingPoint|null; product?:BookableProduct; products?:BookableProduct[] }) {
   const parent=useContext(BookingContext);
+  const products=suppliedProducts??parent?.products??[];
+  const [chooseProduct,setChooseProduct]=useState(false);
   const content=suppliedContent??parent?.content??initialWebsiteContent;
   const [selection, setSelection] = useState<BookingSelection>({
     productId: product?.id,
@@ -154,13 +157,15 @@ export function BookingProvider({ children, content: suppliedContent, preview = 
         selection,
         content,
         product,
+        products,
         currentMeetingPoint:currentMeetingPoint===undefined?parent?.currentMeetingPoint:currentMeetingPoint,
         reset,
         generation,
         setSelection,
         availability,
-        open: (trigger) => {
-          if (product?.active===false || !dialog.current || dialog.current.open) return;
+        open: (trigger, general = false) => {
+          if ((!general && product?.active===false) || !dialog.current || dialog.current.open) return;
+          setChooseProduct(general || !product);
           opener.current = trigger ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
           const state={...window.history.state,[historyMarker]:dialogTitle};
           if(window.history.state?.[historyMarker])window.history.replaceState(state,"");
@@ -204,18 +209,18 @@ export function BookingProvider({ children, content: suppliedContent, preview = 
           }
         }}
       >
-        {opened && <BookingDialogContent titleId={dialogTitle} key={generation} content={content} preview={preview} busy={dialogBusy} confirmClose={confirmClose} closeNotice={closeNotice} onStateChange={reportDialogState} onDiscard={finishClose} onKeep={()=>{setConfirmClose(false);requestAnimationFrame(()=>beforeClosePrompt.current?.focus({preventScroll:true}));}} />}
+        {opened && <BookingDialogContent chooseProduct={chooseProduct} titleId={dialogTitle} key={generation} content={content} preview={preview} busy={dialogBusy} confirmClose={confirmClose} closeNotice={closeNotice} onStateChange={reportDialogState} onDiscard={finishClose} onKeep={()=>{setConfirmClose(false);requestAnimationFrame(()=>beforeClosePrompt.current?.focus({preventScroll:true}));}} />}
       </dialog>
     </BookingContext.Provider>
   );
 }
 
 const subscribeMobileBooking=(notify:()=>void)=>{if(typeof window.matchMedia!=='function')return()=>{};const media=window.matchMedia('(max-width:767px)');media.addEventListener('change',notify);return()=>media.removeEventListener('change',notify);};
-function BookingDialogContent({content,preview=false,titleId,busy,confirmClose,closeNotice,onStateChange,onKeep,onDiscard}: {
-  titleId:string;content:WebsiteContent;preview?:boolean;busy:boolean;confirmClose:boolean;closeNotice:string;
+function BookingDialogContent({content,chooseProduct,preview=false,titleId,busy,confirmClose,closeNotice,onStateChange,onKeep,onDiscard}: {
+  titleId:string;content:WebsiteContent;chooseProduct:boolean;preview?:boolean;busy:boolean;confirmClose:boolean;closeNotice:string;
   onStateChange:(value:{dirty:boolean;busy:boolean})=>void;onKeep:()=>void;onDiscard:()=>void;
 }) {
-  const {close,currentMeetingPoint}=useBooking();
+  const {close}=useBooking();
   const mobile=useSyncExternalStore(subscribeMobileBooking,()=>typeof window.matchMedia==='function'&&window.matchMedia('(max-width:767px)').matches,()=>false);
   const closeButton = useRef<HTMLButtonElement>(null);
   const keepButton = useRef<HTMLButtonElement>(null);
@@ -226,26 +231,25 @@ function BookingDialogContent({content,preview=false,titleId,busy,confirmClose,c
     <header className={styles.header}><div><BrandLogo light/><h2 id={titleId}>{mobile?"Book your experience":content["bookingDialog.title"]}</h2></div><button ref={closeButton} type="button" className={styles.close} aria-label="Close booking" disabled={busy||confirmClose} onClick={close}>&times;</button></header>
     {closeNotice&&<p className={styles.closeNotice} role="status">{closeNotice}</p>}
     {confirmClose&&<section className={styles.discard} role="alertdialog" aria-modal="true" aria-labelledby={confirmTitle} aria-describedby={confirmDescription}>
-      <h3 id={confirmTitle}>Close booking?</h3><p id={confirmDescription}>Your entered contact details will be cleared. Your selected date, departure and passengers will be kept. Closing does not cancel a confirmed booking.</p>
+      <h3 id={confirmTitle}>Close booking?</h3><p id={confirmDescription}>Clear your contact details and close? Confirmed bookings stay unchanged.</p>
       <div><button ref={keepButton} type="button" className="p-button p-button-booking" onClick={onKeep}>Keep editing</button><button type="button" className="p-text-button" onClick={onDiscard}>Close and clear details</button></div>
     </section>}
-    <div className={styles.content} hidden={confirmClose}><p>{content["bookingDialog.text"]}</p><div data-booking-intro-meeting><MeetingPointSummary value={currentMeetingPoint}/></div>{preview?<p>Saved editorial preview. Booking actions are unavailable here.</p>:<CheckoutFlow mobileDialog={mobile} onDialogStateChange={onStateChange}/>}</div>
+    <div className={styles.content} hidden={confirmClose}>{preview?<p>Saved editorial preview. Booking actions are unavailable here.</p>:chooseProduct?<BookingEntry mobileDialog={mobile} onDialogStateChange={onStateChange}/>:<CheckoutFlow mobileDialog={mobile} onDialogStateChange={onStateChange}/>}</div>
     <div data-booking-footer className={styles.footer} hidden={confirmClose}/>
   </>;
 }
 
 /** Keep link styling and direct/new-tab access; ordinary booking activation opens the shared dialog. */
 export function PublicBookingLink({ href, onClick, ...props }: ComponentProps<typeof Link>) {
-  const { open,product } = useBooking();
+  const { open } = useBooking();
   const booking = href === "/book";
-  if(booking&&product?.active===false)return <span className={props.className} aria-disabled="true">Booking unavailable</span>;
   return <Link {...props} className={`${props.className ?? ""}${booking && props.className?.includes("p-button") ? " p-button-booking" : ""}`} href={href} aria-haspopup={booking ? "dialog" : props["aria-haspopup"]} onClick={event => {
     onClick?.(event);
     if (!booking || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || (props.target && props.target !== "_self") || props.download) return;
     event.preventDefault();
     // Transfer from the timetable dialog instead of stacking two modal surfaces.
     event.currentTarget.closest<HTMLDialogElement>("dialog[open]")?.close();
-    open(event.currentTarget);
+    open(event.currentTarget, true);
   }} />;
 }
 
@@ -260,9 +264,9 @@ export function BookButton({
   ariaLabel?: string;
   onClick?: () => void;
 }) {
-  const { open,product } = useBooking();
+  const { open } = useBooking();
   return (
-    <Button type="button" size="lg" disabled={product?.active===false} aria-haspopup="dialog" aria-label={product?.active===false?"Booking unavailable":ariaLabel} className={`p-button p-button-booking ${className}`} onClick={(event) => { onClick?.(); open(event.currentTarget); }}>
+    <Button type="button" size="lg" aria-haspopup="dialog" aria-label={ariaLabel} className={`p-button p-button-booking ${className}`} onClick={(event) => { onClick?.(); open(event.currentTarget, true); }}>
       {children}
     </Button>
   );
@@ -305,7 +309,7 @@ export function AvailabilityStatus({compact=false}:{compact?:boolean}={}) {
   return (
     <div className="p-availability-status" role="status" aria-live="polite">
       {!selection.date ? (
-        <p>Choose a date to check departures and prices.</p>
+        <p>Choose a date.</p>
       ) : availability.loading ? (
         <p>Checking availability…</p>
       ) : availability.error ? (
@@ -330,10 +334,10 @@ export function AvailabilityStatus({compact=false}:{compact?:boolean}={}) {
               (d) => d.id === selection.departureId && d.available,
             ) && (
               <p>
-                Your selected departure no longer has enough seats or is no longer bookable. Please choose another departure.
+                This departure is unavailable. Choose another.
               </p>
             )}
-          {!compact&&<p>Availability refreshes automatically. No seats are held.</p>}
+          {!compact&&<p>No seats held yet.</p>}
         </>
       ) : null}
       {selection.date && (!compact||availability.error) && (
@@ -368,7 +372,7 @@ export function Header({ content: c = initialWebsiteContent, previewPathname }: 
   const pathname = previewPathname ?? currentPathname;
   const inBooking = pathname === "/book" || pathname.startsWith("/booking/");
   const [heroVisible, setHeroVisible] = useState(true);
-  const { open,product } = useBooking();
+  const { open } = useBooking();
   const [hash, setHash] = useState("");
   const headerRef = useRef<HTMLElement>(null);
   const [mobileHeadlineCovered,setMobileHeadlineCovered]=useState(false);
@@ -451,9 +455,7 @@ export function Header({ content: c = initialWebsiteContent, previewPathname }: 
   },[pathname]);
   const bookFromHeader = (event: ReactMouseEvent<HTMLButtonElement>) => {
     setMenu(false);
-    const experiences=pathname==='/'?document.getElementById('experiences'):null;
-    if(experiences){experiences.scrollIntoView({behavior:'smooth',block:'start'});return;}
-    open(window.matchMedia("(max-width:1100px)").matches ? menuToggle.current ?? event.currentTarget : event.currentTarget);
+    open(window.matchMedia("(max-width:1100px)").matches ? menuToggle.current ?? event.currentTarget : event.currentTarget, true);
   };
   return (
     <>
@@ -493,10 +495,10 @@ export function Header({ content: c = initialWebsiteContent, previewPathname }: 
           aria-label="Main navigation"
         >
           {links.map((href,i)=>visibleWebsiteLink(href,c) ? <PublicBookingLink key={i} href={href} aria-current={active===i ? (href.includes("#") ? "location" : "page") : undefined} onClick={()=>{if(menu)menuToggle.current?.focus();setMenu(false);setHash(href.includes("#")?"#"+href.split("#")[1]:"");}}><span className="p-nav-label">{items[i].label}</span></PublicBookingLink> : null)}
-          {inBooking ? <Link className="p-menu-back" href="/" onClick={() => setMenu(false)}>Back to website</Link> : <Button type="button" size="lg" className="p-button p-button-booking p-menu-book" disabled={pathname!=="/"&&product?.active===false} onClick={bookFromHeader}>{c["nav.book"]}</Button>}
+          {inBooking ? <Link className="p-menu-back" href="/" onClick={() => setMenu(false)}>Back to website</Link> : <Button type="button" size="lg" className="p-button p-button-booking p-menu-book" onClick={bookFromHeader}>{c["nav.book"]}</Button>}
         </nav>
         <span className="p-language" title="More languages coming soon" aria-label="English; more languages coming soon">EN</span>
-        {inBooking ? <Link className="p-header-back" href="/">Back to website</Link> : <Button type="button" size="lg" className="p-button p-button-booking p-header-book" disabled={pathname!=="/"&&product?.active===false} aria-label={c["nav.book"]} onClick={bookFromHeader}><span className="p-header-book-full">{c["nav.book"]}</span><span className="p-header-book-compact" aria-hidden="true">Book</span></Button>}
+        {inBooking ? <Link className="p-header-back" href="/">Back to website</Link> : <Button type="button" size="lg" className="p-button p-button-booking p-header-book" aria-label={c["nav.book"]} onClick={bookFromHeader}><span className="p-header-book-full">{c["nav.book"]}</span><span className="p-header-book-compact" aria-hidden="true">Book</span></Button>}
         <button
           ref={menuToggle}
           className="p-menu-toggle"
@@ -512,6 +514,15 @@ export function Header({ content: c = initialWebsiteContent, previewPathname }: 
       {menu && <button type="button" className="p-menu-backdrop" tabIndex={-1} aria-label="Close navigation backdrop" onClick={() => { setMenu(false); menuToggle.current?.focus(); }} />}
     </>
   );
+}
+/** General entry uses the same product directory and checkout as direct product links. */
+export function BookingEntry({mobileDialog=false,onDialogStateChange}: {mobileDialog?:boolean;onDialogStateChange?:(value:{dirty:boolean;busy:boolean})=>void} = {}) {
+  const {products}=useBooking();
+  const [selected,setSelected]=useState<BookableProduct|null>(null);
+  if(selected)return <BookingProvider product={selected}><CheckoutFlow mobileDialog={mobileDialog} onDialogStateChange={onDialogStateChange}/></BookingProvider>;
+  return <section className={styles.products} aria-labelledby="booking-experience-title"><h2 id="booking-experience-title">Choose your experience</h2>
+    {products.length ? products.map(product=><button key={product.id} type="button" disabled={product.active===false} onClick={()=>setSelected(product)}><strong>{product.title}</strong><span>{product.active===false?product.unavailableMessage||"Temporarily unavailable":"Select →"}</span></button>) : <p role="status">Experiences are unavailable right now. Please try again later.</p>}
+  </section>;
 }
 export function BookingFlow({productHeading=true}: {productHeading?:boolean} = {}) {
   const {generation,currentMeetingPoint,product} = useBooking();
