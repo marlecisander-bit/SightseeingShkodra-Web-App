@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { editableWebsiteSections, initialWebsiteContent, validateWebsiteContent } from "../../src/modules/content/website-schema.ts";
+import { editableWebsiteSections, initialWebsiteContent, validateWebsiteContent, websiteFields } from "../../src/modules/content/website-schema.ts";
 
 test("hero amenities and obsolete mobile labels remain stored without active editors", () => {
   const editable = new Set(editableWebsiteSections.flatMap(section => section.fields.map(field => field.key)));
@@ -19,5 +19,5 @@ test("hero amenities and obsolete mobile labels remain stored without active edi
  const editable=new Set(editableWebsiteSections.flatMap(s=>s.fields.map(f=>f.key)));
  const saved={...initialWebsiteContent,"route.text":"Historical route copy","labels.ticket":"Historical ticket label","labels.faq":"Historical FAQ label"};
  for(const key of ["route.text","labels.ticket","labels.faq"]){assert.equal(editable.has(key),false);assert.equal(validateWebsiteContent(saved)[key],saved[key]);}
- assert.equal(Object.keys(validateWebsiteContent(saved)).length,210);
+ assert.equal(Object.keys(validateWebsiteContent(saved)).length,websiteFields.length);
  });
