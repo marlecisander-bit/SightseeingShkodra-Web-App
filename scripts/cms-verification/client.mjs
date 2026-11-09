@@ -6,7 +6,7 @@ const {BookingProvider,BookButton}=await import('../../src/components/public/boo
 const {RouteJourney}=await import('../../src/components/public/route-journey.tsx');
 const {HomepageView}=await import('../../src/components/public/homepage-view.tsx');
 const {planner,place,homeData}=await import('./render.mjs');
-export const clientKeys=new Set(['labels.destination','routePage.mapAction','bookingDialog.title','bookingDialog.text']);
+export const clientKeys=new Set(['labels.destination','routePage.mapAction','bookingDialog.title']);
 export async function renderClientProbe(key,content){
  const dom=new JSDOM('<!doctype html><html><body><div id="fixture"></div></body></html>',{url:'http://127.0.0.1',pretendToBeVisual:true});
  // Default jsdom does not execute scripts or load subresources. No hosted APIs/iframes are fetched.
