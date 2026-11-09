@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   seoConfig,
+  robotsPolicy,
+  pageMetadata,
   guideStructuredData,
   safeJsonLd,
 } from "../../src/modules/content/seo.ts";
@@ -27,6 +29,9 @@ test("indexing requires explicit production gate and a public HTTPS origin", () 
     { NEXT_PUBLIC_SITE_URL: "https://example.com/path" },
     { NEXT_PUBLIC_SITE_URL: "https://user:pass@example.com" },
     { NEXT_PUBLIC_SITE_URL: "invalid" },
+    { NEXT_PUBLIC_SITE_URL: "https://sightseeingshkodra.app/path" },
+    { NEXT_PUBLIC_SITE_URL: "https://user:pass@sightseeingshkodra.com" },
+    { NEXT_PUBLIC_SITE_URL: "https://www.sightseeingshkodra.com/?token=invalid" },
   ])
     assert.equal(seoConfig({ ...enabled, ...override }).index, false);
 });
@@ -58,4 +63,36 @@ test("structured data matches page and breadcrumbs and escapes script delimiters
   );
   assert.ok(!encoded.includes("aggregateRating"));
   assert.ok(!encoded.includes('"offers"'));
+});
+
+ test("public brand aliases consolidate on www.com without changing customer configuration", () => {
+  for (const host of ['sightseeingshkodra.app','www.sightseeingshkodra.app','sightseeingshkodra.com','www.sightseeingshkodra.com']) {
+    const env = {APP_ENV:'production', SITE_INDEXING_ENABLED:'true', NEXT_PUBLIC_SITE_URL:`https://${host}`};
+    assert.deepEqual(seoConfig(env), {origin:'https://www.sightseeingshkodra.com',index:true});
+    assert.equal(env.NEXT_PUBLIC_SITE_URL, `https://${host}`);
+    assert.equal(seoConfig({...env,VERCEL_ENV:'preview'}).index,false);
+  }
+});
+
+test("robots permits public crawling and private noindex inspection only after production gate", () => {
+ const config=seoConfig({APP_ENV:'production',SITE_INDEXING_ENABLED:'true',NEXT_PUBLIC_SITE_URL:'https://sightseeingshkodra.app'});
+ assert.deepEqual(robotsPolicy(config),{rules:{userAgent:'*',allow:'/'},sitemap:'https://www.sightseeingshkodra.com/sitemap.xml'});
+ assert.deepEqual(robotsPolicy({...config,index:false}),{rules:{userAgent:'*',disallow:'/'}});
+});
+
+test("page canonical and private response headers agree with crawl policy", async () => {
+ const previous={...process.env};
+ try {
+  Object.assign(process.env,{APP_ENV:'production',SITE_INDEXING_ENABLED:'true',NEXT_PUBLIC_SITE_URL:'https://sightseeingshkodra.app'});
+  const metadata=pageMetadata('/route','Tour route','Published tour information');
+  assert.equal(metadata.alternates.canonical,'https://www.sightseeingshkodra.com/route');
+  assert.deepEqual(metadata.robots,{index:true,follow:true});
+  assert.deepEqual(pageMetadata('/explore/draft','Draft','Draft',false).robots,{index:false,follow:false});
+ } finally {for(const key of Object.keys(process.env))if(!(key in previous))delete process.env[key];Object.assign(process.env,previous);}
+ const {default:config}=await import('../../next.config.ts');
+ const rules=await config.headers();
+ for(const path of ['/admin/:path*','/auth/:path*','/api/:path*','/booking/:path*','/dev/:path*','/your-day','/credits']) {
+  assert.ok(rules.some(rule=>rule.source===path&&rule.headers.some(header=>header.key==='X-Robots-Tag'&&header.value==='noindex, nofollow')));
+ }
+ assert.ok(!rules.some(rule=>rule.source==='/:path*'));
 });
