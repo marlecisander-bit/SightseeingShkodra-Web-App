@@ -98,6 +98,24 @@
     "dayPage.eyebrow",
     "dayPage.title",
     "tourPage.faqTitle",
-    "faq.items"
+    "faq.items",
+    "seasonal.enabled",
+    "seasonal.start",
+    "seasonal.end",
+    "seasonal.title",
+    "seasonal.message",
+    "seasonal.shortSeason",
+    "seasonal.season",
+    "seasonal.learnMore",
+    "seasonal.popupTitle",
+    "seasonal.description",
+    "seasonal.departuresLabel",
+    "seasonal.departures",
+    "seasonal.stopsLabel",
+    "seasonal.stops",
+    "seasonal.noticeLabel",
+    "seasonal.notice",
+    "seasonal.action",
+    "seasonal.close"
   ]
 }

@@ -1,4 +1,5 @@
 "use client";
+import {SeasonalPreview} from "./seasonal-preview";
 import {sectionConsumers} from "@/modules/content/editorial-fields";
 import {EditorActions} from "./editor-action-bar";
 import {FaqInput} from './faq-input';
@@ -64,6 +65,7 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
     {sectionId === "departures" && <p><a href={`/admin/${operatorId}/catalog`}>Products & suppliers</a> | <a href={`/admin/${operatorId}/departures`}>Operating calendar</a>. Stops and live vehicle information are managed from Live Map.</p>}
     <input type="hidden" name="updated_at" value={stamp} />
     {sectionId === "navigation" && <NavigationPreview content={values}/>}
+    {sectionId === "seasonal" && <SeasonalPreview content={values}/>}
     {sectionId === "hero" && <details><summary>Image display help</summary><p>Desktop crop: at widths of 1600px and above, a centered vertical position is displayed from the bottom. Other desktop positions and the mobile setting are preserved. The editor image does not reproduce every screen crop.</p></details>}
     <fieldset disabled={pending}>
       {section.fields.filter(f=>f.kind==="visibility").map(f=><input key={f.key} type="hidden" name={f.key} value={values[f.key]}/>)}
@@ -99,7 +101,7 @@ export function WebsiteSectionEditor({ operatorId, sectionId, content, stamp, va
             <input type="hidden" name={field.key} value={values[field.key]} />
           </> : <label>{ownerFieldLabel(field.label)}
             {long ? <textarea rows={field.key.includes("alt") ? 2 : 3} name={field.key} required={!field.optional} maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} />
-              : <input type={field.kind === "external" ? "url" : field.kind === "phone" ? "tel" : "text"} name={field.key} required={!field.optional} maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} />}
+              : <input type={field.kind === "external" ? "url" : field.kind === "phone" ? "tel" : ["seasonal.start","seasonal.end"].includes(field.key) ? "date" : "text"} name={field.key} required={!field.optional} maxLength={field.max} value={values[field.key]} onChange={e => setValues(v => ({ ...v, [field.key]: e.target.value }))} />}
           </label>}
         </div>;
       })}</div></fieldset>)}

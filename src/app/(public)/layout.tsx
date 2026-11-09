@@ -1,3 +1,5 @@
+import {SeasonalAnnouncement} from '@/components/public/seasonal-announcement';
+import {seasonalActive} from '@/modules/content/seasonal-announcement';
 import {getBookableProducts} from '@/modules/booking/products-server';
 import { PublicAnalytics } from "@/components/public/analytics";
 import {getCurrentMeetingPoint} from "@/modules/booking/meeting-point-server";
@@ -22,7 +24,7 @@ export default async function PublicLayout({
         <a className="p-skip" href="#main-content">
           Skip to content
         </a>
-        <Header content={content} />
+        <SeasonalAnnouncement content={content} initialActive={seasonalActive(content)}><Header content={content} /></SeasonalAnnouncement>
         {process.env.GA4_ENABLED === "true" && process.env.APP_ENV === "production" && process.env.VERCEL_ENV !== "preview" && process.env.NEXT_PUBLIC_SITE_URL === "https://sightseeingshkodra.app" && <PublicAnalytics />}
         {children}
         <Footer content={content} googleReviewsUrl={reviews.google_reviews_url} />

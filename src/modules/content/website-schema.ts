@@ -1,3 +1,4 @@
+import {seasonalDefaults,seasonalLabels,validateSeasonalAnnouncement} from './seasonal-announcement';
 import { partnerDefaults, safePartnerDestination } from './partner-settings';
 import { safeSocialUrl, safeWebsiteLink } from './website-links';
 export { safeSocialUrl, safeWebsiteLink } from './website-links';
@@ -24,7 +25,7 @@ export function visibleWebsiteLink(link: string, content: WebsiteContent) {
   return !(resolved === "/#route" && !sectionVisible(content, "route") || (link === "/tour#timetable" || resolved === "/route#journey-departures") && !sectionVisible(content, "departures"));
 }
 export function unavailableWebsiteContent(): WebsiteContent {
-  return { ...initialWebsiteContent, "faq.items":"[]", ...Object.fromEntries(homepageVisibilitySections.map(id => [`${id}.showOnHomepage`, "false"])) };
+  return { ...initialWebsiteContent, "seasonal.enabled":"false", "faq.items":"[]", ...Object.fromEntries(homepageVisibilitySections.map(id => [`${id}.showOnHomepage`, "false"])) };
 }
 
 export const footerFields: WebsiteField[] = [
@@ -36,6 +37,7 @@ export const footerDefaults=Object.fromEntries([...footerFields,...legalSections
 
 
 export const websiteSections: {id:string;title:string;fields:WebsiteField[]}[] = [
+ {id:"seasonal",title:"Seasonal Announcement",fields:Object.entries(seasonalDefaults).map(([key,initial])=>({key,initial,label:seasonalLabels[key.slice(9)],kind:key==="seasonal.enabled"?"toggle" as const:"text" as const,max:key==="seasonal.description"?1200:700}))},
  {id:'partners',title:'Our Partners',fields:[
  f('partners.eyebrow','Eyebrow',partnerDefaults['partners.eyebrow']),f('partners.title','Title',partnerDefaults['partners.title']),f('partners.description','Description',partnerDefaults['partners.description']),
  {key:'partners.ctaEnabled',label:'Show partner section button',initial:'false',kind:'toggle',max:5},
@@ -113,9 +115,9 @@ for (const section of websiteSections) {
 }
 // Retain the stored schema and historical showcase headings without offering obsolete controls.
 const homepageEditorOrder = ["hero","homeRoute","route","reviews","partners"];
-export const homepageEditorSections = websiteSections.filter(s => !["heroAmenities","intro","how","live","departures","notebook","final","faq","whatsapp","destinations","navigation","footer","seo",...legalSections.map(s=>s.id),...pageSections.map(p=>p.id),...editorialSections.filter(p=>p.id!=="homeRoute").map(p=>p.id)].includes(s.id)).map(s => s.id === "hero" ? {...s,fields:s.fields.filter(f=>!["hero.description","hero.track","hero.discover"].includes(f.key))} : s.id === "reviews" ? {...s,title:"Guest Reviews",fields:s.fields.filter(f => f.key !== "reviews.second")} : s.id === "route" ? {...s,fields:s.fields.filter(f=>f.key!=="route.text")} : s.id === "how" ? {...s,title:"How it works"} : s).sort((a,b)=>homepageEditorOrder.indexOf(a.id)-homepageEditorOrder.indexOf(b.id));
+export const homepageEditorSections = websiteSections.filter(s => !["seasonal","heroAmenities","intro","how","live","departures","notebook","final","faq","whatsapp","destinations","navigation","footer","seo",...legalSections.map(s=>s.id),...pageSections.map(p=>p.id),...editorialSections.filter(p=>p.id!=="homeRoute").map(p=>p.id)].includes(s.id)).map(s => s.id === "hero" ? {...s,fields:s.fields.filter(f=>!["hero.description","hero.track","hero.discover"].includes(f.key))} : s.id === "reviews" ? {...s,title:"Guest Reviews",fields:s.fields.filter(f => f.key !== "reviews.second")} : s.id === "route" ? {...s,fields:s.fields.filter(f=>f.key!=="route.text")} : s.id === "how" ? {...s,title:"How it works"} : s).sort((a,b)=>homepageEditorOrder.indexOf(a.id)-homepageEditorOrder.indexOf(b.id));
 export const destinationEditorSections = websiteSections.filter(s => s.id === "destinations").map(s => ({ ...s, title: "Destination content", fields: s.fields.filter(f => f.key.startsWith("place.")) }));
-export const globalEditorSections = websiteSections.filter(s=>["whatsapp","navigation","footer","seo",...legalSections.map(s=>s.id)].includes(s.id)).map(s=>s.id==="footer"?{...s,fields:footerFields}:s.id==="navigation"?{...s,fields:s.fields.filter(f=>!["nav.mobileBook","nav.mobileMap"].includes(f.key))}:s.id==="seo"?{...s,fields:s.fields.filter(f=>!["seo.image","seo.alt"].includes(f.key))}:s);
+export const globalEditorSections = websiteSections.filter(s=>["seasonal","whatsapp","navigation","footer","seo",...legalSections.map(s=>s.id)].includes(s.id)).map(s=>s.id==="footer"?{...s,fields:footerFields}:s.id==="navigation"?{...s,fields:s.fields.filter(f=>!["nav.mobileBook","nav.mobileMap"].includes(f.key))}:s.id==="seo"?{...s,fields:s.fields.filter(f=>!["seo.image","seo.alt"].includes(f.key))}:s);
 export const publicPageEditorSections = [...editorialSections.filter(s=>s.id!=="homeRoute").map(s=>s.id==="editorialLabels"?{...s,fields:s.fields.filter(f=>!["labels.tour","labels.ticket","labels.faq","bookingDialog.text"].includes(f.key))}:s.id==="routePage"?{...s,fields:[...s.fields,...websiteSections.find(section=>section.id==="departures")!.fields.filter(f=>f.kind==="visibility")]}:s),...pageSections.filter(s=>s.id!=="tourPage"),websiteSections.find(s=>s.id==="faq")!];
 export const editableWebsiteSections: {id:string;title:string;fields:WebsiteField[]}[] = [...homepageEditorSections, ...globalEditorSections, ...publicPageEditorSections];
 export const websiteEditorGroups = {homepage:homepageEditorSections,destinations:destinationEditorSections,pages:publicPageEditorSections,global:globalEditorSections};
@@ -129,7 +131,7 @@ export function safeWebsiteImage(value: string) {
 }
 export function validateWebsiteContent(value: unknown): WebsiteContent {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw Error("Invalid homepage content");
-  const record = { ...partnerDefaults, ...editorialDefaults, "faq.items":JSON.stringify(legacyFaq(value as WebsiteContent)), ...whatsappDefaults, ...footerDefaults, ...Object.fromEntries(homepageVisibilitySections.map(id => [`${id}.showOnHomepage`, "true"])), ...value } as WebsiteContent;
+  const record = { ...seasonalDefaults, ...partnerDefaults, ...editorialDefaults, "faq.items":JSON.stringify(legacyFaq(value as WebsiteContent)), ...whatsappDefaults, ...footerDefaults, ...Object.fromEntries(homepageVisibilitySections.map(id => [`${id}.showOnHomepage`, "true"])), ...value } as WebsiteContent;
   if (Object.keys(record).length !== websiteFields.length) throw Error("Invalid homepage fields");
   for (const field of websiteFields) {
     const v = record[field.key];
@@ -148,6 +150,7 @@ export function validateWebsiteContent(value: unknown): WebsiteContent {
   if (record["homeRoute.title"].replaceAll("{count}","").match(/[{}0-9]/) || record["homeRoute.title"].split("{count}").length > 2) throw Error("Use {count} once for the live count; do not enter a manual number");
   if(record["partners.ctaEnabled"]==="true" && (!record["partners.ctaLabel"].trim() || !safePartnerDestination(record["partners.ctaUrl"]))) throw Error("Configure the partner button label and destination before enabling it");
   validateWhatsApp(record);
+  validateSeasonalAnnouncement(record);
   return { ...record };
 }
 export function websitePlaces(content: WebsiteContent) {

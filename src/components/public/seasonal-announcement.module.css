@@ -1,0 +1,47 @@
+.frame {position:sticky;top:0;z-index:31;isolation:isolate;}
+.frame.frame :global(.p-header) {position:absolute;top:100%;}
+.ribbon {box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:9px;background:#fff3d6;color:#7c1c32;padding:9px 20px;text-align:center;font-family:var(--font-sans),Arial,sans-serif;font-size:12px;line-height:1.6;letter-spacing:.025em;min-height:38px;}
+.ribbon strong {font-size:11px;letter-spacing:.1em;}
+.snow {font-size:18px;flex-shrink:0;}
+.ribbon button {font:inherit;font-weight:700;color:inherit;border:0;background:none;padding:2px 3px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;white-space:normal;overflow-wrap:anywhere;}
+.ribbon button:focus-visible,.dialog .close:focus-visible,.dialog .action:focus-visible {outline:3px solid #aa153f;outline-offset:3px;}
+.dialog {overflow-wrap:anywhere;box-sizing:border-box;width:min(600px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 32px);padding:0;border:1px solid #eadfd1;border-radius:22px;background:#fffdf8;color:#28252b;box-shadow:0 24px 90px #19081138;overflow:auto;overscroll-behavior:contain;text-align:left;font-family:var(--font-sans),Arial,sans-serif;}
+.dialog::backdrop {background:#21151b99;}
+.dialog .panel {padding:34px;position:relative;}
+.dialog .close {position:absolute;right:14px;top:12px;width:36px;height:36px;border:1px solid #eadfd1;border-radius:50%;background:#fffdf8;color:#7c1c32;font-size:25px;line-height:1;cursor:pointer;}
+.dialog .season {margin:0 32px 14px 0;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#8b2940;}
+.dialog.dialog h2 {font-size:30px;line-height:1.12;letter-spacing:-.035em;margin:0 0 18px;font-weight:750;max-width:440px;}
+.dialog .description {font-size:15px;line-height:1.7;margin:0 0 24px;color:#615760;}
+.dialog .facts {border-top:1px solid #e9dfd3;padding-top:22px;display:grid;gap:22px;}
+.dialog.dialog h3 {font-size:12px;line-height:1.5;margin:0 0 10px;color:#7c1c32;font-weight:700;}
+.dialog.dialog h3 span {margin-right:5px;font-size:17px;}
+.dialog .times {font-size:21px;font-weight:700;letter-spacing:.025em;margin:0;}
+.dialog.dialog ol {margin:0;padding-left:22px;font-size:14px;line-height:1.9;}
+.dialog.dialog li {padding-left:5px;}
+.dialog.dialog li::marker {color:#8b2940;font-size:11px;font-weight:700;}
+.dialog .notice {background:#fff3d6;border-radius:12px;padding:17px 19px;margin:22px 0;}
+.dialog .notice p {font-size:13px;line-height:1.7;margin:0;}
+.dialog .action {display:inline-flex;align-items:center;justify-content:center;gap:24px;background:#b81245;color:#fff;text-decoration:none;border-radius:9px;font-size:14px;font-weight:700;padding:14px 21px;}
+@media(max-width:600px) {
+ .desktop {display:none;}
+ .ribbon {font-size:11px;padding:7px 12px;gap:7px;}
+ .ribbon strong {font-size:10px;letter-spacing:.06em;}
+ .dialog .panel {padding:28px 22px 24px;}
+ .dialog {border-radius:17px;}
+ .dialog.dialog h2 {font-size:26px;padding-right:15px;}
+ .dialog .description {font-size:14px;line-height:1.65;margin-bottom:20px;}
+ .dialog .season {font-size:10px;line-height:1.6;}
+ .dialog .facts {gap:18px;padding-top:18px;}
+ .dialog .times {font-size:20px;}
+ .dialog .notice {padding:14px;margin:18px 0;}
+ .dialog .action {display:flex;}
+}
+@media(max-height:500px) {.dialog .panel {padding-top:24px;}.dialog {max-height:calc(100dvh - 16px);}}
+
+@container(max-width:600px) {.desktop {display:none;}.ribbon {font-size:11px;padding:7px 12px;gap:7px;}.ribbon strong {font-size:10px;letter-spacing:.06em;}}
+
+.mobile {display:none;}
+@media(max-width:600px) {.mobile {display:inline;}}
+@container(max-width:600px) {.mobile {display:inline;}}
+
+.ribbon > span:last-child {min-width:0;overflow-wrap:anywhere;}

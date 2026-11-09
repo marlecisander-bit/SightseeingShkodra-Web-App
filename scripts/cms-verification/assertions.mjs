@@ -13,6 +13,8 @@ export function checkField(field,value,projection){
   ok=key==='live.showOnHomepage'?!text(html,projection.visibilityMarker):!html.includes(match);
  }
  else if(kind==='publication')ok=html.includes('This page has not been published yet.')&&!text(html,projection.legalMarker);
+ else if(['seasonal.enabled','seasonal.start','seasonal.end'].includes(key))ok=!html.includes('data-seasonal-announcement');
+ else if(key==='seasonal.close')ok=attribute(html,'button','aria-label',value);
  else if(key==='partners.ctaEnabled')ok=!attribute(html,'a','href','/book');
  else if(key==='whatsapp.enabled')ok=!html.includes('href="https://wa.me/');
  else if(key==='whatsapp.desktop'||key==='whatsapp.mobile')ok=attribute(html,'a','data-'+key.split('.')[1],'false')&&html.includes('href="https://wa.me/');

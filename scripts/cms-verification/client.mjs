@@ -5,8 +5,11 @@ import {JSDOM} from 'jsdom';
 const {BookingProvider,BookButton}=await import('../../src/components/public/booking.tsx');
 const {RouteJourney}=await import('../../src/components/public/route-journey.tsx');
 const {HomepageView}=await import('../../src/components/public/homepage-view.tsx');
+const {SeasonalAnnouncement}=await import('../../src/components/public/seasonal-announcement.tsx');
+const {seasonalActive}=await import('../../src/modules/content/seasonal-announcement.ts');
+const {seasonalDefaults}=await import('../../src/modules/content/seasonal-announcement.ts');
 const {planner,place,homeData}=await import('./render.mjs');
-export const clientKeys=new Set(['labels.destination','routePage.mapAction','bookingDialog.title']);
+export const clientKeys=new Set([...Object.keys(seasonalDefaults),'labels.destination','routePage.mapAction','bookingDialog.title']);
 export async function renderClientProbe(key,content){
  const dom=new JSDOM('<!doctype html><html><body><div id="fixture"></div></body></html>',{url:'http://127.0.0.1',pretendToBeVisual:true});
  // Default jsdom does not execute scripts or load subresources. No hosted APIs/iframes are fetched.
@@ -16,10 +19,20 @@ export async function renderClientProbe(key,content){
  dom.window.HTMLDialogElement.prototype.close=function(){this.removeAttribute('open');this.dispatchEvent(new dom.window.Event('close'));};
  const host=dom.window.document.getElementById('fixture');const {createRoot}=await import('react-dom/client');const root=createRoot(host);
  try{
-  const component=key==='labels.destination'?React.createElement(BookingProvider,{content,preview:true},React.createElement(HomepageView,{preview:true,home:homeData(),content,planner,places:[place]})):key==='routePage.mapAction'?React.createElement(RouteJourney,{content,initial:{date:'2030-06-01',times:[],fares:[],stops:[{id:'fixture-stop',label:'Synthetic stop'}]},places:[]}):React.createElement(BookingProvider,{content,preview:true},React.createElement(BookButton,null,'Open synthetic booking'));
+  const component=key.startsWith('seasonal.')?React.createElement(SeasonalAnnouncement,{content,initialActive:seasonalActive(content,new Date('2026-11-09T12:00:00Z')),preview:true}):key==='labels.destination'?React.createElement(BookingProvider,{content,preview:true},React.createElement(HomepageView,{preview:true,home:homeData(),content,planner,places:[place]})):key==='routePage.mapAction'?React.createElement(RouteJourney,{content,initial:{date:'2030-06-01',times:[],fares:[],stops:[{id:'fixture-stop',label:'Synthetic stop'}]},places:[]}):React.createElement(BookingProvider,{content,preview:true},React.createElement(BookButton,null,'Open synthetic booking'));
   await act(async()=>{root.render(component);});
   let html;
-  if(key==='labels.destination'||key==='routePage.mapAction'){
+  if(key.startsWith('seasonal.')){
+   if(!['seasonal.enabled','seasonal.start','seasonal.end'].includes(key)){
+    const trigger=host.querySelector('button');assert.ok(trigger);await act(async()=>trigger.click());assert.ok(host.querySelector('dialog[open]'));
+    assert.equal(document.body.style.overflow,'hidden');
+    const popup=host.querySelector('dialog'),close=popup.querySelector('button'),action=popup.querySelector('a');
+    assert.equal(host.querySelector('[id="'+popup.getAttribute('aria-labelledby')+'"]'),popup.querySelector('h2'));
+    close.focus();await act(async()=>close.dispatchEvent(new dom.window.KeyboardEvent('keydown',{key:'Tab',shiftKey:true,bubbles:true,cancelable:true})));assert.equal(document.activeElement,action);
+    await act(async()=>action.dispatchEvent(new dom.window.KeyboardEvent('keydown',{key:'Tab',bubbles:true,cancelable:true})));assert.equal(document.activeElement,close);
+    html=host.innerHTML;await act(async()=>host.querySelector('dialog button').click());assert.ok(!host.querySelector('dialog[open]'));assert.equal(document.body.style.overflow,'');
+   }else html=host.innerHTML;
+  }else if(key==='labels.destination'||key==='routePage.mapAction'){
    const trigger=host.querySelector('ol[aria-label="Choose a destination"] button');assert.ok(trigger,'real stop selector missing');
    const detail=host.querySelector('[id="'+trigger.getAttribute('aria-controls')+'"]');assert.ok(detail,'persistent details missing');
    assert.equal(host.querySelector('[id="'+detail.getAttribute('aria-labelledby')+'"]'),detail.querySelector('h3'));
@@ -38,6 +51,6 @@ export async function renderClientProbe(key,content){
    assert.equal(dialog.querySelector(key.endsWith('title')?'h2':'div > p')?.textContent,content[key]);
    await act(async()=>dialog.querySelector('button[aria-label="Close booking"]').click());assert.ok(!host.querySelector('dialog[open]'));
   }
-  return {route:key==='labels.destination'?'/':key==='routePage.mapAction'?'/route':'shared booking dialog',consumer:key==='labels.destination'||key==='routePage.mapAction'?'actual React persistent stop card selected in isolated jsdom':'actual React booking component opened/closed in isolated jsdom',html:html.replace(/(id|aria-labelledby)="_r_[a-z0-9]+_"/g,'$1="fixture-react-id"')};
+  return {route:key.startsWith('seasonal.')?'shared public header':key==='labels.destination'?'/':key==='routePage.mapAction'?'/route':'shared booking dialog',consumer:key.startsWith('seasonal.')?'actual seasonal dialog and schedule in isolated jsdom':key==='labels.destination'||key==='routePage.mapAction'?'actual React persistent stop card selected in isolated jsdom':'actual React booking component opened/closed in isolated jsdom',html:html.replace(/(id|aria-labelledby|aria-describedby)="_r_[a-z0-9]+_"/g,'$1="fixture-react-id"')};
  }finally{await act(async()=>root.unmount());dom.window.close();for(const [name,descriptor]of saved){if(descriptor)Object.defineProperty(globalThis,name,descriptor);else delete globalThis[name];}}
 }
