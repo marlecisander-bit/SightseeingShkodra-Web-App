@@ -1,5 +1,6 @@
 import 'server-only';
 import { createClient } from '@supabase/supabase-js';
+import { getBookableProducts } from '@/modules/booking/products-server';
 import { getHomepage } from '@/modules/content/homepage-server';
 import { getDestinationStops } from '@/modules/content/destination-stops-server';
 import { plannerClock, type DayPlannerData } from '@/modules/content/day-planner';
@@ -8,12 +9,15 @@ export async function getDayPlanner() {
  const [home,route]=await Promise.all([getHomepage(),getDestinationStops(operator??'')]);
  const result:DayPlannerData={date,title:home.product?.title??'View tickets',times:null,fares:home.date===date?home.adultFares??[]:[],stops:route.available?route.stops:null};
  try {
-  if(!operator||!home.product)throw Error();
+  if(!operator)throw Error();
+  const products=await getBookableProducts();
+  const product=products.find(p=>p.active!==false&&p.primary)??products.find(p=>p.active!==false);
+  if(!product){result.times=[];result.fares=[];return result;}
+  result.title=product.title;
+  if(product.id!==home.product?.id)result.fares=[];
   const client=createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,process.env.SUPABASE_SECRET_KEY!,{auth:{persistSession:false},global:{fetch:(input,init)=>fetch(input,{...init,cache:'no-store',signal:AbortSignal.timeout(5000)})}});
-  // Ticket sales may be paused while the shared route service still operates.
-  // The effective inventory schedule alone determines timetable times.
-  if(home.product.active===false)result.fares=[];
-  const inventory=await client.rpc('inventory_product_v1',{p_product:home.product.id});
+  // Follow an active public offer rather than the inactive homepage binding.
+  const inventory=await client.rpc('inventory_product_v1',{p_product:product.id});
   if(inventory.error||!inventory.data)throw Error('Product schedule unavailable');
   const {data,error}=await client.from('service_schedules').select('id').eq('operator_id',operator).eq('product_id',inventory.data);
   if(error)throw error;
