@@ -1,3 +1,4 @@
+import {timeHomepage, timedHomepage} from '../diagnostics/homepage-server-timing';
 import "server-only";
 import { cache } from "react";
 import { connection } from "next/server";
@@ -20,7 +21,7 @@ export async function loadWebsitePublication(env: NodeJS.ProcessEnv = process.en
   try {
     const client = createClient(env.NEXT_PUBLIC_SUPABASE_URL!, env.SUPABASE_SECRET_KEY!, { auth: { persistSession: false }, global: { fetch: (input, init) => transport(input, { ...init, cache: "no-store", signal: AbortSignal.timeout(4000) }) } });
     stage = "query_failed";
-    const { data, error } = await client.from("content_pages").select("published_body").eq("operator_id", operator).eq("slug", "website-homepage").eq("status", "published").maybeSingle();
+    const { data, error } = await timeHomepage('website.query',()=>client.from("content_pages").select("published_body").eq("operator_id", operator).eq("slug", "website-homepage").eq("status", "published").maybeSingle());
     if (error) return unavailable("query_failed");
     if (!data?.published_body) return unavailable("not_published");
     stage = "invalid_published_content";
@@ -28,10 +29,10 @@ export async function loadWebsitePublication(env: NodeJS.ProcessEnv = process.en
     return { content, published: true };
   } catch { return unavailable(stage); }
 }
-export const getWebsitePublication = cache(async () => {
-  await connection();
+export const getWebsitePublication = cache(timedHomepage('website.factory',async () => {
+  await timeHomepage('request.connection.await',()=>connection());
   return loadWebsitePublication();
-});
+}));
 export async function getPublishedWebsite() { return (await getWebsitePublication()).content; }
 
 export async function getWebsiteEditor(operatorId: string): Promise<WebsiteRecord> {
