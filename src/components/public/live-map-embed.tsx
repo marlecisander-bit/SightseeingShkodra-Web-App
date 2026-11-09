@@ -55,17 +55,18 @@ export function LiveMapEmbed({ priority = false, presentation = "compact", colla
       onLoad={() => { setSlow(false); setLoadCycle(value=>value+1); bridge.current?.reset(); if(selectedStopId)frame.current?.contentWindow?.postMessage({type:"shkodra:select-stop",version:1,id:selectedStopId},mapOrigin); }}
       className={styles.map}
       src={`${mapUrl}&embed=1${externalStatus?"&websiteStatus=external-v1":""}&presentation=${presentation}`}
-      tabIndex={!background&&(presentation === "full" || interactive) ? 0 : -1}
-      style={presentation === "compact" && !interactive ? { pointerEvents: "none" } : undefined}
+      tabIndex={!background && interactive ? 0 : -1}
+      inert={background || !interactive || undefined}
+      style={background || !interactive ? { pointerEvents: "none" } : undefined}
       title="Sightseeing Shkodra live van map"
       loading={background||priority ? "eager" : "lazy"}
       allow="geolocation"
       referrerPolicy="strict-origin-when-cross-origin"
     />
 
-    {!background && presentation === "compact" && !interactive && <div className={styles.scrollSurface} aria-hidden="true" />}
+    {!background && !interactive && <div className={styles.scrollSurface} aria-hidden="true" />}
     </div>
-    {!background && presentation === "compact" && <div className={styles.interaction}><Button type="button" aria-pressed={interactive} onClick={() => setInteractive(value => !value)}>{interactive ? "Done interacting" : "Interact with map"}</Button><span>{interactive ? "Pan and zoom the map, or finish to scroll the page." : "Scroll freely, or enable map controls."}</span></div>}
+    {!background && <div className={styles.interaction}><Button type="button" aria-pressed={interactive} onClick={() => setInteractive(value => !value)}>{interactive ? "Done interacting" : "Interact with map"}</Button><span>{interactive ? "Pan and zoom the map, or finish to scroll the page." : "Scroll freely, or enable map controls."}</span></div>}
     {!background && (onJourney || collapseRecovery ? <details className={styles.help}><summary>Map help</summary>
     <div className={`widget-action-bar ${styles.recovery}`}>
       <Button type="button" onClick={() => { onJourney?.(null,'loading'); setReady(false); setJourney(null); setStatusReason('loading'); setSlow(false); setReload(value => value + 1); }}>Reload map</Button>
