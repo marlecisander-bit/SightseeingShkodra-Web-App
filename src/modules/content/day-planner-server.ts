@@ -10,7 +10,9 @@ export async function getDayPlanner() {
  try {
   if(!operator||!home.product)throw Error();
   const client=createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,process.env.SUPABASE_SECRET_KEY!,{auth:{persistSession:false},global:{fetch:(input,init)=>fetch(input,{...init,cache:'no-store',signal:AbortSignal.timeout(5000)})}});
-  if(home.product.active===false){result.times=[];result.fares=[];return result;}
+  // Ticket sales may be paused while the shared route service still operates.
+  // The effective inventory schedule alone determines timetable times.
+  if(home.product.active===false)result.fares=[];
   const inventory=await client.rpc('inventory_product_v1',{p_product:home.product.id});
   if(inventory.error||!inventory.data)throw Error('Product schedule unavailable');
   const {data,error}=await client.from('service_schedules').select('id').eq('operator_id',operator).eq('product_id',inventory.data);
