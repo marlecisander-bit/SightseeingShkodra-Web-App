@@ -1,3 +1,4 @@
+import {timeHomepage} from '@/modules/diagnostics/homepage-server-timing';
 import {SeasonalAnnouncement} from '@/components/public/seasonal-announcement';
 import {seasonalActive} from '@/modules/content/seasonal-announcement';
 import {getBookableProducts} from '@/modules/booking/products-server';
@@ -17,7 +18,8 @@ export default async function PublicLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [content,reviews,currentMeetingPoint,products] = await Promise.all([getPublishedWebsite(),getPublicReviewSettings(),getCurrentMeetingPoint(),getBookableProducts().catch(()=>[])]);
+  return timeHomepage('layout',async()=>{
+  const [content,reviews,currentMeetingPoint,products] = await Promise.all([timeHomepage('layout.content.await',()=>getPublishedWebsite()),timeHomepage('layout.reviews.await',()=>getPublicReviewSettings()),timeHomepage('layout.meeting.await',()=>getCurrentMeetingPoint()),timeHomepage('layout.products.await',()=>getBookableProducts().catch(()=>[]))]);
   return (
     <div className="public-site">
       <BookingProvider products={products} product={products.find(p=>p.slug===process.env.PUBLIC_HOMEPAGE_PRODUCT_SLUG)} content={content} currentMeetingPoint={currentMeetingPoint}>
@@ -32,4 +34,5 @@ export default async function PublicLayout({
       </BookingProvider>
     </div>
   );
+  });
 }

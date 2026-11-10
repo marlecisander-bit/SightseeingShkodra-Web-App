@@ -1,3 +1,4 @@
+import {timeHomepage} from '../diagnostics/homepage-server-timing';
 import 'server-only';
 import { createClient } from '@supabase/supabase-js';
 import { AvailabilityError, quoteAvailability, validateAvailabilityRequest, type AvailabilityRequest, type AvailabilitySnapshot } from './availability';
@@ -11,7 +12,7 @@ export async function getAvailability(request: AvailabilityRequest, signal?: Abo
   try {
     const client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false },
       global: { fetch: (input, init) => fetch(input, { ...init, cache: 'no-store', ...(signal ? { signal } : {}) }) } });
-    const { data, error } = await client.rpc('read_passenger_availability_v1', {p_operator:request.operatorId,p_product:request.productId,p_date:request.date,p_counts:request.passengers??{adult:request.guests,child:0,infant:0}});
+    const { data, error } = await timeHomepage('availability.query',()=>client.rpc('read_passenger_availability_v1', {p_operator:request.operatorId,p_product:request.productId,p_date:request.date,p_counts:request.passengers??{adult:request.guests,child:0,infant:0}}));
     if (error) throw new AvailabilityError(error.code==='22023'?'INVALID_CONFIGURATION':'UNAVAILABLE');
     return quoteAvailability(request, data as AvailabilitySnapshot | null);
   } catch (error) {

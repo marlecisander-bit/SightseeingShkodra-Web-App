@@ -1,3 +1,4 @@
+import {timeHomepage, timedHomepage} from '../diagnostics/homepage-server-timing';
 import { withOperatorService } from "../identity/operator-service";
 import 'server-only';
 import {cache} from 'react';
@@ -8,16 +9,16 @@ const fields='id,author,rating,body,source,review_date,original_url,avatar_url,l
 export { fields as reviewFields };
 
 export async function readReviewSettings(client:SupabaseClient,operator:string):Promise<ReviewSettings|null> {
- const config=await client.from('review_settings').select('display_limit,google_reviews_url,leave_review_url').eq('operator_id',operator).maybeSingle();
+ const config=await timeHomepage('reviews.settings.query',()=>client.from('review_settings').select('display_limit,google_reviews_url,leave_review_url').eq('operator_id',operator).maybeSingle());
  return config.error?null:config.data??defaultReviewSettings;
 }
 async function readReviewRows(client:SupabaseClient,operator:string,settings:ReviewSettings):Promise<ReviewSelection> {
- const result=await client.from('reviews').select(fields).eq('operator_id',operator).eq('published',true).is('deleted_at',null).order('featured',{ascending:false}).order('display_order').order('created_at',{ascending:false}).order('id').limit(settings.display_limit);
+ const result=await timeHomepage('reviews.rows.query',()=>client.from('reviews').select(fields).eq('operator_id',operator).eq('published',true).is('deleted_at',null).order('featured',{ascending:false}).order('display_order').order('created_at',{ascending:false}).order('id').limit(settings.display_limit));
  return {reviews:result.error?[]:result.data??[],settings};
 }
 // One request-scoped settings read shared by the footer and review sections.
-const publicReviewContext=cache(async()=>{
- await connection();
+const publicReviewContext=cache(timedHomepage('reviews.context.factory',async()=>{
+ await timeHomepage('request.connection.await',()=>connection());
  const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.SUPABASE_SECRET_KEY,operator=process.env.PUBLIC_OPERATOR_ID;
  if(!url||!key||!operator)return null;
  try {
@@ -25,16 +26,16 @@ const publicReviewContext=cache(async()=>{
   const settings=await readReviewSettings(client,operator);
   return settings?{client,operator,settings}:null;
  }catch{return null;}
-});
+}));
 export async function getPublicReviewSettings():Promise<ReviewSettings> {
  return (await publicReviewContext())?.settings??defaultReviewSettings;
 }
-export const getPublicReviews=cache(async ():Promise<ReviewSelection> => {
+export const getPublicReviews=cache(timedHomepage('reviews.factory',async ():Promise<ReviewSelection> => {
  const context=await publicReviewContext();
  if(!context)return {reviews:[],settings:defaultReviewSettings};
  try{return await readReviewRows(context.client,context.operator,context.settings);}
  catch{return {reviews:[],settings:context.settings};}
-});
+}));
 export async function readPublishedReviews(client:SupabaseClient,operator:string):Promise<ReviewSelection> {
  const settings=await readReviewSettings(client,operator);
  return settings?readReviewRows(client,operator,settings):{reviews:[],settings:defaultReviewSettings};
