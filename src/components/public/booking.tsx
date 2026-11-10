@@ -225,8 +225,8 @@ function BookingDialogContent({content,chooseProduct,preview=false,titleId,busy,
   const closeButton = useRef<HTMLButtonElement>(null);
   const keepButton = useRef<HTMLButtonElement>(null);
   const confirmTitle=useId(),confirmDescription=useId();
-  useEffect(() => { closeButton.current?.focus(); }, []);
-  useEffect(()=>{if(confirmClose)keepButton.current?.focus();},[confirmClose]);
+  useEffect(() => { closeButton.current?.focus({preventScroll:true}); }, []);
+  useEffect(()=>{if(confirmClose)keepButton.current?.focus({preventScroll:true});},[confirmClose]);
   return <>
     <header className={styles.header}><div><BrandLogo light/><h2 id={titleId}>{mobile?"Book your experience":content["bookingDialog.title"]}</h2></div><button ref={closeButton} type="button" className={styles.close} aria-label="Close booking" disabled={busy||confirmClose} onClick={close}>&times;</button></header>
     {closeNotice&&<p className={styles.closeNotice} role="status">{closeNotice}</p>}
@@ -442,12 +442,17 @@ export function Header({ content: c = initialWebsiteContent, previewPathname }: 
       frame = 0;
       const height = header.getBoundingClientRect().height;
       hero.style.setProperty('--hero-header-offset', `${height}px`);
+      // The announcement occupies normal flow above the photo, not another viewport.
+      const ribbon = header.closest('[data-seasonal-announcement]');
+      hero.style.setProperty('--hero-seasonal-height', `${ribbon?.getBoundingClientRect().height ?? 0}px`);
       const heading = hero.querySelector('h1');
       setMobileHeadlineCovered(window.matchMedia('(max-width:900px)').matches && !!heading && heading.getBoundingClientRect().top < height);
     };
     const queue = () => { if (!frame) frame = requestAnimationFrame(measure); };
     const resize = new ResizeObserver(queue);
     resize.observe(header);
+    const ribbon = header.closest('[data-seasonal-announcement]');
+    if (ribbon) resize.observe(ribbon);
     window.addEventListener('scroll',queue,{passive:true});
     window.addEventListener('resize',queue);
     measure();
