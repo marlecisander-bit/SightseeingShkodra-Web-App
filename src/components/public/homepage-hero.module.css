@@ -182,7 +182,7 @@
 /* Phone-only composition. The tablet/desktop rules above remain authoritative. */
 @media(max-width:599px){
  .composed .visual{--hero-copy-drop:clamp(16px,calc(8svh - 36px),24px);padding-top:calc(var(--hero-header-offset,calc(60px + env(safe-area-inset-top))) + 10px + var(--hero-copy-drop));padding-inline:max(16px,env(safe-area-inset-left)) max(16px,env(safe-area-inset-right));padding-bottom:max(16px,env(safe-area-inset-bottom));}
- .composed .visual{display:flex;flex-direction:column;box-sizing:border-box;min-height:100vh;min-height:100svh;min-height:100dvh;}
+ .composed .visual{display:flex;flex-direction:column;box-sizing:border-box;min-height:calc(100vh - var(--hero-seasonal-height,0px));min-height:calc(100svh - var(--hero-seasonal-height,0px));}
  .composed .layout{display:flex;flex-direction:column;flex:1;align-items:stretch;gap:max(12px,calc(clamp(20px,calc(30svh - 174px),92px) - var(--hero-copy-drop)));}
  .composed .layout>:last-child{margin-top:0;}
  :global(.public-site) .composed .eyebrow{display:none;margin:0;padding:0;}
@@ -200,5 +200,10 @@
 
 /* Desktop photograph fills the viewport; taller content remains in normal flow. */
 @media(min-width:1024px){
- .composed .visual{box-sizing:border-box;min-height:100vh;min-height:100svh;min-height:100dvh;display:flex;flex-direction:column;justify-content:center;}
+ .composed .visual{box-sizing:border-box;min-height:calc(100vh - var(--hero-seasonal-height,0px));min-height:calc(100svh - var(--hero-seasonal-height,0px));display:flex;flex-direction:column;justify-content:center;}
 }
+
+/* Reserve the server-rendered announcement before its exact wrapped height is measured.
+   Stable viewport units keep browser-toolbar/booking focus changes from recropping the photo. */
+:global(.public-site:has([data-seasonal-announcement])) .composed{--hero-seasonal-height:38px;}
+@media(max-width:600px){:global(.public-site:has([data-seasonal-announcement])) .composed{--hero-seasonal-height:42.8px;}}
