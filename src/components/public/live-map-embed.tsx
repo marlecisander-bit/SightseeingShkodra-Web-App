@@ -9,7 +9,7 @@ import {type JourneySnapshot} from '@/modules/tracking/journey-contract';
 import { publicMapBinding, publicMapUrl, websiteExternalStatusEnabled, localMapPreviewEnabled } from '@/modules/tracking/public-map-binding';
 import { connectJourneyBridge } from "@/modules/tracking/journey-bridge";
 
-export function LiveMapEmbed({ priority = false, presentation = "compact", collapseRecovery = false, onJourney, selectedStopId, localPreview = false, background = false }: { priority?: boolean; collapseRecovery?: boolean; presentation?: "full" | "compact"; onJourney?:(snapshot:JourneySnapshot|null,reason?:'stale'|'loading')=>void; selectedStopId?:string; localPreview?:boolean; background?:boolean }) {
+export function LiveMapEmbed({ priority = false, presentation = "compact", collapseRecovery = false, onJourney, selectedStopId, localPreview = false, background = false, configuredStops = [] }: { configuredStops?:{id:string;label:string}[]; priority?: boolean; collapseRecovery?: boolean; presentation?: "full" | "compact"; onJourney?:(snapshot:JourneySnapshot|null,reason?:'stale'|'loading')=>void; selectedStopId?:string; localPreview?:boolean; background?:boolean }) {
   // Fixed loopback paired preview only; production always uses the canonical binding.
   const preview = process.env.NODE_ENV === 'development' && (localPreview || localMapPreviewEnabled);
   const externalStatus = preview || websiteExternalStatusEnabled;
@@ -42,13 +42,14 @@ export function LiveMapEmbed({ priority = false, presentation = "compact", colla
   const [loadCycle, setLoadCycle] = useState(0);
   const frame=useRef<HTMLIFrameElement>(null);
   const [ready, setReady] = useState(false);
+  const [lastStops,setLastStops] = useState<{id:string;label:string}[]>([]);
   const [journey, setJourney] = useState<JourneySnapshot|null>(null);
   const [statusReason, setStatusReason] = useState<'stale'|'loading'>('loading');
   const bridge = useRef<ReturnType<typeof connectJourneyBridge> | null>(null);
   useEffect(()=>{
     if (!initialized) return;
     const connection = connectJourneyBridge(window, () => frame.current?.contentWindow ?? null, mapOrigin,
-      (snapshot, reason) => { setReady(snapshot !== null); setJourney(snapshot); if(reason)setStatusReason(reason); onJourney?.(snapshot, reason); }, externalStatus);
+      (snapshot, reason) => { if(snapshot?.embeddedDisplay?.stops.length)setLastStops(snapshot.embeddedDisplay.stops.map(s=>({id:s.id,label:s.name}))); setReady(snapshot !== null); setJourney(snapshot); setStatusReason(reason??'loading'); onJourney?.(snapshot, reason); }, externalStatus);
     bridge.current = connection;
     return () => { connection.dispose(); bridge.current = null; if(background)onJourney?.(null,'loading'); };
   },[initialized,onJourney,reload,mapOrigin,externalStatus,background]);
@@ -72,7 +73,8 @@ export function LiveMapEmbed({ priority = false, presentation = "compact", colla
   }, [initialized,reload,loadCycle]);
   return <div ref={container} data-map-initialized={initialized} className={`interactive-widget ${styles.embed}${background?` ${styles.background}`:""}`} aria-hidden={background||undefined} inert={background||undefined} data-journey-source={background||undefined} data-presentation={presentation} data-journey={!!onJourney}>
     {!background&&preview&&<p role="note">Local paired preview · simulated tracking data</p>}
-    {!background&&externalStatus&&<EmbeddedMapStatus display={journey?.embeddedDisplay} reason={statusReason} unavailable={slow} onStop={id=>frame.current?.contentWindow?.postMessage({type:"shkodra:select-stop",version:1,id},mapOrigin)}/>}
+    <div className={styles.surface}>
+    {!background&&externalStatus&&<EmbeddedMapStatus snapshot={journey} configuredStops={configuredStops.length?configuredStops:lastStops} display={journey?.embeddedDisplay} reason={statusReason} unavailable={slow} onStop={id=>frame.current?.contentWindow?.postMessage({type:"shkodra:select-stop",version:1,id},mapOrigin)}/>}
     <div className={styles.viewport}>
     {initialized ? <iframe
       key={reload}
@@ -90,6 +92,7 @@ export function LiveMapEmbed({ priority = false, presentation = "compact", colla
     /> : <div className={`${styles.map} ${styles.placeholder}`} role="status">Live map loads as you approach this section.</div>}
 
     {!background && !interactive && <div className={styles.scrollSurface} aria-hidden="true" />}
+    </div>
     </div>
     {!background && <div className={styles.interaction}><Button type="button" aria-pressed={interactive} onClick={() => setInteractive(value => !value)}>{interactive ? "Done interacting" : "Interact with map"}</Button><span>{interactive ? "Pan and zoom the map, or finish to scroll the page." : "Scroll freely, or enable map controls."}</span></div>}
     {!background && (onJourney || collapseRecovery ? <details className={styles.help}><summary>Map help</summary>
