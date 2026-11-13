@@ -795,7 +795,6 @@ body:has(.p-booking-dialog[open]) {
     gap: 0;
     padding: 15px var(--p-gutter) 28px;
     background: var(--p-paper);
-    border-bottom: 1px solid var(--p-line);
   }
   .public-site .p-navigation a {
     padding-block: 10px;

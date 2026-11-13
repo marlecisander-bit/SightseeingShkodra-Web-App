@@ -1,0 +1,155 @@
+{
+  "date": "2026-11-13",
+  "status": "Local implementation; no commit, push, deployment or cloud changes",
+  "workspace": "SightseeingShkodra-Web-App, previously explicitly approved by owner because canonical folder is unavailable",
+  "root_causes": [
+    "The sticky winter announcement occupied normal flow above the hero and positioned the header below itself.",
+    "The phone hero used a viewport-dependent copy drop and large copy-to-card gap; cards did not receive remaining flex height.",
+    "Short/narrow screens were capped at two amenities even when space existed. Auto margins left empty space above amenities.",
+    "The fitting budget counted an absolutely positioned availability badge as flow content."
+  ],
+  "implementation": [
+    "Phone-only 100dvh minimum with 100svh/100vh fallbacks; safe-area-aware header and stable 44px announcement band.",
+    "Announcement overlays within the reserved header area, with scrollable wrapping for unusually long copy; existing button and dialog retained. The band remains reserved when off, preventing vertical displacement.",
+    "Existing carousel and cards expand through flex layout; photos have a 64px minimum and consume spare height. Content remains in natural flow when it cannot fit.",
+    "Fit chips from measured label wrapping and actual card budget; use existing priority order, retain at least the first measured row, reserve disclosure and price/action space, ignore floating badges, remeasure on viewport/hero/font changes.",
+    "All amenities sheet, native swipe/next-card preview and booking handlers preserved. Tablet landscape retains its previous two-chip compact behavior."
+  ],
+  "screenshots": "before-*.png and after-*.png are matching local synthetic fixtures using real shared components and CSS; live-before-390x844.png is the unchanged live site.",
+  "results": [
+    {
+      "viewport": [
+        375,
+        667
+      ],
+      "before_hero_bottom": 744.921875,
+      "after_hero_bottom": 667,
+      "before_amenity_counts": [
+        "2",
+        "2"
+      ],
+      "after_amenity_counts": [
+        "7",
+        "2"
+      ],
+      "horizontal_overflow": false
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "before_hero_bottom": 874.03125,
+      "after_hero_bottom": 844,
+      "before_amenity_counts": [
+        "7",
+        "2"
+      ],
+      "after_amenity_counts": [
+        "7",
+        "8"
+      ],
+      "horizontal_overflow": false
+    },
+    {
+      "viewport": [
+        430,
+        932
+      ],
+      "before_hero_bottom": 932,
+      "after_hero_bottom": 932,
+      "before_amenity_counts": [
+        "7",
+        "2"
+      ],
+      "after_amenity_counts": [
+        "7",
+        "8"
+      ],
+      "horizontal_overflow": false
+    },
+    {
+      "viewport": [
+        360,
+        800
+      ],
+      "before_hero_bottom": 836.546875,
+      "after_hero_bottom": 800,
+      "before_amenity_counts": [
+        "2",
+        "2"
+      ],
+      "after_amenity_counts": [
+        "7",
+        "8"
+      ],
+      "horizontal_overflow": false
+    },
+    {
+      "viewport": [
+        568,
+        320
+      ],
+      "before_hero_bottom": 757.1875,
+      "after_hero_bottom": 680.390625,
+      "before_amenity_counts": [
+        "2",
+        "2"
+      ],
+      "after_amenity_counts": [
+        "4",
+        "4"
+      ],
+      "horizontal_overflow": false
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "before_hero_bottom": 1367.140625,
+      "after_hero_bottom": 1367.140625,
+      "before_amenity_counts": [
+        "2",
+        "2"
+      ],
+      "after_amenity_counts": [
+        "2",
+        "2"
+      ],
+      "horizontal_overflow": false
+    },
+    {
+      "viewport": [
+        1440,
+        900
+      ],
+      "before_hero_bottom": 916.953125,
+      "after_hero_bottom": 916.953125,
+      "before_amenity_counts": [
+        "2",
+        "2"
+      ],
+      "after_amenity_counts": [
+        "2",
+        "2"
+      ],
+      "horizontal_overflow": false
+    }
+  ],
+  "verification": {
+    "browser": "Actual headless Google Chrome with mobile/touch emulation; screenshots inspected",
+    "checks": "See interaction-results.json; browser-check.mjs asserts portrait viewport fit, equal card heights, no text clipping, collisions or horizontal overflow.",
+    "unit_tests": "18 focused tests pass; tests.log",
+    "lint": "Passed; lint.log",
+    "types": "Passed after retry of transient missing .next generated file; typecheck.log; production build also typechecks",
+    "production_build": "next build --webpack passes; build.log. Default Turbopack build was interrupted after stalling in compile.",
+    "tablet_desktop": "768x1024 and 1440x900 hero/card geometry equals before measurements"
+  },
+  "limitations": [
+    "Physical iPhone Safari and Safari toolbar expanding/collapsing are unverified. Safari remote automation was disabled in this environment; viewport-height cycling in Chromium is a substitute for available-height changes only.",
+    "568x320 landscape requires normal vertical scrolling so copy, price, status and action remain readable; no fixed-height clipping. Enlarged text and unusually long descriptions can likewise extend the hero.",
+    "Preview uses synthetic products and disables booking submission. Existing tests verify product links, isolated booking contexts and dialogs; no real booking created.",
+    "Production-build browser parity with real Supabase content was not performed; public content/configuration was not changed."
+  ]
+}

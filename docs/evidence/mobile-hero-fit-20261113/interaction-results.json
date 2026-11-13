@@ -1,0 +1,18 @@
+{
+  "passed": [
+    "Seasonal dialog open/close",
+    "Three menu cycles with clean bottom border and stable geometry",
+    "Native touch swipe changes carousel selection",
+    "All amenities dialog contains all eight configured amenities",
+    "Ribbon on/off leaves hero and cards in identical positions",
+    "Long wrapped ribbon has no geometry shift",
+    "390px viewport height cycles 744/844 retain visible CTA",
+    "No horizontal page overflow",
+    "Tablet and desktop geometry unchanged",
+    "No browser page exceptions"
+  ],
+  "limitations": [
+    "Chromium viewport resizing does not reproduce Safari browser toolbar chrome.",
+    "Synthetic preview disables booking action; existing booking renderer/context tests cover links and dialog behavior."
+  ]
+}

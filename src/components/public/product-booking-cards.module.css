@@ -84,7 +84,7 @@
 @media(max-width:599px){
  .embedded .grid{grid-auto-columns:88vw;gap:10px;margin-inline-end:calc(-1 * max(16px,env(safe-area-inset-right)));padding:4px 0 6px;}
  .embedded .card{border-radius:22px;box-shadow:0 12px 28px #03112630;}
- .embedded .card>:global(.p-media),.embedded .placeholder{aspect-ratio:auto;height:clamp(128px,min(22svh,46vw),208px);}
+ .embedded .card>:global(.p-media),.embedded .placeholder{aspect-ratio:auto;height:auto;min-height:64px;flex:1 0 64px;}
  .embedded .card>:global(.p-media) :global(img){object-position:center 60%;}
  .embedded .body{padding:clamp(12px,min(3.4vw,1.65svh),14px);gap:clamp(6px,1svh,9px);}
  :global(.public-site) .embedded .body>h3{font-size:clamp(21px,5.7vw,25px);line-height:1.12;}
@@ -96,16 +96,21 @@
 }
 @media(max-width:599px) and (max-height:700px){
  .embedded .body{padding:12px;gap:6px;}
- .embedded .card>:global(.p-media),.embedded .placeholder{height:128px;}
 }
 
 @media(max-width:599px){
  .embedded .description[data-repeats-title]{display:none;}
 }
 
-/* Equal-height offers keep their spare copy space above amenities, not above price. */
-@media(max-width:599px){.embedded .purchaseSummary{margin-top:0;}}
-@media(max-width:599px){.embedded .body:not(:has([data-visible-count])) .purchaseSummary{margin-top:auto;}}
+/* The hero shares its remaining height with the existing carousel. Intrinsic
+   content can still extend the page on short screens or with enlarged text. */
+@media(max-width:599px){
+ .embedded,.embedded .carousel{display:flex;flex-direction:column;flex:1;}
+ .embedded .grid{flex:1;}
+ .embedded .body{flex:0 0 auto;}
+ .embedded .purchaseSummary{margin-top:auto;}
+ .embedded .description{display:block;overflow:visible;-webkit-line-clamp:unset;}
+}
 @media(max-width:900px) and (max-height:500px) and (orientation:landscape) and (pointer:coarse){.embedded .body:has([data-visible-count]) .price{margin-top:0;}}
 
 /* Mouse dragging supplements native touch/trackpad scrolling only when offers overflow. */

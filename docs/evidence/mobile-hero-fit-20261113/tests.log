@@ -1,0 +1,26 @@
+✔ hero retains saved CMS identity, photographs, focal points and action labels (6.471084ms)
+✔ hero introduces the experiences below without a privileged ticket widget (0.637875ms)
+✔ missing product and fare do not fabricate ticket claims in the hero (0.410208ms)
+✔ retired hero amenities never render from saved rows or automatic defaults (0.898167ms)
+✔ typographic destination split preserves all saved headline words and one semantic H1 (1.581458ms)
+✔ removed hero strip controls retain stored compatibility without active editors or public copy (1.809166ms)
+✔ phone image falls back to the CMS desktop photograph without changing copy or saved focal settings (0.37275ms)
+✔ requested amenities have one air-conditioning option and explicitly selectable ticket labels (49.075333ms)
+✔ amenity selection, mutually exclusive ticket labels and icon choice produce the product form payload (56.843584ms)
+✔ product cards preserve public facts and direct URLs with dialog enhancement (55.71975ms)
+✔ hidden cards remain absent and private previews cannot navigate into live booking (5.59525ms)
+✔ product contexts isolate selection, inherit meeting-point settings and use distinct accessible dialog titles (62.8ms)
+✔ compact homepage cards keep complete CMS details and direct product booking links (8.083125ms)
+✔ inactive products keep order and information, escape custom messages and omit all booking links; reactivation hides ribbon (11.178291ms)
+✔ primary homepage fallback retains product-owned inactive state when the directory is unavailable (18.571042ms)
+✔ unavailable status uses a compact badge, informational month and safe active secondary action (5.549875ms)
+✔ announcement uses inclusive Tirane dates across UTC and daylight saving boundaries; Off overrides schedule (14.333083ms)
+✔ legacy CMS content upgrades with announcement Off; editable copy and dates roundtrip without touching product configuration (2.085542ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 741.2225
