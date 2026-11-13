@@ -1,0 +1,111 @@
+{
+  "date": "2026-11-13",
+  "status": "LOCAL ONLY \u2014 not committed, pushed or deployed",
+  "runtime_changes": [
+    "src/components/public/embedded-map-status.tsx",
+    "src/components/public/embedded-map-status.module.css",
+    "public/brand/map-bus-front.svg"
+  ],
+  "supporting_changes": [
+    "src/app/dev/journey-panel/page.tsx",
+    "src/app/dev/journey-panel/fixture.tsx",
+    "tests/components/embedded-map-status.test.mjs"
+  ],
+  "layout": {
+    "before": [
+      {
+        "width": 1440,
+        "height": 339
+      },
+      {
+        "width": 1024,
+        "height": 340.28125
+      },
+      {
+        "width": 768,
+        "height": 384
+      },
+      {
+        "width": 430,
+        "height": 380
+      },
+      {
+        "width": 390,
+        "height": 380
+      },
+      {
+        "width": 375,
+        "height": 424
+      },
+      {
+        "width": 320,
+        "height": 440.15625
+      }
+    ],
+    "after": [
+      {
+        "width": 1440,
+        "height": 145.484375
+      },
+      {
+        "width": 1024,
+        "height": 159.671875
+      },
+      {
+        "width": 768,
+        "height": 157.453125
+      },
+      {
+        "width": 430,
+        "height": 157.453125
+      },
+      {
+        "width": 390,
+        "height": 157.453125
+      },
+      {
+        "width": 375,
+        "height": 157.453125
+      },
+      {
+        "width": 320,
+        "height": 157.453125
+      }
+    ],
+    "desktop": "One compact status/next-destination row and a single slim five-stop line. Ordinary desktop panel about 145px. Wrapped labels at 1024px naturally grow to about 160px.",
+    "mobile": "About 157px collapsed at 320\u2013768px; native button disclosure with aria-expanded and aria-controls reveals the route list. No fixed panel height, clipped copy, transitions or JS breakpoint expansion.",
+    "details": "Tracking details remain behind Details on desktop and within the expanded mobile route disclosure."
+  },
+  "icon": "Exact unchanged bus-front.svg used by the hosted Find Van button, alpha-masked crimson on pale yellow. See icon-provenance.json.",
+  "status_accuracy": [
+    "Existing hasLiveJourneyPosition and valid ETA/phase guards retained; stale transport cannot claim LIVE.",
+    "Historical stop labels are Last known stop; delayed reported-stop copies also remain historical when no timeline node is marked current.",
+    "Route-only sequence uses Next on route; unreliable or missing ETA uses ETA unavailable.",
+    "Confirmed-passed ticks still require explicit checked/completed evidence; no positional inference from route order.",
+    "Upstream activity and supporting route-order explanation remain available in tracking details."
+  ],
+  "verification": {
+    "component_tests": 197,
+    "bridge_integration_tests": 10,
+    "lint": "pass",
+    "typecheck": "pass",
+    "production_build": "next build --webpack passes",
+    "browser_matrix": "49 state/width cases each in actual Chromium and Playwright WebKit (98 total), including 320px and long translated names. No horizontal overflow or clipped headings.",
+    "interaction": "Mouse and keyboard disclosure toggles and stop commands verified.",
+    "hosted_map": "Read-only hosted companion loaded with its framing headers, source, controls and bridge unmodified. Browser-only local Web App proxy under its already-approved origin, including local HMR forwarding. No deployment was used.",
+    "map_resize": "Iframe timeOrigin, dimensions and Leaflet map size preserved through expansion/collapse. Canvas size matches viewport after tablet/desktop/mobile width changes; tiles remain loaded.",
+    "controls": "Expanded route stop selection reaches the existing v1 child handler, disables follow and opens the stop popup. Find Van resumes follow; Find Me uses a synthetic browser location and disables follow; full Route, Stops/open-close, Interact/Done and Reload verified."
+  },
+  "screenshots": {
+    "desktop": "result-1440.png",
+    "tablet": "result-768.png",
+    "mobile": "result-390.png",
+    "synthetic_before_after": "before-*.png and after-*.png",
+    "long_names": "chromium-long-expanded-320.png and webkit-long-expanded-320.png"
+  },
+  "limitations": [
+    "Device emulation and WebKit engine checks are not physical-device testing.",
+    "Live map screenshots reflect the public tracking data available during verification; they are not claims of a currently fresh van location."
+  ],
+  "publication": "None. No database, provider configuration, tracking/GPS pipeline or independent companion source changes."
+}

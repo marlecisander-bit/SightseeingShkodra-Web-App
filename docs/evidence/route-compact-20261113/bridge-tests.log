@@ -1,0 +1,18 @@
+✔ bridge validates sender, expires, reconnects after reload and cleans up remounts (2.772833ms)
+✔ external display capability is explicit, expired replacement clears claims immediately (0.510083ms)
+✔ journey bridge accepts only versioned bounded public stop projections (0.68525ms)
+✔ journey preserves upstream states without calculating ETA or inferring skipped stops (0.152292ms)
+✔ fresh location remains available independently of route continuity (1.120166ms)
+✔ bridge metadata fallback preserves canonical CMS stop ownership (0.0985ms)
+✔ optional v1 metadata is bounded, with legacy compatibility (0.058917ms)
+✔ shared phase messages survive bounded parked grace without live-position claims (0.108042ms)
+✔ upstream direction wording is reused; no website movement engine (0.088584ms)
+✔ bridge expiry governs states and timers rather than an open connection (0.076959ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 79.053375

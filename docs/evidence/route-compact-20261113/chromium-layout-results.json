@@ -1,0 +1,394 @@
+[
+  {
+    "width": 1440,
+    "state": "fresh",
+    "height": 145.484375,
+    "overflow": false,
+    "text": "AT STOP\n\nShiroka & the lake\n● LIVE\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nDetails\n⌄\n✓\nStart / Tourist boarding point\nShiroka & the lake\nRozafa Castle\nHistoric Centre\nMesi Bridge",
+    "clipped": false
+  },
+  {
+    "width": 1440,
+    "state": "arriving",
+    "height": 145.484375,
+    "overflow": false,
+    "text": "ARRIVING\n\nRozafa Castle\n● LIVE\nUpdated 10s ago\n\nNEXT DESTINATION\n\nRozafa Castle\n\nArrival in 8 min\n\nDetails\n⌄\n✓\nStart / Tourist boarding point\n✓\nShiroka & the lake\nRozafa Castle\nHistoric Centre\nMesi Bridge",
+    "clipped": false
+  },
+  {
+    "width": 1440,
+    "state": "stale",
+    "height": 145.484375,
+    "overflow": false,
+    "text": "LAST KNOWN STOP\n\nShiroka & the lake\n◷ Delayed\nUpdated 4 min ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nDetails\n⌄\n✓\nStart / Tourist boarding point\nShiroka & the lake\nRozafa Castle\nHistoric Centre\nMesi Bridge",
+    "clipped": false
+  },
+  {
+    "width": 1440,
+    "state": "unavailable",
+    "height": 145.484375,
+    "overflow": false,
+    "text": "VAN STATUS\n\nLocation unavailable\n○ Tracking unavailable\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nDetails\n⌄\nStart / Tourist boarding point\nShiroka & the lake\nRozafa Castle\nHistoric Centre\nMesi Bridge",
+    "clipped": false
+  },
+  {
+    "width": 1440,
+    "state": "loading",
+    "height": 145.484375,
+    "overflow": false,
+    "text": "VAN STATUS\n\nConnecting to the van…\n◷ Connecting\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nNot yet confirmed\n\nETA unavailable\n\nDetails\n⌄\nStart / Tourist boarding point\nShiroka & the lake\nRozafa Castle\nHistoric Centre\nMesi Bridge",
+    "clipped": false
+  },
+  {
+    "width": 1440,
+    "state": "closed",
+    "height": 145.484375,
+    "overflow": false,
+    "text": "VAN STATUS\n\nTours have finished for today\n○ Tracking unavailable\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nDetails\n⌄\n✓\nStart / Tourist boarding point\nShiroka & the lake\nRozafa Castle\nHistoric Centre\nMesi Bridge",
+    "clipped": false
+  },
+  {
+    "width": 1440,
+    "state": "long",
+    "height": 196.859375,
+    "overflow": false,
+    "text": "AT STOP\n\nShiroka & the lake — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\n● LIVE\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\n\nETA unavailable\n\nDetails\n⌄\n✓\nStart / Tourist boarding point — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\nShiroka & the lake — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\nRozafa Castle — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\nHistoric Centre — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\nMesi Bridge — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët",
+    "clipped": false
+  },
+  {
+    "width": 1024,
+    "state": "fresh",
+    "height": 159.671875,
+    "overflow": false,
+    "text": "AT STOP\n\nShiroka & the lake\n● LIVE\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nDetails\n⌄\n✓\nStart / Tourist boarding point\nShiroka & the lake\nRozafa Castle\nHistoric Centre\nMesi Bridge",
+    "clipped": false
+  },
+  {
+    "width": 1024,
+    "state": "arriving",
+    "height": 159.671875,
+    "overflow": false,
+    "text": "ARRIVING\n\nRozafa Castle\n● LIVE\nUpdated 10s ago\n\nNEXT DESTINATION\n\nRozafa Castle\n\nArrival in 8 min\n\nDetails\n⌄\n✓\nStart / Tourist boarding point\n✓\nShiroka & the lake\nRozafa Castle\nHistoric Centre\nMesi Bridge",
+    "clipped": false
+  },
+  {
+    "width": 1024,
+    "state": "stale",
+    "height": 159.671875,
+    "overflow": false,
+    "text": "LAST KNOWN STOP\n\nShiroka & the lake\n◷ Delayed\nUpdated 4 min ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nDetails\n⌄\n✓\nStart / Tourist boarding point\nShiroka & the lake\nRozafa Castle\nHistoric Centre\nMesi Bridge",
+    "clipped": false
+  },
+  {
+    "width": 1024,
+    "state": "unavailable",
+    "height": 159.671875,
+    "overflow": false,
+    "text": "VAN STATUS\n\nLocation unavailable\n○ Tracking unavailable\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nDetails\n⌄\nStart / Tourist boarding point\nShiroka & the lake\nRozafa Castle\nHistoric Centre\nMesi Bridge",
+    "clipped": false
+  },
+  {
+    "width": 1024,
+    "state": "loading",
+    "height": 159.671875,
+    "overflow": false,
+    "text": "VAN STATUS\n\nConnecting to the van…\n◷ Connecting\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nNot yet confirmed\n\nETA unavailable\n\nDetails\n⌄\nStart / Tourist boarding point\nShiroka & the lake\nRozafa Castle\nHistoric Centre\nMesi Bridge",
+    "clipped": false
+  },
+  {
+    "width": 1024,
+    "state": "closed",
+    "height": 159.671875,
+    "overflow": false,
+    "text": "VAN STATUS\n\nTours have finished for today\n○ Tracking unavailable\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nDetails\n⌄\n✓\nStart / Tourist boarding point\nShiroka & the lake\nRozafa Castle\nHistoric Centre\nMesi Bridge",
+    "clipped": false
+  },
+  {
+    "width": 1024,
+    "state": "long",
+    "height": 249.640625,
+    "overflow": false,
+    "text": "AT STOP\n\nShiroka & the lake — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\n● LIVE\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\n\nETA unavailable\n\nDetails\n⌄\n✓\nStart / Tourist boarding point — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\nShiroka & the lake — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\nRozafa Castle — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\nHistoric Centre — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\nMesi Bridge — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët",
+    "clipped": false
+  },
+  {
+    "width": 768,
+    "state": "fresh",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "AT STOP\n\nShiroka & the lake\n● LIVE\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 768,
+    "state": "arriving",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "ARRIVING\n\nRozafa Castle\n● LIVE\nUpdated 10s ago\n\nNEXT DESTINATION\n\nRozafa Castle\n\nArrival in 8 min\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 768,
+    "state": "stale",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "LAST KNOWN STOP\n\nShiroka & the lake\n◷ Delayed\nUpdated 4 min ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 768,
+    "state": "unavailable",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "VAN STATUS\n\nLocation unavailable\n○ Tracking unavailable\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 768,
+    "state": "loading",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "VAN STATUS\n\nConnecting to the van…\n◷ Connecting\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nNot yet confirmed\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 768,
+    "state": "closed",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "VAN STATUS\n\nTours have finished for today\n○ Tracking unavailable\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 768,
+    "state": "long",
+    "height": 192.765625,
+    "overflow": false,
+    "text": "AT STOP\n\nShiroka & the lake — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\n● LIVE\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 430,
+    "state": "fresh",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "AT STOP\n\nShiroka & the lake\n● LIVE\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 430,
+    "state": "arriving",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "ARRIVING\n\nRozafa Castle\n● LIVE\nUpdated 10s ago\n\nNEXT DESTINATION\n\nRozafa Castle\n\nArrival in 8 min\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 430,
+    "state": "stale",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "LAST KNOWN STOP\n\nShiroka & the lake\n◷ Delayed\nUpdated 4 min ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 430,
+    "state": "unavailable",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "VAN STATUS\n\nLocation unavailable\n○ Tracking unavailable\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 430,
+    "state": "loading",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "VAN STATUS\n\nConnecting to the van…\n◷ Connecting\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nNot yet confirmed\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 430,
+    "state": "closed",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "VAN STATUS\n\nTours have finished for today\n○ Tracking unavailable\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 430,
+    "state": "long",
+    "height": 246.953125,
+    "overflow": false,
+    "text": "AT STOP\n\nShiroka & the lake — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\n● LIVE\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 390,
+    "state": "fresh",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "AT STOP\n\nShiroka & the lake\n● LIVE\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 390,
+    "state": "arriving",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "ARRIVING\n\nRozafa Castle\n● LIVE\nUpdated 10s ago\n\nNEXT DESTINATION\n\nRozafa Castle\n\nArrival in 8 min\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 390,
+    "state": "stale",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "LAST KNOWN STOP\n\nShiroka & the lake\n◷ Delayed\nUpdated 4 min ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 390,
+    "state": "unavailable",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "VAN STATUS\n\nLocation unavailable\n○ Tracking unavailable\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 390,
+    "state": "loading",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "VAN STATUS\n\nConnecting to the van…\n◷ Connecting\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nNot yet confirmed\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 390,
+    "state": "closed",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "VAN STATUS\n\nTours have finished for today\n○ Tracking unavailable\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 390,
+    "state": "long",
+    "height": 266.140625,
+    "overflow": false,
+    "text": "AT STOP\n\nShiroka & the lake — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\n● LIVE\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 375,
+    "state": "fresh",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "AT STOP\n\nShiroka & the lake\n● LIVE\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 375,
+    "state": "arriving",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "ARRIVING\n\nRozafa Castle\n● LIVE\nUpdated 10s ago\n\nNEXT DESTINATION\n\nRozafa Castle\n\nArrival in 8 min\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 375,
+    "state": "stale",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "LAST KNOWN STOP\n\nShiroka & the lake\n◷ Delayed\nUpdated 4 min ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 375,
+    "state": "unavailable",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "VAN STATUS\n\nLocation unavailable\n○ Tracking unavailable\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 375,
+    "state": "loading",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "VAN STATUS\n\nConnecting to the van…\n◷ Connecting\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nNot yet confirmed\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 375,
+    "state": "closed",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "VAN STATUS\n\nTours have finished for today\n○ Tracking unavailable\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 375,
+    "state": "long",
+    "height": 283.640625,
+    "overflow": false,
+    "text": "AT STOP\n\nShiroka & the lake — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\n● LIVE\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 320,
+    "state": "fresh",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "AT STOP\n\nShiroka & the lake\n● LIVE\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 320,
+    "state": "arriving",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "ARRIVING\n\nRozafa Castle\n● LIVE\nUpdated 10s ago\n\nNEXT DESTINATION\n\nRozafa Castle\n\nArrival in 8 min\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 320,
+    "state": "stale",
+    "height": 157.453125,
+    "overflow": false,
+    "text": "LAST KNOWN STOP\n\nShiroka & the lake\n◷ Delayed\nUpdated 4 min ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 320,
+    "state": "unavailable",
+    "height": 174.84375,
+    "overflow": false,
+    "text": "VAN STATUS\n\nLocation unavailable\n○ Tracking unavailable\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 320,
+    "state": "loading",
+    "height": 173.578125,
+    "overflow": false,
+    "text": "VAN STATUS\n\nConnecting to the van…\n◷ Connecting\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nNot yet confirmed\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 320,
+    "state": "closed",
+    "height": 194.03125,
+    "overflow": false,
+    "text": "VAN STATUS\n\nTours have finished for today\n○ Tracking unavailable\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  },
+  {
+    "width": 320,
+    "state": "long",
+    "height": 320.328125,
+    "overflow": false,
+    "text": "AT STOP\n\nShiroka & the lake — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\n● LIVE\nUpdated 10s ago\n\nNEXT ON ROUTE\n\nRozafa Castle — Longer translated destination name / Pika e nisjes dhe informacioni për udhëtarët\n\nETA unavailable\n\nView 5 stops\n⌄",
+    "clipped": false
+  }
+]

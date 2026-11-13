@@ -1,0 +1,141 @@
+{
+  "initial": {
+    "iframe": {
+      "x": 17,
+      "y": 383.890625,
+      "width": 341,
+      "height": 590.796875
+    },
+    "map": {
+      "size": {
+        "x": 341,
+        "y": 530
+      },
+      "canvas": {
+        "width": 341,
+        "height": 530
+      },
+      "tiles": 9,
+      "timeOrigin": 1794580045759.1
+    }
+  },
+  "expanded": {
+    "iframe": {
+      "x": 17,
+      "y": 683.890625,
+      "width": 341,
+      "height": 590.796875
+    },
+    "map": {
+      "size": {
+        "x": 341,
+        "y": 530
+      },
+      "canvas": {
+        "width": 341,
+        "height": 530
+      },
+      "tiles": 9,
+      "timeOrigin": 1794580045759.1
+    }
+  },
+  "collapsed": {
+    "iframe": {
+      "x": 17,
+      "y": 383.890625,
+      "width": 341,
+      "height": 590.796875
+    },
+    "map": {
+      "size": {
+        "x": 341,
+        "y": 530
+      },
+      "canvas": {
+        "width": 341,
+        "height": 530
+      },
+      "tiles": 9,
+      "timeOrigin": 1794580045759.1
+    }
+  },
+  "screenshots": [
+    {
+      "width": 1440,
+      "iframe": {
+        "x": 59,
+        "y": 162.40625,
+        "width": 1307,
+        "height": 700
+      },
+      "map": {
+        "size": {
+          "x": 1307,
+          "y": 639
+        },
+        "canvas": {
+          "width": 1307,
+          "height": 639
+        },
+        "tiles": 28,
+        "timeOrigin": 1794580045759.1
+      }
+    },
+    {
+      "width": 768,
+      "iframe": {
+        "x": 32.125,
+        "y": 174.453125,
+        "width": 688.75,
+        "height": 700
+      },
+      "map": {
+        "size": {
+          "x": 689,
+          "y": 639
+        },
+        "canvas": {
+          "width": 689,
+          "height": 639
+        },
+        "tiles": 28,
+        "timeOrigin": 1794580045759.1
+      }
+    },
+    {
+      "width": 390,
+      "iframe": {
+        "x": 17,
+        "y": 174.890625,
+        "width": 341,
+        "height": 700
+      },
+      "map": {
+        "size": {
+          "x": 341,
+          "y": 639
+        },
+        "canvas": {
+          "width": 341,
+          "height": 639
+        },
+        "tiles": 28,
+        "timeOrigin": 1794580045759.1
+      }
+    }
+  ],
+  "checks": [
+    "Original hosted companion loaded with tiles and original Find Van SVG",
+    "Route expansion/collapse moves the existing iframe without recreating it or changing its dimensions",
+    "Leaflet canvas matches its viewport before/after expansion and width changes",
+    "Expanded route stop selection reaches the existing v1 child handler and opens its popup",
+    "Interact/Done controls work",
+    "Find Van, Find Me with synthetic browser geolocation, full route and Stops controls remain usable",
+    "Map reload remains available",
+    "No horizontal page overflow"
+  ],
+  "notes": [
+    "Browser-local Web App proxy under its existing approved www.com parent origin. The hosted companion, framing headers and bridge remain unmodified.",
+    "No companion sources, GPS pipeline, database or hosted configuration changed."
+  ]
+}
