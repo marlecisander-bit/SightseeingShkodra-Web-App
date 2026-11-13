@@ -4,7 +4,6 @@ import type {JourneySnapshot} from '@/modules/tracking/journey-contract';
 import type {LiveJourneyTracker as Tracker} from './live-journey-tracker';
 import {LiveJourneyTracker} from './live-journey-tracker';
 import {LiveMapEmbed} from './live-map-embed';
-import {useHomepageMobile} from './use-homepage-mobile';
 const Context=createContext<{journey:JourneySnapshot|null;stale:boolean;receive:(snapshot:JourneySnapshot|null,reason?:'stale'|'loading')=>void}|null>(null);
 export function HomepageJourneyProvider({children,enabled=true}:{children:ReactNode;enabled?:boolean}){
  const [state,setState]=useState<{journey:JourneySnapshot|null;stale:boolean}>({journey:null,stale:false});
@@ -14,6 +13,5 @@ export function HomepageJourneyProvider({children,enabled=true}:{children:ReactN
 export function useHomepageJourney(){return useContext(Context);}
 export function HomepageJourney(props:ComponentProps<typeof Tracker>){
  const live=useHomepageJourney();
- const mobile=useHomepageMobile();
- return <LiveJourneyTracker {...props} showStatus={mobile===false} journey={live?.journey} stale={live?.stale}/>;
+ return <LiveJourneyTracker {...props} cards showStatus journey={live?.journey} stale={live?.stale}/>;
 }

@@ -32,3 +32,13 @@ test('historical or old GPS never illuminates LIVE even when transport is connec
  assert.match(render({journey:live}),/data-live="true"/);
  for(const value of [{...live,phase:'UNKNOWN',presentationKind:'historical_location',confidence:{position:'delayed'}},{...live,lastObservationAt:new Date(now-100000).toISOString()},{...live,statusValidUntil:new Date(now-1).toISOString()},{...live,phase:'UNKNOWN'}])assert.doesNotMatch(render({journey:value}),/data-live="true"/);
 });
+
+test('homepage cards start neutral, preserve editorial images and copy, and keep historical tracking honest',()=>{
+ const html=render({cards:true,journey:{...journey,movement:'Last reported near CMS lake'}});
+ assert(!html.includes('aria-pressed="true"'));assert(!html.includes('aria-expanded="true"'));
+ assert.match(html,/Your journey starts here/);assert.match(html,/Lakeside views/);assert.match(html,/CMS alt/);
+ assert(!html.includes('CMS description'));assert(!html.includes('14 min'));assert.match(html,/ETA unavailable/);
+ assert(!html.includes('data-live="true"'));assert(!html.includes('Van here'));
+ const historic=render({cards:true,journey:{...journey,stops:journey.stops.map((s,i)=>({...s,state:i===1?'current':'upcoming'})),movement:'Last reported near CMS lake'}});
+ assert.match(historic,/Last known stop/);assert.match(historic,/Next on route/);assert(!historic.includes('data-state="current"'));
+});
