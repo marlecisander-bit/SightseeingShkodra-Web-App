@@ -179,10 +179,11 @@
  .composed .visual::after{background:linear-gradient(180deg,rgba(12,20,27,.25),rgba(12,20,27,.4) 35%,rgba(12,20,27,.75));}
 }
 
-/* Phone-only composition. The tablet/desktop rules above remain authoritative. */
+/* Phone layout uses the stable small viewport so browser toolbars cannot
+   resize the background or the flexible product photos during scrolling. */
 @media(max-width:599px){
  .composed .visual{padding-top:calc(var(--hero-header-offset,calc(60px + env(safe-area-inset-top))) + 44px + 12px);padding-inline:max(16px,env(safe-area-inset-left)) max(16px,env(safe-area-inset-right));padding-bottom:max(16px,env(safe-area-inset-bottom));}
- .composed .visual{display:flex;flex-direction:column;box-sizing:border-box;min-height:100vh;min-height:100svh;min-height:100dvh;}
+ .composed .visual{display:flex;flex-direction:column;box-sizing:border-box;min-height:100vh;min-height:100svh;}
  .composed .layout{display:flex;flex-direction:column;flex:1;align-items:stretch;gap:12px;}
  .composed .layout>:last-child{margin-top:0;flex:1;}
  :global(.public-site) .composed .eyebrow{display:none;margin:0;padding:0;}
@@ -192,7 +193,7 @@
  .composed .intro h1 em::after{display:none;}
  :global(.public-site) .composed .subtitle{font-size:14px;line-height:1.45;max-width:100%;margin:0;}
  .composed .visual .media{height:100%;bottom:0;}
- .composed .media img{filter:blur(.7px);transform:scale(1.16);transform-origin:50% 100%;object-position:var(--hero-phone-position,var(--hero-mobile-position));}
+ .composed .media img{filter:blur(.7px);transform:none;object-position:var(--hero-phone-position,var(--hero-mobile-position));}
  .composed .visual::after{background:linear-gradient(180deg,rgba(5,22,42,.65),rgba(5,22,42,.56) 38%,rgba(5,22,42,.68) 70%,rgba(5,22,42,.94));}
 }
 

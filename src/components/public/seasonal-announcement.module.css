@@ -46,10 +46,9 @@
 
 .ribbon > span:last-child {min-width:0;overflow-wrap:anywhere;}
 
-/* On the phone homepage, the ribbon shares the hero's reserved header band.
-   Keep that band reserved even when the seasonal announcement is inactive. */
+/* Restore the ribbon above navigation in the existing reserved hero band.
+   Its original typography and wrapping stay in flow inside a zero-height frame. */
 @media(max-width:599px){
  :global(.public-site:has(#home-hero)) .frame{height:0;}
- :global(.public-site:has(#home-hero)) .frame.frame :global(.p-header){top:0;}
- :global(.public-site:has(#home-hero)) .ribbon{position:absolute;top:calc(60px + env(safe-area-inset-top));inset-inline:0;height:44px;min-height:0;padding:4px 12px;overflow:auto;letter-spacing:0;line-height:1.45;}
+ :global(.public-site:has(#home-hero)) .frame.frame :global(.p-header){top:auto;}
 }

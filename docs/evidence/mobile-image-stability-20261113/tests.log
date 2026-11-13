@@ -1,0 +1,26 @@
+✔ hero retains saved CMS identity, photographs, focal points and action labels (5.368333ms)
+✔ hero introduces the experiences below without a privileged ticket widget (1.717917ms)
+✔ missing product and fare do not fabricate ticket claims in the hero (0.417417ms)
+✔ retired hero amenities never render from saved rows or automatic defaults (0.8995ms)
+✔ typographic destination split preserves all saved headline words and one semantic H1 (1.596083ms)
+✔ removed hero strip controls retain stored compatibility without active editors or public copy (2.344958ms)
+✔ phone image falls back to the CMS desktop photograph without changing copy or saved focal settings (0.341375ms)
+✔ requested amenities have one air-conditioning option and explicitly selectable ticket labels (50.968042ms)
+✔ amenity selection, mutually exclusive ticket labels and icon choice produce the product form payload (52.185292ms)
+✔ product cards preserve public facts and direct URLs with dialog enhancement (55.575333ms)
+✔ hidden cards remain absent and private previews cannot navigate into live booking (5.513209ms)
+✔ product contexts isolate selection, inherit meeting-point settings and use distinct accessible dialog titles (62.222708ms)
+✔ compact homepage cards keep complete CMS details and direct product booking links (8.197209ms)
+✔ inactive products keep order and information, escape custom messages and omit all booking links; reactivation hides ribbon (11.095208ms)
+✔ primary homepage fallback retains product-owned inactive state when the directory is unavailable (20.315875ms)
+✔ unavailable status uses a compact badge, informational month and safe active secondary action (5.709958ms)
+✔ announcement uses inclusive Tirane dates across UTC and daylight saving boundaries; Off overrides schedule (8.526083ms)
+✔ legacy CMS content upgrades with announcement Off; editable copy and dates roundtrip without touching product configuration (3.162334ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 789.457916
