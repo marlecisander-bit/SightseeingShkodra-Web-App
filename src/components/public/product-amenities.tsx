@@ -22,9 +22,12 @@ export function ProductAmenities({features,title}:{features:Feature[];title:stri
    if(window.innerWidth>=600){setCount(Math.min(2,features.length));return;}
    const card=node.closest('article'),body=node.parentElement,list=node.querySelector('ul'),hero=node.closest('#home-hero');
    if(!card||!body||!list||!hero)return;
-   const height=Math.min(window.innerHeight,window.visualViewport?.height??window.innerHeight);
-   const pagination=hero.querySelector('[aria-label="Choose experience"]');
    const visual=hero.firstElementChild,rail=card.parentElement;
+   // Share CSS's stable small-viewport budget. Safari toolbar and keyboard
+   // resize events must not trade chips for photo height while scrolling.
+   const minimum=visual?parseFloat(getComputedStyle(visual).minHeight):0;
+   const height=Number.isFinite(minimum)&&minimum>0?minimum:window.innerHeight;
+   const pagination=hero.querySelector('[aria-label="Choose experience"]');
    const reserve=(pagination?.getBoundingClientRect().height??0)+parseFloat(getComputedStyle(visual??hero).paddingBottom)+(rail?parseFloat(getComputedStyle(rail).paddingBottom):0);
    const available=height-(card.getBoundingClientRect().top+window.scrollY)-reserve;
    const bodyStyle=getComputedStyle(body),children=Array.from(body.children).filter(child=>child!==node&&!child.matches('dialog')&&getComputedStyle(child).display!=='none');
@@ -56,9 +59,9 @@ export function ProductAmenities({features,title}:{features:Feature[];title:stri
   const observer=new ResizeObserver(queue);observer.observe(node.parentElement!);observer.observe(node.querySelector('ul')!);
   const hero=node.closest('#home-hero');if(hero)observer.observe(hero);
   const textObserver=new MutationObserver(queue);textObserver.observe(node.querySelector('ul')!,{characterData:true,childList:true,subtree:true});
-  document.addEventListener('close',queue,true);window.addEventListener('resize',queue);window.visualViewport?.addEventListener('resize',queue);phone.addEventListener('change',queue);
+  document.addEventListener('close',queue,true);window.addEventListener('resize',queue);phone.addEventListener('change',queue);
   void document.fonts.ready.then(queue);if(!open)queue();
-  return()=>{active=false;cancelAnimationFrame(frame);observer.disconnect();textObserver.disconnect();document.removeEventListener('close',queue,true);window.removeEventListener('resize',queue);window.visualViewport?.removeEventListener('resize',queue);phone.removeEventListener('change',queue);};
+  return()=>{active=false;cancelAnimationFrame(frame);observer.disconnect();textObserver.disconnect();document.removeEventListener('close',queue,true);window.removeEventListener('resize',queue);phone.removeEventListener('change',queue);};
  },[features,close,open]);
  return <div ref={root} className={styles.amenities} data-visible-count={Math.min(count,features.length)}>
   <ul className={cardStyles.badges} aria-label={title+' information'}>{features.map((feature,index)=><li key={feature.key} data-amenity-visible={index<count}><AmenityIcon name={feature.icon}/><span>{feature.label}</span></li>)}</ul>

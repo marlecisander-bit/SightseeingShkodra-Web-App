@@ -1,0 +1,90 @@
+{
+  "date": "2026-11-13",
+  "status": "LOCAL ONLY \u2014 not committed, pushed or deployed",
+  "files_changed": [
+    "src/components/public/homepage-hero.module.css",
+    "src/components/public/product-amenities.tsx",
+    "src/components/public/seasonal-announcement.module.css"
+  ],
+  "root_causes": [
+    "The previous change placed the winter ribbon below navigation and replaced its original spacing with a fixed overlay band.",
+    "The phone hero used 100dvh. Mobile browser toolbar changes therefore resized the hero and its growing card photos, changing object-fit cover crops.",
+    "Amenities used innerHeight/visualViewport.height and listened directly for visual-viewport changes. Changing chip counts redistributed photo height and could grow the hero.",
+    "The phone background also had a static scale(1.16). This was not a scroll animation, but unnecessarily magnified the crop. No parallax, Framer Motion, scroll timeline, image hover zoom or fixed background attachment was found in the relevant public components."
+  ],
+  "fix": [
+    "Restore original ribbon styles and place it above the header using the original flow order within the existing zero-height sticky frame. Keep the existing hero reservation so cards are not displaced.",
+    "Use 100svh with 100vh fallback for the phone hero. Preserve the overlay, object-fit and focal-point settings; remove only the phone scale transform.",
+    "Fit amenities from the same computed CSS small-viewport minimum; stop listening directly to visualViewport.resize. Preserve fitting on actual window/layout/font changes and dialog closure.",
+    "No change to product-card CSS, carousel, data, pricing, descriptions, booking controls, rounded corners or desktop rules."
+  ],
+  "before_reproduction": {
+    "source": "Current unmodified public website, controlled JS viewport/resize-event injection at 375x667",
+    "photo_height_initial": 105.140625,
+    "photo_height_after_event": 145.796875,
+    "amenities_changed": true,
+    "caveat": "JS resize-event regression, not an actual iPhone toolbar recording."
+  },
+  "verification": {
+    "chromium": "Actual Google Chrome headless with mobile/touch emulation",
+    "webkit": "Playwright WebKit headless with mobile/touch emulation; not physical iPhone Safari",
+    "viewports": [
+      [
+        375,
+        667
+      ],
+      [
+        390,
+        844
+      ],
+      [
+        430,
+        932
+      ],
+      [
+        360,
+        800
+      ],
+      [
+        320,
+        568
+      ],
+      [
+        568,
+        320
+      ],
+      [
+        768,
+        1024
+      ],
+      [
+        1440,
+        900
+      ],
+      [
+        844,
+        390
+      ]
+    ],
+    "scroll_checks": "Seven slow/fast vertical offsets per viewport; image dimensions/transforms/crops and card counts unchanged; normal vertical scrolling remains enabled.",
+    "resize_checks": "Controlled innerHeight/visualViewport resize events at 800/844/600/667 leave geometry/counts unchanged in Chromium and WebKit.",
+    "interactions": [
+      "Original ribbon appearance/position checked; Learn More dialog opens and closes",
+      "Three mobile menu open/close cycles retain zero bottom border",
+      "Chromium native touch swipe selects second card without image-height changes",
+      "WebKit carousel pagination selects second card without image-height changes",
+      "All amenities sheet retains all eight supplied entries and closes without geometry changes"
+    ],
+    "preservation": "All eight baseline viewport card/photo dimensions and amenity counts equal before measurements. Tablet/desktop measurements exactly unchanged. No horizontal page overflow.",
+    "tests": "18 focused component/content tests passed",
+    "lint": "Passed",
+    "typecheck": "Passed",
+    "production_build": "next build --webpack passed"
+  },
+  "evidence": "Matching before-*.png and after-chromium-*.png use the same existing local development fixture with real shared components and synthetic product data. WebKit screenshots and measurement JSON files are also included. change.patch isolates this task from unrelated existing work.",
+  "remaining_limitations": [
+    "No physical iPhone is connected. Safari and Chrome on iPhone, actual toolbar collapse/expansion and rubber-band scrolling remain manual acceptance items. WebKit and controlled viewport events are additional engine/regression evidence only.",
+    "The referenced attachment was not available in this turn; previous placement was recovered from repository styles and saved pre-release screenshots."
+  ],
+  "publication": "No push, merge, deployment, database, hosted configuration or Live Map companion changes."
+}

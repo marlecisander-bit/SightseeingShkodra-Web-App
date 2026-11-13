@@ -1,0 +1,130 @@
+{
+  "engine": "chromium",
+  "phase": "before",
+  "initial": {
+    "hero": 667,
+    "bg": {
+      "width": 435,
+      "height": 773.719970703125,
+      "transform": "matrix(1.16, 0, 0, 1.16, 0, 0)"
+    },
+    "cards": [
+      {
+        "width": 328,
+        "height": 105.140625,
+        "cardHeight": 383.953125,
+        "count": "7"
+      },
+      {
+        "width": 328,
+        "height": 64.234375,
+        "cardHeight": 383.953125,
+        "count": "2"
+      }
+    ]
+  },
+  "events": [
+    {
+      "height": 800,
+      "geometry": {
+        "hero": 707.65625,
+        "bg": {
+          "width": 435,
+          "height": 820.8812255859375,
+          "transform": "matrix(1.16, 0, 0, 1.16, 0, 0)"
+        },
+        "cards": [
+          {
+            "width": 328,
+            "height": 145.796875,
+            "cardHeight": 424.609375,
+            "count": "7"
+          },
+          {
+            "width": 328,
+            "height": 64,
+            "cardHeight": 424.609375,
+            "count": "8"
+          }
+        ]
+      }
+    },
+    {
+      "height": 844,
+      "geometry": {
+        "hero": 707.65625,
+        "bg": {
+          "width": 435,
+          "height": 820.8812255859375,
+          "transform": "matrix(1.16, 0, 0, 1.16, 0, 0)"
+        },
+        "cards": [
+          {
+            "width": 328,
+            "height": 145.796875,
+            "cardHeight": 424.609375,
+            "count": "7"
+          },
+          {
+            "width": 328,
+            "height": 64,
+            "cardHeight": 424.609375,
+            "count": "8"
+          }
+        ]
+      }
+    },
+    {
+      "height": 600,
+      "geometry": {
+        "hero": 667,
+        "bg": {
+          "width": 435,
+          "height": 773.719970703125,
+          "transform": "matrix(1.16, 0, 0, 1.16, 0, 0)"
+        },
+        "cards": [
+          {
+            "width": 328,
+            "height": 117.734375,
+            "cardHeight": 383.953125,
+            "count": "2"
+          },
+          {
+            "width": 328,
+            "height": 64.234375,
+            "cardHeight": 383.953125,
+            "count": "2"
+          }
+        ]
+      }
+    },
+    {
+      "height": 667,
+      "geometry": {
+        "hero": 667,
+        "bg": {
+          "width": 435,
+          "height": 773.719970703125,
+          "transform": "matrix(1.16, 0, 0, 1.16, 0, 0)"
+        },
+        "cards": [
+          {
+            "width": 328,
+            "height": 105.140625,
+            "cardHeight": 383.953125,
+            "count": "7"
+          },
+          {
+            "width": 328,
+            "height": 64.234375,
+            "cardHeight": 383.953125,
+            "count": "2"
+          }
+        ]
+      }
+    }
+  ],
+  "checks": [],
+  "limitation": "Resize events are simulated. Physical Safari toolbar/rubber-band behavior is not verified."
+}
