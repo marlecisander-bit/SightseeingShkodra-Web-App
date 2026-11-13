@@ -1,0 +1,7 @@
+{
+  "source": "https://sightseeingshkodralivetrackingapp.netlify.app/assets/brand/bus-front.svg",
+  "source_binding": "Find Van button uses vehicle-icon.js controlSymbol assets/brand/bus-front.svg",
+  "sha256": "f5fed0934833d486d3a25a2740e04889626213b3298fa7a4d97718cd8e400a21",
+  "exact_source_match": true,
+  "rendering": "Unmodified SVG bytes used as CSS alpha mask to apply brand crimson."
+}

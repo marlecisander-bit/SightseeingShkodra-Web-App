@@ -1,0 +1,27 @@
+✔ loading and disconnected panels keep configured stops without live progress or invented ETA (4.093417ms)
+✔ fresh authoritative arrival and explicit passed evidence render accessible names, count and commands (1.070542ms)
+✔ historical or expired positions cannot expose a live badge, active next destination or ETA (0.935ms)
+✔ route order alone never marks an earlier stop passed; stationary next-on-route is not active destination (0.496209ms)
+✔ unavailable GPS and closed service preserve upstream copy and cannot claim current tracking (1.014292ms)
+✔ external panel gate preserves canonical iframe, handshake opt-in and map controls (4.865459ms)
+✔ missing live stop projection retains the actual configured route count (0.881542ms)
+✔ stale transport cannot claim LIVE even when a retained snapshot has not expired (0.635334ms)
+✔ panel uses the exact Find Van SVG asset and keeps one visible name per stop (4.059916ms)
+✔ bridge validates sender, expires, reconnects after reload and cleans up remounts (1.947375ms)
+✔ external display capability is explicit, expired replacement clears claims immediately (0.258667ms)
+✔ journey bridge accepts only versioned bounded public stop projections (0.693708ms)
+✔ journey preserves upstream states without calculating ETA or inferring skipped stops (0.086917ms)
+✔ fresh location remains available independently of route continuity (1.364416ms)
+✔ bridge metadata fallback preserves canonical CMS stop ownership (0.091333ms)
+✔ optional v1 metadata is bounded, with legacy compatibility (0.052083ms)
+✔ shared phase messages survive bounded parked grace without live-position claims (0.104167ms)
+✔ upstream direction wording is reused; no website movement engine (0.082333ms)
+✔ bridge expiry governs states and timers rather than an open connection (0.073167ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 108.805791
