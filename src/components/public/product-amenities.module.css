@@ -22,3 +22,5 @@
 .contents li:last-child{border:0;}.contents svg{width:22px;height:22px;flex-shrink:0;}
 
 .contents:focus-visible{outline:2px solid var(--ss-primary,#761e35);outline-offset:-3px;}
+
+@media(max-width:599px){.amenities{margin-top:0;}}

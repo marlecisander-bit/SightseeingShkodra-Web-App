@@ -18,23 +18,34 @@ export function ProductAmenities({features,title}:{features:Feature[];title:stri
   const phone=window.matchMedia('(max-width:599px), (max-width:900px) and (max-height:500px) and (orientation:landscape) and (pointer:coarse)');let frame=0,active=true;
   const measure=()=>{
    frame=0;if(!phone.matches){close();return;}if(document.querySelector('dialog[open]'))return;
+   // Preserve the existing compact tablet-landscape presentation.
+   if(window.innerWidth>=600){setCount(Math.min(2,features.length));return;}
    const card=node.closest('article'),body=node.parentElement,list=node.querySelector('ul'),hero=node.closest('#home-hero');
    if(!card||!body||!list||!hero)return;
    const height=Math.min(window.innerHeight,window.visualViewport?.height??window.innerHeight);
-   const compact=window.innerWidth<=375||height<=740;
    const pagination=hero.querySelector('[aria-label="Choose experience"]');
    const visual=hero.firstElementChild,rail=card.parentElement;
-   const reserve=(pagination?.getBoundingClientRect().height??0)+parseFloat(getComputedStyle(visual??hero).paddingBottom)+(rail?parseFloat(getComputedStyle(rail).paddingBottom):0)+4;
+   const reserve=(pagination?.getBoundingClientRect().height??0)+parseFloat(getComputedStyle(visual??hero).paddingBottom)+(rail?parseFloat(getComputedStyle(rail).paddingBottom):0);
    const available=height-(card.getBoundingClientRect().top+window.scrollY)-reserve;
    const bodyStyle=getComputedStyle(body),children=Array.from(body.children).filter(child=>child!==node&&!child.matches('dialog')&&getComputedStyle(child).display!=='none');
-   const base=Array.from(card.children).filter(child=>child!==body).reduce((sum,child)=>sum+child.getBoundingClientRect().height,0)+parseFloat(bodyStyle.paddingTop)+parseFloat(bodyStyle.paddingBottom)+children.reduce((sum,child)=>sum+child.getBoundingClientRect().height,0)+parseFloat(bodyStyle.rowGap)*children.length+2;
+   // A growing photo can give its spare height to chips. Floating status badges
+   // do not consume flow space and must not reduce the amenities budget.
+   const photoHeight=Array.from(card.children).filter(child=>child!==body&&!['absolute','fixed'].includes(getComputedStyle(child).position)).reduce((sum,child)=>{
+    const css=getComputedStyle(child);
+    return sum+(css.flexGrow==='1'?parseFloat(css.minHeight):child.getBoundingClientRect().height);
+   },0);
+   const base=photoHeight+parseFloat(bodyStyle.paddingTop)+parseFloat(bodyStyle.paddingBottom)
+    +children.reduce((sum,child)=>sum+child.getBoundingClientRect().height,0)
+    +parseFloat(bodyStyle.rowGap)*children.length+2;
    node.dataset.measuring='true';
    const top=list.getBoundingClientRect().top;
    const bottoms=Array.from(list.children,child=>child.getBoundingClientRect().bottom-top);
    delete node.dataset.measuring;
-   const maximum=compact?Math.min(2,features.length):features.length;
-   let visible=Math.min(2,features.length);
-   for(let n=visible;n<=maximum;n++){
+   // Keep the first measured row on very short screens; never leave chips
+   // hidden beside a visible chip when they occupy the same row.
+   const nextRow=bottoms.findIndex(bottom=>bottom>bottoms[0]+0.5);
+   let visible=nextRow<0?features.length:nextRow;
+   for(let n=visible;n<=features.length;n++){
     const disclosure=n<features.length?Math.max(44,trigger.current?.getBoundingClientRect().height??0):0;
     if(base+bottoms[n-1]+disclosure<=available)visible=n;
    }
@@ -43,6 +54,7 @@ export function ProductAmenities({features,title}:{features:Feature[];title:stri
   };
   const queue=()=>{if(active&&!frame)frame=requestAnimationFrame(measure);};
   const observer=new ResizeObserver(queue);observer.observe(node.parentElement!);observer.observe(node.querySelector('ul')!);
+  const hero=node.closest('#home-hero');if(hero)observer.observe(hero);
   const textObserver=new MutationObserver(queue);textObserver.observe(node.querySelector('ul')!,{characterData:true,childList:true,subtree:true});
   document.addEventListener('close',queue,true);window.addEventListener('resize',queue);window.visualViewport?.addEventListener('resize',queue);phone.addEventListener('change',queue);
   void document.fonts.ready.then(queue);if(!open)queue();
