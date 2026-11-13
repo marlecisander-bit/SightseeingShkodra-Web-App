@@ -41,8 +41,8 @@ test('selection survives tracking advances and expired transport; keyboard and m
     React.createElement('div',{'data-page':'route'},React.createElement(LiveJourneyTracker,{stops,places:[],journey,stale})))));
    await act(async()=>{await new Promise(resolve=>setTimeout(resolve,50));});
    const states=page=>[...document.querySelectorAll(`[data-page="${page}"] [data-state]`)].map(node=>node.dataset.state);
-   assert.deepEqual(states('home'),states('route'),'same snapshot yields matching page states');
-   assert.equal(document.querySelector('[data-page="home"] [role="status"]').textContent,document.querySelector('[data-page="route"] [role="status"]').textContent);
+   assert.ok(states('home').every(state=>state==='upcoming'),'legacy snapshots without freshness cannot claim a current location on homepage');
+   assert.ok(!document.querySelector('[data-page="home"] [data-live=true]'));
   }}
 
  }finally{await act(async()=>root.unmount());dom.window.close();for(const [name,descriptor] of saved){if(descriptor)Object.defineProperty(globalThis,name,descriptor);else delete globalThis[name];}}

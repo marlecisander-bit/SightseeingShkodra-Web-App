@@ -34,11 +34,12 @@ export async function renderClientProbe(key,content){
    }else html=host.innerHTML;
   }else if(key==='labels.destination'||key==='routePage.mapAction'){
    const trigger=host.querySelector('ol[aria-label="Choose a destination"] button');assert.ok(trigger,'real stop selector missing');
-   const detail=host.querySelector('[id="'+trigger.getAttribute('aria-controls')+'"]');assert.ok(detail,'persistent details missing');
+   if(key==='labels.destination'){assert.equal(trigger.getAttribute('aria-expanded'),'false');await act(async()=>trigger.click());}
+   const detail=host.querySelector('[id="'+trigger.getAttribute('aria-controls')+'"]');assert.ok(detail,'selected destination details missing');
    assert.equal(host.querySelector('[id="'+detail.getAttribute('aria-labelledby')+'"]'),detail.querySelector('h3'));
    await act(async()=>trigger.click());
    assert.equal(host.querySelector('[id="'+trigger.getAttribute('aria-controls')+'"]'),detail,'selection must update the same persistent card');
-   assert.equal(trigger.getAttribute('aria-pressed'),'true');
+   assert.equal(trigger.getAttribute(key==='labels.destination'?'aria-expanded':'aria-pressed'),'true');
    assert.ok(!detail.textContent.includes('Close details'));
    if(key==='labels.destination'){const link=detail.querySelector('a');assert.ok(link);assert.equal(link.getAttribute('href'),place.link);assert.equal(link.textContent,content[key]);}
    else assert.ok([...detail.querySelectorAll('button')].some(b=>b.textContent===content[key]),'CMS map action missing from persistent details');

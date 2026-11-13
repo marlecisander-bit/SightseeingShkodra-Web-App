@@ -1,0 +1,20 @@
+{
+  "publication": "local only \u2014 no push or deployment",
+  "checks": {
+    "components": {
+      "passed": 198,
+      "failed": 0
+    },
+    "lint": "pass",
+    "typecheck": "pass",
+    "webpackBuild": "pass",
+    "companionFrontend": "pass",
+    "browserMatrix": "Chromium and WebKit, widths 320/390/768/1440, completed",
+    "mapIntegration": "pass"
+  },
+  "limitations": [
+    "No physical iPhone attached",
+    "Homepage screenshots use existing saved-CMS development fixture; local root route section unavailable"
+  ],
+  "report": "REVIEW.md"
+}

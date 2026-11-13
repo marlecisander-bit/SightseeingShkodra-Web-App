@@ -1,0 +1,2 @@
+/* Exact Find Van SVG geometry, recolored through its alpha mask. */
+.icon{display:block;flex:none;width:25px;height:25px;background:currentColor;mask:url('/brand/map-bus-front.svg') center/contain no-repeat;-webkit-mask:url('/brand/map-bus-front.svg') center/contain no-repeat;}

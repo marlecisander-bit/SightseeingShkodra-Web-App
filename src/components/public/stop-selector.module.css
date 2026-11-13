@@ -23,3 +23,9 @@
  .actions>a:first-child{width:100%;box-sizing:border-box;}
 }
 @media(prefers-reduced-motion:reduce){.rail{scroll-behavior:auto;}}
+
+.cards .rail{gap:16px;padding:8px 2px;margin:12px 0 20px;align-items:stretch;}
+.cards .stop{padding:0;height:100%;text-align:left;}
+.caption{display:block;padding:0 12px 15px;font-size:12px;line-height:1.5;color:var(--ss-muted);width:100%;box-sizing:border-box;}
+@media(min-width:701px) and (max-width:1000px){.cards .rail{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media(max-width:700px){.cards .rail{grid-auto-columns:82%;gap:14px;scroll-snap-type:x mandatory;scroll-padding-inline:2px;}.cards .rail>li{scroll-snap-align:start;}}

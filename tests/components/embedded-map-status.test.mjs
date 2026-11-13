@@ -39,7 +39,7 @@ test('stale transport cannot claim LIVE even when a retained snapshot has not ex
 test('panel uses the exact Find Van SVG asset and keeps one visible name per stop',async()=>{
  const {readFile}=await import('node:fs/promises');const {createHash}=await import('node:crypto');
  const asset=await readFile(new URL('../../public/brand/map-bus-front.svg',import.meta.url));assert.equal(createHash('sha256').update(asset).digest('hex'),JSON.parse(await readFile(new URL('../../docs/evidence/route-compact-20261113/icon-provenance.json',import.meta.url),'utf8')).sha256);
- const css=await readFile(new URL('../../src/components/public/embedded-map-status.module.css',import.meta.url),'utf8');assert(css.includes("url('/brand/map-bus-front.svg')"));
+ const css=await readFile(new URL('../../src/components/public/map-van-icon.module.css',import.meta.url),'utf8');assert(css.includes("url('/brand/map-bus-front.svg')"));
  const html=render({display,snapshot:fresh()});assert.equal((html.match(/<strong>Castle<\/strong>/g)||[]).length,2);assert(!html.includes('<small>Upcoming</small>'));assert.match(html,/Tracking details/);
 });
 

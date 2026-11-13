@@ -1,4 +1,5 @@
 'use client';
+import {MapVanIcon} from './map-van-icon';
 import {useId,useState,type CSSProperties} from 'react';
 import {hasLiveJourneyPosition,type EmbeddedDisplay,type JourneySnapshot} from '@/modules/tracking/journey-contract';
 import styles from './embedded-map-status.module.css';
@@ -26,7 +27,7 @@ export function EmbeddedMapStatus({display,snapshot,reason,unavailable,onStop,co
  </div>;
  return <section className={styles.panel} aria-label="Van journey information" data-freshness={fresh?'fresh':delayed?'delayed':'unavailable'}>
   <div className={styles.overview}>
-   <div className={styles.current}><span className={styles.van} aria-hidden="true"><span className={styles.frontVan}/></span><div>
+   <div className={styles.current}><span className={styles.van} aria-hidden="true"><MapVanIcon/></span><div>
     <p className={styles.eyebrow}>{fresh?(display?.label||'Current van status'):lastKnown?'Last known stop':'Van status'}</p>
     <h2>{heading}</h2>
     <div className={styles.freshness}><span className={styles.badge}>{fresh?'● LIVE':delayed?'◷ Delayed':reason==='stale'?'○ Disconnected':unavailable||display?'○ Tracking unavailable':'◷ Connecting'}</span><span>{updated(snapshot?.lastObservationAt)}</span></div>
@@ -43,7 +44,7 @@ export function EmbeddedMapStatus({display,snapshot,reason,unavailable,onStop,co
     const historical=!fresh&&(stop.state==='current'||stop.state==='approaching');
     const state=stop.skipped?'skipped':passed?'completed':historical?'historical':stop.state;
     const label=stop.skipped?'Not confirmed visited':passed?'Confirmed passed':historical?'Last known stop':state==='current'?'Current stop':state==='approaching'?'Arriving':state==='next'?(fresh?'Next stop':'Next on route'):state==='unknown'?'Tracking not confirmed':'Upcoming';
-    return <li key={stop.id} data-state={state}><button type="button" onClick={()=>onStop(stop.id)} aria-current={stop.id===active?.id?'step':undefined} aria-label={`Stop ${stop.number}: ${stop.name}. ${label}`}><span className={styles.node} aria-hidden="true"><span className={styles.marker}>{passed?'✓':state==='current'?<span className={styles.frontVan}/>:null}</span></span><span className={styles.stopCopy}><strong>{stop.name}</strong></span></button></li>;
+    return <li key={stop.id} data-state={state}><button type="button" onClick={()=>onStop(stop.id)} aria-current={stop.id===active?.id?'step':undefined} aria-label={`Stop ${stop.number}: ${stop.name}. ${label}`}><span className={styles.node} aria-hidden="true"><span className={styles.marker}>{passed?'✓':state==='current'?<MapVanIcon/>:null}</span></span><span className={styles.stopCopy}><strong>{stop.name}</strong></span></button></li>;
    })}</ol>:<p className={styles.empty}>Configured stops are not available yet.</p>}
    <div className={styles.mobileTracking}>{trackingDetails}</div>
    </div>

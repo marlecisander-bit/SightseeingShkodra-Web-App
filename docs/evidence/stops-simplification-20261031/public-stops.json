@@ -1,0 +1,42 @@
+[
+  {
+    "id": "point_13634d33-3234-4380-9f11-18d95b3276b2",
+    "name": "Stop 1 - Start/Stop",
+    "image": "https://ybngoppqqiohcduojfyg.supabase.co/storage/v1/object/public/website-media/9185510e-0e82-4027-ab1c-8604dad5c92e/ccf0d5dc-74b6-4a9e-857c-24a380395fe4.png",
+    "alt": "Start/Stop boarding point for Sightseeing Shkodra",
+    "text": "Start and finish your Sightseeing Shkodra journey at this stop.",
+    "link": "/explore/stop-1-start-stop"
+  },
+  {
+    "id": "point_9434301f-9f58-49e1-9032-79398525a2cc",
+    "name": "Shiroka & the lake",
+    "image": "https://ybngoppqqiohcduojfyg.supabase.co/storage/v1/object/public/website-media/9185510e-0e82-4027-ab1c-8604dad5c92e/735dfc27-f810-4a03-b531-02f44cfd9c1e.jpg",
+    "alt": "Lake Shkodra and the Buna River seen from Rozafa Castle",
+    "text": "Take the long lunch. Stay for the light on the lake.",
+    "link": "/explore/lake"
+  },
+  {
+    "id": "point_58e64759-bcac-4561-80a4-ecd71ae90d14",
+    "name": "Rozafa Castle",
+    "image": "https://ybngoppqqiohcduojfyg.supabase.co/storage/v1/object/public/website-media/9185510e-0e82-4027-ab1c-8604dad5c92e/81b9045d-fbe2-4176-a232-6b4b01859eaf.jpg",
+    "alt": "Rozafa Castle above the surrounding landscape",
+    "text": "Climb above the everyday. Let the view do the talking.",
+    "link": "/explore/castle"
+  },
+  {
+    "id": "point_1e6d30b8-1a77-411f-97f7-5f3995168e2d",
+    "name": "Historic Centre",
+    "image": "https://ybngoppqqiohcduojfyg.supabase.co/storage/v1/object/public/website-media/9185510e-0e82-4027-ab1c-8604dad5c92e/9f606459-6c9e-4016-8b31-1cf240843319.webp",
+    "alt": "Pedestrian street in the historic centre of Shkodra",
+    "text": "Slow streets, cafe tables and a little everyday Shkodra.",
+    "link": "/explore/centre"
+  },
+  {
+    "id": "point_83aa80ab-27a9-4df7-b742-dd4f4510f4c6",
+    "name": "Mesi Bridge",
+    "image": "https://ybngoppqqiohcduojfyg.supabase.co/storage/v1/object/public/website-media/9185510e-0e82-4027-ab1c-8604dad5c92e/9822de8d-ca3f-4759-b1f1-552a16ae42a3.jpg",
+    "alt": "Stone arches of Mesi Bridge near Shkodra",
+    "text": "Old stone, open skies and a reason to take your time.",
+    "link": "/explore/bridge"
+  }
+]

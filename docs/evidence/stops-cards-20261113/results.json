@@ -1,0 +1,698 @@
+[
+  {
+    "engine": "chrome",
+    "width": 320,
+    "home": {
+      "width": 273,
+      "scroll": 1163,
+      "cards": 5,
+      "page": 305,
+      "viewport": 320
+    }
+  },
+  {
+    "engine": "chrome",
+    "width": 320,
+    "drawer": [
+      {
+        "width": 278,
+        "photo": {
+          "x": 31,
+          "y": 450,
+          "width": 88,
+          "height": 68,
+          "top": 450,
+          "right": 119,
+          "bottom": 518,
+          "left": 31
+        },
+        "name": "Start/Stop"
+      },
+      {
+        "width": 278,
+        "photo": {
+          "x": 31,
+          "y": 548.03125,
+          "width": 88,
+          "height": 68,
+          "top": 548.03125,
+          "right": 119,
+          "bottom": 616.03125,
+          "left": 31
+        },
+        "name": "Shiroka/ Lake Shkodra"
+      },
+      {
+        "width": 278,
+        "photo": {
+          "x": 31,
+          "y": 646.0625,
+          "width": 88,
+          "height": 68,
+          "top": 646.0625,
+          "right": 119,
+          "bottom": 714.0625,
+          "left": 31
+        },
+        "name": "Rozafa Castle"
+      },
+      {
+        "width": 278,
+        "photo": {
+          "x": 31,
+          "y": 743.0625,
+          "width": 88,
+          "height": 68,
+          "top": 743.0625,
+          "right": 119,
+          "bottom": 811.0625,
+          "left": 31
+        },
+        "name": "St Stephen's Cathedral"
+      },
+      {
+        "width": 278,
+        "photo": {
+          "x": 31,
+          "y": 840.0625,
+          "width": 88,
+          "height": 68,
+          "top": 840.0625,
+          "right": 119,
+          "bottom": 908.0625,
+          "left": 31
+        },
+        "name": "Mesi Bridge"
+      }
+    ]
+  },
+  {
+    "engine": "chrome",
+    "width": 390,
+    "home": {
+      "width": 343,
+      "scroll": 1450,
+      "cards": 5,
+      "page": 375,
+      "viewport": 390
+    }
+  },
+  {
+    "engine": "chrome",
+    "width": 390,
+    "drawer": [
+      {
+        "width": 348,
+        "photo": {
+          "x": 31,
+          "y": 450,
+          "width": 88,
+          "height": 68,
+          "top": 450,
+          "right": 119,
+          "bottom": 518,
+          "left": 31
+        },
+        "name": "Start/Stop"
+      },
+      {
+        "width": 348,
+        "photo": {
+          "x": 31,
+          "y": 548.03125,
+          "width": 88,
+          "height": 68,
+          "top": 548.03125,
+          "right": 119,
+          "bottom": 616.03125,
+          "left": 31
+        },
+        "name": "Shiroka/ Lake Shkodra"
+      },
+      {
+        "width": 348,
+        "photo": {
+          "x": 31,
+          "y": 646.0625,
+          "width": 88,
+          "height": 68,
+          "top": 646.0625,
+          "right": 119,
+          "bottom": 714.0625,
+          "left": 31
+        },
+        "name": "Rozafa Castle"
+      },
+      {
+        "width": 348,
+        "photo": {
+          "x": 31,
+          "y": 743.0625,
+          "width": 88,
+          "height": 68,
+          "top": 743.0625,
+          "right": 119,
+          "bottom": 811.0625,
+          "left": 31
+        },
+        "name": "St Stephen's Cathedral"
+      },
+      {
+        "width": 348,
+        "photo": {
+          "x": 31,
+          "y": 840.0625,
+          "width": 88,
+          "height": 68,
+          "top": 840.0625,
+          "right": 119,
+          "bottom": 908.0625,
+          "left": 31
+        },
+        "name": "Mesi Bridge"
+      }
+    ]
+  },
+  {
+    "engine": "chrome",
+    "width": 768,
+    "home": {
+      "width": 676,
+      "scroll": 676,
+      "cards": 5,
+      "page": 753,
+      "viewport": 768
+    }
+  },
+  {
+    "engine": "chrome",
+    "width": 768,
+    "drawer": [
+      {
+        "width": 398,
+        "photo": {
+          "x": 359,
+          "y": 450,
+          "width": 104,
+          "height": 76,
+          "top": 450,
+          "right": 463,
+          "bottom": 526,
+          "left": 359
+        },
+        "name": "Start/Stop"
+      },
+      {
+        "width": 398,
+        "photo": {
+          "x": 359,
+          "y": 555,
+          "width": 104,
+          "height": 76,
+          "top": 555,
+          "right": 463,
+          "bottom": 631,
+          "left": 359
+        },
+        "name": "Shiroka/ Lake Shkodra"
+      },
+      {
+        "width": 398,
+        "photo": {
+          "x": 359,
+          "y": 660,
+          "width": 104,
+          "height": 76,
+          "top": 660,
+          "right": 463,
+          "bottom": 736,
+          "left": 359
+        },
+        "name": "Rozafa Castle"
+      },
+      {
+        "width": 398,
+        "photo": {
+          "x": 359,
+          "y": 765,
+          "width": 104,
+          "height": 76,
+          "top": 765,
+          "right": 463,
+          "bottom": 841,
+          "left": 359
+        },
+        "name": "St Stephen's Cathedral"
+      },
+      {
+        "width": 398,
+        "photo": {
+          "x": 359,
+          "y": 870,
+          "width": 104,
+          "height": 76,
+          "top": 870,
+          "right": 463,
+          "bottom": 946,
+          "left": 359
+        },
+        "name": "Mesi Bridge"
+      }
+    ]
+  },
+  {
+    "engine": "chrome",
+    "width": 1440,
+    "home": {
+      "width": 1176,
+      "scroll": 1176,
+      "cards": 5,
+      "page": 1425,
+      "viewport": 1440
+    }
+  },
+  {
+    "engine": "chrome",
+    "width": 1440,
+    "drawer": [
+      {
+        "width": 398,
+        "photo": {
+          "x": 1031,
+          "y": 450,
+          "width": 104,
+          "height": 76,
+          "top": 450,
+          "right": 1135,
+          "bottom": 526,
+          "left": 1031
+        },
+        "name": "Start/Stop"
+      },
+      {
+        "width": 398,
+        "photo": {
+          "x": 1031,
+          "y": 555,
+          "width": 104,
+          "height": 76,
+          "top": 555,
+          "right": 1135,
+          "bottom": 631,
+          "left": 1031
+        },
+        "name": "Shiroka/ Lake Shkodra"
+      },
+      {
+        "width": 398,
+        "photo": {
+          "x": 1031,
+          "y": 660,
+          "width": 104,
+          "height": 76,
+          "top": 660,
+          "right": 1135,
+          "bottom": 736,
+          "left": 1031
+        },
+        "name": "Rozafa Castle"
+      },
+      {
+        "width": 398,
+        "photo": {
+          "x": 1031,
+          "y": 765,
+          "width": 104,
+          "height": 76,
+          "top": 765,
+          "right": 1135,
+          "bottom": 841,
+          "left": 1031
+        },
+        "name": "St Stephen's Cathedral"
+      },
+      {
+        "width": 398,
+        "photo": {
+          "x": 1031,
+          "y": 870,
+          "width": 104,
+          "height": 76,
+          "top": 870,
+          "right": 1135,
+          "bottom": 946,
+          "left": 1031
+        },
+        "name": "Mesi Bridge"
+      }
+    ]
+  },
+  {
+    "engine": "webkit",
+    "width": 320,
+    "home": {
+      "width": 288,
+      "scroll": 1224,
+      "cards": 5,
+      "page": 320,
+      "viewport": 320
+    }
+  },
+  {
+    "engine": "webkit",
+    "width": 320,
+    "drawer": [
+      {
+        "width": 278,
+        "photo": {
+          "x": 31,
+          "y": 450,
+          "width": 88,
+          "height": 68,
+          "top": 450,
+          "right": 119,
+          "bottom": 518,
+          "left": 31
+        },
+        "name": "Start/Stop"
+      },
+      {
+        "width": 278,
+        "photo": {
+          "x": 31,
+          "y": 548.03125,
+          "width": 88,
+          "height": 68,
+          "top": 548.03125,
+          "right": 119,
+          "bottom": 616.03125,
+          "left": 31
+        },
+        "name": "Shiroka/ Lake Shkodra"
+      },
+      {
+        "width": 278,
+        "photo": {
+          "x": 31,
+          "y": 646.0625,
+          "width": 88,
+          "height": 68,
+          "top": 646.0625,
+          "right": 119,
+          "bottom": 714.0625,
+          "left": 31
+        },
+        "name": "Rozafa Castle"
+      },
+      {
+        "width": 278,
+        "photo": {
+          "x": 31,
+          "y": 743.0625,
+          "width": 88,
+          "height": 68,
+          "top": 743.0625,
+          "right": 119,
+          "bottom": 811.0625,
+          "left": 31
+        },
+        "name": "St Stephen's Cathedral"
+      },
+      {
+        "width": 278,
+        "photo": {
+          "x": 31,
+          "y": 840.0625,
+          "width": 88,
+          "height": 68,
+          "top": 840.0625,
+          "right": 119,
+          "bottom": 908.0625,
+          "left": 31
+        },
+        "name": "Mesi Bridge"
+      }
+    ]
+  },
+  {
+    "engine": "webkit",
+    "width": 390,
+    "home": {
+      "width": 358,
+      "scroll": 1511,
+      "cards": 5,
+      "page": 390,
+      "viewport": 390
+    }
+  },
+  {
+    "engine": "webkit",
+    "width": 390,
+    "drawer": [
+      {
+        "width": 348,
+        "photo": {
+          "x": 31,
+          "y": 450,
+          "width": 88,
+          "height": 68,
+          "top": 450,
+          "right": 119,
+          "bottom": 518,
+          "left": 31
+        },
+        "name": "Start/Stop"
+      },
+      {
+        "width": 348,
+        "photo": {
+          "x": 31,
+          "y": 548.03125,
+          "width": 88,
+          "height": 68,
+          "top": 548.03125,
+          "right": 119,
+          "bottom": 616.03125,
+          "left": 31
+        },
+        "name": "Shiroka/ Lake Shkodra"
+      },
+      {
+        "width": 348,
+        "photo": {
+          "x": 31,
+          "y": 646.0625,
+          "width": 88,
+          "height": 68,
+          "top": 646.0625,
+          "right": 119,
+          "bottom": 714.0625,
+          "left": 31
+        },
+        "name": "Rozafa Castle"
+      },
+      {
+        "width": 348,
+        "photo": {
+          "x": 31,
+          "y": 743.0625,
+          "width": 88,
+          "height": 68,
+          "top": 743.0625,
+          "right": 119,
+          "bottom": 811.0625,
+          "left": 31
+        },
+        "name": "St Stephen's Cathedral"
+      },
+      {
+        "width": 348,
+        "photo": {
+          "x": 31,
+          "y": 840.0625,
+          "width": 88,
+          "height": 68,
+          "top": 840.0625,
+          "right": 119,
+          "bottom": 908.0625,
+          "left": 31
+        },
+        "name": "Mesi Bridge"
+      }
+    ]
+  },
+  {
+    "engine": "webkit",
+    "width": 768,
+    "home": {
+      "width": 691,
+      "scroll": 691,
+      "cards": 5,
+      "page": 768,
+      "viewport": 768
+    }
+  },
+  {
+    "engine": "webkit",
+    "width": 768,
+    "drawer": [
+      {
+        "width": 398,
+        "photo": {
+          "x": 359,
+          "y": 450,
+          "width": 104,
+          "height": 76,
+          "top": 450,
+          "right": 463,
+          "bottom": 526,
+          "left": 359
+        },
+        "name": "Start/Stop"
+      },
+      {
+        "width": 398,
+        "photo": {
+          "x": 359,
+          "y": 555,
+          "width": 104,
+          "height": 76,
+          "top": 555,
+          "right": 463,
+          "bottom": 631,
+          "left": 359
+        },
+        "name": "Shiroka/ Lake Shkodra"
+      },
+      {
+        "width": 398,
+        "photo": {
+          "x": 359,
+          "y": 660,
+          "width": 104,
+          "height": 76,
+          "top": 660,
+          "right": 463,
+          "bottom": 736,
+          "left": 359
+        },
+        "name": "Rozafa Castle"
+      },
+      {
+        "width": 398,
+        "photo": {
+          "x": 359,
+          "y": 765,
+          "width": 104,
+          "height": 76,
+          "top": 765,
+          "right": 463,
+          "bottom": 841,
+          "left": 359
+        },
+        "name": "St Stephen's Cathedral"
+      },
+      {
+        "width": 398,
+        "photo": {
+          "x": 359,
+          "y": 870,
+          "width": 104,
+          "height": 76,
+          "top": 870,
+          "right": 463,
+          "bottom": 946,
+          "left": 359
+        },
+        "name": "Mesi Bridge"
+      }
+    ]
+  },
+  {
+    "engine": "webkit",
+    "width": 1440,
+    "home": {
+      "width": 1176,
+      "scroll": 1176,
+      "cards": 5,
+      "page": 1440,
+      "viewport": 1440
+    }
+  },
+  {
+    "engine": "webkit",
+    "width": 1440,
+    "drawer": [
+      {
+        "width": 398,
+        "photo": {
+          "x": 1031,
+          "y": 450,
+          "width": 104,
+          "height": 76,
+          "top": 450,
+          "right": 1135,
+          "bottom": 526,
+          "left": 1031
+        },
+        "name": "Start/Stop"
+      },
+      {
+        "width": 398,
+        "photo": {
+          "x": 1031,
+          "y": 555,
+          "width": 104,
+          "height": 76,
+          "top": 555,
+          "right": 1135,
+          "bottom": 631,
+          "left": 1031
+        },
+        "name": "Shiroka/ Lake Shkodra"
+      },
+      {
+        "width": 398,
+        "photo": {
+          "x": 1031,
+          "y": 660,
+          "width": 104,
+          "height": 76,
+          "top": 660,
+          "right": 1135,
+          "bottom": 736,
+          "left": 1031
+        },
+        "name": "Rozafa Castle"
+      },
+      {
+        "width": 398,
+        "photo": {
+          "x": 1031,
+          "y": 765,
+          "width": 104,
+          "height": 76,
+          "top": 765,
+          "right": 1135,
+          "bottom": 841,
+          "left": 1031
+        },
+        "name": "St Stephen's Cathedral"
+      },
+      {
+        "width": 398,
+        "photo": {
+          "x": 1031,
+          "y": 870,
+          "width": 104,
+          "height": 76,
+          "top": 870,
+          "right": 1135,
+          "bottom": 946,
+          "left": 1031
+        },
+        "name": "Mesi Bridge"
+      }
+    ]
+  }
+]
