@@ -179,15 +179,15 @@
  .composed .visual::after{background:linear-gradient(180deg,rgba(12,20,27,.25),rgba(12,20,27,.4) 35%,rgba(12,20,27,.75));}
 }
 
-/* Phone layout uses the stable small viewport so browser toolbars cannot
-   resize the background or the flexible product photos during scrolling. */
+/* Phone composition follows content; fixed photo aspect ratios stay stable
+   when browser toolbars expand or collapse. */
 @media(max-width:599px){
  .composed .visual{padding-top:calc(var(--hero-header-offset,calc(60px + env(safe-area-inset-top))) + 44px + 12px);padding-inline:max(16px,env(safe-area-inset-left)) max(16px,env(safe-area-inset-right));padding-bottom:max(16px,env(safe-area-inset-bottom));}
- .composed .visual{display:flex;flex-direction:column;box-sizing:border-box;min-height:100vh;min-height:100svh;}
+ .composed .visual{display:flex;flex-direction:column;box-sizing:border-box;min-height:0;}
  .composed .layout{display:flex;flex-direction:column;flex:1;align-items:stretch;gap:12px;}
  .composed .layout>:last-child{margin-top:0;flex:1;}
  :global(.public-site) .composed .eyebrow{display:none;margin:0;padding:0;}
- :global(.public-site) .composed .intro h1{font-size:clamp(28px,8.4vw,36px);line-height:1.06;letter-spacing:-.035em;margin:0 0 10px;overflow-wrap:anywhere;}
+ :global(.public-site) .composed .intro h1{font-size:clamp(28px,7.2vw,32px);line-height:1.06;letter-spacing:-.035em;margin:0 0 10px;overflow-wrap:anywhere;}
  .composed .headlineLead,.composed .headlineDestination{display:inline;}
  .composed .intro h1 em{display:block;}
  .composed .intro h1 em::after{display:none;}
