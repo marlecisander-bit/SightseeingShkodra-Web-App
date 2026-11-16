@@ -34,3 +34,11 @@
 }
 @media(min-width:600px){.amenities[data-feature-count="0"] .summaryInfo,.amenities[data-feature-count="1"] .summaryInfo,.amenities[data-feature-count="2"] .summaryInfo{display:none;}}
 .contents>p{font-size:14px;line-height:1.5;margin:12px 0;}.contents>h3{font-size:16px;line-height:1.4;margin:18px 0 4px;}
+
+@media(max-width:599px),(max-width:900px) and (max-height:500px) and (orientation:landscape) and (pointer:coarse){
+ .amenities[data-summary=true]{display:contents;}
+ .amenities[data-summary=true]>ul{display:none!important;}
+ .amenities[data-summary=true] .summaryInfo{grid-row:5;grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;min-height:44px;gap:8px;}
+ .amenities[data-summary=true] .summaryInfo .all:not([hidden]){display:flex;min-height:44px;align-items:center;font-size:.75rem;color:var(--ss-primary);}
+ .summaryNote{display:block;font-size:.6875rem;line-height:1.4;min-width:0;}
+}

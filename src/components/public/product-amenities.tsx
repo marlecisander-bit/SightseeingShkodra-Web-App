@@ -1,6 +1,7 @@
 'use client';
 import {useCallback,useEffect,useId,useRef,useState,type MouseEvent,type ReactNode,type RefObject} from 'react';
 import {createPortal} from 'react-dom';
+import {MobileAmenityIcons} from './mobile-amenity-icons';
 import {AmenityIcon} from '@/components/ui/amenity-icon';
 import type {productFeatureBadges} from '@/modules/booking/product-features';
 import cardStyles from './product-booking-cards.module.css';
@@ -73,6 +74,7 @@ export function ProductAmenities({features,title,summary=false,note,details,deta
  const label=features.length?'All amenities':'Tour details';
  return <div ref={root} className={styles.amenities} data-summary={summary||undefined} data-feature-count={features.length} data-visible-count={Math.min(count,features.length)}>
   <ul className={cardStyles.badges} aria-label={title+' information'}>{features.map((feature,index)=><li key={feature.key} data-amenity-visible={index<count}><AmenityIcon name={feature.icon}/><span>{feature.label}</span></li>)}</ul>
+  {summary&&<MobileAmenityIcons features={features}/>}
   <div className={styles.summaryInfo}>
    {summary&&<span className={styles.summaryNote}>{note}</span>}
    <button ref={trigger} type="button" className={styles.all} data-all-amenities hidden={!summary&&count>=features.length} aria-haspopup="dialog" aria-expanded={open} aria-controls={open?id:undefined} aria-label={label+' for '+title} onClick={show}>{label}</button>

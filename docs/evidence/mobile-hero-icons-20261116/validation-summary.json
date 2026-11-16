@@ -1,0 +1,65 @@
+{
+  "branch": "work/mobile-hero-icons-20261116",
+  "localOnly": true,
+  "tests": {
+    "total": 756,
+    "failed": 0,
+    "components": 202
+  },
+  "lint": "passed with pre-existing audit resources.mjs warning excluded",
+  "types": "passed",
+  "webpackBuild": "passed",
+  "desktopChangedPixels": 0,
+  "mobileScreens": [
+    [
+      360,
+      640
+    ],
+    [
+      375,
+      667
+    ],
+    [
+      390,
+      844
+    ],
+    [
+      430,
+      932
+    ],
+    [
+      667,
+      375
+    ],
+    [
+      844,
+      390
+    ]
+  ],
+  "enlargedText": {
+    "rootFont": 32,
+    "heroHeight": 1354.859375,
+    "pageOverflow": false,
+    "cardContentFits": true,
+    "scrollUnlocked": true,
+    "tooltipWithinViewport": true
+  },
+  "interactions": {
+    "keyboardEnterEscape": true,
+    "sameButtonToggle": true,
+    "outsideDismissal": true,
+    "onePopover": true,
+    "allAmenities": true,
+    "menu": true,
+    "bookingDialog": true,
+    "carouselIndicators": true
+  },
+  "limitations": [
+    "mockup unavailable",
+    "physical Safari/touch/browser toolbar behavior unverified",
+    "no completed booking"
+  ],
+  "productionChanged": false,
+  "pushed": false,
+  "merged": false
+}
