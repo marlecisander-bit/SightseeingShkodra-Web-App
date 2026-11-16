@@ -1,0 +1,12 @@
+{
+  "failedReleaseSha": "9e96137cbd42bc0ec9135ae1050e5221a6a4ed89",
+  "failedDeployment": "3RAACKhQvr9npnc7D8b5QgTT9FYH",
+  "restoredSha": "56653a558628463f9e3c4ab92a1b601877db49f9",
+  "restoredDeployment": "7oeTGWvWxeMKjqzSfioga33zmYdf",
+  "method": "Vercel Instant Rollback, confirmed all four domains assigned",
+  "reason": "Streamed hidden route container initialized offscreen map before visibility; failed acceptance gate",
+  "automaticPromotion": "Paused by Vercel rollback until explicitly removed",
+  "cmsChanged": false,
+  "dnsChanged": false,
+  "searchConsoleChanged": false
+}
