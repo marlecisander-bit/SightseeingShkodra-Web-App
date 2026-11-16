@@ -1,0 +1,32 @@
+{
+  "score": {
+    "median": 0.94,
+    "min": 0.94,
+    "max": 0.98
+  },
+  "first-contentful-paint": {
+    "median": 932.917,
+    "min": 932.393,
+    "max": 1282.6599999999999
+  },
+  "largest-contentful-paint": {
+    "median": 2806.917,
+    "min": 2053.393,
+    "max": 2812.66
+  },
+  "total-blocking-time": {
+    "median": 6,
+    "min": 0.5,
+    "max": 18
+  },
+  "cumulative-layout-shift": {
+    "median": 0,
+    "min": 0,
+    "max": 0
+  },
+  "speed-index": {
+    "median": 3597.6058379400247,
+    "min": 3396.8311460392015,
+    "max": 4026.295217936754
+  }
+}
