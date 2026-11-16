@@ -3,7 +3,7 @@ import {test} from 'node:test';
 
 test('only exact retired ticket entry and bridge article have permanent relevant replacements', async () => {
  const {default:nextConfig}=await import('../../next.config.ts');
- const redirects=await nextConfig.redirects();
+ const redirects=(await nextConfig.redirects()).filter(rule=>!rule.has);
  assert.deepEqual(redirects,[
   {source:'/tickets',destination:'/book',permanent:true},
   {source:'/mes-bridge-shkodra',destination:'/explore/bridge',permanent:true},

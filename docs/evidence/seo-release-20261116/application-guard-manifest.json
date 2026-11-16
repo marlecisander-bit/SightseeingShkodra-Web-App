@@ -1,0 +1,10 @@
+{
+  "migrationSha256": "1598d9f2a403814e87ffadb84f5ef2fccf61c6fb205e6cc0404f13cf1330804d",
+  "privateApplySha256": "02bee05c3a46f0bac507e4020829a1d8390ecabce6d615e264b82d10e6bb64be",
+  "isolation": "serializable",
+  "lockTimeout": "5 seconds",
+  "statementTimeout": "30 seconds",
+  "before": "Exact full-row backup comparison under row locks",
+  "after": "Exact expected full-row result excluding normal updated_at changes",
+  "expectedFieldChanges": 33
+}

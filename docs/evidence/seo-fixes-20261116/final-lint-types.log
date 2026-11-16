@@ -1,0 +1,10 @@
+
+> sightseeing-shkodra@0.1.0 lint
+> eslint . --max-warnings=0 --ignore-pattern docs/evidence/seo-audit-20261116/resources.mjs
+
+
+> sightseeing-shkodra@0.1.0 typecheck
+> next typegen && tsc --noEmit
+
+Generating route types...
+✓ Types generated successfully

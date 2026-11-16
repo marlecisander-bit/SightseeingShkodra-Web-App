@@ -1,0 +1,22 @@
+✔ only exact retired ticket entry and bridge article have permanent relevant replacements (6.205584ms)
+✔ booking page binds the selected offer directly to its checkout (1.555958ms)
+✔ invalid, repeated and unavailable product selectors cannot silently book the default product (0.71725ms)
+✔ generic booking URLs show the experience picker without a second directory resolution (0.225416ms)
+✔ public app redirects preserve paths and query parameters, with no com loop (80.974958ms)
+✔ private, API, payment and unknown paths never match marketing redirects (16.010166ms)
+✔ organization identity has no invented business facts (0.215625ms)
+✔ guarded content migration changes audited facts, preserves other policies and is idempotent (2748.172708ms)
+✔ indexing requires explicit production gate and a public HTTPS origin (0.750125ms)
+✔ sitemap publication is independent of operational availability and excludes unpublished pages (0.175667ms)
+✔ structured data matches page and breadcrumbs and escapes script delimiters (0.097417ms)
+✔ public brand aliases consolidate on www.com without changing customer configuration (0.086625ms)
+✔ robots permits public crawling and private noindex inspection only after production gate (0.070792ms)
+✔ page canonical and private response headers agree with crawl policy (1.006166ms)
+ℹ tests 14
+ℹ todo 0
+ℹ duration_ms 3394.812458
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
