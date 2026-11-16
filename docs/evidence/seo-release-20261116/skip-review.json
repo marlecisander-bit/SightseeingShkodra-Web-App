@@ -1,0 +1,10 @@
+{
+  "alreadyCorrect": [
+    "website-homepage.body.content.seasonal.notice",
+    "website-homepage.published_body.content.seasonal.notice"
+  ],
+  "reason": "Both fresh values already promise April 2027; exact-old-value guard correctly makes no change.",
+  "customDraftsOverwritten": 0,
+  "unexpectedSkips": 0,
+  "expectedFieldChanges": 33
+}

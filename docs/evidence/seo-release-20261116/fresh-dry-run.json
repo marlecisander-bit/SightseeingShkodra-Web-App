@@ -1,0 +1,183 @@
+{
+  "backupTime": "2026-11-16T15:22:44.796388+00:00",
+  "project": "ybngoppqqiohcduojfyg",
+  "rows": {
+    "pages": 5,
+    "products": 2
+  },
+  "changedRows": {
+    "pages": 5,
+    "products": 2
+  },
+  "fieldChanges": 33,
+  "paths": [
+    {
+      "table": "contentPages",
+      "id": "1904c2fa-1b81-4a5a-b860-88a1f98cb387",
+      "path": "body.seoTitle"
+    },
+    {
+      "table": "contentPages",
+      "id": "1904c2fa-1b81-4a5a-b860-88a1f98cb387",
+      "path": "body.seoDescription"
+    },
+    {
+      "table": "contentPages",
+      "id": "1904c2fa-1b81-4a5a-b860-88a1f98cb387",
+      "path": "published_body.seoTitle"
+    },
+    {
+      "table": "contentPages",
+      "id": "1904c2fa-1b81-4a5a-b860-88a1f98cb387",
+      "path": "published_body.seoDescription"
+    },
+    {
+      "table": "contentPages",
+      "id": "42a8fef7-e672-403a-9afb-cc3af25956e5",
+      "path": "body.seoTitle"
+    },
+    {
+      "table": "contentPages",
+      "id": "42a8fef7-e672-403a-9afb-cc3af25956e5",
+      "path": "body.seoDescription"
+    },
+    {
+      "table": "contentPages",
+      "id": "42a8fef7-e672-403a-9afb-cc3af25956e5",
+      "path": "published_body.seoTitle"
+    },
+    {
+      "table": "contentPages",
+      "id": "42a8fef7-e672-403a-9afb-cc3af25956e5",
+      "path": "published_body.seoDescription"
+    },
+    {
+      "table": "contentPages",
+      "id": "7f017e7f-622a-4d81-9807-130875c25d98",
+      "path": "body.content.faq.items"
+    },
+    {
+      "table": "contentPages",
+      "id": "7f017e7f-622a-4d81-9807-130875c25d98",
+      "path": "body.content.seo.title"
+    },
+    {
+      "table": "contentPages",
+      "id": "7f017e7f-622a-4d81-9807-130875c25d98",
+      "path": "body.content.seo.description"
+    },
+    {
+      "table": "contentPages",
+      "id": "7f017e7f-622a-4d81-9807-130875c25d98",
+      "path": "body.content.legal.terms.text"
+    },
+    {
+      "table": "contentPages",
+      "id": "7f017e7f-622a-4d81-9807-130875c25d98",
+      "path": "published_body.content.faq.items"
+    },
+    {
+      "table": "contentPages",
+      "id": "7f017e7f-622a-4d81-9807-130875c25d98",
+      "path": "published_body.content.seo.title"
+    },
+    {
+      "table": "contentPages",
+      "id": "7f017e7f-622a-4d81-9807-130875c25d98",
+      "path": "published_body.content.seo.description"
+    },
+    {
+      "table": "contentPages",
+      "id": "7f017e7f-622a-4d81-9807-130875c25d98",
+      "path": "published_body.content.legal.terms.text"
+    },
+    {
+      "table": "contentPages",
+      "id": "db5c1b04-b350-4af4-bea8-fa1c6e2d8c55",
+      "path": "body.seoTitle"
+    },
+    {
+      "table": "contentPages",
+      "id": "db5c1b04-b350-4af4-bea8-fa1c6e2d8c55",
+      "path": "body.seoDescription"
+    },
+    {
+      "table": "contentPages",
+      "id": "db5c1b04-b350-4af4-bea8-fa1c6e2d8c55",
+      "path": "published_body.seoTitle"
+    },
+    {
+      "table": "contentPages",
+      "id": "db5c1b04-b350-4af4-bea8-fa1c6e2d8c55",
+      "path": "published_body.seoDescription"
+    },
+    {
+      "table": "contentPages",
+      "id": "eaae87c2-e41c-46e7-b565-9319ccb3b484",
+      "path": "body.seoTitle"
+    },
+    {
+      "table": "contentPages",
+      "id": "eaae87c2-e41c-46e7-b565-9319ccb3b484",
+      "path": "body.seoDescription"
+    },
+    {
+      "table": "contentPages",
+      "id": "eaae87c2-e41c-46e7-b565-9319ccb3b484",
+      "path": "published_body.seoTitle"
+    },
+    {
+      "table": "contentPages",
+      "id": "eaae87c2-e41c-46e7-b565-9319ccb3b484",
+      "path": "published_body.seoDescription"
+    },
+    {
+      "table": "products",
+      "id": "7d7257f2-ee83-43cf-85bf-5dba3bbf5196",
+      "path": "card_draft.alt"
+    },
+    {
+      "table": "products",
+      "id": "7d7257f2-ee83-43cf-85bf-5dba3bbf5196",
+      "path": "card_draft.description"
+    },
+    {
+      "table": "products",
+      "id": "7d7257f2-ee83-43cf-85bf-5dba3bbf5196",
+      "path": "editor_draft.card.alt"
+    },
+    {
+      "table": "products",
+      "id": "7d7257f2-ee83-43cf-85bf-5dba3bbf5196",
+      "path": "editor_draft.card.description"
+    },
+    {
+      "table": "products",
+      "id": "7d7257f2-ee83-43cf-85bf-5dba3bbf5196",
+      "path": "card_published.alt"
+    },
+    {
+      "table": "products",
+      "id": "7d7257f2-ee83-43cf-85bf-5dba3bbf5196",
+      "path": "card_published.description"
+    },
+    {
+      "table": "products",
+      "id": "d0fb66d4-f290-405b-9362-30a4f5c16e27",
+      "path": "card_draft.description"
+    },
+    {
+      "table": "products",
+      "id": "d0fb66d4-f290-405b-9362-30a4f5c16e27",
+      "path": "editor_draft.card.description"
+    },
+    {
+      "table": "products",
+      "id": "d0fb66d4-f290-405b-9362-30a4f5c16e27",
+      "path": "card_published.description"
+    }
+  ],
+  "replayNoOp": true,
+  "sqlSha256": "1598d9f2a403814e87ffadb84f5ef2fccf61c6fb205e6cc0404f13cf1330804d",
+  "backupSha256": "5d56a7258762236769d5e42fc050c32feb147c240ad0bce05a4690d7668ae50b"
+}

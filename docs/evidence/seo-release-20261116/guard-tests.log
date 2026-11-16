@@ -1,0 +1,14 @@
+✔ public app redirects preserve paths and query parameters, with no com loop (12.157625ms)
+✔ private, API, payment and unknown paths never match marketing redirects (3.244708ms)
+✔ organization identity has no invented business facts (0.123792ms)
+✔ guarded content migration changes audited facts, preserves other policies and is idempotent (966.120167ms)
+✔ www.app marketing redirects win while protected and unknown paths retain their exact alias contract (7.841834ms)
+✔ corrected editor drafts cannot restore obsolete descriptions during later publication and custom drafts stay intact (967.956917ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1404.616625

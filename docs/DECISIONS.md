@@ -322,6 +322,11 @@ Owner requested cream photo badges, full-colour photos, reopening panels and opt
 LOCAL AMENDMENT (7 November 2026): User overrides full-colour unavailable photos: restore grayscale media/muted card surfaces, keep cream status badge/panel in colour, reopening headline before explanation, and matching saved-content admin preview. Hidden storefront cards and operational booking guards unchanged. No migration or hosted changes.
 
 
+## 16 November 2026 — Mobile full-screen hero and amenity disclosures
+
+Owner approved local mobile presentation changes: fill the available viewport including the winter ribbon budget, natural scroll on constrained screens, responsive photographs/cards and up to six data-driven amenity icon buttons with accessible anchored popovers. This supersedes the earlier compact carousel decision to remove mobile hero viewport stretching; desktop, product data, booking rules and native carousel behavior remain unchanged. No deployment or merge is authorized. Missing attached reference is recorded; written requirements guide this implementation.
+
+
 ## 16 November 2026 — SEO audit priority fixes, local implementation and draft PR
 
 Owner approved accurate April2027 hop-on hop-off return, approximately two-hour winter panorama tours at09:00/11:00/13:00 with15-minute photo stops, and selected-operating-day Daily Ticket validity. Prepare public marketing .app→www.com permanent redirects while preserving authentication/customer/API/payment contracts and existing transactional origins. Enrich existing canonical pages and verified structured data; preserve content owners and unrelated policies. Hosted content migration, domain alias correction, ticket-host retirement and Search Console actions are release follow-ups; no deployment, merge or DNS/Search Console change authorized. Branch-specific Vercel deployment suppression allows a review-only PR without changing main deployment behavior.

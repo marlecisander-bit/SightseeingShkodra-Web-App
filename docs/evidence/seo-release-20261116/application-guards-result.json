@@ -1,0 +1,8 @@
+{
+  "freshSnapshotApplication": true,
+  "expectedPlanVerified": true,
+  "concurrentEditRejected": true,
+  "concurrentEditPreserved": true,
+  "scopedRollbackRestoresBackup": true,
+  "rollbackPreservesLaterUnrelatedEdit": true
+}

@@ -18,7 +18,7 @@ export function WhatsAppContact({href,label,desktop,mobile,excludePaths=[]}:{hre
    frame=0;
    node.style.visibility='';
    const phoneHero=window.matchMedia('(max-width:599px), (max-width:900px) and (max-height:500px) and (orientation:landscape) and (pointer:coarse)').matches&&!!document.querySelector('#home-hero #experiences');
-   const heroControls=phoneHero?'#home-hero [aria-label="Choose experience"] button,#home-hero [data-product-details]>summary,#home-hero [data-all-amenities]':'';
+   const heroControls=phoneHero?'#home-hero [aria-label="Choose experience"] button,#home-hero [data-product-details]>summary,#home-hero [data-all-amenities],#home-hero [data-mobile-amenities] button,[role="tooltip"]':'';
    const rect=node.getBoundingClientRect();
    const viewportHeight=document.documentElement.clientHeight;
    // Clear sticky checkout actions and the product card price/booking controls.

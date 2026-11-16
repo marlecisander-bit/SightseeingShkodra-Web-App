@@ -18,6 +18,8 @@ const nextConfig: NextConfig = {
       ]),
       { source: "/tickets", destination: "/book", permanent: true },
       { source: "/mes-bridge-shkodra", destination: "/explore/bridge", permanent: true },
+      // Preserve the existing www.app alias contract for every nonmarketing path.
+      { source: "/:path*", destination: "https://sightseeingshkodra.app/:path*", permanent: false, has: [{type: "host", value: "www\\.sightseeingshkodra\\.app"}] },
     ];
   },
   async headers() { return [...['/admin/:path*', '/auth/:path*', '/api/:path*', '/booking/:path*', '/dev/:path*', '/your-day', '/credits'].map(source => ({source, headers: [{key: 'X-Robots-Tag', value: 'noindex, nofollow'}]})), {source:'/admin/:operatorId/website-preview',headers:[{key:'Content-Security-Policy',value:"connect-src 'none'; frame-src 'none'; form-action 'none'; object-src 'none'; base-uri 'self'"}]},{ source: '/admin/sw.js', headers: [{ key: 'Cache-Control', value: 'no-store, max-age=0' }, { key: 'Content-Type', value: 'application/javascript; charset=utf-8' }, { key: 'X-Content-Type-Options', value: 'nosniff' }] }]; },
