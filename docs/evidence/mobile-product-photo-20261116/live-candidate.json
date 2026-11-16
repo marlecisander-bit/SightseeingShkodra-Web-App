@@ -1,0 +1,422 @@
+[
+  {
+    "name": "chromium",
+    "w": 375,
+    "h": 667,
+    "before": [
+      {
+        "inactive": false,
+        "photo": 105.140625,
+        "card": 383.953125,
+        "body": 276.8125
+      },
+      {
+        "inactive": true,
+        "photo": 64.234375,
+        "card": 383.953125,
+        "body": 317.71875
+      }
+    ],
+    "after": [
+      {
+        "inactive": false,
+        "photo": 64.234375,
+        "card": 383.953125,
+        "body": 317.71875
+      },
+      {
+        "inactive": true,
+        "photo": 64.234375,
+        "card": 383.953125,
+        "body": 317.71875
+      }
+    ],
+    "scrollStable": true,
+    "desktopTabletUnchanged": false
+  },
+  {
+    "name": "chromium",
+    "w": 390,
+    "h": 844,
+    "before": [
+      {
+        "inactive": false,
+        "photo": 254.25,
+        "card": 546.265625,
+        "body": 290.015625
+      },
+      {
+        "inactive": true,
+        "photo": 200.75,
+        "card": 546.265625,
+        "body": 343.515625
+      }
+    ],
+    "after": [
+      {
+        "inactive": false,
+        "photo": 200.75,
+        "card": 546.265625,
+        "body": 343.515625
+      },
+      {
+        "inactive": true,
+        "photo": 200.75,
+        "card": 546.265625,
+        "body": 343.515625
+      }
+    ],
+    "scrollStable": true,
+    "desktopTabletUnchanged": false
+  },
+  {
+    "name": "chromium",
+    "w": 430,
+    "h": 932,
+    "before": [
+      {
+        "inactive": false,
+        "photo": 329.0625,
+        "card": 627.390625,
+        "body": 296.328125
+      },
+      {
+        "inactive": true,
+        "photo": 275.5625,
+        "card": 627.390625,
+        "body": 349.828125
+      }
+    ],
+    "after": [
+      {
+        "inactive": false,
+        "photo": 275.5625,
+        "card": 627.390625,
+        "body": 349.828125
+      },
+      {
+        "inactive": true,
+        "photo": 275.5625,
+        "card": 627.390625,
+        "body": 349.828125
+      }
+    ],
+    "scrollStable": true,
+    "desktopTabletUnchanged": false
+  },
+  {
+    "name": "chromium",
+    "w": 360,
+    "h": 800,
+    "before": [
+      {
+        "inactive": false,
+        "photo": 220.75,
+        "card": 507.609375,
+        "body": 284.859375
+      },
+      {
+        "inactive": true,
+        "photo": 138.953125,
+        "card": 507.609375,
+        "body": 366.65625
+      }
+    ],
+    "after": [
+      {
+        "inactive": false,
+        "photo": 138.953125,
+        "card": 507.609375,
+        "body": 366.65625
+      },
+      {
+        "inactive": true,
+        "photo": 138.953125,
+        "card": 507.609375,
+        "body": 366.65625
+      }
+    ],
+    "scrollStable": true,
+    "desktopTabletUnchanged": false
+  },
+  {
+    "name": "chromium",
+    "w": 768,
+    "h": 1024,
+    "before": [
+      {
+        "inactive": false,
+        "photo": 460.953125,
+        "card": 851.796875,
+        "body": 388.84375
+      },
+      {
+        "inactive": true,
+        "photo": 460.953125,
+        "card": 851.796875,
+        "body": 388.84375
+      }
+    ],
+    "after": [
+      {
+        "inactive": false,
+        "photo": 460.953125,
+        "card": 851.796875,
+        "body": 388.84375
+      },
+      {
+        "inactive": true,
+        "photo": 460.953125,
+        "card": 851.796875,
+        "body": 388.84375
+      }
+    ],
+    "scrollStable": true,
+    "desktopTabletUnchanged": true
+  },
+  {
+    "name": "chromium",
+    "w": 1440,
+    "h": 900,
+    "before": [
+      {
+        "inactive": false,
+        "photo": 293.75,
+        "card": 698.484375,
+        "body": 402.734375
+      },
+      {
+        "inactive": true,
+        "photo": 293.75,
+        "card": 698.484375,
+        "body": 402.734375
+      }
+    ],
+    "after": [
+      {
+        "inactive": false,
+        "photo": 293.75,
+        "card": 698.484375,
+        "body": 402.734375
+      },
+      {
+        "inactive": true,
+        "photo": 293.75,
+        "card": 698.484375,
+        "body": 402.734375
+      }
+    ],
+    "scrollStable": true,
+    "desktopTabletUnchanged": true
+  },
+  {
+    "name": "webkit",
+    "w": 375,
+    "h": 667,
+    "before": [
+      {
+        "inactive": false,
+        "photo": 105.140625,
+        "card": 383.953125,
+        "body": 276.8125
+      },
+      {
+        "inactive": true,
+        "photo": 64.234375,
+        "card": 383.953125,
+        "body": 317.71875
+      }
+    ],
+    "after": [
+      {
+        "inactive": false,
+        "photo": 64.234375,
+        "card": 383.953125,
+        "body": 317.71875
+      },
+      {
+        "inactive": true,
+        "photo": 64.234375,
+        "card": 383.953125,
+        "body": 317.71875
+      }
+    ],
+    "scrollStable": true,
+    "desktopTabletUnchanged": false
+  },
+  {
+    "name": "webkit",
+    "w": 390,
+    "h": 844,
+    "before": [
+      {
+        "inactive": false,
+        "photo": 254.28125,
+        "card": 546.28125,
+        "body": 290
+      },
+      {
+        "inactive": true,
+        "photo": 200.78125,
+        "card": 546.28125,
+        "body": 343.5
+      }
+    ],
+    "after": [
+      {
+        "inactive": false,
+        "photo": 200.78125,
+        "card": 546.28125,
+        "body": 343.5
+      },
+      {
+        "inactive": true,
+        "photo": 200.78125,
+        "card": 546.28125,
+        "body": 343.5
+      }
+    ],
+    "scrollStable": true,
+    "desktopTabletUnchanged": false
+  },
+  {
+    "name": "webkit",
+    "w": 430,
+    "h": 932,
+    "before": [
+      {
+        "inactive": false,
+        "photo": 329.078125,
+        "card": 627.390625,
+        "body": 296.3125
+      },
+      {
+        "inactive": true,
+        "photo": 275.578125,
+        "card": 627.390625,
+        "body": 349.8125
+      }
+    ],
+    "after": [
+      {
+        "inactive": false,
+        "photo": 275.578125,
+        "card": 627.390625,
+        "body": 349.8125
+      },
+      {
+        "inactive": true,
+        "photo": 275.578125,
+        "card": 627.390625,
+        "body": 349.8125
+      }
+    ],
+    "scrollStable": true,
+    "desktopTabletUnchanged": false
+  },
+  {
+    "name": "webkit",
+    "w": 360,
+    "h": 800,
+    "before": [
+      {
+        "inactive": false,
+        "photo": 220.75,
+        "card": 507.609375,
+        "body": 284.859375
+      },
+      {
+        "inactive": true,
+        "photo": 138.953125,
+        "card": 507.609375,
+        "body": 366.65625
+      }
+    ],
+    "after": [
+      {
+        "inactive": false,
+        "photo": 138.953125,
+        "card": 507.609375,
+        "body": 366.65625
+      },
+      {
+        "inactive": true,
+        "photo": 138.953125,
+        "card": 507.609375,
+        "body": 366.65625
+      }
+    ],
+    "scrollStable": true,
+    "desktopTabletUnchanged": false
+  },
+  {
+    "name": "webkit",
+    "w": 768,
+    "h": 1024,
+    "before": [
+      {
+        "inactive": false,
+        "photo": 470.625,
+        "card": 861.46875,
+        "body": 388.84375
+      },
+      {
+        "inactive": true,
+        "photo": 470.625,
+        "card": 861.46875,
+        "body": 388.84375
+      }
+    ],
+    "after": [
+      {
+        "inactive": false,
+        "photo": 470.625,
+        "card": 861.46875,
+        "body": 388.84375
+      },
+      {
+        "inactive": true,
+        "photo": 470.625,
+        "card": 861.46875,
+        "body": 388.84375
+      }
+    ],
+    "scrollStable": true,
+    "desktopTabletUnchanged": true
+  },
+  {
+    "name": "webkit",
+    "w": 1440,
+    "h": 900,
+    "before": [
+      {
+        "inactive": false,
+        "photo": 297.421875,
+        "card": 702.140625,
+        "body": 402.71875
+      },
+      {
+        "inactive": true,
+        "photo": 297.421875,
+        "card": 702.140625,
+        "body": 402.71875
+      }
+    ],
+    "after": [
+      {
+        "inactive": false,
+        "photo": 297.421875,
+        "card": 702.140625,
+        "body": 402.71875
+      },
+      {
+        "inactive": true,
+        "photo": 297.421875,
+        "card": 702.140625,
+        "body": 402.71875
+      }
+    ],
+    "scrollStable": true,
+    "desktopTabletUnchanged": true
+  }
+]

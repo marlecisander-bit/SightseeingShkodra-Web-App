@@ -1,0 +1,42 @@
+{
+  "status": "local only; not published",
+  "rootCause": "Independent flex photo growth used each card body height. The inactive availability panel consumes more body space and reduces only that photo.",
+  "change": "Phone carousel shares photo/body rows with CSS subgrid; photo and text heights align across cards. Existing 64px minimum, viewport budget and natural content growth retained.",
+  "source": "src/components/public/product-booking-cards.module.css",
+  "checks": {
+    "components": 198,
+    "lint": "pass",
+    "types": "pass",
+    "webpackBuild": "pass",
+    "localBrowserCases": 14,
+    "liveContentBrowserOnlyCandidateCases": 12,
+    "engines": [
+      "Chromium",
+      "WebKit"
+    ],
+    "portraitSizes": [
+      "375x667",
+      "390x844",
+      "430x932",
+      "360x800"
+    ],
+    "tabletDesktopUnchanged": true,
+    "scrollStable": true
+  },
+  "example390x844": {
+    "beforeActivePhoto": 254.25,
+    "beforeInactivePhoto": 200.75,
+    "afterBoth": 200.75
+  },
+  "boundaries": [
+    "No production changes",
+    "No desktop/tablet styling changes",
+    "Status, grayscale, prices, links and booking behavior retained",
+    "Physical iPhone not connected; tested WebKit engine"
+  ],
+  "evidence": [
+    "before.json",
+    "after.json",
+    "live-candidate.json"
+  ]
+}

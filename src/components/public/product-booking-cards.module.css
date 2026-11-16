@@ -106,7 +106,9 @@
    content can still extend the page on short screens or with enlarged text. */
 @media(max-width:599px){
  .embedded,.embedded .carousel{display:flex;flex-direction:column;flex:1;}
- .embedded .grid{flex:1;}
+ /* Share photo/body rows: availability copy must not shrink only one photo. */
+ .embedded .grid{flex:1;grid-template-rows:minmax(64px,1fr) auto;row-gap:0;}
+ .embedded .card{display:grid;grid-template-rows:subgrid;grid-row:span 2;row-gap:0;}
  .embedded .body{flex:0 0 auto;}
  .embedded .purchaseSummary{margin-top:auto;}
  .embedded .description{display:block;overflow:visible;-webkit-line-clamp:unset;}
