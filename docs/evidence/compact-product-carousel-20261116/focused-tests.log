@@ -1,0 +1,10 @@
+✔ compact unavailable cards keep authoritative price/date and offer details without a booking link (44.645042ms)
+✔ both details openers expose all saved amenities and seasonal content, close on Escape and restore their own focus (76.139833ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 675.433125
