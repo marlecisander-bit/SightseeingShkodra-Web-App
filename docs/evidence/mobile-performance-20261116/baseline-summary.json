@@ -1,0 +1,29 @@
+[
+  {
+    "run": 1,
+    "score": 0.94,
+    "first-contentful-paint": 932.917,
+    "largest-contentful-paint": 2806.917,
+    "total-blocking-time": 18,
+    "cumulative-layout-shift": 0,
+    "speed-index": 3597.6058379400247
+  },
+  {
+    "run": 2,
+    "score": 0.98,
+    "first-contentful-paint": 932.393,
+    "largest-contentful-paint": 2053.393,
+    "total-blocking-time": 6,
+    "cumulative-layout-shift": 0,
+    "speed-index": 3396.8311460392015
+  },
+  {
+    "run": 3,
+    "score": 0.94,
+    "first-contentful-paint": 1282.6599999999999,
+    "largest-contentful-paint": 2812.66,
+    "total-blocking-time": 0.5,
+    "cumulative-layout-shift": 0,
+    "speed-index": 4026.295217936754
+  }
+]
