@@ -1,0 +1,208 @@
+{
+  "before": {
+    "rows": [
+      {
+        "run": 1,
+        "score": 0.94,
+        "first-contentful-paint": 932.917,
+        "largest-contentful-paint": 2806.917,
+        "total-blocking-time": 18,
+        "cumulative-layout-shift": 0,
+        "speed-index": 3597.6058379400247,
+        "loadDelay": 2049.272000061035,
+        "cssBytes": 57681,
+        "cssRequests": 4,
+        "heroRequests": 1,
+        "mapRequests": 0
+      },
+      {
+        "run": 2,
+        "score": 0.98,
+        "first-contentful-paint": 932.393,
+        "largest-contentful-paint": 2053.393,
+        "total-blocking-time": 6,
+        "cumulative-layout-shift": 0,
+        "speed-index": 3396.8311460392015,
+        "loadDelay": 1914.914,
+        "cssBytes": 57681,
+        "cssRequests": 4,
+        "heroRequests": 1,
+        "mapRequests": 0
+      },
+      {
+        "run": 3,
+        "score": 0.94,
+        "first-contentful-paint": 1282.6599999999999,
+        "largest-contentful-paint": 2812.66,
+        "total-blocking-time": 0.5,
+        "cumulative-layout-shift": 0,
+        "speed-index": 4026.295217936754,
+        "loadDelay": 2298.195,
+        "cssBytes": 57682,
+        "cssRequests": 4,
+        "heroRequests": 1,
+        "mapRequests": 0
+      }
+    ],
+    "metrics": {
+      "score": {
+        "median": 0.94,
+        "min": 0.94,
+        "max": 0.98
+      },
+      "first-contentful-paint": {
+        "median": 932.917,
+        "min": 932.393,
+        "max": 1282.6599999999999
+      },
+      "largest-contentful-paint": {
+        "median": 2806.917,
+        "min": 2053.393,
+        "max": 2812.66
+      },
+      "total-blocking-time": {
+        "median": 6,
+        "min": 0.5,
+        "max": 18
+      },
+      "cumulative-layout-shift": {
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "speed-index": {
+        "median": 3597.6058379400247,
+        "min": 3396.8311460392015,
+        "max": 4026.295217936754
+      },
+      "loadDelay": {
+        "median": 2049.272000061035,
+        "min": 1914.914,
+        "max": 2298.195
+      },
+      "cssBytes": {
+        "median": 57681,
+        "min": 57681,
+        "max": 57682
+      },
+      "cssRequests": {
+        "median": 4,
+        "min": 4,
+        "max": 4
+      },
+      "heroRequests": {
+        "median": 1,
+        "min": 1,
+        "max": 1
+      },
+      "mapRequests": {
+        "median": 0,
+        "min": 0,
+        "max": 0
+      }
+    }
+  },
+  "after": {
+    "rows": [
+      {
+        "run": 1,
+        "score": 0.93,
+        "first-contentful-paint": 1276.7958500000002,
+        "largest-contentful-paint": 2772.95648,
+        "total-blocking-time": 24.75992999999994,
+        "cumulative-layout-shift": 0,
+        "speed-index": 4642.512165808194,
+        "loadDelay": 1765.434,
+        "cssBytes": 71566,
+        "cssRequests": 25,
+        "heroRequests": 1,
+        "mapRequests": 68
+      },
+      {
+        "run": 2,
+        "score": 0.95,
+        "first-contentful-paint": 1196.8769500000003,
+        "largest-contentful-paint": 2610.6529650000007,
+        "total-blocking-time": 4.5,
+        "cumulative-layout-shift": 0,
+        "speed-index": 3620.0106219942854,
+        "loadDelay": 917.549,
+        "cssBytes": 71665,
+        "cssRequests": 25,
+        "heroRequests": 1,
+        "mapRequests": 68
+      },
+      {
+        "run": 3,
+        "score": 0.96,
+        "first-contentful-paint": 1163.0571,
+        "largest-contentful-paint": 2581.1513700000005,
+        "total-blocking-time": 2.5,
+        "cumulative-layout-shift": 0,
+        "speed-index": 3145.026050232419,
+        "loadDelay": 736.687,
+        "cssBytes": 71553,
+        "cssRequests": 25,
+        "heroRequests": 1,
+        "mapRequests": 68
+      }
+    ],
+    "metrics": {
+      "score": {
+        "median": 0.95,
+        "min": 0.93,
+        "max": 0.96
+      },
+      "first-contentful-paint": {
+        "median": 1196.8769500000003,
+        "min": 1163.0571,
+        "max": 1276.7958500000002
+      },
+      "largest-contentful-paint": {
+        "median": 2610.6529650000007,
+        "min": 2581.1513700000005,
+        "max": 2772.95648
+      },
+      "total-blocking-time": {
+        "median": 4.5,
+        "min": 2.5,
+        "max": 24.75992999999994
+      },
+      "cumulative-layout-shift": {
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "speed-index": {
+        "median": 3620.0106219942854,
+        "min": 3145.026050232419,
+        "max": 4642.512165808194
+      },
+      "loadDelay": {
+        "median": 917.549,
+        "min": 736.687,
+        "max": 1765.434
+      },
+      "cssBytes": {
+        "median": 71566,
+        "min": 71553,
+        "max": 71665
+      },
+      "cssRequests": {
+        "median": 25,
+        "min": 25,
+        "max": 25
+      },
+      "heroRequests": {
+        "median": 1,
+        "min": 1,
+        "max": 1
+      },
+      "mapRequests": {
+        "median": 68,
+        "min": 68,
+        "max": 68
+      }
+    }
+  }
+}
