@@ -27,6 +27,8 @@ test('responsive hero hints flush while ancillary data is suspended, without pre
    assert.match(hints[0].getAttribute('imagesrcset'),/mobile/);
    assert.match(hints[1].getAttribute('imagesrcset'),/desktop/);
    assert.ok(dom.window.document.querySelector('main[aria-busy="true"]'));
+   // Preserve the header's :has(#home-hero) sizing before the real hero arrives.
+   assert.ok(dom.window.document.querySelector('main.p-home #home-hero'));
    assert.doesNotMatch(html,/Ancillary data resolved/);
   } finally {dom.window.close();}
   finish();await ended;
