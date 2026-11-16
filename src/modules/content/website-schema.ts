@@ -108,7 +108,7 @@ export const websiteSections: {id:string;title:string;fields:WebsiteField[]}[] =
     ...footerFields,
     f("footer.location", "Location", "Shkodër, Albania"), f("footer.language", "Language note", "English · More languages coming soon"), f("footer.contact", "Contact and legal note", "Contact and legal information before launch"),
   ] },
-  { id: "seo", title: "Homepage SEO", fields: [f("seo.title", "Search title", "Sightseeing Shkodra"), f("seo.description", "Search description", "Discover Shkodra. Tour details and booking information coming soon."), f("seo.image", "Social image", "/images/lake.webp", "image"), f("seo.alt", "Social image description", "Lake Shkodra and the Buna River seen from Rozafa Castle")] },
+  { id: "seo", title: "Homepage SEO", fields: [f("seo.title", "Search title", "Shkodra Sightseeing & Panorama Tours | Sightseeing Shkodra"), f("seo.description", "Search description", "Explore Shkodra on an approximately two-hour panorama tour with 15-minute photo stops. Winter departures at 09:00, 11:00 and 13:00. View tours and book."), f("seo.image", "Social image", "/images/lake.webp", "image"), f("seo.alt", "Social image description", "Lake Shkodra and the Buna River seen from Rozafa Castle")] },
 ];
 for (const section of websiteSections) {
   if (homepageVisibilitySections.some(id => id === section.id)) section.fields.push(f(`${section.id}.showOnHomepage`, `Show ${visibilityScope(section.id)}`, "true", "visibility"));

@@ -6,11 +6,14 @@ globalThis.productPageResolve=async id=>{calls.push(id);return id===product.id?p
 registerHooks({resolve(s,c,next){
  let source;
  if(s==='next/navigation')source="export function notFound(){throw Error('NOT_FOUND')}";
- if(s.endsWith('/booking/products-server'))source='export const resolveBookableProduct=id=>globalThis.productPageResolve(id);';
+ if(s.endsWith('/booking/products-server'))source='export const resolveBookableProduct=id=>globalThis.productPageResolve(id);export const getBookableProducts=async()=>[];';
  if(s.endsWith('/content/website-server'))source='export const getPublishedWebsite=async()=>({});export const getWebsitePublication=async()=>({content:{},published:true});';
  if(s.endsWith('/content/sitemap-server'))source='export const isPublicTourPublished=async()=>true;';
  if(s.endsWith('/content/seo'))source='export const editorialMetadata=()=>({});';
  if(s.endsWith('/public/booking'))source='export function BookingProvider(){};export function BookingFlow(){};export function BookingEntry(){};';
+ if(s.endsWith('/booking/meeting-point-server'))source='export const getCurrentMeetingPoint=async()=>null;';
+ if(s.endsWith('/content/tour-details-server'))source='export const getTourInclusions=async()=>({});';
+ if(s.endsWith('/public/tour-summary'))source='export function TourSummary(){};';
  if(s.endsWith('/public/page-intro'))source='export function PageIntro(){};';
  return source?{url:'data:text/javascript,'+encodeURIComponent(source),shortCircuit:true}:next(s,c);
 },load(url,c,next){if(url.startsWith('data:text/javascript,'))return {format:'module',source:decodeURIComponent(url.slice('data:text/javascript,'.length)),shortCircuit:true};return next(url,c);}});

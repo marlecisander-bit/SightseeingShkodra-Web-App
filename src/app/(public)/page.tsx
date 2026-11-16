@@ -8,6 +8,8 @@ import { getPublicReviews } from "@/modules/content/reviews-server";
 import { getHomepage } from "@/modules/content/homepage-server";
 import { getWebsitePublication } from "@/modules/content/website-server";
 import { HomepageView } from "@/components/public/homepage-view";
+import {businessStructuredData} from "@/modules/content/business-structured-data";
+import {safeJsonLd,seoConfig} from "@/modules/content/seo";
 import { websiteMetadata } from "@/modules/content/seo";
 export async function generateMetadata() {
   const { content: c, published } = await getWebsitePublication();
@@ -19,5 +21,5 @@ export default async function Home() {
   const content = publication.content;
   preloadHomepageHero(content);
   const [home, reviews, planner, places, partners,products] = await Promise.all([getHomepage(), getPublicReviews(), getDayPlanner(), getPublicDestinations(), loadPublicPartners(homepageVisible(content,"partners")),getBookableProducts().catch(()=>[])]);
-  return <HomepageView products={products} partners={partners} planner={planner} home={home} content={content} reviews={reviews} places={places.filter(d=>d.showOnHomepage)} />;
+  return <><HomepageView products={products} partners={partners} planner={planner} home={home} content={content} reviews={reviews} places={places.filter(d=>d.showOnHomepage)} />{seoConfig().origin&&<script type="application/ld+json" dangerouslySetInnerHTML={{__html:safeJsonLd(businessStructuredData(seoConfig().origin!,content))}}/>}</>;
 }

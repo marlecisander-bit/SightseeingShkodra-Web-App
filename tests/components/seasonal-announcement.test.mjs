@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {seasonalActive,seasonalDefaults} from '../../src/modules/content/seasonal-announcement.ts';
 import {initialWebsiteContent,validateWebsiteContent,globalEditorSections,homepageEditorSections,unavailableWebsiteContent} from '../../src/modules/content/website-schema.ts';
-const on={...initialWebsiteContent,'seasonal.enabled':'true'};
+const on={...initialWebsiteContent,'seasonal.enabled':'true','seasonal.start':'2026-11-01','seasonal.end':'2027-04-30'};
 test('announcement uses inclusive Tirane dates across UTC and daylight saving boundaries; Off overrides schedule',()=>{
  for(const [instant,active] of [['2026-10-31T22:59:59Z',false],['2026-10-31T23:00:00Z',true],['2027-04-30T21:59:59Z',true],['2027-04-30T22:00:00Z',false]])assert.equal(seasonalActive(on,new Date(instant)),active,instant);
  assert.equal(seasonalActive({...on,'seasonal.enabled':'false'},new Date('2026-11-09')),false);

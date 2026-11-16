@@ -5,6 +5,17 @@ const nextConfig: NextConfig = {
   async redirects() {
     // Exact retired public entry points only; never match customer/token routes.
     return [
+      // Public marketing only. Transactional/customer/auth/API routes retain their origin.
+      ...["sightseeingshkodra.app", "www.sightseeingshkodra.app"].flatMap(host => [
+        ...["/", "/book", "/route", "/explore", "/explore/:slug", "/faq", "/privacy-policy", "/terms-and-conditions", "/live", "/credits"].map(source => ({
+          source, destination: `https://www.sightseeingshkodra.com${source}`, permanent: true,
+          has: [{type: "host" as const, value: host.replaceAll(".", "\\.")}],
+        })),
+        ...[{source:"/tickets",path:"/book"},{source:"/tour",path:"/book"},{source:"/mes-bridge-shkodra",path:"/explore/bridge"}].map(({source,path}) => ({
+          source, destination: `https://www.sightseeingshkodra.com${path}`, permanent: true,
+          has: [{type:"host" as const,value:host.replaceAll(".","\\.")}],
+        })),
+      ]),
       { source: "/tickets", destination: "/book", permanent: true },
       { source: "/mes-bridge-shkodra", destination: "/explore/bridge", permanent: true },
     ];

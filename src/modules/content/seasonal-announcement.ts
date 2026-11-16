@@ -3,15 +3,15 @@ import {plannerClock} from './day-planner';
 // Editorial communication only: these values never control inventory or pricing.
 export const seasonalDefaults:Record<string,string> = {
  'seasonal.enabled':'false',
- 'seasonal.start':'2026-11-01','seasonal.end':'2027-04-30',
+ 'seasonal.start':'2026-11-01','seasonal.end':'2027-03-31',
  'seasonal.title':'WINTER SEASON','seasonal.message':'Panoramic Tours Only',
- 'seasonal.shortSeason':'Nov 2026 – Apr 2027','seasonal.season':'November 2026 – April 2027',
+ 'seasonal.shortSeason':'Nov 2026 – Mar 2027','seasonal.season':'November 2026 – March 2027',
  'seasonal.learnMore':'Learn More','seasonal.popupTitle':'Winter Panoramic Sightseeing Tours',
- 'seasonal.description':'Discover Shkodra on our relaxing 2-hour Panoramic Sightseeing Tour, featuring three scenic photo stops with 15 minutes at each location to explore, enjoy the views and take memorable pictures.',
+ 'seasonal.description':'Discover Shkodra on our Panoramic Sightseeing Tour, lasting approximately two hours and featuring three scenic photo stops with 15 minutes at each location to explore, enjoy the views and take memorable pictures.',
  'seasonal.departuresLabel':'Daily Departures','seasonal.departures':'09:00 · 11:00 · 13:00',
  'seasonal.stopsLabel':'Photo Stops','seasonal.stops':'Shiroka & Lake Shkodra\nCathedral & Historic Center\nMesi Bridge',
  'seasonal.noticeLabel':'Important Information',
- 'seasonal.notice':'During the winter season, only Panoramic Sightseeing Tours are available. Our regular Hop-On Hop-Off service returns in May 2027.',
+ 'seasonal.notice':'During the winter season, only Panoramic Sightseeing Tours are available. Our regular Hop-On Hop-Off service returns in April 2027.',
  'seasonal.action':'Explore Tours','seasonal.close':'Close announcement',
 };
 export const seasonalLabels:Record<string,string>={enabled:'Enable seasonal announcement',start:'Start date (Europe/Tirane)',end:'End date, inclusive (Europe/Tirane)',title:'Ribbon title',message:'Ribbon message',shortSeason:'Desktop season label',season:'Popup season label',learnMore:'Learn more label',popupTitle:'Popup title',description:'Popup description',departuresLabel:'Departures heading',departures:'Departure times (separate with ·)',stopsLabel:'Photo stops heading',stops:'Photo stops (one per line)',noticeLabel:'Service notice heading',notice:'Service notice',action:'Explore tours label',close:'Close button accessible label'};
