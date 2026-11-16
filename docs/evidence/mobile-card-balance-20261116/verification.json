@@ -1,0 +1,84 @@
+{
+  "status": "local only; not deployed",
+  "rootCause": "Shared photo/body subgrid rows stretched the shorter active body to the inactive availability panel height, and auto margin placed the spare space above the price.",
+  "change": "Phone cards use equal width-based 16:9 photo frames and natural body heights; rail aligns cards to the top, and purchase summary follows the content without auto spacing.",
+  "applicationSourceFiles": [
+    "src/components/public/product-booking-cards.module.css"
+  ],
+  "checks": {
+    "componentsPassed": 198,
+    "lint": "pass",
+    "types": "pass",
+    "webpackBuild": "pass",
+    "actualContentBrowserCases": 16,
+    "localCompiledFixtureCases": 14,
+    "engines": [
+      "Chromium",
+      "WebKit"
+    ],
+    "sizes": [
+      "375x667",
+      "390x844",
+      "430x932",
+      "440x772",
+      "360x800",
+      "667x375",
+      "768x1024",
+      "1440x900"
+    ],
+    "equalMobilePhotos": true,
+    "amenityCountsPreserved": true,
+    "scrollStable": true,
+    "tabletDesktopUnchanged": true
+  },
+  "example440x772": {
+    "name": "webkit",
+    "w": 440,
+    "h": 772,
+    "before": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 122.671875,
+        "photoWidth": 385,
+        "card": 467.390625,
+        "gap": 89.515625,
+        "body": 342.71875
+      },
+      {
+        "amenities": 8,
+        "inactive": true,
+        "photo": 122.671875,
+        "photoWidth": 385,
+        "card": 467.390625,
+        "gap": 7.71875,
+        "body": 342.71875
+      }
+    ],
+    "after": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 216.65625,
+        "photoWidth": 385,
+        "card": 479.578125,
+        "gap": 7.71875,
+        "body": 260.921875
+      },
+      {
+        "amenities": 8,
+        "inactive": true,
+        "photo": 216.65625,
+        "photoWidth": 385,
+        "card": 561.375,
+        "gap": 7.71875,
+        "body": 342.71875
+      }
+    ]
+  },
+  "limitations": [
+    "Physical iPhone unavailable; WebKit engine tested.",
+    "Taller inactive cards use natural height; on short screens normal vertical scrolling remains available."
+  ],
+  "publication": "No push or deployment performed."
+}

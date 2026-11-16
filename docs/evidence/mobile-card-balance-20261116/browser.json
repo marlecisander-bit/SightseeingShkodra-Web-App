@@ -1,0 +1,722 @@
+[
+  {
+    "name": "chromium",
+    "w": 375,
+    "h": 667,
+    "before": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 64.234375,
+        "photoWidth": 328,
+        "card": 383.953125,
+        "gap": 46.90625,
+        "body": 317.71875
+      },
+      {
+        "amenities": 2,
+        "inactive": true,
+        "photo": 64.234375,
+        "photoWidth": 328,
+        "card": 383.953125,
+        "gap": 6,
+        "body": 317.71875
+      }
+    ],
+    "after": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 184.5,
+        "photoWidth": 328,
+        "card": 463.3125,
+        "gap": 6,
+        "body": 276.8125
+      },
+      {
+        "amenities": 2,
+        "inactive": true,
+        "photo": 184.5,
+        "photoWidth": 328,
+        "card": 504.21875,
+        "gap": 6,
+        "body": 317.71875
+      }
+    ]
+  },
+  {
+    "name": "chromium",
+    "w": 390,
+    "h": 844,
+    "before": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 200.75,
+        "photoWidth": 341,
+        "card": 546.265625,
+        "gap": 61.9375,
+        "body": 343.515625
+      },
+      {
+        "amenities": 8,
+        "inactive": true,
+        "photo": 200.75,
+        "photoWidth": 341,
+        "card": 546.265625,
+        "gap": 8.4375,
+        "body": 343.515625
+      }
+    ],
+    "after": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 191.90625,
+        "photoWidth": 341,
+        "card": 483.921875,
+        "gap": 8.4375,
+        "body": 290.015625
+      },
+      {
+        "amenities": 8,
+        "inactive": true,
+        "photo": 191.90625,
+        "photoWidth": 341,
+        "card": 537.421875,
+        "gap": 8.4375,
+        "body": 343.515625
+      }
+    ]
+  },
+  {
+    "name": "chromium",
+    "w": 430,
+    "h": 932,
+    "before": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 275.5625,
+        "photoWidth": 376,
+        "card": 627.390625,
+        "gap": 62.5,
+        "body": 349.828125
+      },
+      {
+        "amenities": 8,
+        "inactive": true,
+        "photo": 275.5625,
+        "photoWidth": 376,
+        "card": 627.390625,
+        "gap": 9,
+        "body": 349.828125
+      }
+    ],
+    "after": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 211.71875,
+        "photoWidth": 376,
+        "card": 510.046875,
+        "gap": 9,
+        "body": 296.328125
+      },
+      {
+        "amenities": 8,
+        "inactive": true,
+        "photo": 211.71875,
+        "photoWidth": 376,
+        "card": 563.546875,
+        "gap": 9,
+        "body": 349.828125
+      }
+    ]
+  },
+  {
+    "name": "chromium",
+    "w": 440,
+    "h": 772,
+    "before": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 122.671875,
+        "photoWidth": 385,
+        "card": 467.390625,
+        "gap": 89.515625,
+        "body": 342.71875
+      },
+      {
+        "amenities": 8,
+        "inactive": true,
+        "photo": 122.671875,
+        "photoWidth": 385,
+        "card": 467.390625,
+        "gap": 7.71875,
+        "body": 342.71875
+      }
+    ],
+    "after": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 216.65625,
+        "photoWidth": 385,
+        "card": 479.578125,
+        "gap": 7.71875,
+        "body": 260.921875
+      },
+      {
+        "amenities": 8,
+        "inactive": true,
+        "photo": 216.65625,
+        "photoWidth": 385,
+        "card": 561.375,
+        "gap": 7.71875,
+        "body": 342.71875
+      }
+    ]
+  },
+  {
+    "name": "chromium",
+    "w": 360,
+    "h": 800,
+    "before": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 138.953125,
+        "photoWidth": 315,
+        "card": 507.609375,
+        "gap": 89.796875,
+        "body": 366.65625
+      },
+      {
+        "amenities": 8,
+        "inactive": true,
+        "photo": 138.953125,
+        "photoWidth": 315,
+        "card": 507.609375,
+        "gap": 8,
+        "body": 366.65625
+      }
+    ],
+    "after": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 177.0625,
+        "photoWidth": 315,
+        "card": 463.921875,
+        "gap": 8,
+        "body": 284.859375
+      },
+      {
+        "amenities": 8,
+        "inactive": true,
+        "photo": 177.0625,
+        "photoWidth": 315,
+        "card": 545.71875,
+        "gap": 8,
+        "body": 366.65625
+      }
+    ]
+  },
+  {
+    "name": "chromium",
+    "w": 667,
+    "h": 375,
+    "before": [
+      {
+        "amenities": 2,
+        "inactive": false,
+        "photo": 395.8125,
+        "photoWidth": 528,
+        "card": 819.65625,
+        "gap": 0,
+        "body": 421.84375
+      },
+      {
+        "amenities": 2,
+        "inactive": true,
+        "photo": 395.8125,
+        "photoWidth": 528,
+        "card": 819.65625,
+        "gap": 0,
+        "body": 421.84375
+      }
+    ],
+    "after": [
+      {
+        "amenities": 2,
+        "inactive": false,
+        "photo": 395.8125,
+        "photoWidth": 528,
+        "card": 819.65625,
+        "gap": 0,
+        "body": 421.84375
+      },
+      {
+        "amenities": 2,
+        "inactive": true,
+        "photo": 395.8125,
+        "photoWidth": 528,
+        "card": 819.65625,
+        "gap": 0,
+        "body": 421.84375
+      }
+    ]
+  },
+  {
+    "name": "chromium",
+    "w": 768,
+    "h": 1024,
+    "before": [
+      {
+        "amenities": 2,
+        "inactive": false,
+        "photo": 460.953125,
+        "photoWidth": 615,
+        "card": 851.796875,
+        "gap": 0,
+        "body": 388.84375
+      },
+      {
+        "amenities": 2,
+        "inactive": true,
+        "photo": 460.953125,
+        "photoWidth": 615,
+        "card": 851.796875,
+        "gap": 0,
+        "body": 388.84375
+      }
+    ],
+    "after": [
+      {
+        "amenities": 2,
+        "inactive": false,
+        "photo": 460.953125,
+        "photoWidth": 615,
+        "card": 851.796875,
+        "gap": 0,
+        "body": 388.84375
+      },
+      {
+        "amenities": 2,
+        "inactive": true,
+        "photo": 460.953125,
+        "photoWidth": 615,
+        "card": 851.796875,
+        "gap": 0,
+        "body": 388.84375
+      }
+    ]
+  },
+  {
+    "name": "chromium",
+    "w": 1440,
+    "h": 900,
+    "before": [
+      {
+        "amenities": 2,
+        "inactive": false,
+        "photo": 293.75,
+        "photoWidth": 392,
+        "card": 698.484375,
+        "gap": 0,
+        "body": 402.734375
+      },
+      {
+        "amenities": 2,
+        "inactive": true,
+        "photo": 293.75,
+        "photoWidth": 392,
+        "card": 698.484375,
+        "gap": 0,
+        "body": 402.734375
+      }
+    ],
+    "after": [
+      {
+        "amenities": 2,
+        "inactive": false,
+        "photo": 293.75,
+        "photoWidth": 392,
+        "card": 698.484375,
+        "gap": 0,
+        "body": 402.734375
+      },
+      {
+        "amenities": 2,
+        "inactive": true,
+        "photo": 293.75,
+        "photoWidth": 392,
+        "card": 698.484375,
+        "gap": 0,
+        "body": 402.734375
+      }
+    ]
+  },
+  {
+    "name": "webkit",
+    "w": 375,
+    "h": 667,
+    "before": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 64.234375,
+        "photoWidth": 328,
+        "card": 383.953125,
+        "gap": 46.90625,
+        "body": 317.71875
+      },
+      {
+        "amenities": 2,
+        "inactive": true,
+        "photo": 64.234375,
+        "photoWidth": 328,
+        "card": 383.953125,
+        "gap": 6,
+        "body": 317.71875
+      }
+    ],
+    "after": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 184.5,
+        "photoWidth": 328,
+        "card": 463.3125,
+        "gap": 6,
+        "body": 276.8125
+      },
+      {
+        "amenities": 2,
+        "inactive": true,
+        "photo": 184.5,
+        "photoWidth": 328,
+        "card": 504.21875,
+        "gap": 6,
+        "body": 317.71875
+      }
+    ]
+  },
+  {
+    "name": "webkit",
+    "w": 390,
+    "h": 844,
+    "before": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 200.78125,
+        "photoWidth": 341,
+        "card": 546.28125,
+        "gap": 61.9375,
+        "body": 343.5
+      },
+      {
+        "amenities": 8,
+        "inactive": true,
+        "photo": 200.78125,
+        "photoWidth": 341,
+        "card": 546.28125,
+        "gap": 8.4375,
+        "body": 343.5
+      }
+    ],
+    "after": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 191.90625,
+        "photoWidth": 341,
+        "card": 483.90625,
+        "gap": 8.4375,
+        "body": 290
+      },
+      {
+        "amenities": 8,
+        "inactive": true,
+        "photo": 191.90625,
+        "photoWidth": 341,
+        "card": 537.40625,
+        "gap": 8.4375,
+        "body": 343.5
+      }
+    ]
+  },
+  {
+    "name": "webkit",
+    "w": 430,
+    "h": 932,
+    "before": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 275.578125,
+        "photoWidth": 376,
+        "card": 627.390625,
+        "gap": 62.5,
+        "body": 349.8125
+      },
+      {
+        "amenities": 8,
+        "inactive": true,
+        "photo": 275.578125,
+        "photoWidth": 376,
+        "card": 627.390625,
+        "gap": 9,
+        "body": 349.8125
+      }
+    ],
+    "after": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 211.71875,
+        "photoWidth": 376,
+        "card": 510.03125,
+        "gap": 9,
+        "body": 296.3125
+      },
+      {
+        "amenities": 8,
+        "inactive": true,
+        "photo": 211.71875,
+        "photoWidth": 376,
+        "card": 563.53125,
+        "gap": 9,
+        "body": 349.8125
+      }
+    ]
+  },
+  {
+    "name": "webkit",
+    "w": 440,
+    "h": 772,
+    "before": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 122.671875,
+        "photoWidth": 385,
+        "card": 467.390625,
+        "gap": 89.515625,
+        "body": 342.71875
+      },
+      {
+        "amenities": 8,
+        "inactive": true,
+        "photo": 122.671875,
+        "photoWidth": 385,
+        "card": 467.390625,
+        "gap": 7.71875,
+        "body": 342.71875
+      }
+    ],
+    "after": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 216.65625,
+        "photoWidth": 385,
+        "card": 479.578125,
+        "gap": 7.71875,
+        "body": 260.921875
+      },
+      {
+        "amenities": 8,
+        "inactive": true,
+        "photo": 216.65625,
+        "photoWidth": 385,
+        "card": 561.375,
+        "gap": 7.71875,
+        "body": 342.71875
+      }
+    ]
+  },
+  {
+    "name": "webkit",
+    "w": 360,
+    "h": 800,
+    "before": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 138.953125,
+        "photoWidth": 315,
+        "card": 507.609375,
+        "gap": 89.796875,
+        "body": 366.65625
+      },
+      {
+        "amenities": 8,
+        "inactive": true,
+        "photo": 138.953125,
+        "photoWidth": 315,
+        "card": 507.609375,
+        "gap": 8,
+        "body": 366.65625
+      }
+    ],
+    "after": [
+      {
+        "amenities": 7,
+        "inactive": false,
+        "photo": 177.0625,
+        "photoWidth": 315,
+        "card": 463.921875,
+        "gap": 8,
+        "body": 284.859375
+      },
+      {
+        "amenities": 8,
+        "inactive": true,
+        "photo": 177.0625,
+        "photoWidth": 315,
+        "card": 545.71875,
+        "gap": 8,
+        "body": 366.65625
+      }
+    ]
+  },
+  {
+    "name": "webkit",
+    "w": 667,
+    "h": 375,
+    "before": [
+      {
+        "amenities": 2,
+        "inactive": false,
+        "photo": 405.484375,
+        "photoWidth": 541,
+        "card": 796.328125,
+        "gap": 0,
+        "body": 388.84375
+      },
+      {
+        "amenities": 2,
+        "inactive": true,
+        "photo": 405.484375,
+        "photoWidth": 541,
+        "card": 796.328125,
+        "gap": 0,
+        "body": 388.84375
+      }
+    ],
+    "after": [
+      {
+        "amenities": 2,
+        "inactive": false,
+        "photo": 405.484375,
+        "photoWidth": 541,
+        "card": 796.328125,
+        "gap": 0,
+        "body": 388.84375
+      },
+      {
+        "amenities": 2,
+        "inactive": true,
+        "photo": 405.484375,
+        "photoWidth": 541,
+        "card": 796.328125,
+        "gap": 0,
+        "body": 388.84375
+      }
+    ]
+  },
+  {
+    "name": "webkit",
+    "w": 768,
+    "h": 1024,
+    "before": [
+      {
+        "amenities": 2,
+        "inactive": false,
+        "photo": 470.625,
+        "photoWidth": 628,
+        "card": 861.46875,
+        "gap": 0,
+        "body": 388.84375
+      },
+      {
+        "amenities": 2,
+        "inactive": true,
+        "photo": 470.625,
+        "photoWidth": 628,
+        "card": 861.46875,
+        "gap": 0,
+        "body": 388.84375
+      }
+    ],
+    "after": [
+      {
+        "amenities": 2,
+        "inactive": false,
+        "photo": 470.625,
+        "photoWidth": 628,
+        "card": 861.46875,
+        "gap": 0,
+        "body": 388.84375
+      },
+      {
+        "amenities": 2,
+        "inactive": true,
+        "photo": 470.625,
+        "photoWidth": 628,
+        "card": 861.46875,
+        "gap": 0,
+        "body": 388.84375
+      }
+    ]
+  },
+  {
+    "name": "webkit",
+    "w": 1440,
+    "h": 900,
+    "before": [
+      {
+        "amenities": 2,
+        "inactive": false,
+        "photo": 297.421875,
+        "photoWidth": 397,
+        "card": 702.140625,
+        "gap": 0,
+        "body": 402.71875
+      },
+      {
+        "amenities": 2,
+        "inactive": true,
+        "photo": 297.421875,
+        "photoWidth": 397,
+        "card": 702.140625,
+        "gap": 0,
+        "body": 402.71875
+      }
+    ],
+    "after": [
+      {
+        "amenities": 2,
+        "inactive": false,
+        "photo": 297.421875,
+        "photoWidth": 397,
+        "card": 702.140625,
+        "gap": 0,
+        "body": 402.71875
+      },
+      {
+        "amenities": 2,
+        "inactive": true,
+        "photo": 297.421875,
+        "photoWidth": 397,
+        "card": 702.140625,
+        "gap": 0,
+        "body": 402.71875
+      }
+    ]
+  }
+]
