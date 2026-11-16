@@ -1,0 +1,130 @@
+[
+  {
+    "viewport": [
+      360,
+      640
+    ],
+    "heroBottom": 640,
+    "headingClear": true,
+    "photoHeight": 96,
+    "overflow": false,
+    "cardContentFits": true,
+    "targets44": true,
+    "transforms": [
+      "none",
+      "none"
+    ]
+  },
+  {
+    "viewport": [
+      375,
+      667
+    ],
+    "heroBottom": 667,
+    "headingClear": true,
+    "photoHeight": 100.046875,
+    "overflow": false,
+    "cardContentFits": true,
+    "targets44": true,
+    "transforms": [
+      "none",
+      "none"
+    ]
+  },
+  {
+    "viewport": [
+      390,
+      844
+    ],
+    "heroBottom": 844,
+    "headingClear": true,
+    "photoHeight": 166.3125,
+    "overflow": false,
+    "cardContentFits": true,
+    "targets44": true,
+    "transforms": [
+      "none",
+      "none"
+    ]
+  },
+  {
+    "viewport": [
+      430,
+      932
+    ],
+    "heroBottom": 932,
+    "headingClear": true,
+    "photoHeight": 190.953125,
+    "overflow": false,
+    "cardContentFits": true,
+    "targets44": true,
+    "transforms": [
+      "none",
+      "none"
+    ]
+  },
+  {
+    "viewport": [
+      667,
+      375
+    ],
+    "heroBottom": 666.203125,
+    "headingClear": true,
+    "photoHeight": 96,
+    "overflow": false,
+    "cardContentFits": true,
+    "targets44": true,
+    "transforms": [
+      "none",
+      "none"
+    ]
+  },
+  {
+    "viewport": [
+      844,
+      390
+    ],
+    "heroBottom": 666.203125,
+    "headingClear": true,
+    "photoHeight": 96,
+    "overflow": false,
+    "cardContentFits": true,
+    "targets44": true,
+    "transforms": [
+      "none",
+      "none"
+    ]
+  },
+  {
+    "viewport": [
+      390,
+      740
+    ],
+    "heroBottom": 740,
+    "headingClear": true,
+    "photoHeight": 137.1875,
+    "overflow": false,
+    "cardContentFits": true,
+    "targets44": true,
+    "transforms": [
+      "none",
+      "none"
+    ]
+  },
+  {
+    "viewport": [
+      390,
+      844
+    ],
+    "heroBottom": 844,
+    "headingClear": true,
+    "photoHeight": 166.3125,
+    "overflow": false,
+    "cardContentFits": true,
+    "targets44": true,
+    "transforms": [
+      "none",
+      "none"
+    ]
+  }
+]

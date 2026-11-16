@@ -46,9 +46,8 @@
 
 .ribbon > span:last-child {min-width:0;overflow-wrap:anywhere;}
 
-/* Restore the ribbon above navigation in the existing reserved hero band.
-   Its original typography and wrapping stay in flow inside a zero-height frame. */
+/* The ribbon owns its natural mobile height; the hero subtracts that measured height. */
 @media(max-width:599px){
- :global(.public-site:has(#home-hero)) .frame{height:0;}
- :global(.public-site:has(#home-hero)) .frame.frame :global(.p-header){top:auto;}
+ :global(.public-site:has(#home-hero)) .frame{height:auto;}
+ :global(.public-site:has(#home-hero)) .frame.frame :global(.p-header){top:100%;}
 }

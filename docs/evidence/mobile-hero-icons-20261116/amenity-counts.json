@@ -1,0 +1,38 @@
+[
+  {
+    "amenities": "0",
+    "result": [
+      {
+        "type": "text",
+        "text": "Script ran on page and returned:\n```json\n{\"icons\":0,\"overflow\":false,\"hasAll\":true}\n```"
+      }
+    ]
+  },
+  {
+    "amenities": "1",
+    "result": [
+      {
+        "type": "text",
+        "text": "Script ran on page and returned:\n```json\n{\"icons\":1,\"overflow\":false,\"hasAll\":true}\n```"
+      }
+    ]
+  },
+  {
+    "amenities": "3",
+    "result": [
+      {
+        "type": "text",
+        "text": "Script ran on page and returned:\n```json\n{\"icons\":3,\"overflow\":false,\"hasAll\":true}\n```"
+      }
+    ]
+  },
+  {
+    "amenities": "7",
+    "result": [
+      {
+        "type": "text",
+        "text": "Script ran on page and returned:\n```json\n{\"icons\":6,\"overflow\":false,\"hasAll\":true}\n```"
+      }
+    ]
+  }
+]

@@ -320,3 +320,8 @@ Owner requested canonical www.com completion and actual processing inspection wi
 Owner requested cream photo badges, full-colour photos, reopening panels and optional route actions, with compatible per-tour admin controls. Reuse active/unavailable_message; add nullable validated presentation JSON for reason, label, structured month/day reopening and secondary action. Active remains the booking authority; displayed dates never reopen sales. Existing content is preserved, and old inactive records fall back to temporary unavailability. See TOUR-STATUS-DESIGN-2026-11-07.md. Local implementation only in this task.
 
 LOCAL AMENDMENT (7 November 2026): User overrides full-colour unavailable photos: restore grayscale media/muted card surfaces, keep cream status badge/panel in colour, reopening headline before explanation, and matching saved-content admin preview. Hidden storefront cards and operational booking guards unchanged. No migration or hosted changes.
+
+
+## 16 November 2026 — Mobile full-screen hero and amenity disclosures
+
+Owner approved local mobile presentation changes: fill the available viewport including the winter ribbon budget, natural scroll on constrained screens, responsive photographs/cards and up to six data-driven amenity icon buttons with accessible anchored popovers. This supersedes the earlier compact carousel decision to remove mobile hero viewport stretching; desktop, product data, booking rules and native carousel behavior remain unchanged. No deployment or merge is authorized. Missing attached reference is recorded; written requirements guide this implementation.
