@@ -4,7 +4,8 @@
     "deploymentEnabled": {
       "review/seo-priority-20261116": false,
       "perf/mobile-loading-20261116": false,
-      "rollback/performance-20261116": false
+      "rollback/performance-20261116": false,
+      "style/justify-product-descriptions-20261116": false
     }
   }
 }
