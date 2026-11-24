@@ -6,7 +6,7 @@ import { Component, useEffect, useRef, useState, type ReactNode } from 'react';
 import { BookButton, useBooking } from './booking';
 import { ProductBookingLink } from './product-booking-link';
 import { plannerClock, type DayPlannerData } from '@/modules/content/day-planner';
-import { freshRoutePosition, recentRoutePosition, routeLastKnownPositionMs, routeLivePositionMs, type RouteBoarding, type RouteStop } from '@/modules/tracking/route-itinerary';
+import { freshRoutePosition, nearestRouteStop, recentRoutePosition, routeLastKnownPositionMs, routeLivePositionMs, type RouteBoarding, type RouteStop } from '@/modules/tracking/route-itinerary';
 import type { Coordinate } from '@/modules/tracking/published-map';
 import type { Position } from '@/modules/tracking/positions';
 import styles from './route-explorer.module.css';
@@ -23,7 +23,9 @@ class MapBoundary extends Component<{ children: ReactNode }, { failed: boolean }
   }
 }
 
-type Panel = 'stops' | 'departures' | 'stop' | 'boarding' | 'tracking' | null;
+type VisitorLocation = { coordinate: Coordinate; accuracy: number };
+
+type Panel = 'stops' | 'departures' | 'stop' | 'boarding' | 'tracking' | 'location' | null;
 
 export function RouteExplorer({ planner, routeTitle, lines, stops, boarding, mapVersion, initialPosition, initialLastKnown = null, initialEta = null, initialMovement = null, initialObservedAt = null }: {
   planner: DayPlannerData; routeTitle: string; lines: Coordinate[][]; stops: RouteStop[];
@@ -39,12 +41,17 @@ export function RouteExplorer({ planner, routeTitle, lines, stops, boarding, map
   const panelClose = useRef<HTMLButtonElement>(null);
   const previousControl = useRef<HTMLElement | null>(null);
   const [findVehicle, setFindVehicle] = useState(0);
+  const [visitor, setVisitor] = useState<VisitorLocation | null>(null);
+  const [locationMessage, setLocationMessage] = useState('');
+  const locationRequest = useRef(0);
   const [times, setTimes] = useState(planner.times);
   const [observedAt, setObservedAt] = useState(initialObservedAt);
   const selectedIndex = stops.findIndex(stop => stop.id === selection);
   const selected = stops[selectedIndex];
   const canvasSelection = panel === 'stop' || panel === 'boarding' ? selection : null;
   const scheduleProduct = planner.product?.slug;
+  const nearest = panel === 'location' && visitor ? nearestRouteStop(visitor.coordinate, stops) : null;
+  const walkingDestination = nearest && (boarding?.stopId === nearest.stop.id ? boarding.coordinate ?? nearest.coordinate : nearest.coordinate);
   const canTrack = lines.length > 0 && mapVersion !== null;
   const vehicle = canTrack ? live.position : null;
   const lastKnownTime = observedAt ? new Intl.DateTimeFormat('en-GB', {
@@ -122,6 +129,7 @@ export function RouteExplorer({ planner, routeTitle, lines, stops, boarding, map
   }, [scheduleProduct]);
 
   function show(next: Exclude<Panel, null>, id: string | null = null) {
+    if (next !== 'location') locationRequest.current += 1;
     if (!panel) previousControl.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     select(id);
     setPanel(next);
@@ -131,10 +139,40 @@ export function RouteExplorer({ planner, routeTitle, lines, stops, boarding, map
     show(boardingId ? 'boarding' : 'stop', boardingId ? 'boarding' : id);
   }
   function close(restoreFocus = true) {
+    locationRequest.current += 1;
     setPanel(null);
     select(null);
     if (restoreFocus) previousControl.current?.focus({ preventScroll: true });
   }
+  function findMe() {
+    show('location');
+    setVisitor(null);
+    if (!navigator.geolocation) {
+      setLocationMessage('Your browser does not provide location access.');
+      return;
+    }
+    setLocationMessage('Finding your location…');
+    const request = ++locationRequest.current;
+    navigator.geolocation.getCurrentPosition(({ coords }) => {
+      if (request !== locationRequest.current) return;
+      const { latitude, longitude, accuracy } = coords;
+      if (!Number.isFinite(latitude) || Math.abs(latitude) > 90 ||
+          !Number.isFinite(longitude) || Math.abs(longitude) > 180 ||
+          !Number.isFinite(accuracy) || accuracy < 0) {
+        setLocationMessage('Could not get a usable location. Try again.');
+        return;
+      }
+      setVisitor({ coordinate: [latitude, longitude], accuracy });
+      setLocationMessage('Your location is marked on the map.');
+    }, error => {
+      if (request !== locationRequest.current) return;
+      setLocationMessage(error.code === 1
+        ? 'Location access is off. Allow location in your browser to use Find me.'
+        : 'Could not find your location. Try again.');
+    }, { enableHighAccuracy: true, timeout: 15_000, maximumAge: 5_000 });
+  }
+
+  useEffect(() => () => { locationRequest.current += 1; }, []);
   useEffect(() => {
     if (panel) panelClose.current?.focus({ preventScroll: true });
   }, [panel]);
@@ -145,7 +183,7 @@ export function RouteExplorer({ planner, routeTitle, lines, stops, boarding, map
     <div className={styles.workspace}>
       <div className={styles.map}>
         <MapBoundary><Map lines={lines} stops={stops} boarding={boarding} vehicle={vehicle} findVehicle={findVehicle}
-          selected={canvasSelection} reset={reset} zoom={zoom} onSelect={choose} /></MapBoundary>
+          selected={canvasSelection} visitor={visitor} centerVisitor={panel === 'location'} reset={reset} zoom={zoom} onSelect={choose} /></MapBoundary>
         <header className={styles.tour} data-map-obstacle>
           <h1>{routeTitle}</h1>
           <button className={styles.trackingButton} type="button" aria-label="Tracking details"
@@ -154,8 +192,13 @@ export function RouteExplorer({ planner, routeTitle, lines, stops, boarding, map
         </header>
         <div className={styles.mapControls} data-map-obstacle aria-label="Map controls">
           <div className={styles.mapActions}>
-            {vehicle && <button type="button" onClick={() => setFindVehicle(value => value + 1)}>Live van</button>}
-            <button type="button" onClick={() => { close(false); setReset(value => value + 1); }}>Full route</button>
+            <button type="button" onClick={findMe} aria-expanded={panel === 'location'}>Find me</button>
+            <button type="button" onClick={() => {
+              if (!vehicle) { show('tracking'); return; }
+              close(false);
+              setFindVehicle(value => value + 1);
+            }}>Find van</button>
+            <button type="button" onClick={() => { close(false); setVisitor(null); setReset(value => value + 1); }}>Full route</button>
           </div>
           <div className={styles.zoom}>
             <button type="button" aria-label="Zoom in" onClick={() => setZoom(previous => ({ delta: 1, request: previous.request + 1 }))}>+</button>
@@ -186,6 +229,16 @@ export function RouteExplorer({ planner, routeTitle, lines, stops, boarding, map
           {stops.length ? <ol className={styles.stops}>{stops.map((stop, index) => <li key={stop.id}>
             <button type="button" onClick={() => choose(stop.id)}><b>{index + 1}</b> {boarding?.stopId === stop.id ? 'Start here' : stop.place?.name ?? stop.name}</button>
           </li>)}</ol> : <p>The itinerary is currently unavailable.</p>}
+        </>}
+        {panel === 'location' && <><h2>Your location</h2><p role="status">{locationMessage}</p>
+          {nearest && <div className={styles.nearby}>
+            <p>Nearest stop by straight-line distance</p>
+            <button type="button" onClick={() => choose(nearest.stop.id)}>
+              {boarding?.stopId === nearest.stop.id ? 'Start here' : nearest.stop.place?.name ?? nearest.stop.name}
+            </button>
+            <a className={styles.directions} href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(walkingDestination?.join(',') ?? '')}&travelmode=walking`}
+              target="_blank" rel="noopener noreferrer">Walking directions</a>
+          </div>}
         </>}
         {panel === 'tracking' && <><h2>Tracking details</h2>
           <p role="status">{vehicle ? live.movement ?? 'Van location live' : 'Live location unavailable'}</p>

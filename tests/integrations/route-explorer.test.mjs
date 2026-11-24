@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { freshRoutePosition, recentRoutePosition, routeBoarding, routeEta, routeItinerary } from '../../src/modules/tracking/route-itinerary.ts';
+import { freshRoutePosition, nearestRouteStop, recentRoutePosition, routeBoarding, routeEta, routeItinerary } from '../../src/modules/tracking/route-itinerary.ts';
 
 const point = (id, number) => ({ id, name: id, number, kind: 'stop', coordinate: [42, 19] });
 const lines = [[[42, 19], [42.1, 19.1]]];
@@ -55,4 +55,16 @@ test('keeps a valid recent stale fix separate from live tracking for up to ten m
   assert.equal(recentRoutePosition(position, observed + 328000), position);
   assert.equal(recentRoutePosition(position, observed + 600000), null);
   assert.equal(recentRoutePosition(position, observed - 1000), null);
+});
+
+test('finds the nearest located stop and ignores entries without coordinates', () => {
+  const stops = [
+    { id: 'unknown', name: 'Unknown' },
+    { id: 'lake', name: 'Lake', coordinate: [42.05, 19.48] },
+    { id: 'centre', name: 'Centre', coordinate: [42.068, 19.512] },
+  ];
+  const result = nearestRouteStop([42.068, 19.511], stops);
+  assert.equal(result.stop.id, 'centre');
+  assert(result.distance > 70 && result.distance < 90);
+  assert.equal(nearestRouteStop([42.068, 19.511], stops.slice(0, 1)), null);
 });

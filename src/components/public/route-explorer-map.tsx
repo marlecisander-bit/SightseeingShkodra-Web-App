@@ -12,6 +12,7 @@ type Props = {
   lines: Coordinate[][]; stops: RouteStop[]; boarding: RouteBoarding | null;
   vehicle: Position | null; findVehicle: number; selected: string | null; reset: number;
   zoom: { delta: number; request: number };
+  visitor: { coordinate: Coordinate; accuracy: number } | null; centerVisitor: boolean;
   onSelect: (id: string) => void;
 };
 
@@ -19,7 +20,7 @@ const initialCenter: Coordinate = [42.069, 19.512];
 const tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-export default function RouteExplorerMap({ lines, stops, boarding, vehicle, findVehicle, selected, reset, zoom, onSelect }: Props) {
+export default function RouteExplorerMap({ lines, stops, boarding, vehicle, findVehicle, selected, reset, zoom, visitor, centerVisitor, onSelect }: Props) {
   const surface = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const pins = useRef(new Map<string, L.Marker>());
@@ -62,6 +63,7 @@ export default function RouteExplorerMap({ lines, stops, boarding, vehicle, find
     }).setView(initialCenter, 13);
     map.current = instance;
     instance.createPane('tourVehicle').style.zIndex = '625';
+    instance.createPane('tourVisitor').style.zIndex = '624';
     // Overview tiles use one lower source zoom, which has fewer street labels.
     const overview = L.tileLayer(tileUrl, { tileSize: 512, zoomOffset: -1, maxZoom: 19, attribution, className: styles.overviewTiles });
     const detail = L.tileLayer(tileUrl, { maxZoom: 19, attribution });
@@ -191,9 +193,47 @@ export default function RouteExplorerMap({ lines, stops, boarding, vehicle, find
 
   useEffect(() => {
     if (!vehicle || !map.current || lastFind.current === findVehicle) return;
-    lastFind.current = findVehicle;
-    map.current.setView([vehicle.lat, vehicle.lng], Math.max(15, map.current.getZoom()), { animate: false });
+    const frame = requestAnimationFrame(() => {
+      const instance = map.current;
+      if (!instance) return;
+      lastFind.current = findVehicle;
+      instance.invalidateSize({ animate: false });
+      instance.setView([vehicle.lat, vehicle.lng], Math.max(15, instance.getZoom()), { animate: false });
+    });
+    return () => cancelAnimationFrame(frame);
   }, [findVehicle, vehicle]);
+
+  useEffect(() => {
+    const instance = map.current;
+    if (!visitor || !instance) return;
+    const group = L.layerGroup().addTo(instance);
+    if (visitor.accuracy > 0) L.circle(visitor.coordinate, {
+      radius: visitor.accuracy, color: '#245bc0', weight: 1, opacity: .4,
+      fillColor: '#4388f2', fillOpacity: .12, interactive: false,
+    }).addTo(group);
+    L.circleMarker(visitor.coordinate, {
+      pane: 'tourVisitor', radius: 8, color: '#fff', weight: 3, fillColor: '#245bc0', fillOpacity: 1,
+    }).bindTooltip('Your location').addTo(group);
+    return () => { group.remove(); };
+  }, [visitor]);
+
+  useEffect(() => {
+    if (!centerVisitor || !visitor || !map.current) return;
+    const frame = requestAnimationFrame(() => {
+      const instance = map.current;
+      if (!instance) return;
+      instance.invalidateSize({ animate: false });
+      // A coarse location is easier to interpret with its accuracy area in view.
+      if (visitor.accuracy >= 120) {
+        instance.fitBounds(L.latLng(visitor.coordinate).toBounds(visitor.accuracy * 2), {
+          padding: [16, 16], maxZoom: 16, animate: false,
+        });
+      } else {
+        instance.setView(visitor.coordinate, Math.max(16, instance.getZoom()), { animate: false });
+      }
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [centerVisitor, visitor]);
 
   useEffect(() => {
     if (zoom.request && map.current) map.current.setZoom(map.current.getZoom() + zoom.delta, { animate: false });
