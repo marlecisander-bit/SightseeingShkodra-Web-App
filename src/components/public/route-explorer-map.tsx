@@ -31,6 +31,7 @@ function arrangeStopCaptions(canvas: HTMLElement, markers: Map<string, L.Marker>
     if (!element || !content || !photo) return [];
     const caption = element.querySelector<HTMLElement>(`.${styles.pinCaption}`);
     content.style.transform = '';
+    content.style.setProperty('--caption-leader', '0px');
     if (caption) { caption.style.transform = ''; caption.style.visibility = ''; }
     return [{ id, element, content, photo: photo.getBoundingClientRect() as LabelBox, caption }];
   }).sort((a, b) => Number(b.id === selected) - Number(a.id === selected));
@@ -61,27 +62,35 @@ function arrangeStopCaptions(canvas: HTMLElement, markers: Map<string, L.Marker>
   }
 
   const placed: LabelBox[] = [];
-  for (const { id, caption } of entries) {
+  const offsets = [0, 12, 24, 36, 48, 60, 72, 84, 96, 108, 120].flatMap(y =>
+      [0, -20, 20, -40, 40, -60, 60, -80, 80].map(x => ({ x, y })))
+      .sort((a, b) => Math.abs(a.x) * 1.3 + a.y - Math.abs(b.x) * 1.3 - b.y);
+  for (const { id, caption, content } of entries) {
     if (!caption) continue;
     const box = caption.getBoundingClientRect();
     const obstructions = entries.filter(entry => entry.id !== id).map(entry => entry.photo);
     if (vehicle) obstructions.push(vehicle);
     if (tooltip) obstructions.push(tooltip);
     let offset: [number, number] | undefined;
-    for (const shift of [0, -20, 20, -40, 40, -60, 60]) {
-      for (const y of [0, 12, 24, 36, 48]) {
-        const x = Math.min(viewport.right - 6 - box.right, Math.max(viewport.left + 6 - box.left, shift));
-        const candidate = { left: box.left + x, right: box.right + x, top: box.top + y, bottom: box.bottom + y };
-        if (Math.abs(x) > 64 || candidate.top < viewport.top + 8 || candidate.bottom > viewport.bottom - 18 ||
-            [...obstructions, ...placed].some(other => overlaps(candidate, other))) continue;
-        offset = [x, y];
-        placed.push(candidate);
-        break;
-      }
-      if (offset) break;
+    for (const { x: shift, y } of offsets) {
+      const x = Math.min(viewport.right - 6 - box.right, Math.max(viewport.left + 6 - box.left, shift));
+      const candidate = { left: box.left + x, right: box.right + x, top: box.top + y, bottom: box.bottom + y };
+      if (Math.abs(x) > 84 || candidate.top < viewport.top + 8 || candidate.bottom > viewport.bottom - 18 ||
+          [...obstructions, ...placed].some(other => overlaps(candidate, other))) continue;
+      offset = [x, y];
+      placed.push(candidate);
+      break;
     }
-    if (offset) caption.style.transform = `translate(${offset[0]}px, ${offset[1]}px)`;
-    else caption.style.visibility = 'hidden';
+    if (!offset) {
+      caption.style.visibility = 'hidden';
+      continue;
+    }
+    const [x, y] = offset;
+    caption.style.transform = `translate(${x}px, ${y}px)`;
+    if (x || y) {
+      content.style.setProperty('--caption-leader', `${Math.hypot(x, y + 3)}px`);
+      content.style.setProperty('--caption-angle', `${Math.atan2(y + 3, x)}rad`);
+    }
   }
 }
 
@@ -161,7 +170,8 @@ export default function RouteExplorerMap({ lines, stops, boarding, vehicle, vehi
       markers.set(id, marker);
     };
     stops.forEach((stop, index) => {
-      const name = stop.place?.name || stop.name;
+      const sourceName = stop.place?.name || stop.name;
+      const name = sourceName.replace(/^Stop\s+\d+\s*[-–—:]\s*/i, '').trim() || sourceName;
       if (stop.coordinate) pin(stop.id, `Stop ${index + 1}: ${name}`, stop.coordinate, String(index + 1), stop.place?.image, name);
     });
     if (boarding?.coordinate) pin('boarding', `Start here: ${boarding.name}`, boarding.coordinate, 'Start here');
