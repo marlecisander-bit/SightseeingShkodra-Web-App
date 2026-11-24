@@ -8,9 +8,10 @@ import type { Snapshot } from '@/modules/tracking/positions';
 
 type LiveMapResponse = { mapVersion: string | number | null; map: PublishedMap; snapshot: Snapshot; journey: unknown };
 
-export function NativeRouteMap({ selectedStopId, onJourney }: {
+export function NativeRouteMap({ selectedStopId, onJourney, background = false }: {
   selectedStopId?: string;
-  onJourney: (value: JourneySnapshot | null, reason?: 'stale') => void;
+  background?: boolean;
+  onJourney?: (value: JourneySnapshot | null, reason?: 'stale') => void;
 }) {
   const [data, setData] = useState<LiveMapResponse>();
   const [failed, setFailed] = useState(false);
@@ -26,7 +27,7 @@ export function NativeRouteMap({ selectedStopId, onJourney }: {
         if (!response.ok) throw new Error('Live map unavailable');
         const next: LiveMapResponse = await response.json();
         if (!controller.signal.aborted) {
-          setData(previous => ({
+          if (!background) setData(previous => ({
             ...next,
             map: previous && previous.mapVersion === next.mapVersion ? previous.map : next.map,
           }));
@@ -34,14 +35,14 @@ export function NativeRouteMap({ selectedStopId, onJourney }: {
           clearTimeout(expires);
           const journey = parseJourney(next.journey);
           const ttl = journey ? presentationTtl(journey) : 0;
-          onJourney(ttl ? journey : null);
-          if (ttl) expires = setTimeout(() => onJourney(null), ttl);
+          onJourney?.(ttl ? journey : null);
+          if (ttl) expires = setTimeout(() => onJourney?.(null), ttl);
         }
       } catch {
         if (!controller.signal.aborted) {
           clearTimeout(expires);
           setFailed(true);
-          onJourney(null, 'stale');
+          onJourney?.(null, 'stale');
         }
       } finally {
         pending = false;
@@ -56,8 +57,9 @@ export function NativeRouteMap({ selectedStopId, onJourney }: {
       clearTimeout(expires);
       document.removeEventListener('visibilitychange', refresh);
     };
-  }, [onJourney]);
+  }, [background, onJourney]);
 
+  if (background) return null;
   if (!data) return <p role="status">{failed ? 'Live map temporarily unavailable.' : 'Loading live map…'}</p>;
   return <SharedMap mode="view" publishedMap={data.map} selectedStopId={selectedStopId}
     snapshot={failed ? { state: 'unavailable', positions: [] } : data.snapshot} />;

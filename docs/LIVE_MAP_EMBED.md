@@ -60,3 +60,7 @@ Verify the current device and GPS worker paths, legacy map links, and every publ
 ### Native journey status
 
 The preview now shows supported stop progression and ETA from coherent tracking snapshots. Estimates require a fresh moving observation and a matching upstream ETA. A stationary stop shows its location without an arrival countdown. Stale estimates expire locally. Full companion feature parity, live vehicle acceptance and admin integration remain pending.
+
+### Connected website and admin consumers
+
+The opt-in native source also supplies homepage journey status and the Your day map. Tracking-authorized staff in the public operator workspace can view the published map in Live Map. Operational editing and publishing still use the existing companion because the tracking database requires an authenticated tracking-project identity. Netlify remains needed for those controls and existing direct links.

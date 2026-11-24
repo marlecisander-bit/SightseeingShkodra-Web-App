@@ -15,19 +15,19 @@ import Image from 'next/image';
 import type {ReactNode} from 'react';
 import {signOut} from '../auth/actions';
 import styles from './admin.module.css';
-type ShellProps={operatorId:string;operatorName:string;role:StaffRole;section?:string;children:ReactNode;userId:string};
+type ShellProps={nativeMap?:boolean;operatorId:string;operatorName:string;role:StaffRole;section?:string;children:ReactNode;userId:string};
 /** Authenticated layouts supply verified identity. The view itself grants no access. */
 export function AdminShell(props:ShellProps){
  const view=<AdminShellView {...props}/>;
  return hasPermission(props.role,'bookings.read')?<NotificationProvider operator={props.operatorId} userId={props.userId}>{view}</NotificationProvider>:view;
 }
 /** Shared chrome, also exercised by a development-only, credential-free visual fixture. */
-export function AdminShellView({operatorId,operatorName,role,section:requestedSection,children,userId,navigation,accountActions}:{operatorId:string;operatorName:string;role:StaffRole;section?:string;children:ReactNode;userId:string;navigation?:AdminNavGroup[];accountActions?:ReactNode}){
+export function AdminShellView({operatorId,operatorName,role,section:requestedSection,children,userId,navigation,accountActions,nativeMap=false}:{nativeMap?:boolean;operatorId:string;operatorName:string;role:StaffRole;section?:string;children:ReactNode;userId:string;navigation?:AdminNavGroup[];accountActions?:ReactNode}){
  const pathname=usePathname();
  useEffect(()=>installAdminNavigationGuard(window),[pathname]);
  const routeSection=requestedSection??pathname.split('/')[3]??'overview';
  const section=routeSection==='product-cards'?'products':routeSection;
- const groups=navigation??adminNavigationGroups(operatorId,role);
+ const groups=navigation??adminNavigationGroups(operatorId,role,nativeMap);
  const title=adminSections.find(item=>item.slug===section)?.label??'Workspace';
  const account=accountActions??<div className={styles.accountActions}><p>{operatorName} / {role.replace('_',' ')}</p><a href="/" target="_blank" rel="noopener noreferrer">View website <AdminIcon name="external-link" size={16}/></a><Link prefetch={false} href="/admin">Switch workspace</Link><form action={signOut}><Button><AdminIcon name="log-out" size={18}/>Sign out</Button></form></div>;
  const body=<div className={styles.shell} data-admin-phase="v2-phase-1">
