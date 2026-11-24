@@ -12,15 +12,47 @@ import styles from './route-explorer.module.css';
 type Props = {
   routes: PublishedMap['routes']; stops: RouteStop[]; boarding: RouteBoarding | null;
   vehicle: Position | null; findVehicle: number; allowArrivalFocus: boolean; selected: string | null; reset: number;
+  zoom: { delta: number } | null;
   visitor: { coordinate: Coordinate; accuracy: number } | null; centerVisitor: boolean;
   onSelect: (id: string) => void;
 };
+
+function mapObstacles(canvas: HTMLElement) {
+  const workspace = canvas.closest('[data-route-explorer]');
+  return [...workspace?.querySelectorAll('[data-map-obstacle]') ?? []].map(node => node.getBoundingClientRect());
+}
+
+function keepVisible(instance: L.Map, coordinate: L.LatLngExpression, padding: number) {
+  const canvas = instance.getContainer();
+  const rect = canvas.getBoundingClientRect();
+  const size = instance.getSize();
+  const original = instance.latLngToContainerPoint(coordinate);
+  const clamp = (x: number, y: number) => L.point(
+    Math.max(padding, Math.min(size.x - padding, x)),
+    Math.max(padding, Math.min(size.y - padding - 16, y)),
+  );
+  const obstacles = mapObstacles(canvas).filter(box =>
+    box.left < rect.right && box.right > rect.left && box.top < rect.bottom && box.bottom > rect.top,
+  );
+  const xs = [original.x, ...obstacles.flatMap(box => [
+    box.left - rect.left - padding - 2, box.right - rect.left + padding + 2,
+  ])];
+  const ys = [original.y, ...obstacles.flatMap(box => [
+    box.top - rect.top - padding - 2, box.bottom - rect.top + padding + 2,
+  ])];
+  const candidates = xs.flatMap(x => ys.map(y => clamp(x, y)));
+  const best = candidates.filter(point => !obstacles.some(box =>
+    rect.left + point.x + padding > box.left && rect.left + point.x - padding < box.right &&
+    rect.top + point.y + padding > box.top && rect.top + point.y - padding < box.bottom,
+  )).sort((a, b) => a.distanceTo(original) - b.distanceTo(original))[0] ?? candidates[0];
+  if (!best.equals(original)) instance.panBy(original.subtract(best), { animate: false });
+}
 
 const initialCenter: Coordinate = [42.069, 19.512];
 const tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-export default function RouteExplorerMap({ routes, stops, boarding, vehicle, findVehicle, allowArrivalFocus, selected, reset, visitor, centerVisitor, onSelect }: Props) {
+export default function RouteExplorerMap({ routes, stops, boarding, vehicle, findVehicle, allowArrivalFocus, selected, reset, zoom, visitor, centerVisitor, onSelect }: Props) {
   const surface = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const pins = useRef(new Map<string, L.Marker>());
@@ -34,20 +66,22 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, fin
     const canvas = surface.current;
     if (!canvas) return;
     const bounds = canvas.getBoundingClientRect();
-    const markers = [...pins.current].sort(([a], [b]) => Number(b === selected) - Number(a === selected));
+    const priority = (id: string) => (id === selected ? 2 : 0) + (id === 'boarding' ? 1 : 0);
+    const markers = [...pins.current].sort(([a], [b]) => priority(b) - priority(a));
     const symbols = markers.flatMap(([, marker]) => {
       const element = marker.getElement();
       return (element?.querySelector('.stop-portrait') ?? element)?.getBoundingClientRect() ?? [];
     });
     const obstacles = [
       ...symbols,
-      ...[...canvas.parentElement!.querySelectorAll('[data-map-obstacle]')].map(element => element.getBoundingClientRect()),
+      ...mapObstacles(canvas),
     ];
-    for (const [, marker] of markers) {
+    for (const [id, marker] of markers) {
       const caption = marker.getElement()?.querySelector<HTMLElement>('[data-map-caption]');
       if (!caption) continue;
       caption.style.visibility = 'hidden';
-      for (const placement of ['below', 'right', 'left']) {
+      const placements = id === 'boarding' ? ['above', 'right', 'left', 'below'] : ['below', 'right', 'left'];
+      for (const placement of placements) {
         caption.dataset.placement = placement;
         const box = caption.getBoundingClientRect();
         if (box.left < bounds.left + 4 || box.right > bounds.right - 4 ||
@@ -135,7 +169,7 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, fin
 
       const title = start ? `Start here: ${name}` : `Stop ${number}: ${name}`;
       const marker = L.marker(location, {
-        icon: L.divIcon({ className: design ? `stop-photo-marker ${styles.photoMarker}` : start ? styles.startMarker : styles.marker,
+        icon: L.divIcon({ className: design ? `stop-photo-marker ${styles.photoMarker} ${start ? styles.boardingPhoto : ''}` : start ? styles.startMarker : styles.marker,
           html: content, iconSize: design ? [44, 44] : [34, 34], iconAnchor: design ? [22, 22] : [17, start ? 30 : 17] }),
         keyboard: true, autoPanOnFocus: false, title, zIndexOffset: start ? 250 : 0,
       }).addTo(group);
@@ -144,7 +178,10 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, fin
       button?.addEventListener('keydown', event => {
         if (event.key === ' ') { event.preventDefault(); choose(id); }
       });
-      marker.on('click', () => choose(id));
+      marker.on('click', () => {
+        button?.focus({ preventScroll: true });
+        choose(id);
+      });
       markers.set(id, marker);
     }
     stops.forEach((stop, index) => {
@@ -166,8 +203,8 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, fin
       const bounds = L.latLngBounds([...routes.flatMap(route => route.lines.flat()), ...stops.flatMap(stop => stop.coordinate ? [stop.coordinate] : []),
         ...(boarding?.coordinate ? [boarding.coordinate] : [])]);
       const size = instance.getSize();
-      const top = Math.min(72, size.y * .18);
-      const bottom = Math.min(64, size.y * .18);
+      const top = Math.min(66, size.y * .18);
+      const bottom = Math.min(size.x > 760 ? 140 : 94, size.y * .26);
       if (bounds.isValid()) instance.fitBounds(bounds, {
         paddingTopLeft: [37, top], paddingBottomRight: [37, bottom], maxZoom: 15, animate: false,
       });
@@ -190,11 +227,7 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, fin
     const frame = requestAnimationFrame(() => {
       if (marker) {
         instance.invalidateSize({ animate: false });
-        const target = instance.latLngToContainerPoint(marker.getLatLng());
-        const size = instance.getSize();
-        const x = Math.max(26, Math.min(size.x - 26, target.x));
-        const y = Math.max(62, Math.min(size.y - 48, target.y));
-        if (x !== target.x || y !== target.y) instance.panBy([target.x - x, target.y - y], { animate: false });
+        keepVisible(instance, marker.getLatLng(), 38);
       }
       placeLabels();
     });
@@ -234,6 +267,7 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, fin
       lastFind.current = findVehicle;
       instance.invalidateSize({ animate: false });
       instance.setView([vehicle.lat, vehicle.lng], Math.max(15, instance.getZoom()), { animate: false });
+      keepVisible(instance, [vehicle.lat, vehicle.lng], 32);
     });
     return () => cancelAnimationFrame(frame);
   }, [findVehicle, vehicle]);
@@ -258,17 +292,14 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, fin
       const instance = map.current;
       if (!instance) return;
       instance.invalidateSize({ animate: false });
-      // A coarse location is easier to interpret with its accuracy area in view.
-      if (visitor.accuracy >= 120) {
-        instance.fitBounds(L.latLng(visitor.coordinate).toBounds(visitor.accuracy * 2), {
-          padding: [16, 16], maxZoom: 16, animate: false,
-        });
-      } else {
-        instance.setView(visitor.coordinate, Math.max(16, instance.getZoom()), { animate: false });
-      }
+      keepVisible(instance, visitor.coordinate, 18);
     });
     return () => cancelAnimationFrame(frame);
   }, [centerVisitor, visitor]);
+
+  useEffect(() => {
+    if (zoom && map.current) map.current.setZoom(map.current.getZoom() + zoom.delta, { animate: false });
+  }, [zoom]);
 
   return <div ref={surface} className={styles.canvas} role="region" aria-label="Interactive tour map" />;
 }
