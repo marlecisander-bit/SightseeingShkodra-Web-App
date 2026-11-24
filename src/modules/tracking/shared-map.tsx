@@ -10,7 +10,7 @@ import { stoppedAt } from "./tracking-state";
 const MapCanvas = dynamic(() => import("./map-canvas"), {
   ssr: false, loading: () => <p role="status">Loading map...</p>,
 });
-export type MapProps = { snapshot: Snapshot; publishedMap?: PublishedMap; selectedStopId?: string } & (
+export type MapProps = { snapshot: Snapshot; publishedMap?: PublishedMap; selectedStopId?: string; showFindVehicle?: boolean } & (
   { mode: "view" } |
   { mode: "manage"; onVehicleSelect: (vehicleId: string) => void }
 );

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { NativeRouteMap } from '@/components/public/native-route-map';
 import { trackingWeekdays } from '@/modules/tracking/service-hours';
 import { readTrackingHours, readTrackingVersions, trackingAdminEnabled, trackingAdminSession } from '@/modules/tracking/admin-server';
+import { TrackingMapEditor } from '../../../tracking-map-editor';
 import { AdminSectionContext } from '../../../admin-workspace-context';
 import { sectionAccess, type SectionProps } from '../../../section-access';
 import { connectMapAccount, disconnectMapAccount, saveTrackingHours, saveTrackingMap } from '../../../tracking-map-actions';
@@ -40,7 +41,7 @@ export default async function Page(props: SectionProps) {
 
   return <>
     <h1>Live Map</h1>
-    {process.env.LIVE_MAP_NATIVE_ROUTE === '1' && operatorId === process.env.PUBLIC_OPERATOR_ID && <NativeRouteMap />}
+    {process.env.LIVE_MAP_NATIVE_ROUTE === '1' && operatorId === process.env.PUBLIC_OPERATOR_ID && <NativeRouteMap showFindVehicle />}
     {result && Object.hasOwn(messages, result) && <p role="status">{messages[result]}</p>}
     {enabled ? <section>
       <h2>Map editing and publishing</h2>
@@ -55,9 +56,8 @@ export default async function Page(props: SectionProps) {
           <form action={save}>
             {versionFields}
             <input type="hidden" name="requestId" value={randomUUID()} />
-            <label>Map GeoJSON <textarea name="geojson" rows={16} cols={65} required maxLength={500000}
-              defaultValue={JSON.stringify(versions.head?.map_data ?? { type: 'FeatureCollection', features: [] }, null, 2)} /></label>
-            <button name="status" value="draft" type="submit">Save draft</button>
+            <TrackingMapEditor key={versions.head?.id ?? 'new'}
+              initial={versions.head?.map_data ?? { type: 'FeatureCollection', features: [] }} />
           </form>
           {versions.head?.status === 'draft' && <form action={save}>
             {versionFields}

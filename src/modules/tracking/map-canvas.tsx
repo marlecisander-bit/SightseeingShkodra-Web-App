@@ -72,7 +72,10 @@ export default function MapCanvas(props: MapProps & { now: number | null }) {
   useEffect(() => {
     if (props.selectedStopId) stopMarkers.current.get(props.selectedStopId)?.openPopup();
   }, [props.publishedMap, props.selectedStopId]);
+  const vehicle = props.snapshot.positions[0];
   return <>
+    {props.showFindVehicle && <button type="button" disabled={!vehicle}
+      onClick={() => { if (vehicle) map.current?.setView([vehicle.lat, vehicle.lng], 16); }}>Find van</button>}
     <div ref={element} className={styles.canvas} role="region" aria-label="Interactive vehicle map. Positions are also listed below." />
     {tileError && <p role="status">Map background could not fully load. Vehicle coordinates remain listed below.</p>}
   </>;

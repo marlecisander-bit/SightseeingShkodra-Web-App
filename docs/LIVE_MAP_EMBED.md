@@ -72,3 +72,9 @@ The native workspace now supports editing map GeoJSON, saving a draft and publis
 ### Van operating hours
 
 The native workspace reads and saves the default vehicle's weekly hours through the existing tracking Supabase project. It uses the same authenticated RPC and Monday-first Europe/Tirane schedule as the companion and preserves overnight schedules. Preview remains read-only. Graphical editing and remaining GPS controls still need migration and isolated release testing.
+
+### Graphical map editor and cutover checks
+
+Live Map now edits point locations and route geometry on a map, edits stop and POI details, and saves through the same draft and publish workflow. The admin map includes Find van. Calendar and overview public-map links use /route. The installed companion GPS provider selector is fixed to ScorpionTrack and disabled. The tracking worker and its provider binding remain in Supabase.
+
+Disposable tracking database checks passed for unauthorized saves, draft privacy, stale-version conflicts, publication visibility, authorization for operating hours, overnight schedules and worker closure. Hosted authenticated editing and mobile editor acceptance are still outstanding. Verify existing direct Netlify bookmarks and QR codes before retirement.

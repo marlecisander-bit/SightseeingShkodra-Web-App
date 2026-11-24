@@ -8,9 +8,10 @@ import type { Snapshot } from '@/modules/tracking/positions';
 
 type LiveMapResponse = { mapVersion: string | number | null; map: PublishedMap; snapshot: Snapshot; journey: unknown };
 
-export function NativeRouteMap({ selectedStopId, onJourney, background = false }: {
+export function NativeRouteMap({ selectedStopId, onJourney, background = false, showFindVehicle = false }: {
   selectedStopId?: string;
   background?: boolean;
+  showFindVehicle?: boolean;
   onJourney?: (value: JourneySnapshot | null, reason?: 'stale') => void;
 }) {
   const [data, setData] = useState<LiveMapResponse>();
@@ -61,6 +62,6 @@ export function NativeRouteMap({ selectedStopId, onJourney, background = false }
 
   if (background) return null;
   if (!data) return <p role="status">{failed ? 'Live map temporarily unavailable.' : 'Loading live map…'}</p>;
-  return <SharedMap mode="view" publishedMap={data.map} selectedStopId={selectedStopId}
+  return <SharedMap mode="view" showFindVehicle={showFindVehicle} publishedMap={data.map} selectedStopId={selectedStopId}
     snapshot={failed ? { state: 'unavailable', positions: [] } : data.snapshot} />;
 }
