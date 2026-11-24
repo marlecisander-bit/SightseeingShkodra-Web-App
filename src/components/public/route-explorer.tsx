@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { Component, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { Component, useEffect, useState, type ReactNode } from 'react';
 import { BookButton, useBooking } from './booking';
 import { ProductBookingLink } from './product-booking-link';
 import { plannerClock, type DayPlannerData } from '@/modules/content/day-planner';
@@ -25,8 +25,8 @@ class MapBoundary extends Component<{ children: ReactNode }, { failed: boolean }
 
 type Panel = 'stops' | 'departures' | 'stop' | 'boarding' | null;
 
-export function RouteExplorer({ planner, summary, lines, stops, boarding, mapVersion, initialPosition, initialEta = null }: {
-  planner: DayPlannerData; summary: string; lines: Coordinate[][]; stops: RouteStop[];
+export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, initialPosition, initialEta = null }: {
+  planner: DayPlannerData; lines: Coordinate[][]; stops: RouteStop[];
   boarding: RouteBoarding | null; mapVersion: string | number | null; initialPosition: Position | null; initialEta?: string | null;
 }) {
   const { products } = useBooking();
@@ -41,8 +41,7 @@ export function RouteExplorer({ planner, summary, lines, stops, boarding, mapVer
   const canvasSelection = panel === 'stop' || panel === 'boarding' ? selection : null;
   const scheduleProduct = planner.product?.slug;
   const canTrack = lines.length > 0 && mapVersion !== null;
-  const shortSummary = useMemo(() => summary || [planner.product?.mode === 'whole_day' ? 'Hop on, hop off' : planner.product ? `${planner.product.minutes} min` : '',
-    stops.length ? `${stops.length} stops` : ''].filter(Boolean).join(' · '), [planner.product, stops.length, summary]);
+
 
   useEffect(() => {
     if (!canTrack) return;
@@ -108,8 +107,8 @@ export function RouteExplorer({ planner, summary, lines, stops, boarding, mapVer
         <MapBoundary><Map lines={lines} stops={stops} boarding={boarding} vehicle={canTrack ? live.position : null}
           selected={canvasSelection} reset={reset} onSelect={choose} /></MapBoundary>
         <header className={styles.tour}>
-          <h1>{planner.product ? planner.title : 'Route & Live Map'}</h1>
-          {shortSummary && <p>{shortSummary}</p>}
+          <h1>Route &amp; Live Map</h1>
+          {stops.length > 0 && <p>{stops.length} published stops</p>}
           {!lines.length && <p>Route line unavailable</p>}
           <p role="status">{canTrack && live.position ? `Van location live${live.eta ? ` · Next stop ${live.eta}` : ''}` : 'Live location unavailable'}</p>
         </header>
@@ -121,7 +120,7 @@ export function RouteExplorer({ planner, summary, lines, stops, boarding, mapVer
           <div className={styles.stopDetail}>
             {selected.place?.image && <Image unoptimized src={selected.place.image} alt={selected.place.alt ?? ''} width={88} height={68} />}
             <div><p className={styles.kicker}>Stop {selectedIndex + 1} of {stops.length}</p><h2>{selected.place?.name ?? selected.name}</h2>
-              {selected.place?.text && <p>{selected.place.text}</p>}
+              {(selected.place?.text || selected.description) && <p>{selected.place?.text || selected.description}</p>}
               {selected.place?.link?.startsWith('/explore/') && <a href={selected.place.link}>Visitor guide</a>}
             </div>
           </div>
@@ -140,7 +139,7 @@ export function RouteExplorer({ planner, summary, lines, stops, boarding, mapVer
             <button type="button" onClick={() => choose(stop.id)}><b>{index + 1}</b> {stop.name}</button>
           </li>)}</ol> : <p>The itinerary is currently unavailable.</p>}
         </>}
-        {panel === 'departures' && <><h2>Departures</h2><p>Today · Shkodra local time</p>
+        {panel === 'departures' && <><h2>Departures</h2>{planner.product && <p>{planner.title}</p>}<p>Today · Shkodra local time</p>
           {times?.length ? <ul className={styles.times}>{times.map(time => <li key={time}><time>{time}</time></li>)}</ul>
             : <p>{times ? 'No service scheduled today.' : 'The timetable is currently unavailable.'}</p>}
           <p>Scheduled departures. Seats are confirmed in booking.</p>

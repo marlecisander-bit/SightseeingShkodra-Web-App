@@ -46,7 +46,7 @@ The source provides lastDeparted, not a full visited-stop history. Only the conf
 
 The redesigned `/route` uses a native Leaflet map and the existing tracking Supabase project. Pin selection and list selection share website state. The explorer reads the day planner for the active public product and effective Shkodra-local schedule, and opens that product in the existing booking flow when available.
 
-An untagged published loop can serve the whole-day tour. To show a different product's geometry, the published route must identify that product with `tourProductSlug` and provide its ordered stop IDs in `stopSequence`. The current tracking project publishes an untagged five-stop loop. The winter view uses the CMS photo-stop order and any matching published destination coordinates, with no winter line until an authoritative itinerary is available. The tracking CMS currently validates its five-stop loop, so publishing a separate winter geometry requires an appropriate source and publication path.
+The public map uses the tracking project's published geometry and stop sequence year-round. The schedule and booking panel use the active public product independently. During winter, visitors can see the published route while checking Panorama departures without presenting that route as the Panorama itinerary.
 
 On 24 November 2026 the production website's configured pickup Maps link resolved to 42.067722, 19.512861. The site's published pickup FAQ identifies the starting area as Hotel Rozafa at Democracy Square. The native directions link uses those coordinates for that exact configured link. A later CMS meeting-point change takes precedence.
 
