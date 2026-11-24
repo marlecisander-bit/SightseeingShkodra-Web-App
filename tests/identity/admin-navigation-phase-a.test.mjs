@@ -4,7 +4,7 @@ import {adminNavigationGroups,activeAdminItem,adminContext,websiteNavigationCont
 import {navigationFor} from '../../src/modules/identity/admin-navigation.ts';
 for(const role of ['owner','admin','operations','content_editor'])test(`${role}: all existing sections preserved with no new capabilities`,()=>{
  const groups=adminNavigationGroups('operator-fixture',role),items=groups.flatMap(g=>g.items);
- assert.deepEqual([...new Set(items.flatMap(i=>i.section?[i.section]:[]))].sort(),navigationFor(role).map(i=>i.slug).sort());
+ assert.deepEqual([...new Set(items.flatMap(i=>i.section?[i.section]:[]))].sort(),navigationFor(role).filter(i=>i.slug!=='live-map').map(i=>i.slug).sort());
  assert.equal(new Set(items.map(i=>i.href)).size,items.length,'context destinations must be unique');
  assert.ok(items.every(i=>!i.section||i.href.startsWith('/admin/operator-fixture/'+i.section)));
  assert.equal(items.some(i=>i.id==='products'),true);
@@ -12,6 +12,9 @@ for(const role of ['owner','admin','operations','content_editor'])test(`${role}:
  assert.equal(items.some(i=>i.id==='email'),role==='owner');
  assert.equal(items.some(i=>i.id==='map-admin'),role!=='content_editor');
  assert.ok(!groups.some(g=>g.id==='reports'));
+ const nativeItems=adminNavigationGroups('operator-fixture',role,true).flatMap(g=>g.items);
+ assert.equal(nativeItems.find(i=>i.id==='live-map')?.href,
+  role==='content_editor'?undefined:'/admin/operator-fixture/live-map');
 });
 test('six approved areas, canonical external map and active contextual views',()=>{
  assert.equal(Object.keys(adminAreaLabels).length,6);
