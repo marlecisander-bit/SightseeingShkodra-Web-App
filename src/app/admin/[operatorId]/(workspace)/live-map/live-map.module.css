@@ -12,3 +12,7 @@
 .workspace button[type=submit] { background: #a91f29; color: white; border-color: #a91f29; }
 .workspace button:disabled { opacity: .55; }
 .days { display: grid; gap: .5rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
+.editorFrame { display: block; width: 100%; min-width: 0; height: max(680px, calc(100dvh - 7rem)); border: 1px solid #e3e7ec; border-radius: 12px; background: #fff; }
+@media (max-width: 1023px) {
+  :global(body):has(.editorFrame) :global(nav[aria-label="Primary admin navigation"]) { display: none; }
+}

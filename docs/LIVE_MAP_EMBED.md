@@ -51,3 +51,11 @@ The public map uses the tracking project's published geometry and stop sequence 
 On 24 November 2026 the production website's configured pickup Maps link resolved to 42.067722, 19.512861. The site's published pickup FAQ identifies the starting area as Hotel Rozafa at Democracy Square. The native directions link uses those coordinates for that exact configured link. A later CMS meeting-point change takes precedence.
 
 Local Chrome checks used the published loop, controlled schedules, and synthetic fresh/stale GPS snapshots. They covered 320, 390 and 1440 px, pin/list selection, gestures, boarding, booking, and a failed tile load. Physical iPhone acceptance remains pending.
+
+## Full Live Map editing workspace
+
+The Web App hosts the existing companion editor under Calendar → Live Map admin. Its markup and browser assets originate from companion revision `d56805d8ab42b4f844d09047d6eb91b574af1e60`. The workspace uses the website's existing staff authorization and Live Map account connection. The browser requests only the workspace's same-origin endpoints. The server scopes reads to the configured project and its default vehicle, and uses the existing tracking Supabase draft, publication and service-hours RPCs. The frame receives neither the tracking JWT nor a backend key.
+
+The editor includes the original Overview, Live map, Stops, Route, Places, Operating hours and Files & backup tools. GPS uses the existing snapshot presentation and visible-page polling. Route snapping uses the companion's existing OSRM request, and map tiles use OpenStreetMap. GeoJSON backups and PNG, PDF and SVG map exports run in the browser. External POI search and project, team and provider changes were already disabled in the single-project companion and are outside this operational workspace.
+
+The asset directory includes pinned Leaflet 1.9.4, Geoman 2.20.0, Supabase JS 2.116.0, html2canvas 1.4.1 and jsPDF 4.2.1 runtime files and license notices. The signed-in page and scoped data relay live under the operator's `live-map/workspace` route. The recovery page and separate Supabase project also serve the new editor. Public editorial destination photos remain managed in Website.
