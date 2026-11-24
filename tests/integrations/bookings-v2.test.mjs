@@ -113,9 +113,9 @@ test('sign-in return from the safe calendar handoff stays in read-only Bookings;
  }
 });
 
-test('Tours static destinations skip operational reads and keep the existing departure permission',async()=>{
+test('Legacy Calendar map links redirect without operational reads and keep the existing departure permission',async()=>{
  const {CalendarPanel}=await import('../../src/app/admin/calendar-panel.tsx');
- for(const view of ['route','live']){const f=fixture();const result=await CalendarPanel({operatorId:op,view});assert.equal(result.props.view,view);assert.equal(f.calls.length,0);assert.deepEqual(f.checks,['departures.manage']);}
+ for(const view of ['route','live']){const f=fixture();await assert.rejects(CalendarPanel({operatorId:op,view}),e=>e.destination===`/admin/${op}/live-map`);assert.equal(f.calls.length,0);assert.deepEqual(f.checks,['departures.manage']);}
  const f=fixture({role:'content_editor'});await assert.rejects(CalendarPanel({operatorId:op,view:'today'}),/FORBIDDEN/);assert.equal(f.calls.length,0);
 });
 test('Tours Today uses a pure month projection and former product settings redirect without inventory preparation',async()=>{

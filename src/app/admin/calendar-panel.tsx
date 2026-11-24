@@ -14,7 +14,11 @@ import type {PassengerCategories} from '@/modules/booking/passengers';
 export async function CalendarPanel({operatorId,date,result,fromBookings,view:requestedView,history,schedule:requestedSchedule,product:requestedProduct}:{product?:string;operatorId:string;date?:string;result?:string;fromBookings?:string;view?:string;history?:string;schedule?:string}) {
  const context=await requirePermission(operatorId,'departures.manage'),view=toursView(requestedView);
  if(view==='prices'||view==='tickets')redirect(`/admin/${operatorId}/products`);
- if(['route','live'].includes(view))return <ToursWorkspace operatorId={operatorId} role={context.role} view={view}/>;
+ if(requestedView==='route'||requestedView==='live'){
+  if(hasPermission(context.role,'tracking.manage'))redirect(`/admin/${operatorId}/live-map`);
+  if(requestedView==='route'&&hasPermission(context.role,'content.manage'))redirect(`/admin/${operatorId}/route-stops`);
+  redirect('/route');
+ }
  const data=await withOperatorService(operatorId,'departures.manage',async(client,ctx)=>{try{
   const [s,p,v,o]=await Promise.all([client.from('service_schedules').select('*',{count:'exact'}).eq('operator_id',operatorId).order('start_date').limit(101),client.from('products').select('id,title,status,active,availability_presentation,updated_at,inventory_product_id,seat_reservation_mode,reservation_minutes',{count:'exact'}).eq('operator_id',operatorId).eq('type','van_tour').limit(101),client.from('vehicles').select('id,name',{count:'exact'}).eq('operator_id',operatorId).limit(101),client.from('operators').select('timezone').eq('id',operatorId).single()]);
   if(s.error||p.error||v.error||o.error||[s,p,v].some(r=>r.count!==r.data?.length||(r.data?.length??0)>100))throw Error('Calendar unavailable');

@@ -27,7 +27,8 @@ test('six direct mobile links share role-filtered desktop groups; canonical URLs
  assert.equal(d.querySelectorAll('aside [aria-current=page]').length,1);
  const mapAdmin=d.querySelector('a[href="/admin/fixture/live-map"]');
  assert.equal(mapAdmin.target,'');
- assert.equal(d.querySelector('a[href="/route"]').rel,'noopener noreferrer');
+ assert.equal(d.querySelector('a[href="/route"]'),null);
+ assert.equal(d.querySelector('a[href*="departures?view=route"]'),null);
  assert.equal(d.querySelector('a[href*="netlify.app"]'),null);
  const booking=d.querySelector('aside nav > a[href="/admin/fixture/bookings"]');
  assert.equal(booking.textContent,'Bookings');

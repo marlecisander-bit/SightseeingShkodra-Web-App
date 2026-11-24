@@ -18,14 +18,12 @@ export function adminNavigationGroups(operatorId:string,role:StaffRole):AdminNav
   {id:'tours',label:'Calendar',icon:'van',items:[
    tour('availability','Calendar','calendar','availability'),
    tour('today','Today','today'),
-   tour('route','Route & stops','route'),
    ...(hasPermission(role,'tracking.manage')?[
-    link('map-admin','Live Map admin','live-map'),
-    {id:'live',label:'Open public route map',href:'/route',external:true}
+    link('map-admin','Live Map admin','live-map')
    ]:[])]},
   {id:'products',label:'Products',icon:'ticket',items:[link('products','All products','products'),link('catalog','Suppliers','catalog')]},
   {id:'website',label:'Website',icon:'camera',items:[
-   link('content','Page editor','content'),link('route-stops','Route & destination content','route-stops'),
+   link('content','Page editor','content'),link('route-stops','Stops & destinations','route-stops'),
    ...(hasPermission(role,'content.sensitive')?[link('business','Business profile & footer','content','business'),link('whatsapp','WhatsApp contact','content','whatsapp')]:[]),
    link('media','Images & media','content','media','Photos stay with their page or product.'),
    link('reviews','Guest reviews','reviews'),link('partners','Partners','partners'),
