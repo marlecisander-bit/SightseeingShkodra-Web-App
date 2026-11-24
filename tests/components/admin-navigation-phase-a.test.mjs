@@ -25,7 +25,10 @@ test('six direct mobile links share role-filtered desktop groups; canonical URLs
  assert.deepEqual(links.map(x=>x.textContent),['Home','Bookings','Calendar','Products','Website','More']);
  assert.deepEqual(links.map(x=>x.getAttribute('href')),['/admin/fixture/overview','/admin/fixture/bookings','/admin/fixture/departures?view=calendar#admin-nav=availability','/admin/fixture/products','/admin/fixture/content','/admin/fixture/more']);
  assert.equal(d.querySelectorAll('aside [aria-current=page]').length,1);
- assert.equal(d.querySelector('a[href*="netlify.app"]').rel,'noopener noreferrer');
+ const mapAdmin=d.querySelector('a[href="/admin/fixture/live-map"]');
+ assert.equal(mapAdmin.target,'');
+ assert.equal(d.querySelector('a[href="/route"]').rel,'noopener noreferrer');
+ assert.equal(d.querySelector('a[href*="netlify.app"]'),null);
  const booking=d.querySelector('aside nav > a[href="/admin/fixture/bookings"]');
  assert.equal(booking.textContent,'Bookings');
  assert.ok(booking.querySelector('[data-admin-icon="calendar-check"]'));

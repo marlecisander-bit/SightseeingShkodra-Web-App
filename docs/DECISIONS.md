@@ -330,3 +330,7 @@ Owner approved local mobile presentation changes: fill the available viewport in
 ## 16 November 2026 — SEO audit priority fixes, local implementation and draft PR
 
 Owner approved accurate April2027 hop-on hop-off return, approximately two-hour winter panorama tours at09:00/11:00/13:00 with15-minute photo stops, and selected-operating-day Daily Ticket validity. Prepare public marketing .app→www.com permanent redirects while preserving authentication/customer/API/payment contracts and existing transactional origins. Enrich existing canonical pages and verified structured data; preserve content owners and unrelated policies. Hosted content migration, domain alias correction, ticket-host retirement and Search Console actions are release follow-ups; no deployment, merge or DNS/Search Console change authorized. Branch-specific Vercel deployment suppression allows a review-only PR without changing main deployment behavior.
+
+## 24 November 2026 — Live Map administration inside the Web App
+
+The owner directed the Calendar Live Map admin link to an editor in the Web App because the former Netlify site is disabled. The separate tracking Supabase project remains authoritative for map versions, GPS and operating hours. The workspace requires website tracking permission and the existing tracking administrator account. Map and hours writes use the companion project’s existing RPCs. Website stop photos and editorial destination content remain in the Website workspace.

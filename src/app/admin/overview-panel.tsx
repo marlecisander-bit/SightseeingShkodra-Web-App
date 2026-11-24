@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import type {DailyDepartures} from '@/modules/dashboard/daily-departures';
-import {publicMapUrl} from '@/modules/tracking/public-map-binding';
 import {hasPermission,type StaffRole} from '@/modules/identity/roles';
 import {AdminIcon,type AdminIconName} from './admin-icon';
 import {DashboardNotifications,DashboardAttentionValue} from './notifications';
@@ -34,7 +33,7 @@ export function OverviewPanel({operatorId,role,now=new Date(),snapshot,departure
    </section>}
    {!canBook&&hasPermission(role,'content.manage')&&<section className={`${styles.card} ${styles.departures}`}><h2>Your website workspace</h2><p>Edit your page content and preview saved drafts. Publishing remains limited to authorized roles.</p><Link prefetch={false} className={styles.textLink} href={`${root}/content`}>Open page editor <AdminIcon name="arrow-right" size={16}/></Link></section>}
    {canBook&&<section className={`${styles.card} ${styles.attention}`}><div className={styles.cardTitle}><div><p className={styles.eyebrow}>Your notifications</p><h2>Recent notifications</h2></div><AdminIcon name="bell"/></div><DashboardNotifications/><Link prefetch={false} className={styles.textLink} href={`${root}/notifications`}>All notifications <AdminIcon name="arrow-right" size={16}/></Link></section>}
-   <section className={`${styles.card} ${styles.mapCard}`}><span className={styles.mapIcon}><AdminIcon name="map"/></span><div><h2>Live Map</h2><p>View vehicle location and route stops</p></div><Link prefetch={false} className={styles.mapLink} href={publicMapUrl} target="_blank" rel="noopener noreferrer" aria-label="Open Live Map (opens in a new tab)"><span>Open Live Map</span><AdminIcon name="external-link" size={18}/></Link></section>
+   <section className={`${styles.card} ${styles.mapCard}`}><span className={styles.mapIcon}><AdminIcon name="map"/></span><div><h2>Live Map</h2><p>View vehicle location and route stops</p></div><Link prefetch={false} className={styles.mapLink} href="/route" target="_blank" rel="noopener noreferrer" aria-label="Open Live Map (opens in a new tab)"><span>Open Live Map</span><AdminIcon name="external-link" size={18}/></Link></section>
    <section className={styles.quickCard}><h2>Quick actions</h2><div className={styles.quickActions}>
     {hasPermission(role,'bookings.create')&&<Link prefetch={false} href={`${root}/bookings?create=1#new-booking`} className={styles.primary}><AdminIcon name="ticket" size={18}/>New reservation</Link>}
     {canBook&&<Link prefetch={false} href={`${root}/bookings?date=${today}`}><AdminIcon name="calendar-check" size={18}/>Today’s bookings</Link>}

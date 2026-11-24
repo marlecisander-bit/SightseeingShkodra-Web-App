@@ -8,6 +8,7 @@ export const adminSections: { slug: string; label: string; permission: Permissio
   { slug: 'catalog', label: 'Suppliers', permission: 'catalog.manage', description: 'Manage supplier details and contacts.' },
   { slug: 'departures', label: 'Tours', permission: 'departures.manage', description: 'Manage departure dates, availability and day-specific prices.' },
   { slug: 'bookings', label: 'Bookings', permission: 'bookings.read', description: 'Find bookings, check guests in and record meeting-point payments.' },
+  { slug: 'live-map', label: 'Live Map', permission: 'tracking.manage', description: 'Edit and publish operational routes and stops, and manage van operating hours.' },
   { slug: 'route-stops', label: 'Route stops', permission: 'content.manage', description: 'Edit stop names and images while Live Map controls positioning and journey status.' },
   { slug: 'partners', label: 'Partners', permission: 'content.manage', description: 'Manage homepage partner logos, websites and display order.' },
   { slug: 'reviews', label: 'Guest Reviews', permission: 'content.manage', description: 'Curate genuine guest reviews and homepage display settings.' },

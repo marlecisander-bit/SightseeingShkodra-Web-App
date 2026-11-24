@@ -1,4 +1,3 @@
-import {publicMapUrl} from '@/modules/tracking/public-map-binding';
 import {hasPermission, type StaffRole} from './roles';
 import {navigationFor} from './admin-navigation';
 import type {AmenityIconName} from '@/modules/content/hero-amenities';
@@ -21,8 +20,8 @@ export function adminNavigationGroups(operatorId:string,role:StaffRole):AdminNav
    tour('today','Today','today'),
    tour('route','Route & stops','route'),
    ...(hasPermission(role,'tracking.manage')?[
-    {id:'live',label:'Open Live Map',href:publicMapUrl,external:true},
-    {id:'map-admin',label:'Operational stops & GPS',href:'https://sightseeingshkodralivetrackingapp.netlify.app/',external:true,note:'Independent Live Map · separate sign-in.'}
+    link('map-admin','Live Map admin','live-map'),
+    {id:'live',label:'Open public route map',href:'/route',external:true}
    ]:[])]},
   {id:'products',label:'Products',icon:'ticket',items:[link('products','All products','products'),link('catalog','Suppliers','catalog')]},
   {id:'website',label:'Website',icon:'camera',items:[
