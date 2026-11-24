@@ -38,7 +38,6 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
   const [selection, select] = useState<string | null>(null);
   const [reset, setReset] = useState(0);
   const [live, setLive] = useState({ position: initialPosition, lastKnown: initialLastKnown, eta: initialEta, movement: initialMovement });
-  const [zoom, setZoom] = useState({ delta: 0, request: 0 });
   const panelClose = useRef<HTMLButtonElement>(null);
   const previousControl = useRef<HTMLElement | null>(null);
   const [findVehicle, setFindVehicle] = useState(0);
@@ -190,7 +189,7 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
     <div className={styles.workspace}>
       <div className={styles.map}>
         <MapBoundary><Map routes={routes} stops={stops} boarding={boarding} vehicle={vehicle} findVehicle={findVehicle} allowArrivalFocus={allowArrivalFocus}
-          selected={canvasSelection} visitor={visitor} centerVisitor={panel === 'location'} reset={reset} zoom={zoom} onSelect={choose} /></MapBoundary>
+          selected={canvasSelection} visitor={visitor} centerVisitor={panel === 'location'} reset={reset} onSelect={choose} /></MapBoundary>
         <header className={styles.tour} data-map-obstacle>
           <h1>{routeTitle}</h1>
           <button className={styles.trackingButton} type="button" aria-label="Tracking details"
@@ -221,6 +220,7 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
           {stops.length ? <ol className={styles.stops}>{stops.map((stop, index) => <li key={stop.id}>
             <button type="button" onClick={() => choose(stop.id)}><b>{index + 1}</b> {boarding?.stopId === stop.id ? 'Start here' : stop.place?.name ?? stop.name}</button>
           </li>)}</ol> : <p>The itinerary is currently unavailable.</p>}
+          <button type="button" onClick={() => show('departures')}>View departures</button>
         </>}
         {panel === 'location' && <><h2>Your location</h2><p role="status">{locationMessage}</p>
           {nearest && <div className={styles.nearby}>
@@ -256,16 +256,6 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
         }}><RouteControlIcon name="van" />Find van</button>
         <button type="button" onClick={() => { close(false); setVisitor(null); setReset(value => value + 1); }}>
           <RouteControlIcon name="route" />Full route
-        </button>
-        <button type="button" aria-expanded={panel === 'boarding'}
-          onClick={() => panel === 'boarding' ? close() : choose('boarding')}><RouteControlIcon name="boarding" />Start here</button>
-        <button type="button" aria-expanded={panel === 'departures'}
-          onClick={() => panel === 'departures' ? close() : show('departures')}><RouteControlIcon name="departures" />Departures</button>
-        <button type="button" onClick={() => setZoom(previous => ({ delta: 1, request: previous.request + 1 }))}>
-          <RouteControlIcon name="plus" />Zoom in
-        </button>
-        <button type="button" onClick={() => setZoom(previous => ({ delta: -1, request: previous.request + 1 }))}>
-          <RouteControlIcon name="minus" />Zoom out
         </button>
       </nav>
     </div>
