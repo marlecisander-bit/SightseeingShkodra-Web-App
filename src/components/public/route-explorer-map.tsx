@@ -18,7 +18,7 @@ export default function RouteExplorerMap({ lines, stops, boarding, vehicle, sele
   const surface = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const pins = useRef(new Map<string, L.Marker>());
-  const van = useRef<L.CircleMarker | null>(null);
+  const van = useRef<L.Marker | null>(null);
   const choose = useEffectEvent((id: string) => onSelect(id));
 
   useEffect(() => {
@@ -114,8 +114,12 @@ export default function RouteExplorerMap({ lines, stops, boarding, vehicle, sele
     if (!map.current) return;
     const point: Coordinate = [vehicle.lat, vehicle.lng];
     if (van.current) van.current.setLatLng(point);
-    else van.current = L.circleMarker(point, { radius: 9, color: 'white', weight: 3,
-      fillColor: '#08756e', fillOpacity: 1, interactive: false }).addTo(map.current);
+    else van.current = L.marker(point, {
+      icon: L.icon({ iconUrl: '/brand/map-bus-front.svg', className: styles.vanMarker,
+        iconSize: [36, 36], iconAnchor: [18, 18] }),
+      title: 'Live sightseeing van', alt: 'Live sightseeing van', keyboard: false,
+      interactive: false, zIndexOffset: 350,
+    }).addTo(map.current);
   }, [vehicle]);
 
   return <div ref={surface} className={styles.canvas} role="region" aria-label="Interactive tour map" />;

@@ -110,7 +110,7 @@ export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, ini
           <h1>Route &amp; Live Map</h1>
           {stops.length > 0 && <p>{stops.length} published stops</p>}
           {!lines.length && <p>Route line unavailable</p>}
-          <p role="status">{canTrack && live.position ? `Van location live${live.eta ? ` · Next stop ${live.eta}` : ''}` : 'Live location unavailable'}</p>
+          <p role="status">{canTrack && live.position ? `Van location live${live.eta ? ` · Next stop in ${live.eta}` : ''}` : canTrack ? 'Waiting for a fresh GPS update' : 'Live location unavailable'}</p>
         </header>
         <button className={styles.full} type="button" onClick={() => { close(); setReset(value => value + 1); }}>Full route</button>
       </div>

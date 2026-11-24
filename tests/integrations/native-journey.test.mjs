@@ -41,3 +41,15 @@ test('shows a confirmed stationary stop without an arrival countdown', () => {
   assert.equal(journey.stops[1].state, 'current');
   assert.equal(journey.stops[2].eta, '');
 });
+
+test('uses an estimate timestamped by the same moving observation when the ETA row is absent', () => {
+  const snapshot = fixture();
+  snapshot.eta = null;
+  snapshot.stop.operational_state.etaCalculatedAt = observed;
+  const journey = project(snapshot);
+  assert.equal(journey.confidence.eta, 'valid');
+  assert.equal(journey.stops.find(stop => stop.state === 'next').eta, '~2 min');
+
+  snapshot.stop.operational_state.etaCalculatedAt = '2026-11-24T11:59:20Z';
+  assert.equal(project(snapshot).confidence.eta, 'unavailable');
+});
