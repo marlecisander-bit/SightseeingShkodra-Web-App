@@ -12,5 +12,5 @@ export default async function WorkspaceLayout({children,params}:{children:ReactN
  catch(error){if(error instanceof AuthorizationError)return children;throw error;}
  const client=await createSessionClient();
  const {data:operator}=await client.from('operators').select('name').eq('id',context.operatorId).single();
- return <AdminShell userId={context.userId} operatorId={context.operatorId} operatorName={operator?.name??'Operator workspace'} role={context.role}>{children}</AdminShell>;
+ return <AdminShell nativeMap={process.env.LIVE_MAP_NATIVE_ROUTE === '1' && context.operatorId === process.env.PUBLIC_OPERATOR_ID} userId={context.userId} operatorId={context.operatorId} operatorName={operator?.name??'Operator workspace'} role={context.role}>{children}</AdminShell>;
 }

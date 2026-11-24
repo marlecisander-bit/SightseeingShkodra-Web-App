@@ -10,7 +10,7 @@ import { stoppedAt } from "./tracking-state";
 const MapCanvas = dynamic(() => import("./map-canvas"), {
   ssr: false, loading: () => <p role="status">Loading map...</p>,
 });
-export type MapProps = { snapshot: Snapshot; publishedMap?: PublishedMap } & (
+export type MapProps = { snapshot: Snapshot; publishedMap?: PublishedMap; selectedStopId?: string; showFindVehicle?: boolean } & (
   { mode: "view" } |
   { mode: "manage"; onVehicleSelect: (vehicleId: string) => void }
 );
@@ -27,7 +27,7 @@ export function SharedMap(props: MapProps) {
     <MapCanvas {...props} now={now} />
     <div className={styles.details}>
       <p role="status">{props.snapshot.state === "unavailable" ? "Vehicle positions are temporarily unavailable." :
-        props.snapshot.state === "empty" ? "No vehicle positions are available yet." : "Reported vehicle positions. Arrival times are not available."}</p>
+        props.snapshot.state === "empty" ? "No vehicle positions are available yet." : "Reported vehicle positions."}</p>
       <ul>{props.snapshot.positions.map((position, index) => <li key={position.vehicleId}>
         <strong>Vehicle {index + 1}</strong>{" — "}{now === null ? "Checking update time..." : positionStatus(position, now)}
         {position.tracking && now !== null && (() => { const stop = stoppedAt(position.tracking, now); return stop ? <p>{stop.label} {stop.number}{stop.name ? `: ${stop.name}` : ""}</p> : null; })()}

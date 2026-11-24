@@ -26,7 +26,7 @@ export function projectPublishedMap(value: unknown): PublishedMap {
       const id = String(index); // Stable within this published snapshot; not a database identity.
       if (geometry.type === "Point") {
         const kind = p.pointType === "poi" ? "poi" : "stop";
-        result.points.push({ id, kind, name: label(p.name, kind === "poi" ? "Place of interest" : "Stop"), number: typeof p.stopNumber === "number" || typeof p.stopNumber === "string" ? String(p.stopNumber).slice(0, 30) : "", coordinate: coordinate(geometry.coordinates) });
+        result.points.push({ id: label(p.objectId, id), kind, name: label(p.name, kind === "poi" ? "Place of interest" : "Stop"), number: typeof p.stopNumber === "number" || typeof p.stopNumber === "string" ? String(p.stopNumber).slice(0, 30) : "", coordinate: coordinate(geometry.coordinates) });
         coordinateCount++;
       } else if (geometry.type === "LineString" || geometry.type === "MultiLineString") {
         const lines = geometry.type === "LineString" ? [geometry.coordinates] : geometry.coordinates;

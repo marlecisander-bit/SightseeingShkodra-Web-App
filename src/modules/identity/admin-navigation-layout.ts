@@ -8,7 +8,7 @@ export type AdminNavItem = {id:string;label:string;section?:string;context?:stri
 export type AdminNavGroup = {id:AdminArea;label:string;icon:AmenityIconName;items:AdminNavItem[]};
 export const adminAreaLabels:Record<AdminArea,string>={overview:'Home',bookings:'Bookings',tours:'Calendar',products:'Products',website:'Website',more:'More'};
 // Presentation only: every destination and action retains independent server authorization.
-export function adminNavigationGroups(operatorId:string,role:StaffRole):AdminNavGroup[]{
+export function adminNavigationGroups(operatorId:string,role:StaffRole,nativeMap=false):AdminNavGroup[]{
  const root=`/admin/${encodeURIComponent(operatorId)}`;
  const allowed=new Set(navigationFor(role).map(item=>item.slug));
  const link=(id:string,label:string,section:string,context?:string,note?:string):AdminNavItem=>({id,label,section,context,href:`${root}/${section}${context?'#admin-nav='+context:''}`,note});
@@ -21,7 +21,8 @@ export function adminNavigationGroups(operatorId:string,role:StaffRole):AdminNav
    tour('today','Today','today'),
    tour('route','Route & stops','route'),
    ...(hasPermission(role,'tracking.manage')?[
-    {id:'live',label:'Open Live Map',href:publicMapUrl,external:true},
+    ...(nativeMap?[link('live-map','Live Map','live-map')]:[]),
+    {id:'live',label:'Open Live Map',href:nativeMap?'/route':publicMapUrl,external:!nativeMap},
     {id:'map-admin',label:'Operational stops & GPS',href:'https://sightseeingshkodralivetrackingapp.netlify.app/',external:true,note:'Independent Live Map · separate sign-in.'}
    ]:[])]},
   {id:'products',label:'Products',icon:'ticket',items:[link('products','All products','products'),link('catalog','Suppliers','catalog')]},
