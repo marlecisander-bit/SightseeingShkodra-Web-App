@@ -37,3 +37,18 @@ test("invalid or oversized map data never leaves a partially rendered route", ()
   }
   assert.equal(projectPublishedMap(collection([])).state,"empty");
 });
+test('published stop designs retain admin defaults and respect explicit edits', () => {
+  const id = 'point_13634d33-3234-4380-9f11-18d95b3276b2';
+  const original = { ...point, properties: { objectId: id, stopNumber: 1 } };
+  const updated = { ...original, properties: { ...original.properties, color: '#ABCDEF', photoUrl: '' } };
+  const route = { type: 'Feature', properties: { color: '#d90000', weight: '7', lineStyle: 'dashed' },
+    geometry: { type: 'LineString', coordinates: [[19, 42], [20, 43]] } };
+  const originalMap = projectPublishedMap(collection([original]));
+  assert.equal(originalMap.points[0].design.color, '#F20544');
+  assert.match(originalMap.points[0].design.photoUrl, /^https:/);
+  const updatedMap = projectPublishedMap(collection([updated, route]));
+  assert.deepEqual(updatedMap.points[0].design, { number: '1', color: '#ABCDEF', photoUrl: undefined });
+  assert.equal(updatedMap.routes[0].color, '#d90000');
+  assert.equal(updatedMap.routes[0].weight, 7);
+  assert.equal(updatedMap.routes[0].lineStyle, 'dashed');
+});

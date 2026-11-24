@@ -67,7 +67,7 @@
 .stops b { color: #8d1d40; margin-right: 6px; }
 .times { display: flex; flex-wrap: wrap; gap: 6px; }
 .times li { padding: 4px 9px; background: #f4eee9; border-radius: 5px; font-weight: 700; }
-.vanMarker { padding: 4px; border-radius: 50%; border: 2px solid white; background: white; box-shadow: 0 2px 7px #0006; }
+.vanMarker { filter: drop-shadow(0 3px 3px #0006); }
 .marker, .startMarker { background: transparent; border: 0; }
 .pinNumber {
   display: grid; place-items: center; width: 34px; height: 34px; border: 3px solid #8d1d40;
@@ -103,3 +103,10 @@
   .bar button:nth-child(n + 5) { border-top: 1px solid #e6e0dc; }
   .bar button:nth-child(5) { border-left: 0; }
 }
+
+.photoCaption[data-placement=right], .photoCaption[data-placement=left] {
+  top: 50%; transform: translateY(-50%);
+}
+.photoCaption[data-placement=right] { left: calc(100% + 5px); }
+.photoCaption[data-placement=left] { left: auto; right: calc(100% + 5px); }
+.photoMarker[data-selected=true] :global(.stop-photo-frame) { outline: 3px solid #192d45; }

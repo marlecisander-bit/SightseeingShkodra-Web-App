@@ -2,10 +2,10 @@ import type { MeetingPoint } from '../booking/meeting-point';
 import type { DayPlannerData } from '../content/day-planner';
 import type { JourneySnapshot } from './journey-contract';
 import type { Position } from './positions';
-import type { Coordinate, PublishedMap } from './published-map';
+import type { Coordinate, PublishedMap, StopDesign } from './published-map';
 
 export type RoutePlace = { id: string; name: string; text: string; link: string; stopId?: string | null; image?: string; alt?: string };
-export type RouteStop = { id: string; name: string; coordinate?: Coordinate; description?: string; place?: RoutePlace };
+export type RouteStop = { id: string; name: string; coordinate?: Coordinate; description?: string; place?: RoutePlace; design?: StopDesign };
 export type RouteBoarding = { stopId?: string | null; name: string; directions: string; coordinate?: Coordinate; url: string };
 
 export const routeLivePositionMs = 90_000;
@@ -41,7 +41,7 @@ export function routeItinerary(publishedStops: DayPlannerData['stops'], map: Pub
   const stops: RouteStop[] = orderedPoints.length
     ? orderedPoints.map(point => ({
       id: point.id, name: point.name, coordinate: point.coordinate,
-      description: point.description, place: placeFor(point.id),
+      description: point.description, design: point.design, place: placeFor(point.id),
     }))
     : (publishedStops ?? []).map(stop => ({
       id: stop.id, name: stop.label.replace(/^Stop \d+ - /, ''), place: placeFor(stop.id),

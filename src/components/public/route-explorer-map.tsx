@@ -3,13 +3,14 @@
 import { useEffect, useEffectEvent, useRef } from 'react';
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import '../../../public/live-map-workspace/css/stop-design.css';
 import type { Position } from '@/modules/tracking/positions';
-import type { Coordinate } from '@/modules/tracking/published-map';
+import type { Coordinate, PublishedMap, StopDesign } from '@/modules/tracking/published-map';
 import type { RouteBoarding, RouteStop } from '@/modules/tracking/route-itinerary';
 import styles from './route-explorer.module.css';
 
 type Props = {
-  lines: Coordinate[][]; stops: RouteStop[]; boarding: RouteBoarding | null;
+  routes: PublishedMap['routes']; stops: RouteStop[]; boarding: RouteBoarding | null;
   vehicle: Position | null; findVehicle: number; allowArrivalFocus: boolean; selected: string | null; reset: number;
   zoom: { delta: number; request: number };
   visitor: { coordinate: Coordinate; accuracy: number } | null; centerVisitor: boolean;
@@ -20,7 +21,7 @@ const initialCenter: Coordinate = [42.069, 19.512];
 const tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-export default function RouteExplorerMap({ lines, stops, boarding, vehicle, findVehicle, allowArrivalFocus, selected, reset, zoom, visitor, centerVisitor, onSelect }: Props) {
+export default function RouteExplorerMap({ routes, stops, boarding, vehicle, findVehicle, allowArrivalFocus, selected, reset, zoom, visitor, centerVisitor, onSelect }: Props) {
   const surface = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const pins = useRef(new Map<string, L.Marker>());
@@ -35,16 +36,19 @@ export default function RouteExplorerMap({ lines, stops, boarding, vehicle, find
     if (!canvas) return;
     const bounds = canvas.getBoundingClientRect();
     const markers = [...pins.current].sort(([a], [b]) => Number(b === selected) - Number(a === selected));
-    const symbols = markers.flatMap(([, marker]) => marker.getElement()?.getBoundingClientRect() ?? []);
+    const symbols = markers.flatMap(([, marker]) => {
+      const element = marker.getElement();
+      return (element?.querySelector('.stop-portrait') ?? element)?.getBoundingClientRect() ?? [];
+    });
     const obstacles = [
       ...symbols,
       ...[...canvas.parentElement!.querySelectorAll('[data-map-obstacle]')].map(element => element.getBoundingClientRect()),
     ];
     for (const [, marker] of markers) {
-      const caption = marker.getElement()?.querySelector<HTMLElement>(`.${styles.pinCaption}`);
+      const caption = marker.getElement()?.querySelector<HTMLElement>('[data-map-caption]');
       if (!caption) continue;
       caption.style.visibility = 'hidden';
-      for (const placement of ['right', 'left', 'below']) {
+      for (const placement of ['below', 'right', 'left']) {
         caption.dataset.placement = placement;
         const box = caption.getBoundingClientRect();
         if (box.left < bounds.left + 4 || box.right > bounds.right - 4 ||
@@ -67,22 +71,9 @@ export default function RouteExplorerMap({ lines, stops, boarding, vehicle, find
     arrivalDeadline.current = Date.now() + 15_000;
     instance.createPane('tourVehicle').style.zIndex = '625';
     instance.createPane('tourVisitor').style.zIndex = '624';
-    // Overview tiles use one lower source zoom, which has fewer street labels.
-    const overview = L.tileLayer(tileUrl, { tileSize: 512, zoomOffset: -1, maxZoom: 19, attribution, className: styles.overviewTiles });
-    const detail = L.tileLayer(tileUrl, { maxZoom: 19, attribution });
-    let active: L.TileLayer | undefined;
-    function updateTiles() {
-      const next = instance.getZoom() >= 14 ? detail : overview;
-      if (active === next) return;
-      active?.remove();
-      active = next.addTo(instance);
-    }
-    for (const layer of [overview, detail]) {
-      layer.on('tileerror', () => surface.current?.setAttribute('data-tiles', 'unavailable'));
-      layer.on('tileload', () => surface.current?.removeAttribute('data-tiles'));
-    }
-    updateTiles();
-    instance.on('zoomend', updateTiles);
+    const tiles = L.tileLayer(tileUrl, { maxZoom: 19, attribution, referrerPolicy: 'strict-origin' }).addTo(instance);
+    tiles.on('tileerror', () => surface.current?.setAttribute('data-tiles', 'unavailable'));
+    tiles.on('tileload', () => surface.current?.removeAttribute('data-tiles'));
     instance.on('moveend resize', placeLabels);
     const observer = new ResizeObserver(() => { instance.invalidateSize({ animate: false }); placeLabels(); });
     observer.observe(surface.current);
@@ -94,23 +85,59 @@ export default function RouteExplorerMap({ lines, stops, boarding, vehicle, find
     if (!instance) return;
     const group = L.layerGroup().addTo(instance);
     const markers = pins.current;
-    for (const line of lines) L.polyline(line, { color: '#8d1d40', weight: 5, interactive: false }).addTo(group);
+    for (const route of routes) for (const line of route.lines) {
+      L.polyline(line, {
+        color: route.color === 'var(--ss-route)' ? '#d90000' : route.color,
+        weight: route.weight ?? 6, opacity: .92,
+        dashArray: route.lineStyle === 'dashed' ? '12 8' : route.lineStyle === 'dotted' ? '2 8' : undefined,
+        interactive: false,
+      }).addTo(group);
+    }
 
-    function addPin(id: string, location: Coordinate, number: string, name: string) {
+    function addPin(id: string, location: Coordinate, number: string, name: string, design?: StopDesign) {
       const start = id === 'boarding';
-      const body = document.createElement('span');
-      body.className = styles.pinNumber;
-      body.textContent = number;
-      const label = document.createElement('span');
-      label.className = styles.pinCaption;
-      label.textContent = start ? 'Start here' : name;
       const content = document.createElement('span');
-      content.append(body, label);
+      const label = document.createElement('span');
+      label.className = design ? `stop-name-pill ${styles.photoCaption}` : styles.pinCaption;
+      label.dataset.mapCaption = '';
+      label.textContent = start ? 'Start here' : name;
+      if (design) {
+        content.className = 'stop-marker-shell';
+        const portrait = document.createElement('span');
+        portrait.className = 'stop-portrait';
+        portrait.style.setProperty('--stop-color', design.color);
+        const frame = document.createElement('span');
+        frame.className = 'stop-photo-frame';
+        const fallback = document.createElement('span');
+        fallback.className = 'stop-photo-fallback';
+        fallback.textContent = 'Photo unavailable';
+        frame.append(fallback);
+        if (design.photoUrl) {
+          const image = document.createElement('img');
+          image.className = 'stop-photo';
+          image.alt = '';
+          image.decoding = 'async';
+          image.referrerPolicy = 'no-referrer';
+          image.addEventListener('error', () => { image.hidden = true; portrait.classList.add('is-photo-missing'); });
+          image.src = design.photoUrl;
+          frame.prepend(image);
+        } else portrait.classList.add('is-photo-missing');
+        const badge = document.createElement('span');
+        badge.className = 'stop-number-badge';
+        badge.textContent = design.number;
+        portrait.append(frame, badge, label);
+        content.append(portrait);
+      } else {
+        const body = document.createElement('span');
+        body.className = styles.pinNumber;
+        body.textContent = number;
+        content.append(body, label);
+      }
 
       const title = start ? `Start here: ${name}` : `Stop ${number}: ${name}`;
       const marker = L.marker(location, {
-        icon: L.divIcon({ className: start ? styles.startMarker : styles.marker,
-          html: content, iconSize: [34, 34], iconAnchor: [17, start ? 30 : 17] }),
+        icon: L.divIcon({ className: design ? `stop-photo-marker ${styles.photoMarker}` : start ? styles.startMarker : styles.marker,
+          html: content, iconSize: design ? [44, 44] : [34, 34], iconAnchor: design ? [22, 22] : [17, start ? 30 : 17] }),
         keyboard: true, autoPanOnFocus: false, title, zIndexOffset: start ? 250 : 0,
       }).addTo(group);
       const button = marker.getElement();
@@ -123,33 +150,33 @@ export default function RouteExplorerMap({ lines, stops, boarding, vehicle, find
     }
     stops.forEach((stop, index) => {
       if (!stop.coordinate || (boarding?.coordinate && boarding.stopId === stop.id)) return;
-      const sourceName = stop.place?.name || stop.name;
+      const sourceName = stop.name;
       const name = sourceName.replace(/^Stop\s+\d+\s*[-–—:]\s*/i, '').trim() || sourceName;
-      addPin(stop.id, stop.coordinate, String(index + 1), name);
+      addPin(stop.id, stop.coordinate, stop.design?.number ?? String(index + 1), name, stop.design);
     });
-    if (boarding?.coordinate) addPin('boarding', boarding.coordinate, '●', boarding.name);
+    if (boarding?.coordinate) addPin('boarding', boarding.coordinate, '●', boarding.name, stops.find(stop => stop.id === boarding.stopId)?.design);
     placeLabels();
     return () => { group.remove(); markers.clear(); };
-  }, [boarding, lines, stops]);
+  }, [boarding, routes, stops]);
 
   useEffect(() => {
     const instance = map.current;
     if (!instance) return;
     const frame = requestAnimationFrame(() => {
       instance.invalidateSize({ animate: false });
-      const bounds = L.latLngBounds([...lines.flat(), ...stops.flatMap(stop => stop.coordinate ? [stop.coordinate] : []),
+      const bounds = L.latLngBounds([...routes.flatMap(route => route.lines.flat()), ...stops.flatMap(stop => stop.coordinate ? [stop.coordinate] : []),
         ...(boarding?.coordinate ? [boarding.coordinate] : [])]);
       const size = instance.getSize();
       const top = Math.min(72, size.y * .18);
       const bottom = Math.min(64, size.y * .18);
       if (bounds.isValid()) instance.fitBounds(bounds, {
-        paddingTopLeft: [28, top], paddingBottomRight: [28, bottom], maxZoom: 15, animate: false,
+        paddingTopLeft: [37, top], paddingBottomRight: [37, bottom], maxZoom: 15, animate: false,
       });
       else instance.setView(initialCenter, 13, { animate: false });
       placeLabels();
     });
     return () => cancelAnimationFrame(frame);
-  }, [boarding, lines, reset, stops]);
+  }, [boarding, routes, reset, stops]);
 
   useEffect(() => {
     const instance = map.current;
@@ -173,7 +200,7 @@ export default function RouteExplorerMap({ lines, stops, boarding, vehicle, find
       placeLabels();
     });
     return () => cancelAnimationFrame(frame);
-  }, [boarding, lines, selected, stops]);
+  }, [boarding, routes, selected, stops]);
 
   useEffect(() => {
     if (!vehicle) { van.current?.remove(); van.current = null; return; }
@@ -181,8 +208,8 @@ export default function RouteExplorerMap({ lines, stops, boarding, vehicle, find
     const point: Coordinate = [vehicle.lat, vehicle.lng];
     if (van.current) { van.current.setLatLng(point); return; }
     van.current = L.marker(point, {
-      icon: L.icon({ iconUrl: '/brand/map-bus-front.svg', className: styles.vanMarker,
-        iconSize: [34, 34], iconAnchor: [17, 17] }),
+      icon: L.icon({ iconUrl: '/live-map-workspace/assets/brand/sightseeing-van.svg', className: styles.vanMarker,
+        iconSize: [43, 28], iconAnchor: [21.5, 14] }),
       pane: 'tourVehicle', title: 'Live sightseeing van', alt: 'Live sightseeing van',
       keyboard: false, interactive: false,
     }).addTo(map.current);
