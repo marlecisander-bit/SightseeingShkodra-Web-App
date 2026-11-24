@@ -24,7 +24,7 @@ test('dashboard preserves unavailable vs zero, local service date and useful gua
  assert.match(d.body.textContent,/Schedule summary unavailable/);
  assert.ok(d.querySelector(`a[href="/admin/${op}/departures?view=calendar&date=2026-10-24"]`));
  assert.ok(d.querySelector(`a[href="/admin/${op}/bookings?date=2026-10-24"]`));
- assert.equal(d.querySelector('a[href*="live-map.html"]').target,'_blank');
+ assert.equal(d.querySelector('a[href="/route"]').target,'_blank');
  assert.doesNotMatch(d.body.textContent,/€180|5 \/ 8|0 passengers|No departures/);
  // Enforce the no-data-read dependency boundary, not a mocked result from a mutating reader.
  const source=readFileSync(new URL('../../src/app/admin/overview-panel.tsx',import.meta.url),'utf8');
