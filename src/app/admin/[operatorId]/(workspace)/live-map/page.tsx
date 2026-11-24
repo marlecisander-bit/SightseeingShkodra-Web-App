@@ -13,7 +13,12 @@ import { connectMapAccount, disconnectMapAccount, saveTrackingHours, saveTrackin
 const messages: Record<string, string> = {
   connected: 'Tracking account connected.',
   disconnected: 'Tracking account disconnected.',
-  'connection-failed': 'Could not connect an authorized tracking account.',
+  'connection-failed': 'Your Live Map session ended. Connect your tracking account again.',
+  'invalid-credentials': 'The Live Map account email or password was rejected. Use the credentials from the former Live Map admin.',
+  'email-not-confirmed': 'Confirm the email address for your Live Map account before signing in.',
+  'tracking-access-denied': 'That account signed in successfully, but it has no administrator access to the Sightseeing Shkodra tracking project.',
+  'connection-unavailable': 'The Live Map sign-in could not be completed. Try again shortly.',
+  'try-later': 'Too many sign-in attempts. Wait a few minutes before trying again.',
   'hours-saved': 'Van operating hours saved.',
   'hours-failed': 'Could not confirm the operating hours save. Review the saved hours before retrying.',
   'invalid-hours': 'Enter different opening and closing times for each selected day.',
@@ -59,13 +64,13 @@ export default async function Page(props: SectionProps) {
         dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Tirane',
       }).format(new Date(observation.updatedAt))}</time> · Shkodra time</p>}
     </section>}
-    {result && Object.hasOwn(messages, result) && <p role="status">{messages[result]}</p>}
+    {result && Object.hasOwn(messages, result) && <p role="status">{result === 'connected' && !session ? messages['connection-failed'] : messages[result]}</p>}
     {enabled ? <section>
       <h2>Map editing and publishing</h2>
       {!session ? <form action={connectMapAccount.bind(null, operatorId)}>
-        <p>Sign in with your existing Live Map account to edit or publish the map.</p>
-        <label>Tracking account email <input name="email" type="email" autoComplete="username" required /></label>
-        <label>Tracking account password <input name="password" type="password" autoComplete="current-password" required /></label>
+        <p>Use the account from the former Live Map admin. Your website staff account is separate.</p>
+        <label>Tracking account email <input name="email" type="email" autoComplete="section-livemap username" required /></label>
+        <label>Tracking account password <input name="password" type="password" autoComplete="section-livemap current-password" required /></label>
         <button type="submit">Connect tracking account</button>
       </form> : <>
         <form action={disconnectMapAccount.bind(null, operatorId)}><button type="submit">Disconnect tracking account</button></form>

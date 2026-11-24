@@ -28,9 +28,8 @@ function signature(operatorId: string, userId: string, token: string) {
 
 function clientFor(token?: string) {
   return createClient(process.env.LIVE_MAP_SUPABASE_URL!, process.env.LIVE_MAP_PUBLISHABLE_KEY!, {
-    auth: { persistSession: false, autoRefreshToken: false },
+    ...(token ? { accessToken: async () => token } : { auth: { persistSession: false, autoRefreshToken: false } }),
     global: {
-      ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
       fetch: (input, init) => fetch(input, { ...init, cache: 'no-store', signal: AbortSignal.timeout(8000) }),
     },
   });
@@ -39,22 +38,28 @@ function clientFor(token?: string) {
 async function authorizedProject(client: ReturnType<typeof clientFor>) {
   const { data, error } = await client.from('projects').select('id,default_vehicle_id')
     .eq('slug', publicMapBinding.project).eq('is_public', true).single();
-  if (error || !data) return null;
+  if (error) throw new Error('Tracking project lookup failed');
+  if (!data) return null;
   const access = await client.rpc('is_tracking_admin', { p: data.id });
-  return !access.error && access.data === true ? { projectId: data.id as string, vehicleId: data.default_vehicle_id as string | null } : null;
+  if (access.error) throw new Error('Tracking administrator check failed');
+  return access.data === true ? { projectId: data.id as string, vehicleId: data.default_vehicle_id as string | null } : null;
 }
 
 export async function connectTrackingAdmin(operatorId: string, email: string, password: string) {
   const { userId } = await requirePermission(operatorId, 'tracking.manage');
-  if (!trackingAdminEnabled(operatorId)) return false;
+  if (!trackingAdminEnabled(operatorId)) return 'connection-unavailable';
   const { data, error } = await clientFor().auth.signInWithPassword({ email, password });
   const token = data.session?.access_token;
-  if (error || !token || !data.session || !await authorizedProject(clientFor(token))) return false;
+  if (error?.code === 'invalid_credentials') return 'invalid-credentials';
+  if (error?.code === 'email_not_confirmed') return 'email-not-confirmed';
+  if (error?.status === 429) return 'try-later';
+  if (error || !token || !data.session) return 'connection-unavailable';
+  if (!await authorizedProject(clientFor(token))) return 'tracking-access-denied';
   (await cookies()).set(cookieName, `${signature(operatorId, userId, token)}:${token}`, {
     httpOnly: true, secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict', path: cookiePath, maxAge: Math.min(data.session.expires_in, 3600),
   });
-  return true;
+  return 'connected';
 }
 
 export async function disconnectTrackingAdmin(operatorId: string) {
@@ -70,7 +75,7 @@ export async function trackingAdminSession(operatorId: string) {
   if (!token || !/^[a-f0-9]{64}$/.test(mac) ||
       !timingSafeEqual(Buffer.from(mac), Buffer.from(signature(operatorId, userId, token)))) return null;
   const client = clientFor(token);
-  const project = await authorizedProject(client);
+  const project = await authorizedProject(client).catch(() => null);
   return project ? { client, ...project } : null;
 }
 
