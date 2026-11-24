@@ -30,6 +30,7 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react";
+import { whatsappLink } from '@/modules/content/whatsapp';
 import { usePathname } from "next/navigation";
 import {
   type BookingSelection,
@@ -370,6 +371,7 @@ export function BookingBar() {
 export function Header({ content: c = initialWebsiteContent, previewPathname }: { content?: WebsiteContent; previewPathname?:string }) {
   const currentPathname = usePathname();
   const pathname = previewPathname ?? currentPathname;
+  const routeWhatsApp = pathname === "/route" ? whatsappLink(c) : null;
   const inBooking = pathname === "/book" || pathname.startsWith("/booking/");
   const [heroVisible, setHeroVisible] = useState(true);
   const { open } = useBooking();
@@ -500,6 +502,8 @@ export function Header({ content: c = initialWebsiteContent, previewPathname }: 
           aria-label="Main navigation"
         >
           {links.map((href,i)=>visibleWebsiteLink(href,c) ? <PublicBookingLink key={i} href={href} aria-current={active===i ? (href.includes("#") ? "location" : "page") : undefined} onClick={()=>{if(menu)menuToggle.current?.focus();setMenu(false);setHash(href.includes("#")?"#"+href.split("#")[1]:"");}}><span className="p-nav-label">{items[i].label}</span></PublicBookingLink> : null)}
+          {routeWhatsApp && <a className="p-route-whatsapp" href={routeWhatsApp} target="_blank" rel="noopener noreferrer"
+            onClick={() => { setMenu(false); menuToggle.current?.focus(); }}><span className="p-nav-label">WhatsApp</span></a>}
           {inBooking ? <Link className="p-menu-back" href="/" onClick={() => setMenu(false)}>Back to website</Link> : <Button type="button" size="lg" className="p-button p-button-booking p-menu-book" onClick={bookFromHeader}>{c["nav.book"]}</Button>}
         </nav>
         <span className="p-language" title="More languages coming soon" aria-label="English; more languages coming soon">EN</span>

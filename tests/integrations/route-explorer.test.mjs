@@ -24,7 +24,8 @@ test('keeps ordered planner stops if map data is unavailable', () => {
 });
 test('boarding uses verified configured pickup and honors later meeting point changes', () => {
   const meeting = { name: 'Meeting point', directions: '', label: 'Directions', stopId: null };
-  const verified = routeBoarding({ ...meeting, url: 'https://maps.app.goo.gl/rssrPnaBYZVWp316A' });
+  const verified = routeBoarding({ ...meeting, stopId: 'boarding-stop', url: 'https://maps.app.goo.gl/rssrPnaBYZVWp316A' });
+  assert.equal(verified.stopId, 'boarding-stop');
   assert.equal(verified.name, 'Hotel Rozafa / Democracy Square');
   assert.match(verified.url, /destination=42.067722%2C19.512861/);
   const updated = routeBoarding({ ...meeting, name: 'New stop', url: 'https://www.google.com/maps/dir/?destination=42,19' });

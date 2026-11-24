@@ -1398,3 +1398,9 @@ body:has(.p-booking-dialog[open]) {
 @media (min-width: 1101px) {
  .public-site:has([data-route-explorer]) .p-header { --p-header-height: 76px; height: calc(76px + env(safe-area-inset-top)); }
 }
+@media (max-width: 760px) {
+ .public-site:has([data-route-explorer]) .p-global-footer { display: none; }
+ .public-site:has([data-route-explorer]) .p-header .p-header-book,
+ .public-site:has([data-route-explorer]) .p-header .p-language { display: none; }
+ .public-site:has([data-route-explorer]) .p-header .p-menu-toggle { margin-left: auto; }
+}

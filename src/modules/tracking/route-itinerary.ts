@@ -6,7 +6,7 @@ import type { Coordinate, PublishedMap } from './published-map';
 
 export type RoutePlace = { id: string; name: string; text: string; link: string; stopId?: string | null; image?: string; alt?: string };
 export type RouteStop = { id: string; name: string; coordinate?: Coordinate; description?: string; place?: RoutePlace };
-export type RouteBoarding = { name: string; directions: string; coordinate?: Coordinate; url: string };
+export type RouteBoarding = { stopId?: string | null; name: string; directions: string; coordinate?: Coordinate; url: string };
 
 export const routeLivePositionMs = 90_000;
 export const routeLastKnownPositionMs = 600_000;
@@ -59,7 +59,7 @@ export function routeBoarding(meeting: MeetingPoint | null, map?: PublishedMap):
   const parsed: Coordinate | undefined = match ? [Number(match[1]), Number(match[2])] : undefined;
   const coordinate: Coordinate | undefined = parsed && Math.abs(parsed[0]) <= 90 && Math.abs(parsed[1]) <= 180
     ? parsed : verifiedPickup ? [42.067722, 19.512861] : bound?.coordinate;
-  return { name: verifiedPickup && meeting.name === 'Meeting point' ? 'Hotel Rozafa / Democracy Square' : meeting.name,
+  return { stopId: meeting.stopId, name: verifiedPickup && meeting.name === 'Meeting point' ? 'Hotel Rozafa / Democracy Square' : meeting.name,
     directions: meeting.directions, coordinate,
     url: coordinate ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(coordinate.join(','))}` : meeting.url };
 }

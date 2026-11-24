@@ -28,7 +28,7 @@ export default async function PublicLayout({
         {process.env.GA4_ENABLED === "true" && process.env.APP_ENV === "production" && process.env.VERCEL_ENV !== "preview" && process.env.NEXT_PUBLIC_SITE_URL === "https://sightseeingshkodra.app" && <PublicAnalytics />}
         {children}
         <Footer content={content} googleReviewsUrl={reviews.google_reviews_url} />
-        <WhatsAppContact href={whatsappLink(content)} label={content['whatsapp.label']??''} desktop={content['whatsapp.desktop']==='true'} mobile={content['whatsapp.mobile']==='true'}/>
+        <WhatsAppContact excludePaths={["/route"]} href={whatsappLink(content)} label={content['whatsapp.label']??''} desktop={content['whatsapp.desktop']==='true'} mobile={content['whatsapp.mobile']==='true'}/>
       </BookingProvider>
     </div>
   );
