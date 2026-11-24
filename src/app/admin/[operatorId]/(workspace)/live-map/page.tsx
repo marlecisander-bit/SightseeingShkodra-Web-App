@@ -12,6 +12,7 @@ import { connectMapAccount, disconnectMapAccount, saveTrackingHours, saveTrackin
 
 const messages: Record<string, string> = {
   connected: 'Tracking account connected.',
+  'password-reset': 'Live Map password updated. Sign in with the new password.',
   disconnected: 'Tracking account disconnected.',
   'connection-failed': 'Your Live Map session ended. Connect your tracking account again.',
   'invalid-credentials': 'The Live Map account email or password was rejected. Use the credentials from the former Live Map admin.',
@@ -72,6 +73,7 @@ export default async function Page(props: SectionProps) {
         <label>Tracking account email <input name="email" type="email" autoComplete="section-livemap username" required /></label>
         <label>Tracking account password <input name="password" type="password" autoComplete="section-livemap current-password" required /></label>
         <button type="submit">Connect tracking account</button>
+        <Link href="/auth/live-map-recovery">Forgot your Live Map password?</Link>
       </form> : <>
         <form action={disconnectMapAccount.bind(null, operatorId)}><button type="submit">Disconnect tracking account</button></form>
         {versions ? <>
