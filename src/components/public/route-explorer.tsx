@@ -25,23 +25,25 @@ class MapBoundary extends Component<{ children: ReactNode }, { failed: boolean }
 
 type Panel = 'stops' | 'departures' | 'stop' | 'boarding' | null;
 
-export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, initialPosition, initialLastKnown = null, initialEta = null }: {
+export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, initialPosition, initialLastKnown = null, initialEta = null, initialMovement = null }: {
   planner: DayPlannerData; lines: Coordinate[][]; stops: RouteStop[];
-  boarding: RouteBoarding | null; mapVersion: string | number | null; initialPosition: Position | null; initialLastKnown?: Position | null; initialEta?: string | null;
+  boarding: RouteBoarding | null; mapVersion: string | number | null; initialPosition: Position | null; initialLastKnown?: Position | null; initialEta?: string | null; initialMovement?: string | null;
 }) {
   const { products } = useBooking();
   const activeProduct = products.find(product => product.active !== false && product.slug === planner.product?.slug);
   const [panel, setPanel] = useState<Panel>(null);
   const [selection, select] = useState<string | null>(null);
   const [reset, setReset] = useState(0);
-  const [live, setLive] = useState({ position: initialPosition, lastKnown: initialLastKnown, eta: initialEta });
-  const [showLastKnown, setShowLastKnown] = useState(false);
+  const [live, setLive] = useState({ position: initialPosition, lastKnown: initialLastKnown, eta: initialEta, movement: initialMovement });
+  const [showLastKnown, setShowLastKnown] = useState(true);
+  const [findVehicle, setFindVehicle] = useState(0);
   const [times, setTimes] = useState(planner.times);
   const selectedIndex = stops.findIndex(stop => stop.id === selection);
   const selected = stops[selectedIndex];
   const canvasSelection = panel === 'stop' || panel === 'boarding' ? selection : null;
   const scheduleProduct = planner.product?.slug;
   const canTrack = lines.length > 0 && mapVersion !== null;
+  const vehicle = canTrack ? live.position ?? (showLastKnown ? live.lastKnown : null) : null;
 
 
   useEffect(() => {
@@ -55,10 +57,10 @@ export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, ini
       const observed = Date.parse(lastPosition.updatedAt);
       expires = setTimeout(() => {
         if (fresh) {
-          setLive({ position: null, lastKnown: recentRoutePosition(lastPosition), eta: null });
+          setLive({ position: null, lastKnown: recentRoutePosition(lastPosition), eta: null, movement: null });
           expire(lastPosition, false);
         } else {
-          setLive({ position: null, lastKnown: null, eta: null });
+          setLive({ position: null, lastKnown: null, eta: null, movement: null });
         }
       }, Math.max(0, observed + (fresh ? routeLivePositionMs : routeLastKnownPositionMs) - Date.now()));
     };
@@ -74,11 +76,12 @@ export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, ini
           ? recentRoutePosition(data.position ?? data.lastKnown) : null;
         const position = freshRoutePosition(lastPosition);
         const eta = position && typeof data.eta === 'string' && data.eta.length <= 80 ? data.eta : null;
-        setLive({ position, lastKnown: position ? null : lastPosition, eta });
+        const movement = position && typeof data.movement === 'string' && data.movement.length <= 180 ? data.movement : null;
+        setLive({ position, lastKnown: position ? null : lastPosition, eta, movement });
         expire(lastPosition, !!position);
       } catch {
         if (!controller.signal.aborted) {
-          setLive(current => ({ position: null, lastKnown: recentRoutePosition(current.position ?? current.lastKnown), eta: null }));
+          setLive(current => ({ position: null, lastKnown: recentRoutePosition(current.position ?? current.lastKnown), eta: null, movement: null }));
         }
       } finally { busy = false; }
     }
@@ -120,18 +123,24 @@ export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, ini
   }}>
     <div className={styles.workspace}>
       <div className={styles.map}>
-        <MapBoundary><Map lines={lines} stops={stops} boarding={boarding} vehicle={canTrack ? live.position ?? (showLastKnown ? live.lastKnown : null) : null}
+        <MapBoundary><Map lines={lines} stops={stops} boarding={boarding} vehicle={vehicle} findVehicle={findVehicle}
           vehicleHistorical={showLastKnown && !live.position && !!live.lastKnown}
           selected={canvasSelection} reset={reset} onSelect={choose} /></MapBoundary>
         <header className={styles.tour}>
           <h1>Route &amp; Live Map</h1>
           {stops.length > 0 && <p>{stops.length} published stops</p>}
           {!lines.length && <p>Route line unavailable</p>}
-          <p role="status">{canTrack && live.position ? `Van location live${live.eta ? ` · Next stop in ${live.eta}` : ''}` : canTrack ? 'Waiting for a fresh GPS update' : 'Live location unavailable'}</p>
-          {canTrack && !live.position && live.lastKnown && <button className={styles.lastKnown} type="button"
-            aria-pressed={showLastKnown} onClick={() => setShowLastKnown(value => !value)}>
-            {showLastKnown ? 'Hide last known location' : 'Show last known location'}
-          </button>}
+          <p role="status">{live.position
+            ? `${live.movement ?? 'Van location live'}${live.eta ? ` · Next stop in ${live.eta}` : ''}`
+            : live.lastKnown && showLastKnown ? 'Last known van location · Waiting for fresh GPS'
+              : canTrack ? 'Waiting for a fresh GPS update' : 'Live location unavailable'}</p>
+          <div className={styles.vehicleActions}>
+            {vehicle && <button className={styles.lastKnown} type="button" onClick={() => setFindVehicle(value => value + 1)}>Find van</button>}
+            {canTrack && !live.position && live.lastKnown && <button className={styles.lastKnown} type="button"
+              aria-pressed={showLastKnown} onClick={() => setShowLastKnown(value => !value)}>
+              {showLastKnown ? 'Hide last known location' : 'Show last known location'}
+            </button>}
+          </div>
         </header>
         <button className={styles.full} type="button" onClick={() => { close(); setReset(value => value + 1); }}>Full route</button>
       </div>

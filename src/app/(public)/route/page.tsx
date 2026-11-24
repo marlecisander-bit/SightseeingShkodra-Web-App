@@ -24,5 +24,6 @@ export default async function RoutePage() {
   return <RouteExplorer planner={planner} lines={lines} stops={stops}
     boarding={routeBoarding(meeting, tracking?.map)} mapVersion={tracking?.mapVersion ?? null}
     initialPosition={initialPosition} initialLastKnown={initialPosition ? null : lastPosition}
+    initialMovement={initialPosition ? tracking?.journey?.movement ?? null : null}
     initialEta={initialPosition ? routeEta(tracking?.journey) : null} />;
 }

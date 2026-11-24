@@ -9,6 +9,7 @@ export async function GET(request: Request) {
     mapVersion: data?.mapVersion ?? null,
     position,
     lastKnown: position ? null : lastPosition,
+    movement: position ? data?.journey?.movement ?? null : null,
     eta: position ? routeEta(data?.journey) : null,
   }, { headers: { 'Cache-Control': 'no-store' } });
 }
