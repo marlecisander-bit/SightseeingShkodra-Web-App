@@ -41,3 +41,18 @@ Local implementation; not deployed. This entry supersedes earlier references to 
 Both the website and the additive independent-map bridge must be released for the external timeline to receive live state and Show on map commands. The currently hosted map has not received this extension: local browser testing therefore verified the honest static timeline fallback alongside the working hosted live map. End-to-end moving-vehicle bridge acceptance, coordinated deployment, physical Safari/Android and a full network profile remain pending. No deployment or production data changes were performed.
 
 The source provides lastDeparted, not a full visited-stop history. Only the confirmed last departure is marked; earlier or skipped stops are not invented as visited. All underlying operational stop-radius, parked and reset behavior remains owned by the existing map. VM projection tests are not proof of a real vehicle run. No production CMS visibility toggles or GPS simulation were performed during this task.
+
+## Native Route preview
+
+The owner approved integrating the map and map admin into the Web App while retaining the separate tracking Supabase project. The local native `/route` preview uses `LIVE_MAP_NATIVE_ROUTE=1` with the existing tracking Supabase URL and publishable key. The public endpoint reads only the fixed public project, its published map version, and the default vehicle's current published tracking snapshot. The flag defaults off.
+
+The preview renders route geometry, stops and reported vehicle position in Next.js. It does not yet reproduce operational stop progression, ETA, or the full companion map controls. Other public consumers still use the companion. Map management and Netlify retirement remain pending. The existing map publication RPC requires an authenticated tracking-project identity with permission on the target project. Preserve that check and the RPC's atomic draft/publish behavior when integrating admin writes.
+
+Verify the current device and GPS worker paths, legacy map links, and every public consumer before retiring Netlify. No tracking project migration or public deployment was performed for the local preview.
+
+### Publication readiness check — 24 November 2026
+
+- Local Webpack production build, TypeScript, targeted lint and all 758 repository tests passed. The built server returned native `/route` markup with no iframe when enabled, and the map API returned HTTP 200 with `Cache-Control: no-store`, one published route and five stops from the existing tracking project. The disabled API returned HTTP 404. The local browser-facing HTML check used fallback web app content because main Supabase CMS settings were absent.
+- The tracking project returned a vehicle observation approximately 15 hours old at the time of the check. Connectivity is verified. Fresh vehicle updates, stop progression and ETA have yet to pass live acceptance.
+- Chrome showed the Live Map Netlify project serving its November 13 production deploy on the default Netlify subdomain. The separate tracking Supabase project showed the deployed `gps-worker` Edge Function. The Netlify team also hosts the separate Borealis project.
+- Release remains blocked on native admin editing and publishing, migration of remaining Netlify consumers, live mobile acceptance and verification of the exact intended release branch. Local checks ran in the existing mixed working tree. No push, hosting or Supabase change was made.
