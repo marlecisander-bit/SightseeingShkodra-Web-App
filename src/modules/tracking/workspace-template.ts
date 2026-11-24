@@ -223,29 +223,12 @@ export const workspaceHtml = String.raw`<!DOCTYPE html>
         </div>
 
 
-        <section class="context-section" data-context-section="map"><div class="workflow-card" id="editor-save-status" role="status" aria-live="polite"><strong>Saved and published versions</strong><span id="editor-feedback" aria-live="polite"></span><span>Draft: <span id="last-saved-draft">Not loaded</span></span><span>Public: <span id="last-published">Not loaded</span></span><span>Apply edits locally, Save Draft, then Publish. Discard returns to the last saved map.</span><button type="button" class="context-secondary" data-action="discardChanges">Discard unsaved changes</button></div>
-
-            <div class="workflow-card">
-                <strong>Tour setup</strong>
-                <span>Build and publish the tour in a clear operational order.</span>
-
-                <div class="workflow-steps">
-                    <span class="workflow-step current">1 Stops</span>
-                    <span class="workflow-step">2 Route</span>
-                    <span class="workflow-step">3 POIs</span>
-                    <span class="workflow-step">4 Preview</span>
-                    <span class="workflow-step">5 Publish</span>
-                </div>
-            </div>
-
-            <div class="sidebar-actions">
-                <button class="context-primary" type="button" data-action="setAdminSection" data-section="stops">Manage Stops</button>
-                <button class="context-secondary" type="button" data-action="setAdminSection" data-section="routes">Manage Route</button>
-                <button class="context-secondary" type="button" data-action="setAdminSection" data-section="pois">Manage POIs</button>
-            </div>
-
-        </section>
-
+        <div class="workflow-card" id="editor-save-status">
+            <span id="editor-feedback" role="status" aria-live="polite"></span>
+            <span>Saved draft: <span id="last-saved-draft">Not loaded</span></span>
+            <span>Public version: <span id="last-published">Not loaded</span></span>
+            <button type="button" class="context-secondary" data-action="discardChanges">Discard unsaved changes</button>
+        </div>
 
         <section class="context-section" data-context-section="stops">
 
@@ -1052,42 +1035,6 @@ export const workspaceHtml = String.raw`<!DOCTYPE html>
   </div>
 </div>
 <div id="export-stage"></div>
-
-<!-- =========================================================
-     PUBLICATION STATUS
-========================================================= -->
-
-<div id="publish-bar">
-
-    <div id="publish-actions"><button type="button" class="btn-light" data-action="discardChanges">Discard unsaved</button>
-
-        <button
-            class="btn-light"
-            data-action="previewPublicMap">View public map</button>
-
-
-        <button
-            class="btn-primary"
-            data-action="saveDraft">
-
-            Save Draft
-
-        </button>
-
-
-        <button
-            class="btn-green"
-            data-action="publishMap">
-
-            Publish
-
-        </button>
-
-    </div>
-
-</div>
-
-
 
 <div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 

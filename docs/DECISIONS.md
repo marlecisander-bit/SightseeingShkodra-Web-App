@@ -334,3 +334,7 @@ Owner approved accurate April2027 hop-on hop-off return, approximately two-hour 
 ## 24 November 2026 — Live Map administration inside the Web App
 
 The owner directed the Calendar Live Map admin link to an editor in the Web App because the former Netlify site is disabled. The separate tracking Supabase project remains authoritative for map versions, GPS and operating hours. The workspace requires website tracking permission and the existing tracking administrator account. Map and hours writes use the companion project’s existing RPCs. Website stop photos and editorial destination content remain in the Website workspace.
+
+## 24 November 2026 — Single entry for Live Map and destination editing
+
+Calendar opens Live Map admin for GPS, operational stops, map photos, route geometry and publication. The former Calendar Route & stops and Live tracking views return authorized staff to the appropriate workspace. Website → Stops & destinations offers a read-only stop association review and a single destination editing list. Existing destination records, links, permissions and the separate tracking project remain authoritative. The Live Map workspace keeps its tools in its navigation and has one draft, publish, discard and public preview control.

@@ -16,3 +16,4 @@
 @media (max-width: 1023px) {
   :global(body):has(.editorFrame) :global(nav[aria-label="Primary admin navigation"]) { display: none; }
 }
+.workspaceLinks { display: flex; flex-wrap: wrap; gap: .5rem 1rem; }

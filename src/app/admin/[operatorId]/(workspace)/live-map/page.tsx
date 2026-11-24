@@ -33,7 +33,7 @@ export default async function Page(props: SectionProps) {
   return <div className={styles.workspace}>
     <header>
       <h1>Live Map admin</h1>
-      <Link href="/route" target="_blank" rel="noopener noreferrer">Open public route map</Link>
+      {!session && <Link href="/route" target="_blank" rel="noopener noreferrer">Open public route map</Link>}
     </header>
     {enabled && !session && <section aria-label="Published map and GPS">
       <h2>Published map and GPS</h2>
@@ -54,8 +54,10 @@ export default async function Page(props: SectionProps) {
         <Link href="/auth/live-map-recovery">Forgot your Live Map password?</Link>
       </form> : <>
         <form action={disconnectMapAccount.bind(null, operatorId)}><button type="submit">Disconnect tracking account</button></form>
-        <Link href={`/admin/${encodeURIComponent(operatorId)}/departures?view=route`}>Back to Calendar</Link>
-        <Link href={workspaceUrl} target="_blank" rel="noopener noreferrer">Open workspace in a new tab</Link>
+        <div className={styles.workspaceLinks}>
+          <Link href={`/admin/${encodeURIComponent(operatorId)}/departures?view=calendar`}>Back to Calendar</Link>
+          <Link href={workspaceUrl} target="_blank" rel="noopener noreferrer">Open workspace in a new tab</Link>
+        </div>
       </>}
     </section> : <p>Map editing is unavailable for this workspace.</p>}
     {session && <iframe className={styles.editorFrame} src={workspaceUrl} title="Live Map editing workspace" />}
