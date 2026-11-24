@@ -41,3 +41,13 @@ Local implementation; not deployed. This entry supersedes earlier references to 
 Both the website and the additive independent-map bridge must be released for the external timeline to receive live state and Show on map commands. The currently hosted map has not received this extension: local browser testing therefore verified the honest static timeline fallback alongside the working hosted live map. End-to-end moving-vehicle bridge acceptance, coordinated deployment, physical Safari/Android and a full network profile remain pending. No deployment or production data changes were performed.
 
 The source provides lastDeparted, not a full visited-stop history. Only the confirmed last departure is marked; earlier or skipped stops are not invented as visited. All underlying operational stop-radius, parked and reset behavior remains owned by the existing map. VM projection tests are not proof of a real vehicle run. No production CMS visibility toggles or GPS simulation were performed during this task.
+
+## Public Route explorer
+
+The redesigned `/route` uses a native Leaflet map and the existing tracking Supabase project. Pin selection and list selection share website state. The explorer reads the day planner for the active public product and effective Shkodra-local schedule, and opens that product in the existing booking flow when available.
+
+An untagged published loop can serve the whole-day tour. To show a different product's geometry, the published route must identify that product with `tourProductSlug` and provide its ordered stop IDs in `stopSequence`. The current tracking project publishes an untagged five-stop loop. The winter view uses the CMS photo-stop order and any matching published destination coordinates, with no winter line until an authoritative itinerary is available. The tracking CMS currently validates its five-stop loop, so publishing a separate winter geometry requires an appropriate source and publication path.
+
+On 24 November 2026 the production website's configured pickup Maps link resolved to 42.067722, 19.512861. The site's published pickup FAQ identifies the starting area as Hotel Rozafa at Democracy Square. The native directions link uses those coordinates for that exact configured link. A later CMS meeting-point change takes precedence.
+
+Local Chrome checks used the published loop, controlled schedules, and synthetic fresh/stale GPS snapshots. They covered 320, 390 and 1440 px, pin/list selection, gestures, boarding, booking, and a failed tile load. Physical iPhone acceptance remains pending.

@@ -4,7 +4,7 @@ export function plannerClock(now = new Date()) {
   const get=(key:string)=>parts.find(p=>p.type===key)!.value;
   return {date:`${get('year')}-${get('month')}-${get('day')}`,time:`${get('hour')}:${get('minute')}`};
 }
-export type DayPlannerData={date:string;title:string;times:string[]|null;fares:{time:string;amount:number}[];stops:{id:string;label:string}[]|null};
+export type DayPlannerData={date:string;title:string;product?:{slug:string;mode:'selected_departure'|'whole_day';minutes:number};times:string[]|null;fares:{time:string;amount:number}[];stops:{id:string;label:string}[]|null};
 export function plannerSummary(data:DayPlannerData, now=new Date()) {
  const clock=plannerClock(now),current=clock.date===data.date;
  const upcoming=current?data.times?.filter(t=>t>clock.time):undefined;

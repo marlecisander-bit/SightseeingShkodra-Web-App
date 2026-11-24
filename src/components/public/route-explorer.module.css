@@ -1,0 +1,70 @@
+:global(.public-site) .page.page { padding-top: calc(var(--route-header) + env(safe-area-inset-top, 0px)); }
+.page {
+  --route-header: 76px;
+  color: var(--ss-charcoal);
+}
+.workspace {
+  display: grid;
+  grid-template: minmax(0, 1fr) auto / minmax(0, 1fr) minmax(250px, 320px);
+  height: calc(100dvh - var(--route-header) - env(safe-area-inset-top));
+  min-height: 480px;
+  background: var(--ss-cream, #f9f5ef);
+}
+.map { grid-area: 1 / 1 / 3 / 2; position: relative; min-width: 0; min-height: 0; isolation: isolate; background: #e5e9df; }
+.canvas { width: 100%; height: 100%; }
+.canvas[data-tiles=unavailable] { background: #e5e9df; }
+.canvas :global(.leaflet-top.leaflet-right) { top: auto; bottom: 78px; right: max(2px, env(safe-area-inset-right)); }
+.canvas :global(.leaflet-bottom) { bottom: 3px; }
+.loading { margin: 0; padding: 110px 20px; }
+.tour, .full { position: absolute; z-index: 450; }
+.tour {
+  top: 12px; left: max(12px, env(safe-area-inset-left)); max-width: min(380px, calc(100% - 90px));
+  padding: 8px 12px; background: white; border-radius: 12px; box-shadow: 0 2px 10px #0002;
+}
+.tour h1 { color: var(--brand-red, #a93229); margin: 0; font-size: clamp(17px, 2.4vw, 24px); line-height: 1.15; }
+.tour p { margin: 3px 0 0; font-size: 12px; line-height: 1.25; }
+.full { right: max(12px, env(safe-area-inset-right)); bottom: 24px; }
+.bar { grid-area: 2 / 2; display: flex; gap: 6px; padding: 8px; padding-bottom: max(8px, env(safe-area-inset-bottom)); background: white; border-top: 1px solid #dfdbd4; }
+.bar button { flex: 1 1 0; padding-inline: 6px; }
+.bar button[aria-expanded=true] { background: var(--brand-red, #a93229); color: white; }
+.panel { grid-area: 1 / 2; position: relative; min-width: 0; overflow: auto; padding: 12px 44px 10px 14px; background: white; }
+.panel h2 { margin: 0 0 4px; font-size: clamp(18px, 2vw, 24px); line-height: 1.15; }
+.panel p { margin: 4px 0 8px; font-size: 13px; line-height: 1.35; }
+.panel button, .bar button, .full { min-height: 44px; border: 1px solid #d9d3ce; border-radius: 9px; background: white; color: inherit; cursor: pointer; font: inherit; font-size: 13px; font-weight: 650; padding-inline: 10px; }
+.panel button:disabled { opacity: .45; cursor: default; }
+.page :is(button, a, [tabindex]):focus-visible { outline: 3px solid #146576; outline-offset: 2px; }
+.panel .close { position: absolute; top: 3px; right: 3px; min-width: 44px; border: 0; font-size: 24px; }
+.stopDetail { display: flex; align-items: flex-start; gap: 10px; }
+.stopDetail img { width: 68px; height: 58px; object-fit: cover; border-radius: 7px; }
+.stopDetail > div { min-width: 0; overflow-wrap: anywhere; }
+.stopDetail .kicker, .kicker { font-size: 11px; font-weight: 750; }
+.sequence { display: flex; gap: 8px; margin-top: 6px; }
+.stops, .times { padding: 0; margin: 8px 0; list-style: none; }
+.stops { display: grid; gap: 4px; }
+.stops button { text-align: left; width: 100%; }
+.stops b { color: var(--brand-red, #a93229); margin-right: 6px; }
+.times { display: flex; flex-wrap: wrap; gap: 6px; }
+.times li { padding: 4px 9px; background: #f4eee9; border-radius: 5px; font-weight: 700; }
+.marker, .startMarker { background: transparent; border: 0; }
+.pin {
+  display: grid; place-items: center; width: 100%; height: 100%; position: relative;
+  overflow: hidden; border-radius: 50%; border: 2px solid white; color: white; background: #923227; box-shadow: 0 1px 6px #0006;
+}
+.pin img { position: absolute; width: 100%; height: 100%; object-fit: cover; }
+.pin b { z-index: 1; background: #923227; border-radius: 9px; padding: 0 5px; }
+.startMarker .pin { border-radius: 16px; background: var(--color-booking-primary, #f5c639); color: #251b08; }
+.startMarker .pin b { background: transparent; white-space: nowrap; }
+[data-selected=true] .pin { border-color: #ffd375; box-shadow: 0 0 0 3px #6c241d; }
+@media (min-width: 761px) {
+  .workspace:has(.panel) .map { grid-column: 1; }
+  .workspace:not(:has(.panel)) .map { grid-column: 1 / -1; grid-row: 1; }
+  .workspace:not(:has(.panel)) .bar { grid-column: 1 / -1; justify-content: center; }
+  .workspace:not(:has(.panel)) .bar button { flex: 0 1 140px; }
+}
+@media (max-width: 1100px) { .page { --route-header: 60px; } }
+@media (max-width: 760px) {
+  .workspace { grid-template: minmax(0, 1fr) auto auto / minmax(0, 1fr); min-height: 360px; }
+  .map { grid-area: 1 / 1; }
+  .panel { grid-area: 2 / 1; border-radius: 15px 15px 0 0; max-height: min(31dvh, 240px); padding-left: max(12px, env(safe-area-inset-left)); }
+  .bar { grid-area: 3 / 1; padding-inline: max(8px, env(safe-area-inset-left)) max(8px, env(safe-area-inset-right)); }
+}

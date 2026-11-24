@@ -14,6 +14,7 @@ export async function getDayPlanner() {
   const product=products.find(p=>p.active!==false&&p.primary)??products.find(p=>p.active!==false);
   if(!product){result.times=[];result.fares=[];return result;}
   result.title=product.title;
+  result.product={slug:product.slug,mode:product.mode,minutes:product.minutes};
   if(product.id!==home.product?.id)result.fares=[];
   const client=createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,process.env.SUPABASE_SECRET_KEY!,{auth:{persistSession:false},global:{fetch:(input,init)=>fetch(input,{...init,cache:'no-store',signal:AbortSignal.timeout(5000)})}});
   // Follow an active public offer rather than the inactive homepage binding.
