@@ -21,7 +21,7 @@ export default async function RoutePage() {
   const { lines, stops } = routeItinerary(planner.stops, tracking?.map, places.filter(place => place.showOnPage));
   const lastPosition = lines.length ? recentRoutePosition(tracking?.snapshot.positions[0]) : null;
   const initialPosition = freshRoutePosition(lastPosition);
-  return <RouteExplorer planner={planner} routeTitle={tracking?.map.routes[0]?.name ?? 'Tour route'} lines={lines} stops={stops}
+  return <RouteExplorer planner={planner} routeTitle={tracking?.map.routes[0]?.name ?? 'Tour route'} routes={tracking?.map.routes ?? []} stops={stops}
     boarding={routeBoarding(meeting, tracking?.map)} mapVersion={tracking?.mapVersion ?? null}
     initialPosition={initialPosition} initialLastKnown={initialPosition ? null : lastPosition}
     initialObservedAt={tracking?.snapshot.positions[0]?.updatedAt ?? null}

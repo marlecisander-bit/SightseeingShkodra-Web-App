@@ -1094,7 +1094,6 @@ export const workspaceHtml = String.raw`<!DOCTYPE html>
 <!-- WORKSPACE_CONFIG -->
 <script src="/live-map-workspace/js/shared/app-config.js"></script>
 <script src="/live-map-workspace/js/shared/map-content-safety.js"></script>
-<script src="/live-map-workspace/js/shared/stop-design-defaults.js"></script>
 <script src="/live-map-workspace/js/shared/stop-design.js"></script>
     <script src="/live-map-workspace/js/shared/tracking-realtime.js"></script>
     <script src="/live-map-workspace/js/shared/tracking-state.js"></script>

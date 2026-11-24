@@ -1,5 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { trackingAdminSession } from '@/modules/tracking/admin-server';
+import stopDesignDefaults from '@/modules/tracking/stop-design-defaults.json';
 import { workspaceHtml } from '@/modules/tracking/workspace-template';
 
 export async function GET(_request: Request, { params }: { params: Promise<{ operatorId: string }> }) {
@@ -18,7 +19,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ ope
     workspaceProjectId: session.projectId,
     workspaceDataPath: `/admin/${encodeURIComponent(operatorId)}/live-map/workspace/data/`,
   };
-  const bootstrap = `<script nonce="${nonce}">window.liveMapWorkspace = ${JSON.stringify(configuration).replace(/</g, '\\u003c')};</script>`;
+  const defaults = JSON.stringify(stopDesignDefaults).replace(/</g, '\\u003c');
+  const bootstrap = `<script nonce="${nonce}">window.liveMapWorkspace = ${JSON.stringify(configuration).replace(/</g, '\\u003c')};window.stopDesignDefaults = ${defaults};</script>`;
   return new Response(workspaceHtml.replace('<!-- WORKSPACE_CONFIG -->', bootstrap), {
     headers: {
       ...headers,

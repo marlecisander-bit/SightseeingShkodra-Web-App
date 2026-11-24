@@ -8,7 +8,7 @@ import { RouteControlIcon } from './route-control-icon';
 import { ProductBookingLink } from './product-booking-link';
 import { plannerClock, type DayPlannerData } from '@/modules/content/day-planner';
 import { freshRoutePosition, nearestRouteStop, recentRoutePosition, routeLastKnownPositionMs, routeLivePositionMs, type RouteBoarding, type RouteStop } from '@/modules/tracking/route-itinerary';
-import type { Coordinate } from '@/modules/tracking/published-map';
+import type { Coordinate, PublishedMap } from '@/modules/tracking/published-map';
 import type { Position } from '@/modules/tracking/positions';
 import styles from './route-explorer.module.css';
 
@@ -28,8 +28,8 @@ type VisitorLocation = { coordinate: Coordinate; accuracy: number };
 
 type Panel = 'stops' | 'departures' | 'stop' | 'boarding' | 'tracking' | 'location' | null;
 
-export function RouteExplorer({ planner, routeTitle, lines, stops, boarding, mapVersion, initialPosition, initialLastKnown = null, initialEta = null, initialMovement = null, initialObservedAt = null }: {
-  planner: DayPlannerData; routeTitle: string; lines: Coordinate[][]; stops: RouteStop[];
+export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, mapVersion, initialPosition, initialLastKnown = null, initialEta = null, initialMovement = null, initialObservedAt = null }: {
+  planner: DayPlannerData; routeTitle: string; routes: PublishedMap['routes']; stops: RouteStop[];
   boarding: RouteBoarding | null; mapVersion: string | number | null; initialPosition: Position | null; initialLastKnown?: Position | null; initialEta?: string | null; initialMovement?: string | null; initialObservedAt?: string | null;
 }) {
   const { products } = useBooking();
@@ -54,7 +54,8 @@ export function RouteExplorer({ planner, routeTitle, lines, stops, boarding, map
   const scheduleProduct = planner.product?.slug;
   const nearest = panel === 'location' && visitor ? nearestRouteStop(visitor.coordinate, stops) : null;
   const walkingDestination = nearest && (boarding?.stopId === nearest.stop.id ? boarding.coordinate ?? nearest.coordinate : nearest.coordinate);
-  const canTrack = lines.length > 0 && mapVersion !== null;
+  const selectedPhoto = selected?.design?.photoUrl ?? selected?.place?.image;
+  const canTrack = routes.length > 0 && mapVersion !== null;
   const vehicle = canTrack ? live.position : null;
   const lastKnownTime = observedAt ? new Intl.DateTimeFormat('en-GB', {
     day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Tirane',
@@ -188,7 +189,7 @@ export function RouteExplorer({ planner, routeTitle, lines, stops, boarding, map
   }}>
     <div className={styles.workspace}>
       <div className={styles.map}>
-        <MapBoundary><Map lines={lines} stops={stops} boarding={boarding} vehicle={vehicle} findVehicle={findVehicle} allowArrivalFocus={allowArrivalFocus}
+        <MapBoundary><Map routes={routes} stops={stops} boarding={boarding} vehicle={vehicle} findVehicle={findVehicle} allowArrivalFocus={allowArrivalFocus}
           selected={canvasSelection} visitor={visitor} centerVisitor={panel === 'location'} reset={reset} zoom={zoom} onSelect={choose} /></MapBoundary>
         <header className={styles.tour} data-map-obstacle>
           <h1>{routeTitle}</h1>
@@ -201,7 +202,7 @@ export function RouteExplorer({ planner, routeTitle, lines, stops, boarding, map
         <button ref={panelClose} className={styles.close} type="button" aria-label="Close panel" onClick={() => close()}>×</button>
         {panel === 'stop' && selected && <>
           <div className={styles.stopDetail}>
-            {selected.place?.image && <Image unoptimized src={selected.place.image} alt={selected.place.alt ?? ''} width={88} height={68} />}
+            {selectedPhoto && <Image unoptimized src={selectedPhoto} alt={selected.place?.alt ?? ''} width={88} height={68} />}
             <div><p className={styles.kicker}>Stop {selectedIndex + 1} of {stops.length}</p><h2>{selected.place?.name ?? selected.name}</h2>
               {(selected.place?.text || selected.description) && <p>{selected.place?.text || selected.description}</p>}
               {selected.place?.link?.startsWith('/explore/') && <a href={selected.place.link}>Visitor guide</a>}
