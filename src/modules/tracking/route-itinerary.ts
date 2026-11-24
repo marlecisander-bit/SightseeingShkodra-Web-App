@@ -8,9 +8,18 @@ export type RoutePlace = { id: string; name: string; text: string; link: string;
 export type RouteStop = { id: string; name: string; coordinate?: Coordinate; description?: string; place?: RoutePlace };
 export type RouteBoarding = { name: string; directions: string; coordinate?: Coordinate; url: string };
 
+export const routeLivePositionMs = 90_000;
+export const routeLastKnownPositionMs = 600_000;
+
 export function freshRoutePosition(position?: Position | null, now = Date.now()) {
   const age = position ? now - Date.parse(position.updatedAt) : NaN;
-  return position && Number.isFinite(age) && age >= 0 && age < 90_000 ? position : null;
+  return position && Number.isFinite(age) && age >= 0 && age < routeLivePositionMs ? position : null;
+}
+
+// The companion also limits historical GPS context to ten minutes.
+export function recentRoutePosition(position?: Position | null, now = Date.now()) {
+  const age = position ? now - Date.parse(position.updatedAt) : NaN;
+  return position && Number.isFinite(age) && age >= 0 && age < routeLastKnownPositionMs ? position : null;
 }
 
 export function routeEta(journey?: JourneySnapshot | null) {
