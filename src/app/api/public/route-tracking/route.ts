@@ -8,6 +8,7 @@ export async function GET(request: Request) {
   return Response.json({
     mapVersion: data?.mapVersion ?? null,
     position,
+    observedAt: data?.snapshot.positions[0]?.updatedAt ?? null,
     lastKnown: position ? null : lastPosition,
     movement: position ? data?.journey?.movement ?? null : null,
     eta: position ? routeEta(data?.journey) : null,

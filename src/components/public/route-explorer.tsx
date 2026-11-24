@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { Component, useEffect, useState, type ReactNode } from 'react';
+import { Component, useEffect, useRef, useState, type ReactNode } from 'react';
 import { BookButton, useBooking } from './booking';
 import { ProductBookingLink } from './product-booking-link';
 import { plannerClock, type DayPlannerData } from '@/modules/content/day-planner';
@@ -23,11 +23,11 @@ class MapBoundary extends Component<{ children: ReactNode }, { failed: boolean }
   }
 }
 
-type Panel = 'stops' | 'departures' | 'stop' | 'boarding' | null;
+type Panel = 'stops' | 'departures' | 'stop' | 'boarding' | 'tracking' | null;
 
-export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, initialPosition, initialLastKnown = null, initialEta = null, initialMovement = null }: {
-  planner: DayPlannerData; lines: Coordinate[][]; stops: RouteStop[];
-  boarding: RouteBoarding | null; mapVersion: string | number | null; initialPosition: Position | null; initialLastKnown?: Position | null; initialEta?: string | null; initialMovement?: string | null;
+export function RouteExplorer({ planner, routeTitle, lines, stops, boarding, mapVersion, initialPosition, initialLastKnown = null, initialEta = null, initialMovement = null, initialObservedAt = null }: {
+  planner: DayPlannerData; routeTitle: string; lines: Coordinate[][]; stops: RouteStop[];
+  boarding: RouteBoarding | null; mapVersion: string | number | null; initialPosition: Position | null; initialLastKnown?: Position | null; initialEta?: string | null; initialMovement?: string | null; initialObservedAt?: string | null;
 }) {
   const { products } = useBooking();
   const activeProduct = products.find(product => product.active !== false && product.slug === planner.product?.slug);
@@ -35,18 +35,21 @@ export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, ini
   const [selection, select] = useState<string | null>(null);
   const [reset, setReset] = useState(0);
   const [live, setLive] = useState({ position: initialPosition, lastKnown: initialLastKnown, eta: initialEta, movement: initialMovement });
-  const [showLastKnown, setShowLastKnown] = useState(true);
+  const [zoom, setZoom] = useState({ delta: 0, request: 0 });
+  const panelClose = useRef<HTMLButtonElement>(null);
+  const previousControl = useRef<HTMLElement | null>(null);
   const [findVehicle, setFindVehicle] = useState(0);
   const [times, setTimes] = useState(planner.times);
+  const [observedAt, setObservedAt] = useState(initialObservedAt);
   const selectedIndex = stops.findIndex(stop => stop.id === selection);
   const selected = stops[selectedIndex];
   const canvasSelection = panel === 'stop' || panel === 'boarding' ? selection : null;
   const scheduleProduct = planner.product?.slug;
   const canTrack = lines.length > 0 && mapVersion !== null;
-  const vehicle = canTrack ? live.position ?? (showLastKnown ? live.lastKnown : null) : null;
-  const lastKnownTime = live.lastKnown ? new Intl.DateTimeFormat('en-GB', {
-    hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Tirane',
-  }).format(new Date(live.lastKnown.updatedAt)) : null;
+  const vehicle = canTrack ? live.position : null;
+  const lastKnownTime = observedAt ? new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Tirane',
+  }).format(new Date(observedAt)) : null;
 
 
   useEffect(() => {
@@ -81,6 +84,9 @@ export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, ini
         const eta = position && typeof data.eta === 'string' && data.eta.length <= 80 ? data.eta : null;
         const movement = position && typeof data.movement === 'string' && data.movement.length <= 180 ? data.movement : null;
         setLive({ position, lastKnown: position ? null : lastPosition, eta, movement });
+        if (data.mapVersion === mapVersion && typeof data.observedAt === 'string' && Number.isFinite(Date.parse(data.observedAt))) {
+          setObservedAt(data.observedAt);
+        }
         expire(lastPosition, !!position);
       } catch {
         if (!controller.signal.aborted) {
@@ -115,11 +121,23 @@ export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, ini
     return () => { controller.abort(); clearInterval(timer); document.removeEventListener('visibilitychange', refresh); };
   }, [scheduleProduct]);
 
-  function choose(id: string) {
+  function show(next: Exclude<Panel, null>, id: string | null = null) {
+    if (!panel) previousControl.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     select(id);
-    setPanel(id === 'boarding' ? 'boarding' : 'stop');
+    setPanel(next);
   }
-  function close() { setPanel(null); select(null); }
+  function choose(id: string) {
+    const boardingId = id === 'boarding' || (boarding?.coordinate && id === boarding.stopId);
+    show(boardingId ? 'boarding' : 'stop', boardingId ? 'boarding' : id);
+  }
+  function close(restoreFocus = true) {
+    setPanel(null);
+    select(null);
+    if (restoreFocus) previousControl.current?.focus({ preventScroll: true });
+  }
+  useEffect(() => {
+    if (panel) panelClose.current?.focus({ preventScroll: true });
+  }, [panel]);
 
   return <main id="main-content" data-route-explorer className={styles.page} onKeyDown={event => {
     if (event.key === 'Escape' && panel) close();
@@ -127,28 +145,26 @@ export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, ini
     <div className={styles.workspace}>
       <div className={styles.map}>
         <MapBoundary><Map lines={lines} stops={stops} boarding={boarding} vehicle={vehicle} findVehicle={findVehicle}
-          vehicleHistorical={showLastKnown && !live.position && !!live.lastKnown}
-          selected={canvasSelection} reset={reset} onSelect={choose} /></MapBoundary>
-        <header className={styles.tour}>
-          <h1>Route &amp; Live Map</h1>
-          {stops.length > 0 && <p>{stops.length} published stops</p>}
-          {!lines.length && <p>Route line unavailable</p>}
-          <p role="status">{live.position
-            ? `${live.movement ?? 'Van location live'}${live.eta ? ` · Next stop in ${live.eta}` : ''}`
-            : live.lastKnown && showLastKnown ? `Last known van location · ${lastKnownTime} Shkodra time`
-              : canTrack ? 'Waiting for a fresh GPS update' : 'Live location unavailable'}</p>
-          <div className={styles.vehicleActions}>
-            {vehicle && <button className={styles.lastKnown} type="button" onClick={() => setFindVehicle(value => value + 1)}>Find van</button>}
-            {canTrack && !live.position && live.lastKnown && <button className={styles.lastKnown} type="button"
-              aria-pressed={showLastKnown} onClick={() => setShowLastKnown(value => !value)}>
-              {showLastKnown ? 'Hide last known location' : 'Show last known location'}
-            </button>}
-          </div>
+          selected={canvasSelection} reset={reset} zoom={zoom} onSelect={choose} /></MapBoundary>
+        <header className={styles.tour} data-map-obstacle>
+          <h1>{routeTitle}</h1>
+          <button className={styles.trackingButton} type="button" aria-label="Tracking details"
+            onClick={() => panel === 'tracking' ? close() : show('tracking')}
+            aria-expanded={panel === 'tracking'}>i</button>
         </header>
-        <button className={styles.full} type="button" onClick={() => { close(); setReset(value => value + 1); }}>Full route</button>
+        <div className={styles.mapControls} data-map-obstacle aria-label="Map controls">
+          <div className={styles.mapActions}>
+            {vehicle && <button type="button" onClick={() => setFindVehicle(value => value + 1)}>Live van</button>}
+            <button type="button" onClick={() => { close(false); setReset(value => value + 1); }}>Full route</button>
+          </div>
+          <div className={styles.zoom}>
+            <button type="button" aria-label="Zoom in" onClick={() => setZoom(previous => ({ delta: 1, request: previous.request + 1 }))}>+</button>
+            <button type="button" aria-label="Zoom out" onClick={() => setZoom(previous => ({ delta: -1, request: previous.request + 1 }))}>−</button>
+          </div>
+        </div>
       </div>
       {panel && <section className={styles.panel} id="route-panel" aria-label={panel === 'stop' ? selected?.name : panel}>
-        <button className={styles.close} type="button" aria-label="Close panel" onClick={close}>×</button>
+        <button ref={panelClose} className={styles.close} type="button" aria-label="Close panel" onClick={() => close()}>×</button>
         {panel === 'stop' && selected && <>
           <div className={styles.stopDetail}>
             {selected.place?.image && <Image unoptimized src={selected.place.image} alt={selected.place.alt ?? ''} width={88} height={68} />}
@@ -164,13 +180,17 @@ export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, ini
         </>}
         {panel === 'boarding' && <><p className={styles.kicker}>Start here</p><h2>{boarding?.name ?? 'Boarding point'}</h2>
           {boarding?.directions && <p>{boarding.directions}</p>}
-          {boarding ? <a href={boarding.url} target="_blank" rel="noopener noreferrer">Get directions</a> : <p>Boarding details are currently unavailable.</p>}
+          {boarding ? <a className={styles.directions} href={boarding.url} target="_blank" rel="noopener noreferrer">Get directions</a> : <p>Boarding details are currently unavailable.</p>}
         </>}
         {panel === 'stops' && <><h2>Stops</h2>
-          <button type="button" onClick={() => choose('boarding')}>Start here</button>
           {stops.length ? <ol className={styles.stops}>{stops.map((stop, index) => <li key={stop.id}>
-            <button type="button" onClick={() => choose(stop.id)}><b>{index + 1}</b> {stop.name}</button>
+            <button type="button" onClick={() => choose(stop.id)}><b>{index + 1}</b> {boarding?.stopId === stop.id ? 'Start here' : stop.place?.name ?? stop.name}</button>
           </li>)}</ol> : <p>The itinerary is currently unavailable.</p>}
+        </>}
+        {panel === 'tracking' && <><h2>Tracking details</h2>
+          <p role="status">{vehicle ? live.movement ?? 'Van location live' : 'Live location unavailable'}</p>
+          {lastKnownTime && <p>Last GPS update at {lastKnownTime}, Shkodra time.</p>}
+          {vehicle && live.eta && <p>Next stop in {live.eta}.</p>}
         </>}
         {panel === 'departures' && <><h2>Departures</h2>{planner.product && <p>{planner.title}</p>}<p>Today · Shkodra local time</p>
           {times?.length ? <ul className={styles.times}>{times.map(time => <li key={time}><time>{time}</time></li>)}</ul>
@@ -181,9 +201,9 @@ export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, ini
         </>}
       </section>}
       <nav className={styles.bar} aria-label="Tour map panels">
-        <button type="button" aria-controls={panel ? 'route-panel' : undefined} aria-expanded={panel === 'stops'} onClick={() => panel === 'stops' ? close() : setPanel('stops')}>Stops</button>
+        <button type="button" aria-controls={panel ? 'route-panel' : undefined} aria-expanded={panel === 'stops'} onClick={() => panel === 'stops' ? close() : show('stops')}>Stops</button>
         <button type="button" aria-controls={panel ? 'route-panel' : undefined} aria-expanded={panel === 'boarding'} onClick={() => panel === 'boarding' ? close() : choose('boarding')}>Start here</button>
-        <button type="button" aria-controls={panel ? 'route-panel' : undefined} aria-expanded={panel === 'departures'} onClick={() => panel === 'departures' ? close() : setPanel('departures')}>Departures</button>
+        <button type="button" aria-controls={panel ? 'route-panel' : undefined} aria-expanded={panel === 'departures'} onClick={() => panel === 'departures' ? close() : show('departures')}>Departures</button>
       </nav>
     </div>
   </main>;
