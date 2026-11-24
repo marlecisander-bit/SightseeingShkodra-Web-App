@@ -133,3 +133,7 @@ body.admin-redesign {
 .admin-redesign .admin-skip {top:0;clip-path:inset(50%);width:1px;height:1px;padding:0;overflow:hidden;}
 .admin-redesign .admin-skip:focus {top:12px;clip-path:none;width:auto;height:auto;padding:12px;overflow:visible;}
 @media(max-width:359px){.admin-redesign .van-card-readings>span{display:none;}}
+
+/* Keep the document scrollable around the map and fixed navigation. */
+html.live-map-admin-document { height: auto; min-height: 100%; overflow: auto; }
+.live-map-admin-document body.admin-redesign { height: auto; overflow: visible; }

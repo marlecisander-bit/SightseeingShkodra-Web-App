@@ -1,6 +1,6 @@
 // Live Map companion markup, rendered only by the authenticated workspace route.
 export const workspaceHtml = String.raw`<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="live-map-admin-document">
 
 <head>
 
