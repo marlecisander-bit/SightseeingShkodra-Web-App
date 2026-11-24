@@ -10,11 +10,11 @@ import styles from './route-explorer.module.css';
 
 type Props = {
   lines: Coordinate[][]; stops: RouteStop[]; boarding: RouteBoarding | null;
-  vehicle: Position | null; selected: string | null; reset: number;
+  vehicle: Position | null; vehicleHistorical: boolean; selected: string | null; reset: number;
   onSelect: (id: string) => void;
 };
 
-export default function RouteExplorerMap({ lines, stops, boarding, vehicle, selected, reset, onSelect }: Props) {
+export default function RouteExplorerMap({ lines, stops, boarding, vehicle, vehicleHistorical, selected, reset, onSelect }: Props) {
   const surface = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const pins = useRef(new Map<string, L.Marker>());
@@ -23,7 +23,7 @@ export default function RouteExplorerMap({ lines, stops, boarding, vehicle, sele
 
   useEffect(() => {
     if (!surface.current) return;
-    const instance = L.map(surface.current, { scrollWheelZoom: false, zoomControl: false, zoomAnimation: false }).setView([42.069, 19.512], 13);
+    const instance = L.map(surface.current, { scrollWheelZoom: true, zoomControl: false, zoomAnimation: false }).setView([42.069, 19.512], 13);
     map.current = instance;
     L.control.zoom({ position: 'topright' }).addTo(instance);
     const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -113,14 +113,24 @@ export default function RouteExplorerMap({ lines, stops, boarding, vehicle, sele
     if (!vehicle) { van.current?.remove(); van.current = null; return; }
     if (!map.current) return;
     const point: Coordinate = [vehicle.lat, vehicle.lng];
-    if (van.current) van.current.setLatLng(point);
-    else van.current = L.marker(point, {
-      icon: L.icon({ iconUrl: '/brand/map-bus-front.svg', className: styles.vanMarker,
+    const label = vehicleHistorical ? 'Last known van location' : 'Live sightseeing van';
+    const tooltip = vehicleHistorical ? `Last known van location · ${new Intl.DateTimeFormat('en-GB', {
+      hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Tirane',
+    }).format(new Date(vehicle.updatedAt))} Shkodra time` : null;
+    if (van.current?.options.alt === label) {
+      van.current.setLatLng(point);
+      if (tooltip) van.current.setTooltipContent(tooltip);
+      return;
+    }
+    van.current?.remove();
+    van.current = L.marker(point, {
+      icon: L.icon({ iconUrl: '/brand/map-bus-front.svg',
+        className: vehicleHistorical ? `${styles.vanMarker} ${styles.historicalVan}` : styles.vanMarker,
         iconSize: [36, 36], iconAnchor: [18, 18] }),
-      title: 'Live sightseeing van', alt: 'Live sightseeing van', keyboard: false,
-      interactive: false, zIndexOffset: 350,
+      title: label, alt: label, keyboard: vehicleHistorical, interactive: vehicleHistorical, zIndexOffset: 350,
     }).addTo(map.current);
-  }, [vehicle]);
+    if (tooltip) van.current.bindTooltip(tooltip, { permanent: true, direction: 'top', offset: [0, -18] });
+  }, [vehicle, vehicleHistorical]);
 
   return <div ref={surface} className={styles.canvas} role="region" aria-label="Interactive tour map" />;
 }

@@ -6,7 +6,7 @@ import { Component, useEffect, useState, type ReactNode } from 'react';
 import { BookButton, useBooking } from './booking';
 import { ProductBookingLink } from './product-booking-link';
 import { plannerClock, type DayPlannerData } from '@/modules/content/day-planner';
-import { freshRoutePosition, type RouteBoarding, type RouteStop } from '@/modules/tracking/route-itinerary';
+import { freshRoutePosition, recentRoutePosition, routeLastKnownPositionMs, routeLivePositionMs, type RouteBoarding, type RouteStop } from '@/modules/tracking/route-itinerary';
 import type { Coordinate } from '@/modules/tracking/published-map';
 import type { Position } from '@/modules/tracking/positions';
 import styles from './route-explorer.module.css';
@@ -25,16 +25,17 @@ class MapBoundary extends Component<{ children: ReactNode }, { failed: boolean }
 
 type Panel = 'stops' | 'departures' | 'stop' | 'boarding' | null;
 
-export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, initialPosition, initialEta = null }: {
+export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, initialPosition, initialLastKnown = null, initialEta = null }: {
   planner: DayPlannerData; lines: Coordinate[][]; stops: RouteStop[];
-  boarding: RouteBoarding | null; mapVersion: string | number | null; initialPosition: Position | null; initialEta?: string | null;
+  boarding: RouteBoarding | null; mapVersion: string | number | null; initialPosition: Position | null; initialLastKnown?: Position | null; initialEta?: string | null;
 }) {
   const { products } = useBooking();
   const activeProduct = products.find(product => product.active !== false && product.slug === planner.product?.slug);
   const [panel, setPanel] = useState<Panel>(null);
   const [selection, select] = useState<string | null>(null);
   const [reset, setReset] = useState(0);
-  const [live, setLive] = useState({ position: initialPosition, eta: initialEta });
+  const [live, setLive] = useState({ position: initialPosition, lastKnown: initialLastKnown, eta: initialEta });
+  const [showLastKnown, setShowLastKnown] = useState(false);
   const [times, setTimes] = useState(planner.times);
   const selectedIndex = stops.findIndex(stop => stop.id === selection);
   const selected = stops[selectedIndex];
@@ -48,9 +49,18 @@ export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, ini
     const controller = new AbortController();
     let busy = false;
     let expires: ReturnType<typeof setTimeout> | undefined;
-    const expire = (vehicle: Position | null) => {
+    const expire = (lastPosition: Position | null, fresh: boolean) => {
       clearTimeout(expires);
-      if (vehicle) expires = setTimeout(() => setLive({ position: null, eta: null }), Math.max(0, Date.parse(vehicle.updatedAt) + 90_000 - Date.now()));
+      if (!lastPosition) return;
+      const observed = Date.parse(lastPosition.updatedAt);
+      expires = setTimeout(() => {
+        if (fresh) {
+          setLive({ position: null, lastKnown: recentRoutePosition(lastPosition), eta: null });
+          expire(lastPosition, false);
+        } else {
+          setLive({ position: null, lastKnown: null, eta: null });
+        }
+      }, Math.max(0, observed + (fresh ? routeLivePositionMs : routeLastKnownPositionMs) - Date.now()));
     };
     async function refresh() {
       if (busy || document.hidden) return;
@@ -60,19 +70,25 @@ export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, ini
         if (!reply.ok) throw Error('Tracking unavailable');
         const data = await reply.json();
         if (controller.signal.aborted) return;
-        const next = data.mapVersion === mapVersion ? freshRoutePosition(data.position) : null;
-        const eta = next && typeof data.eta === 'string' && data.eta.length <= 80 ? data.eta : null;
-        setLive({ position: next, eta }); expire(next);
+        const lastPosition = data.mapVersion === mapVersion
+          ? recentRoutePosition(data.position ?? data.lastKnown) : null;
+        const position = freshRoutePosition(lastPosition);
+        const eta = position && typeof data.eta === 'string' && data.eta.length <= 80 ? data.eta : null;
+        setLive({ position, lastKnown: position ? null : lastPosition, eta });
+        expire(lastPosition, !!position);
       } catch {
-        if (!controller.signal.aborted) { setLive({ position: null, eta: null }); expire(null); }
+        if (!controller.signal.aborted) {
+          setLive(current => ({ position: null, lastKnown: recentRoutePosition(current.position ?? current.lastKnown), eta: null }));
+        }
       } finally { busy = false; }
     }
-    expire(freshRoutePosition(initialPosition));
+    const initial = recentRoutePosition(initialPosition ?? initialLastKnown);
+    expire(initial, !!freshRoutePosition(initial));
     void refresh();
     const timer = setInterval(refresh, 10_000);
     document.addEventListener('visibilitychange', refresh);
     return () => { controller.abort(); clearInterval(timer); clearTimeout(expires); document.removeEventListener('visibilitychange', refresh); };
-  }, [canTrack, initialPosition, mapVersion]);
+  }, [canTrack, initialLastKnown, initialPosition, mapVersion]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -104,13 +120,18 @@ export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, ini
   }}>
     <div className={styles.workspace}>
       <div className={styles.map}>
-        <MapBoundary><Map lines={lines} stops={stops} boarding={boarding} vehicle={canTrack ? live.position : null}
+        <MapBoundary><Map lines={lines} stops={stops} boarding={boarding} vehicle={canTrack ? live.position ?? (showLastKnown ? live.lastKnown : null) : null}
+          vehicleHistorical={showLastKnown && !live.position && !!live.lastKnown}
           selected={canvasSelection} reset={reset} onSelect={choose} /></MapBoundary>
         <header className={styles.tour}>
           <h1>Route &amp; Live Map</h1>
           {stops.length > 0 && <p>{stops.length} published stops</p>}
           {!lines.length && <p>Route line unavailable</p>}
           <p role="status">{canTrack && live.position ? `Van location live${live.eta ? ` · Next stop in ${live.eta}` : ''}` : canTrack ? 'Waiting for a fresh GPS update' : 'Live location unavailable'}</p>
+          {canTrack && !live.position && live.lastKnown && <button className={styles.lastKnown} type="button"
+            aria-pressed={showLastKnown} onClick={() => setShowLastKnown(value => !value)}>
+            {showLastKnown ? 'Hide last known location' : 'Show last known location'}
+          </button>}
         </header>
         <button className={styles.full} type="button" onClick={() => { close(); setReset(value => value + 1); }}>Full route</button>
       </div>

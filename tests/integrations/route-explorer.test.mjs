@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { freshRoutePosition, routeBoarding, routeEta, routeItinerary } from '../../src/modules/tracking/route-itinerary.ts';
+import { freshRoutePosition, recentRoutePosition, routeBoarding, routeEta, routeItinerary } from '../../src/modules/tracking/route-itinerary.ts';
 
 const point = (id, number) => ({ id, name: id, number, kind: 'stop', coordinate: [42, 19] });
 const lines = [[[42, 19], [42.1, 19.1]]];
@@ -45,4 +45,13 @@ test('only an upstream valid next-stop estimate is displayed', () => {
   assert.equal(routeEta(journey), '~2 min');
   assert.equal(routeEta({ ...journey, confidence: { eta: 'historical' } }), null);
   assert.equal(routeEta(null), null);
+});
+
+test('keeps a valid recent stale fix separate from live tracking for up to ten minutes', () => {
+  const position = { vehicleId: 'van', lat: 42, lng: 19, updatedAt: '2026-11-24T08:00:00Z' };
+  const observed = Date.parse(position.updatedAt);
+  assert.equal(freshRoutePosition(position, observed + 328000), null);
+  assert.equal(recentRoutePosition(position, observed + 328000), position);
+  assert.equal(recentRoutePosition(position, observed + 600000), null);
+  assert.equal(recentRoutePosition(position, observed - 1000), null);
 });
