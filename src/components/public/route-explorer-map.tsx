@@ -12,7 +12,6 @@ import styles from './route-explorer.module.css';
 type Props = {
   routes: PublishedMap['routes']; stops: RouteStop[]; boarding: RouteBoarding | null;
   vehicle: Position | null; findVehicle: number; allowArrivalFocus: boolean; selected: string | null; reset: number;
-  zoom: { delta: number; request: number };
   visitor: { coordinate: Coordinate; accuracy: number } | null; centerVisitor: boolean;
   onSelect: (id: string) => void;
 };
@@ -21,7 +20,7 @@ const initialCenter: Coordinate = [42.069, 19.512];
 const tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-export default function RouteExplorerMap({ routes, stops, boarding, vehicle, findVehicle, allowArrivalFocus, selected, reset, zoom, visitor, centerVisitor, onSelect }: Props) {
+export default function RouteExplorerMap({ routes, stops, boarding, vehicle, findVehicle, allowArrivalFocus, selected, reset, visitor, centerVisitor, onSelect }: Props) {
   const surface = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const pins = useRef(new Map<string, L.Marker>());
@@ -270,10 +269,6 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, fin
     });
     return () => cancelAnimationFrame(frame);
   }, [centerVisitor, visitor]);
-
-  useEffect(() => {
-    if (zoom.request && map.current) map.current.setZoom(map.current.getZoom() + zoom.delta, { animate: false });
-  }, [zoom]);
 
   return <div ref={surface} className={styles.canvas} role="region" aria-label="Interactive tour map" />;
 }
