@@ -14,11 +14,9 @@ export async function connectMapAccount(operatorId: string, form: FormData) {
   const email = form.get('email');
   const password = form.get('password');
   if (typeof email !== 'string' || typeof password !== 'string' || !email.trim() || !password ||
-      email.length > 320 || password.length > 1024) finish(operatorId, 'connection-failed');
-  let connected = false;
-  try { connected = await connectTrackingAdmin(operatorId, email.trim(), password); }
-  catch { /* The sign-in outcome is presented without upstream error details. */ }
-  finish(operatorId, connected ? 'connected' : 'connection-failed');
+      email.length > 320 || password.length > 1024) finish(operatorId, 'invalid-credentials');
+  const result = await connectTrackingAdmin(operatorId, email.trim(), password).catch(() => 'connection-unavailable');
+  finish(operatorId, result);
 }
 
 export async function disconnectMapAccount(operatorId: string) {
