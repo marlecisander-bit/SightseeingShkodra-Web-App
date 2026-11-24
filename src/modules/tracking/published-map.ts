@@ -4,7 +4,7 @@
 export type Coordinate = [number, number]; // Leaflet latitude, longitude
 export type PublishedMap = {
   state: "ready" | "empty" | "unavailable";
-  routes: { id: string; name: string; color: string; lines: Coordinate[][] }[];
+  routes: { id: string; name: string; color: string; lines: Coordinate[][]; productSlug?: string; stopSequence?: string[] }[];
   points: { id: string; name: string; number: string; kind: "stop" | "poi"; coordinate: Coordinate }[];
 };
 const record = (value: unknown): Record<string, unknown> | null => value !== null && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
@@ -26,7 +26,7 @@ export function projectPublishedMap(value: unknown): PublishedMap {
       const id = String(index); // Stable within this published snapshot; not a database identity.
       if (geometry.type === "Point") {
         const kind = p.pointType === "poi" ? "poi" : "stop";
-        result.points.push({ id, kind, name: label(p.name, kind === "poi" ? "Place of interest" : "Stop"), number: typeof p.stopNumber === "number" || typeof p.stopNumber === "string" ? String(p.stopNumber).slice(0, 30) : "", coordinate: coordinate(geometry.coordinates) });
+        result.points.push({ id: label(p.objectId, id), kind, name: label(p.name, kind === "poi" ? "Place of interest" : "Stop"), number: typeof p.stopNumber === "number" || typeof p.stopNumber === "string" ? String(p.stopNumber).slice(0, 30) : "", coordinate: coordinate(geometry.coordinates) });
         coordinateCount++;
       } else if (geometry.type === "LineString" || geometry.type === "MultiLineString") {
         const lines = geometry.type === "LineString" ? [geometry.coordinates] : geometry.coordinates;
@@ -37,7 +37,10 @@ export function projectPublishedMap(value: unknown): PublishedMap {
           if (coordinateCount > 20000) throw Error("Map too large");
           return line.map(coordinate);
         });
-        result.routes.push({ id, name: label(p.name, "Tour route"), color: typeof p.color === "string" && /^#[0-9a-f]{6}$/i.test(p.color) ? p.color : "var(--ss-route)", lines: projected });
+        const productSlug = typeof p.tourProductSlug === 'string' && /^[a-z0-9-]{1,100}$/.test(p.tourProductSlug) ? p.tourProductSlug : undefined;
+        const stopSequence = Array.isArray(p.stopSequence) && p.stopSequence.length <= 101 &&
+          p.stopSequence.every(id => typeof id === 'string' && id.length <= 150) ? p.stopSequence as string[] : undefined;
+        result.routes.push({ ...(productSlug ? { productSlug } : {}), ...(stopSequence ? { stopSequence } : {}), id, name: label(p.name, "Tour route"), color: typeof p.color === "string" && /^#[0-9a-f]{6}$/i.test(p.color) ? p.color : "var(--ss-route)", lines: projected });
       }
       if (coordinateCount > 20000) throw Error("Map too large");
     }
