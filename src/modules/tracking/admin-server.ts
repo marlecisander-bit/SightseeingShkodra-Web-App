@@ -4,7 +4,6 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { requirePermission } from '@/modules/identity/require-permission';
-import { parseTrackingWeek, trackingWeekdays } from './service-hours';
 import { matchesPublicMapProject, publicMapBinding } from './public-map-binding';
 
 const cookieName = 'shkodra-tracking-admin';
@@ -76,26 +75,5 @@ export async function trackingAdminSession(operatorId: string) {
       !timingSafeEqual(Buffer.from(mac), Buffer.from(signature(operatorId, userId, token)))) return null;
   const client = clientFor(token);
   const project = await authorizedProject(client).catch(() => null);
-  return project ? { client, ...project } : null;
-}
-
-export async function readTrackingVersions({ client, projectId }: NonNullable<Awaited<ReturnType<typeof trackingAdminSession>>>) {
-  const query = () => client.from('map_versions').select('id,status').eq('project_id', projectId);
-  const [head, published, draft] = await Promise.all([
-    client.from('map_versions').select('id,status,map_data').eq('project_id', projectId).order('id', { ascending: false }).limit(1).maybeSingle(),
-    query().eq('status', 'published').order('published_at', { ascending: false, nullsFirst: false }).order('id', { ascending: false }).limit(1).maybeSingle(),
-    query().eq('status', 'draft').order('id', { ascending: false }).limit(1).maybeSingle(),
-  ]);
-  if (head.error || published.error || draft.error) throw Error('Map versions unavailable');
-  return { head: head.data, published: published.data?.id ?? null, draft: draft.data?.id ?? null };
-}
-
-export async function readTrackingHours({ client, vehicleId }: NonNullable<Awaited<ReturnType<typeof trackingAdminSession>>>) {
-  if (!vehicleId) return null;
-  const { data, error } = await client.from('vehicle_service_hours').select('enabled,week')
-    .eq('vehicle_id', vehicleId).maybeSingle();
-  if (error) throw Error('Tracking hours unavailable');
-  const week = data ? parseTrackingWeek(data.week) : trackingWeekdays.map(() => null);
-  if (!week || (data && typeof data.enabled !== 'boolean')) throw Error('Invalid tracking hours');
-  return { enabled: data?.enabled === true, week };
+  return project ? { client, token, ...project } : null;
 }
