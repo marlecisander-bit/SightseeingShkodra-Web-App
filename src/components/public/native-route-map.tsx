@@ -2,17 +2,22 @@
 
 import { useEffect, useState } from 'react';
 import { SharedMap } from '@/modules/tracking/shared-map';
+import { parseJourney, presentationTtl, type JourneySnapshot } from '@/modules/tracking/journey-contract';
 import type { PublishedMap } from '@/modules/tracking/published-map';
 import type { Snapshot } from '@/modules/tracking/positions';
 
-type LiveMapResponse = { mapVersion: string | number | null; map: PublishedMap; snapshot: Snapshot };
+type LiveMapResponse = { mapVersion: string | number | null; map: PublishedMap; snapshot: Snapshot; journey: unknown };
 
-export function NativeRouteMap({ selectedStopId }: { selectedStopId?: string }) {
+export function NativeRouteMap({ selectedStopId, onJourney }: {
+  selectedStopId?: string;
+  onJourney: (value: JourneySnapshot | null, reason?: 'stale') => void;
+}) {
   const [data, setData] = useState<LiveMapResponse>();
   const [failed, setFailed] = useState(false);
   useEffect(() => {
     const controller = new AbortController();
     let pending = false;
+    let expires: ReturnType<typeof setTimeout> | undefined;
     async function refresh() {
       if (pending || document.hidden) return;
       pending = true;
@@ -26,9 +31,18 @@ export function NativeRouteMap({ selectedStopId }: { selectedStopId?: string }) 
             map: previous && previous.mapVersion === next.mapVersion ? previous.map : next.map,
           }));
           setFailed(false);
+          clearTimeout(expires);
+          const journey = parseJourney(next.journey);
+          const ttl = journey ? presentationTtl(journey) : 0;
+          onJourney(ttl ? journey : null);
+          if (ttl) expires = setTimeout(() => onJourney(null), ttl);
         }
       } catch {
-        if (!controller.signal.aborted) setFailed(true);
+        if (!controller.signal.aborted) {
+          clearTimeout(expires);
+          setFailed(true);
+          onJourney(null, 'stale');
+        }
       } finally {
         pending = false;
       }
@@ -39,9 +53,10 @@ export function NativeRouteMap({ selectedStopId }: { selectedStopId?: string }) 
     return () => {
       controller.abort();
       clearInterval(timer);
+      clearTimeout(expires);
       document.removeEventListener('visibilitychange', refresh);
     };
-  }, []);
+  }, [onJourney]);
 
   if (!data) return <p role="status">{failed ? 'Live map temporarily unavailable.' : 'Loading live map…'}</p>;
   return <SharedMap mode="view" publishedMap={data.map} selectedStopId={selectedStopId}

@@ -56,3 +56,7 @@ Verify the current device and GPS worker paths, legacy map links, and every publ
 - The tracking project returned a vehicle observation approximately 15 hours old at the time of the check. Connectivity is verified. Fresh vehicle updates, stop progression and ETA have yet to pass live acceptance.
 - Chrome showed the Live Map Netlify project serving its November 13 production deploy on the default Netlify subdomain. The separate tracking Supabase project showed the deployed `gps-worker` Edge Function. The Netlify team also hosts the separate Borealis project.
 - Release remains blocked on native admin editing and publishing, migration of remaining Netlify consumers, live mobile acceptance and verification of the exact intended release branch. Local checks ran in the existing mixed working tree. No push, hosting or Supabase change was made.
+
+### Native journey status
+
+The preview now shows supported stop progression and ETA from coherent tracking snapshots. Estimates require a fresh moving observation and a matching upstream ETA. A stationary stop shows its location without an arrival countdown. Stale estimates expire locally. Full companion feature parity, live vehicle acceptance and admin integration remain pending.

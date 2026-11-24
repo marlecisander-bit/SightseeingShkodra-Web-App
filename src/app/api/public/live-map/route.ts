@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { matchesPublicMapProject, publicMapBinding } from '@/modules/tracking/public-map-binding';
+import { projectNativeJourney } from '@/modules/tracking/native-journey';
 import { projectPublishedMap } from '@/modules/tracking/published-map';
 import type { Position } from '@/modules/tracking/positions';
 
@@ -43,7 +44,12 @@ export async function GET(request: Request) {
       state: tracking.error ? 'unavailable' : position ? 'ready' : 'empty',
       positions: position ? [position] : [],
     };
-    return Response.json({ mapVersion: map.data?.id ?? null, map: projectPublishedMap(map.data?.map_data), snapshot }, { headers });
+    const mapVersion = map.data?.id ?? null;
+    const publishedMap = projectPublishedMap(map.data?.map_data);
+    const journey = position ? projectNativeJourney(
+      tracking.data?.snapshot, publishedMap, mapVersion, project.id, project.default_vehicle_id,
+    ) : null;
+    return Response.json({ mapVersion, map: publishedMap, snapshot, journey }, { headers });
   } catch {
     return unavailable();
   }
