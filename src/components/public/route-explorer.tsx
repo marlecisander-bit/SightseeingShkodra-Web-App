@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { Component, useEffect, useRef, useState, type ReactNode } from 'react';
 import { BookButton, useBooking } from './booking';
+import { RouteControlIcon } from './route-control-icon';
 import { ProductBookingLink } from './product-booking-link';
 import { plannerClock, type DayPlannerData } from '@/modules/content/day-planner';
 import { freshRoutePosition, nearestRouteStop, recentRoutePosition, routeLastKnownPositionMs, routeLivePositionMs, type RouteBoarding, type RouteStop } from '@/modules/tracking/route-itinerary';
@@ -41,6 +42,7 @@ export function RouteExplorer({ planner, routeTitle, lines, stops, boarding, map
   const panelClose = useRef<HTMLButtonElement>(null);
   const previousControl = useRef<HTMLElement | null>(null);
   const [findVehicle, setFindVehicle] = useState(0);
+  const [allowArrivalFocus, setAllowArrivalFocus] = useState(true);
   const [visitor, setVisitor] = useState<VisitorLocation | null>(null);
   const [locationMessage, setLocationMessage] = useState('');
   const locationRequest = useRef(0);
@@ -177,12 +179,16 @@ export function RouteExplorer({ planner, routeTitle, lines, stops, boarding, map
     if (panel) panelClose.current?.focus({ preventScroll: true });
   }, [panel]);
 
-  return <main id="main-content" data-route-explorer className={styles.page} onKeyDown={event => {
+  return <main id="main-content" data-route-explorer className={styles.page}
+    onPointerDownCapture={() => setAllowArrivalFocus(false)}
+    onWheelCapture={() => setAllowArrivalFocus(false)}
+    onKeyDownCapture={() => setAllowArrivalFocus(false)}
+    onKeyDown={event => {
     if (event.key === 'Escape' && panel) close();
   }}>
     <div className={styles.workspace}>
       <div className={styles.map}>
-        <MapBoundary><Map lines={lines} stops={stops} boarding={boarding} vehicle={vehicle} findVehicle={findVehicle}
+        <MapBoundary><Map lines={lines} stops={stops} boarding={boarding} vehicle={vehicle} findVehicle={findVehicle} allowArrivalFocus={allowArrivalFocus}
           selected={canvasSelection} visitor={visitor} centerVisitor={panel === 'location'} reset={reset} zoom={zoom} onSelect={choose} /></MapBoundary>
         <header className={styles.tour} data-map-obstacle>
           <h1>{routeTitle}</h1>
@@ -190,21 +196,6 @@ export function RouteExplorer({ planner, routeTitle, lines, stops, boarding, map
             onClick={() => panel === 'tracking' ? close() : show('tracking')}
             aria-expanded={panel === 'tracking'}>i</button>
         </header>
-        <div className={styles.mapControls} data-map-obstacle aria-label="Map controls">
-          <div className={styles.mapActions}>
-            <button type="button" onClick={findMe} aria-expanded={panel === 'location'}>Find me</button>
-            <button type="button" onClick={() => {
-              if (!vehicle) { show('tracking'); return; }
-              close(false);
-              setFindVehicle(value => value + 1);
-            }}>Find van</button>
-            <button type="button" onClick={() => { close(false); setVisitor(null); setReset(value => value + 1); }}>Full route</button>
-          </div>
-          <div className={styles.zoom}>
-            <button type="button" aria-label="Zoom in" onClick={() => setZoom(previous => ({ delta: 1, request: previous.request + 1 }))}>+</button>
-            <button type="button" aria-label="Zoom out" onClick={() => setZoom(previous => ({ delta: -1, request: previous.request + 1 }))}>−</button>
-          </div>
-        </div>
       </div>
       {panel && <section className={styles.panel} id="route-panel" aria-label={panel === 'stop' ? selected?.name : panel}>
         <button ref={panelClose} className={styles.close} type="button" aria-label="Close panel" onClick={() => close()}>×</button>
@@ -253,10 +244,28 @@ export function RouteExplorer({ planner, routeTitle, lines, stops, boarding, map
             : <BookButton>Check availability</BookButton>}
         </>}
       </section>}
-      <nav className={styles.bar} aria-label="Tour map panels">
-        <button type="button" aria-controls={panel ? 'route-panel' : undefined} aria-expanded={panel === 'stops'} onClick={() => panel === 'stops' ? close() : show('stops')}>Stops</button>
-        <button type="button" aria-controls={panel ? 'route-panel' : undefined} aria-expanded={panel === 'boarding'} onClick={() => panel === 'boarding' ? close() : choose('boarding')}>Start here</button>
-        <button type="button" aria-controls={panel ? 'route-panel' : undefined} aria-expanded={panel === 'departures'} onClick={() => panel === 'departures' ? close() : show('departures')}>Departures</button>
+      <nav className={styles.bar} aria-label="Map controls">
+        <button type="button" aria-controls={panel ? 'route-panel' : undefined} aria-expanded={panel === 'stops'}
+          onClick={() => panel === 'stops' ? close() : show('stops')}><RouteControlIcon name="stops" />Stops</button>
+        <button type="button" aria-expanded={panel === 'location'} onClick={findMe}><RouteControlIcon name="me" />Find me</button>
+        <button type="button" onClick={() => {
+          if (!vehicle) { show('tracking'); return; }
+          close(false);
+          setFindVehicle(value => value + 1);
+        }}><RouteControlIcon name="van" />Find van</button>
+        <button type="button" onClick={() => { close(false); setVisitor(null); setReset(value => value + 1); }}>
+          <RouteControlIcon name="route" />Full route
+        </button>
+        <button type="button" aria-expanded={panel === 'boarding'}
+          onClick={() => panel === 'boarding' ? close() : choose('boarding')}><RouteControlIcon name="boarding" />Start here</button>
+        <button type="button" aria-expanded={panel === 'departures'}
+          onClick={() => panel === 'departures' ? close() : show('departures')}><RouteControlIcon name="departures" />Departures</button>
+        <button type="button" onClick={() => setZoom(previous => ({ delta: 1, request: previous.request + 1 }))}>
+          <RouteControlIcon name="plus" />Zoom in
+        </button>
+        <button type="button" onClick={() => setZoom(previous => ({ delta: -1, request: previous.request + 1 }))}>
+          <RouteControlIcon name="minus" />Zoom out
+        </button>
       </nav>
     </div>
   </main>;

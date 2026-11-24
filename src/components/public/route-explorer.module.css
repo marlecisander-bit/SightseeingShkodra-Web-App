@@ -6,13 +6,13 @@
   height: calc(100dvh - var(--route-header) - env(safe-area-inset-top, 0px));
   background: #f9f5ef;
 }
-.map { grid-area: 1 / 1 / 3 / 2; position: relative; min-width: 0; min-height: 0; isolation: isolate; background: #e5e9df; }
+.map { grid-area: 1 / 1 / 2 / 2; position: relative; min-width: 0; min-height: 0; isolation: isolate; background: #e5e9df; }
 .canvas { width: 100%; height: 100%; isolation: isolate; }
 .canvas[data-tiles=unavailable] { background: #e5e9df; }
 .overviewTiles { filter: saturate(.68) contrast(.87) brightness(1.07); }
 .canvas :global(.leaflet-bottom) { bottom: 2px; }
 .loading { margin: 0; padding: 70px 16px; }
-.tour, .mapControls { position: absolute; z-index: 2; }
+.tour { position: absolute; z-index: 2; }
 .tour {
   top: 12px; left: max(12px, env(safe-area-inset-left)); max-width: calc(100% - 24px);
   display: flex; align-items: center; gap: 6px; padding: 3px 4px 3px 12px;
@@ -23,25 +23,22 @@
   width: 38px; min-height: 38px; border: 0; border-radius: 8px; background: #faf2f4;
   color: #8d1d40; font: 700 16px/1 Georgia, serif; cursor: pointer;
 }
-.mapControls { display: flex; align-items: end; gap: 6px; right: max(10px, env(safe-area-inset-right)); bottom: 24px; }
-.mapActions, .zoom { display: grid; gap: 4px; }
-.mapActions { grid-template-columns: repeat(2, max-content); justify-items: end; }
-.zoom { gap: 0; border-radius: 10px; background: white; box-shadow: 0 2px 8px #0002; }
-.zoom button { min-width: 44px; font-size: 21px; }
-.zoom button + button { border-top: 0; }
-.mapControls button, .panel button, .bar button {
+.panel button {
   min-height: 44px; padding-inline: 9px; color: inherit; background: white; border: 1px solid #d9d3ce;
   border-radius: 9px; box-shadow: 0 1px 3px #0001; cursor: pointer; font: 650 13px/1.15 var(--font-sans), sans-serif;
 }
-.mapActions button { min-height: 32px; }
-.mapActions button:last-child { grid-column: 1 / -1; min-height: 42px; }
 .bar {
-  grid-area: 2 / 2; display: flex; padding-bottom: env(safe-area-inset-bottom, 0px); background: #fff;
-  border-top: 1px solid #dfdbd4;
+  grid-area: 2 / 1 / 3 / -1; display: grid; grid-template-columns: repeat(8, minmax(0, 85px)); justify-content: center;
+  padding-bottom: env(safe-area-inset-bottom, 0px); background: #fff; border-top: 1px solid #dfdbd4;
 }
-.bar button { flex: 1 1 0; min-width: 0; min-height: 54px; padding: 5px; border: 0; border-radius: 0; box-shadow: none; }
+.bar button {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  min-width: 0; min-height: 54px; padding: 5px 2px; border: 0; background: white; color: inherit;
+  font: 650 12px/1.15 var(--font-sans), sans-serif; cursor: pointer;
+}
+.bar button svg { color: #8d1d40; flex-shrink: 0; }
 .bar button + button { border-left: 1px solid #e6e0dc; }
-.bar button[aria-expanded=true] { background: #f9edf0; color: #861b3b; }
+.bar button:hover, .bar button[aria-expanded=true] { background: #f9edf0; color: #861b3b; }
 .panel {
   grid-area: 1 / 2; position: relative; min-width: 0; overflow: auto; overscroll-behavior: contain;
   padding: 18px 48px 14px 16px; background: #fff;
@@ -91,8 +88,6 @@
 .startMarker[data-selected=true] .pinNumber, .startMarker:focus-visible .pinNumber { box-shadow: 0 0 0 3px #8d1d40; }
 @media (min-width: 761px) {
   .workspace:not(:has(.panel)) .map { grid-column: 1 / -1; grid-row: 1; }
-  .workspace:not(:has(.panel)) .bar { grid-column: 1 / -1; justify-content: center; }
-  .workspace:not(:has(.panel)) .bar button { flex: 0 1 140px; }
 }
 @media (max-width: 1100px) { .page { --route-header: 60px; } }
 @media (max-width: 760px) {
@@ -101,5 +96,10 @@
   .map { grid-area: 1 / 1; }
   .panel { grid-area: 2 / 1; border-radius: 17px 17px 0 0; max-height: min(30dvh, 230px);
     padding-left: max(14px, env(safe-area-inset-left)); box-shadow: 0 -4px 16px #0002; }
-  .bar { grid-area: 3 / 1; padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px); }
+  .bar { grid-area: 3 / 1; grid-template-columns: repeat(4, minmax(0, 1fr)); padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px); }
+}
+
+@media (max-width: 760px) {
+  .bar button:nth-child(n + 5) { border-top: 1px solid #e6e0dc; }
+  .bar button:nth-child(5) { border-left: 0; }
 }

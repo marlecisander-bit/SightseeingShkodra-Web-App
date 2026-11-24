@@ -10,7 +10,7 @@ import styles from './route-explorer.module.css';
 
 type Props = {
   lines: Coordinate[][]; stops: RouteStop[]; boarding: RouteBoarding | null;
-  vehicle: Position | null; findVehicle: number; selected: string | null; reset: number;
+  vehicle: Position | null; findVehicle: number; allowArrivalFocus: boolean; selected: string | null; reset: number;
   zoom: { delta: number; request: number };
   visitor: { coordinate: Coordinate; accuracy: number } | null; centerVisitor: boolean;
   onSelect: (id: string) => void;
@@ -20,12 +20,14 @@ const initialCenter: Coordinate = [42.069, 19.512];
 const tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-export default function RouteExplorerMap({ lines, stops, boarding, vehicle, findVehicle, selected, reset, zoom, visitor, centerVisitor, onSelect }: Props) {
+export default function RouteExplorerMap({ lines, stops, boarding, vehicle, findVehicle, allowArrivalFocus, selected, reset, zoom, visitor, centerVisitor, onSelect }: Props) {
   const surface = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const pins = useRef(new Map<string, L.Marker>());
   const van = useRef<L.Marker | null>(null);
   const lastFind = useRef(0);
+  const arrivalDeadline = useRef(0);
+  const arrivalFocused = useRef(false);
   const choose = useEffectEvent((id: string) => onSelect(id));
 
   const placeLabels = useEffectEvent(() => {
@@ -62,6 +64,7 @@ export default function RouteExplorerMap({ lines, stops, boarding, vehicle, find
       scrollWheelZoom: true, zoomControl: false, zoomAnimation: false, zoomSnap: 0.25, minZoom: 3,
     }).setView(initialCenter, 13);
     map.current = instance;
+    arrivalDeadline.current = Date.now() + 15_000;
     instance.createPane('tourVehicle').style.zIndex = '625';
     instance.createPane('tourVisitor').style.zIndex = '624';
     // Overview tiles use one lower source zoom, which has fewer street labels.
@@ -138,7 +141,7 @@ export default function RouteExplorerMap({ lines, stops, boarding, vehicle, find
         ...(boarding?.coordinate ? [boarding.coordinate] : [])]);
       const size = instance.getSize();
       const top = Math.min(72, size.y * .18);
-      const bottom = Math.min(114, size.y * .25);
+      const bottom = Math.min(64, size.y * .18);
       if (bounds.isValid()) instance.fitBounds(bounds, {
         paddingTopLeft: [28, top], paddingBottomRight: [28, bottom], maxZoom: 15, animate: false,
       });
@@ -164,13 +167,7 @@ export default function RouteExplorerMap({ lines, stops, boarding, vehicle, find
         const target = instance.latLngToContainerPoint(marker.getLatLng());
         const size = instance.getSize();
         const x = Math.max(26, Math.min(size.x - 26, target.x));
-        let y = Math.max(62, Math.min(size.y - 60, target.y));
-        const canvas = surface.current?.getBoundingClientRect();
-        const controls = surface.current?.parentElement?.querySelector('[aria-label="Map controls"]')?.getBoundingClientRect();
-        if (canvas && controls && canvas.left + x + 20 > controls.left &&
-            canvas.left + x - 20 < controls.right && canvas.top + y + 20 > controls.top) {
-          y = Math.max(62, controls.top - canvas.top - 23);
-        }
+        const y = Math.max(62, Math.min(size.y - 48, target.y));
         if (x !== target.x || y !== target.y) instance.panBy([target.x - x, target.y - y], { animate: false });
       }
       placeLabels();
@@ -190,6 +187,18 @@ export default function RouteExplorerMap({ lines, stops, boarding, vehicle, find
       keyboard: false, interactive: false,
     }).addTo(map.current);
   }, [vehicle]);
+
+  useEffect(() => {
+    if (!vehicle || !allowArrivalFocus || arrivalFocused.current || Date.now() > arrivalDeadline.current) return;
+    const frame = requestAnimationFrame(() => {
+      const instance = map.current;
+      if (!instance) return;
+      arrivalFocused.current = true;
+      instance.invalidateSize({ animate: false });
+      instance.setView([vehicle.lat, vehicle.lng], 16, { animate: false });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [allowArrivalFocus, vehicle]);
 
   useEffect(() => {
     if (!vehicle || !map.current || lastFind.current === findVehicle) return;
