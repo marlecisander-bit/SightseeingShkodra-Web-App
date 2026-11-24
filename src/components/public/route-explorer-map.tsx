@@ -10,21 +10,24 @@ import styles from './route-explorer.module.css';
 
 type Props = {
   lines: Coordinate[][]; stops: RouteStop[]; boarding: RouteBoarding | null;
-  vehicle: Position | null; vehicleHistorical: boolean; selected: string | null; reset: number;
+  vehicle: Position | null; vehicleHistorical: boolean; findVehicle: number; selected: string | null; reset: number;
   onSelect: (id: string) => void;
 };
 
-export default function RouteExplorerMap({ lines, stops, boarding, vehicle, vehicleHistorical, selected, reset, onSelect }: Props) {
+export default function RouteExplorerMap({ lines, stops, boarding, vehicle, vehicleHistorical, findVehicle, selected, reset, onSelect }: Props) {
   const surface = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const pins = useRef(new Map<string, L.Marker>());
   const van = useRef<L.Marker | null>(null);
+  const lastFind = useRef(0);
   const choose = useEffectEvent((id: string) => onSelect(id));
 
   useEffect(() => {
     if (!surface.current) return;
     const instance = L.map(surface.current, { scrollWheelZoom: true, zoomControl: false, zoomAnimation: false }).setView([42.069, 19.512], 13);
     map.current = instance;
+    // Leaflet's stop markers share a pane and can overlap the parked van.
+    instance.createPane('tourVehicle').style.zIndex = '625';
     L.control.zoom({ position: 'topright' }).addTo(instance);
     const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -127,10 +130,16 @@ export default function RouteExplorerMap({ lines, stops, boarding, vehicle, vehi
       icon: L.icon({ iconUrl: '/brand/map-bus-front.svg',
         className: vehicleHistorical ? `${styles.vanMarker} ${styles.historicalVan}` : styles.vanMarker,
         iconSize: [36, 36], iconAnchor: [18, 18] }),
-      title: label, alt: label, keyboard: vehicleHistorical, interactive: vehicleHistorical, zIndexOffset: 350,
+      pane: 'tourVehicle', title: label, alt: label, keyboard: vehicleHistorical, interactive: vehicleHistorical,
     }).addTo(map.current);
     if (tooltip) van.current.bindTooltip(tooltip, { permanent: true, direction: 'top', offset: [0, -18] });
   }, [vehicle, vehicleHistorical]);
+
+  useEffect(() => {
+    if (!vehicle || !map.current || lastFind.current === findVehicle) return;
+    lastFind.current = findVehicle;
+    map.current.setView([vehicle.lat, vehicle.lng], Math.max(15, map.current.getZoom()), { animate: false });
+  }, [findVehicle, vehicle]);
 
   return <div ref={surface} className={styles.canvas} role="region" aria-label="Interactive tour map" />;
 }
