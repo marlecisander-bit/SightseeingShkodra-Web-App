@@ -209,7 +209,7 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, fin
     if (van.current) { van.current.setLatLng(point); return; }
     van.current = L.marker(point, {
       icon: L.icon({ iconUrl: '/live-map-workspace/assets/brand/sightseeing-van.svg', className: styles.vanMarker,
-        iconSize: [43, 28], iconAnchor: [21.5, 14] }),
+        iconSize: [58, 38], iconAnchor: [29, 19] }),
       pane: 'tourVehicle', title: 'Live sightseeing van', alt: 'Live sightseeing van',
       keyboard: false, interactive: false,
     }).addTo(map.current);
