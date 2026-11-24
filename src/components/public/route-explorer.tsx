@@ -44,6 +44,9 @@ export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, ini
   const scheduleProduct = planner.product?.slug;
   const canTrack = lines.length > 0 && mapVersion !== null;
   const vehicle = canTrack ? live.position ?? (showLastKnown ? live.lastKnown : null) : null;
+  const lastKnownTime = live.lastKnown ? new Intl.DateTimeFormat('en-GB', {
+    hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Tirane',
+  }).format(new Date(live.lastKnown.updatedAt)) : null;
 
 
   useEffect(() => {
@@ -132,7 +135,7 @@ export function RouteExplorer({ planner, lines, stops, boarding, mapVersion, ini
           {!lines.length && <p>Route line unavailable</p>}
           <p role="status">{live.position
             ? `${live.movement ?? 'Van location live'}${live.eta ? ` · Next stop in ${live.eta}` : ''}`
-            : live.lastKnown && showLastKnown ? 'Last known van location · Waiting for fresh GPS'
+            : live.lastKnown && showLastKnown ? `Last known van location · ${lastKnownTime} Shkodra time`
               : canTrack ? 'Waiting for a fresh GPS update' : 'Live location unavailable'}</p>
           <div className={styles.vehicleActions}>
             {vehicle && <button className={styles.lastKnown} type="button" onClick={() => setFindVehicle(value => value + 1)}>Find van</button>}
