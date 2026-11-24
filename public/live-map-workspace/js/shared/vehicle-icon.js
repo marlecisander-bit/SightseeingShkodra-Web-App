@@ -1,8 +1,8 @@
 (function() {
     // Keep the existing side-view artwork on live public/admin vehicle markers.
-    const symbol = '<img class="vehicle-symbol" src="assets/brand/sightseeing-van.svg" alt="" aria-hidden="true" draggable="false">';
+    const symbol = '<img class="vehicle-symbol" src="/live-map-workspace/assets/brand/sightseeing-van.svg" alt="" aria-hidden="true" draggable="false">';
 
-    const controlSymbol = '<img class="vehicle-symbol vehicle-control-symbol" src="assets/brand/bus-front.svg" alt="" aria-hidden="true" draggable="false">';
+    const controlSymbol = '<img class="vehicle-symbol vehicle-control-symbol" src="/live-map-workspace/assets/brand/bus-front.svg" alt="" aria-hidden="true" draggable="false">';
 
     window.vehicleIconMarkup = function() { return symbol; };
     // The artwork faces west. Mirror only the image, never Leaflet's positioning.

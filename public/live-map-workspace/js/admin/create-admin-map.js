@@ -3,7 +3,7 @@ window.app = window.app || {};
 window.app.mapService = {
     create: function(containerId, center, zoom) {
         const config = center || window.appConfig.mapCenter;
-        const map = L.map(containerId).setView([
+        const map = L.map(containerId, { scrollWheelZoom: false }).setView([
             config.lat,
             config.lng
         ], config.zoom || zoom || 13);
