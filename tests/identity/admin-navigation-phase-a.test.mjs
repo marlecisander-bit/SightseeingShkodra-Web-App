@@ -12,15 +12,17 @@ for(const role of ['owner','admin','operations','content_editor'])test(`${role}:
  assert.equal(items.some(i=>i.id==='email'),role==='owner');
  assert.equal(items.some(i=>i.id==='map-admin'),role!=='content_editor');
  assert.ok(!groups.some(g=>g.id==='reports'));
+ assert.equal(items.find(i=>i.id==='map-admin')?.href,
+  role==='content_editor'?undefined:'/admin/operator-fixture/live-map');
 });
-test('six approved areas, canonical external map and active contextual views',()=>{
+test('six approved areas, native Live Map admin and active contextual views',()=>{
  assert.equal(Object.keys(adminAreaLabels).length,6);
  const g=adminNavigationGroups('fixture','owner');
  assert.equal(activeAdminItem(g,'products','').id,'products');
  assert.equal(activeAdminItem(g,'departures','availability').id,'availability');
  assert.equal(activeAdminItem(g,'content','faq').id,'faq');
  assert.equal(activeAdminItem(g,'content','').id,'content');
- assert.equal(g.flatMap(g=>g.items).find(i=>i.id==='map-admin').href,'https://sightseeingshkodralivetrackingapp.netlify.app/');
+ assert.equal(g.flatMap(g=>g.items).find(i=>i.id==='map-admin').href,'/admin/fixture/live-map');
  assert.equal(adminContext('#admin-panel:website-section=hero'),'');
  assert.equal(adminContext('#admin-nav=prices'),'prices');
  assert.deepEqual(websiteNavigationContext('faq'),{scope:'pages',section:'faq'});

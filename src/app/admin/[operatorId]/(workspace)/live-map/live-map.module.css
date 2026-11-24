@@ -1,0 +1,14 @@
+.workspace { display: grid; gap: 1rem; min-width: 0; }
+.workspace > header { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; justify-content: space-between; }
+.workspace > section { min-width: 0; padding: clamp(.75rem, 3vw, 1.25rem); background: white; border: 1px solid #e3e7ec; border-radius: 12px; }
+.workspace > section h2 { margin-top: 0; }
+.workspace form { display: grid; gap: .75rem; justify-items: start; margin-block: .75rem; }
+.workspace form > div, .workspace fieldset { width: 100%; min-width: 0; }
+.workspace fieldset { display: grid; gap: .5rem; border: 1px solid #e3e7ec; border-radius: 8px; margin: .75rem 0; }
+.workspace label { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; max-width: 100%; }
+.workspace :is(input, select, textarea, button) { max-width: 100%; font: inherit; }
+.workspace :is(input:not([type=checkbox]), select, textarea, button) { min-height: 44px; }
+.workspace button { padding: .5rem .75rem; border: 1px solid #d9dfe6; border-radius: 8px; color: inherit; background: #f6f7f9; }
+.workspace button[type=submit] { background: #a91f29; color: white; border-color: #a91f29; }
+.workspace button:disabled { opacity: .55; }
+.days { display: grid; gap: .5rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
