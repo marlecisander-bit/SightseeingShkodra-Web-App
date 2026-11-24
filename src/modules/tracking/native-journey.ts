@@ -42,13 +42,16 @@ export function projectNativeJourney(
 
   const eta = record(snapshot?.eta);
   const seconds = op.etaSeconds;
-  const showEta = moving && eta && String(eta.map_version_id) === String(mapVersion) &&
-    String(eta.next_stop_number) === next.number && stamp(eta.calculated_at) === observed &&
-    (eta.source_run_id == null || String(eta.source_run_id) === String(position.source_run_id)) &&
-    (eta.vehicle_id == null || eta.vehicle_id === vehicleId) &&
-    (eta.project_id == null || eta.project_id === projectId) &&
-    (eta.confidence === 'MEDIUM' || eta.confidence === 'HIGH') &&
-    eta.eta_seconds === seconds && typeof seconds === 'number' && Number.isFinite(seconds) && seconds >= 0;
+  const etaMatches = snapshot?.eta == null
+    ? stamp(op.etaCalculatedAt) === observed
+    : !!eta && String(eta.map_version_id) === String(mapVersion) &&
+      String(eta.next_stop_number) === next?.number && stamp(eta.calculated_at) === observed &&
+      (eta.source_run_id == null || String(eta.source_run_id) === String(position.source_run_id)) &&
+      (eta.vehicle_id == null || eta.vehicle_id === vehicleId) &&
+      (eta.project_id == null || eta.project_id === projectId) &&
+      (eta.confidence == null || eta.confidence === 'MEDIUM' || eta.confidence === 'HIGH') &&
+      eta.eta_seconds === seconds;
+  const showEta = moving && etaMatches && typeof seconds === 'number' && Number.isFinite(seconds) && seconds >= 0;
   const departed = points.find(point => point.id === stop.last_completed_stop_id && point.number === String(op.lastDeparted));
 
   return {
