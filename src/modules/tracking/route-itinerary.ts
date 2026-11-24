@@ -49,6 +49,21 @@ export function routeItinerary(publishedStops: DayPlannerData['stops'], map: Pub
   return { stops, lines: routes.flatMap(route => route.lines) };
 }
 
+export function nearestRouteStop(location: Coordinate, stops: RouteStop[]) {
+  const radians = Math.PI / 180;
+  let nearest: { stop: RouteStop; coordinate: Coordinate; distance: number } | null = null;
+  for (const stop of stops) {
+    if (!stop.coordinate) continue;
+    const [latitude, longitude] = stop.coordinate;
+    const a = Math.sin((latitude - location[0]) * radians / 2) ** 2 +
+      Math.cos(location[0] * radians) * Math.cos(latitude * radians) *
+      Math.sin((longitude - location[1]) * radians / 2) ** 2;
+    const distance = 12_742_000 * Math.asin(Math.sqrt(Math.min(a, 1)));
+    if (!nearest || distance < nearest.distance) nearest = { stop, coordinate: stop.coordinate, distance };
+  }
+  return nearest;
+}
+
 export function routeBoarding(meeting: MeetingPoint | null, map?: PublishedMap): RouteBoarding | null {
   if (!meeting) return null;
   const bound = meeting.stopId ? map?.points.find(point => point.id === meeting.stopId && point.kind === 'stop') : undefined;

@@ -25,7 +25,7 @@
 }
 .mapControls { display: flex; align-items: end; gap: 6px; right: max(10px, env(safe-area-inset-right)); bottom: 24px; }
 .mapActions, .zoom { display: grid; gap: 4px; }
-.mapActions { justify-items: end; }
+.mapActions { grid-template-columns: repeat(2, max-content); justify-items: end; }
 .zoom { gap: 0; border-radius: 10px; background: white; box-shadow: 0 2px 8px #0002; }
 .zoom button { min-width: 44px; font-size: 21px; }
 .zoom button + button { border-top: 0; }
@@ -34,7 +34,7 @@
   border-radius: 9px; box-shadow: 0 1px 3px #0001; cursor: pointer; font: 650 13px/1.15 var(--font-sans), sans-serif;
 }
 .mapActions button { min-height: 32px; }
-.mapActions button:last-child { min-height: 42px; }
+.mapActions button:last-child { grid-column: 1 / -1; min-height: 42px; }
 .bar {
   grid-area: 2 / 2; display: flex; padding-bottom: env(safe-area-inset-bottom, 0px); background: #fff;
   border-top: 1px solid #dfdbd4;
@@ -55,6 +55,9 @@
   display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding-inline: 16px; margin-top: 8px;
   border-radius: 9px; background: #8d1d40; color: white; text-decoration: none; font-weight: 700;
 }
+.nearby { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.nearby p { flex-basis: 100%; }
+.nearby .directions { margin-top: 0; font-size: 13px; }
 .directions:hover { color: white; background: #701732; }
 .stopDetail { display: flex; align-items: flex-start; gap: 10px; }
 .stopDetail img { width: 68px; height: 58px; object-fit: cover; border-radius: 7px; }
