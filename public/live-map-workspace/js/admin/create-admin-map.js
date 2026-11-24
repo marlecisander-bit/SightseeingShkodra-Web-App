@@ -10,6 +10,7 @@ window.app.mapService = {
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             crossOrigin: true,
+            referrerPolicy: 'strict-origin',
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
         }).addTo(map);
 

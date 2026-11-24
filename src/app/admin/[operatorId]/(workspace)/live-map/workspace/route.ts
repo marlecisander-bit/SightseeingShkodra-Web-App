@@ -9,7 +9,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ ope
     'Cache-Control': 'private, no-store',
     'Content-Type': 'text/html; charset=utf-8',
     'X-Content-Type-Options': 'nosniff',
-    'Referrer-Policy': 'no-referrer',
+    'Referrer-Policy': 'strict-origin',
   };
   if (!session) return new Response('<p>Reconnect your tracking account in the website admin to open the editing workspace.</p>', { status: 401, headers });
 
