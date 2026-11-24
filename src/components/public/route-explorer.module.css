@@ -56,7 +56,7 @@
   height: 2px; background: #742d27; box-shadow: 0 0 0 1px #fff;
   transform: rotate(var(--pin-angle, 0rad)); transform-origin: left center;
 }
-.pinContent { display: grid; justify-items: center; align-content: start; width: 100%; gap: 3px; }
+.pinContent { position: relative; display: grid; justify-items: center; align-content: start; width: 100%; gap: 3px; }
 .pin {
   display: grid; place-items: center; width: 44px; height: 44px; position: relative;
   margin-top: 9px; border-radius: 11px; border: 2px solid white; color: white;
@@ -66,6 +66,11 @@
 .pin b { position: absolute; top: -11px; min-width: 22px; min-height: 22px; display: grid; place-items: center;
   padding-inline: 3px; background: var(--color-booking-primary, #f5c639); color: #251b08;
   border: 1px solid #fff; border-radius: 50%; font: 750 12px/1 var(--font-sans), sans-serif; }
+.pinContent::before {
+  content: ""; position: absolute; left: 50%; top: 53px; width: var(--caption-leader, 0);
+  height: 1px; background: #742d27; box-shadow: 0 0 0 1px #fff;
+  transform: rotate(var(--caption-angle, 0rad)); transform-origin: left center;
+}
 .pinCaption {
   max-width: 104px; padding: 2px 5px; border-radius: 5px;
   color: #291f20; background: #fff; box-shadow: 0 1px 4px #0004;
@@ -77,7 +82,12 @@
   background: var(--color-booking-primary, #f5c639); color: #251b08; }
 .startMarker .pin b { position: static; background: transparent; border: 0; border-radius: 0; white-space: nowrap; }
 .marker:focus-visible .pin, [data-selected=true] .pin { border-color: #ffd375; box-shadow: 0 0 0 3px #6c241d; }
-[data-selected=true] .pinCaption { color: white; background: #6c241d; }
+[data-selected=true] .pinContent::before {
+  content: ""; position: absolute; left: 50%; top: 53px; width: var(--caption-leader, 0);
+  height: 1px; background: #742d27; box-shadow: 0 0 0 1px #fff;
+  transform: rotate(var(--caption-angle, 0rad)); transform-origin: left center;
+}
+.pinCaption { color: white; background: #6c241d; }
 @media (min-width: 761px) {
   .workspace:has(.panel) .map { grid-column: 1; }
   .workspace:not(:has(.panel)) .map { grid-column: 1 / -1; grid-row: 1; }
