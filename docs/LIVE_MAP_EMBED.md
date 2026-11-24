@@ -64,3 +64,7 @@ The preview now shows supported stop progression and ETA from coherent tracking 
 ### Connected website and admin consumers
 
 The opt-in native source also supplies homepage journey status and the Your day map. Tracking-authorized staff in the public operator workspace can view the published map in Live Map. Operational editing and publishing still use the existing companion because the tracking database requires an authenticated tracking-project identity. Netlify remains needed for those controls and existing direct links.
+
+### Admin draft and publish
+
+The native workspace now supports editing map GeoJSON, saving a draft and publishing the saved draft through the tracking project's existing RPC. It requires both website tracking permission and an existing administrator account in the tracking project. The connection expires after at most one hour. No service-role key is used. The current Vercel Preview remains read-only. Draft and publish need an end-to-end check on an isolated tracking project before production. GPS controls, operating hours and the graphical editor remain in the companion.
