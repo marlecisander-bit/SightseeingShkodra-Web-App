@@ -4,6 +4,7 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { requirePermission } from '@/modules/identity/require-permission';
+import { parseTrackingWeek, trackingWeekdays } from './service-hours';
 import { matchesPublicMapProject, publicMapBinding } from './public-map-binding';
 
 const cookieName = 'shkodra-tracking-admin';
@@ -32,11 +33,11 @@ function clientFor(token?: string) {
 }
 
 async function authorizedProject(client: ReturnType<typeof clientFor>) {
-  const { data, error } = await client.from('projects').select('id')
+  const { data, error } = await client.from('projects').select('id,default_vehicle_id')
     .eq('slug', publicMapBinding.project).eq('is_public', true).single();
   if (error || !data) return null;
   const access = await client.rpc('is_tracking_admin', { p: data.id });
-  return !access.error && access.data === true ? data.id as string : null;
+  return !access.error && access.data === true ? { projectId: data.id as string, vehicleId: data.default_vehicle_id as string | null } : null;
 }
 
 export async function connectTrackingAdmin(operatorId: string, email: string, password: string) {
@@ -65,8 +66,8 @@ export async function trackingAdminSession(operatorId: string) {
   if (!token || !/^[a-f0-9]{64}$/.test(mac) ||
       !timingSafeEqual(Buffer.from(mac), Buffer.from(signature(operatorId, userId, token)))) return null;
   const client = clientFor(token);
-  const projectId = await authorizedProject(client);
-  return projectId ? { client, projectId } : null;
+  const project = await authorizedProject(client);
+  return project ? { client, ...project } : null;
 }
 
 export async function readTrackingVersions({ client, projectId }: NonNullable<Awaited<ReturnType<typeof trackingAdminSession>>>) {
@@ -78,4 +79,14 @@ export async function readTrackingVersions({ client, projectId }: NonNullable<Aw
   ]);
   if (head.error || published.error || draft.error) throw Error('Map versions unavailable');
   return { head: head.data, published: published.data?.id ?? null, draft: draft.data?.id ?? null };
+}
+
+export async function readTrackingHours({ client, vehicleId }: NonNullable<Awaited<ReturnType<typeof trackingAdminSession>>>) {
+  if (!vehicleId) return null;
+  const { data, error } = await client.from('vehicle_service_hours').select('enabled,week')
+    .eq('vehicle_id', vehicleId).maybeSingle();
+  if (error) throw Error('Tracking hours unavailable');
+  const week = data ? parseTrackingWeek(data.week) : trackingWeekdays.map(() => null);
+  if (!week || (data && typeof data.enabled !== 'boolean')) throw Error('Invalid tracking hours');
+  return { enabled: data?.enabled === true, week };
 }

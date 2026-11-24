@@ -1,15 +1,19 @@
 import { randomUUID } from 'node:crypto';
 import Link from 'next/link';
 import { NativeRouteMap } from '@/components/public/native-route-map';
-import { readTrackingVersions, trackingAdminEnabled, trackingAdminSession } from '@/modules/tracking/admin-server';
+import { trackingWeekdays } from '@/modules/tracking/service-hours';
+import { readTrackingHours, readTrackingVersions, trackingAdminEnabled, trackingAdminSession } from '@/modules/tracking/admin-server';
 import { AdminSectionContext } from '../../../admin-workspace-context';
 import { sectionAccess, type SectionProps } from '../../../section-access';
-import { connectMapAccount, disconnectMapAccount, saveTrackingMap } from '../../../tracking-map-actions';
+import { connectMapAccount, disconnectMapAccount, saveTrackingHours, saveTrackingMap } from '../../../tracking-map-actions';
 
 const messages: Record<string, string> = {
   connected: 'Tracking account connected.',
   disconnected: 'Tracking account disconnected.',
   'connection-failed': 'Could not connect an authorized tracking account.',
+  'hours-saved': 'Van operating hours saved.',
+  'hours-failed': 'Could not confirm the operating hours save. Review the saved hours before retrying.',
+  'invalid-hours': 'Enter different opening and closing times for each selected day.',
   'draft-saved': 'Map draft saved.',
   published: 'Map published.',
   conflict: 'Another editor saved a newer map. Review that version before saving again.',
@@ -23,7 +27,10 @@ export default async function Page(props: SectionProps) {
   const { result } = await props.searchParams;
   const enabled = trackingAdminEnabled(operatorId);
   const session = enabled ? await trackingAdminSession(operatorId).catch(() => null) : null;
-  const versions = session ? await readTrackingVersions(session).catch(() => null) : null;
+  const [versions, hours] = session ? await Promise.all([
+    readTrackingVersions(session).catch(() => null),
+    readTrackingHours(session).catch(() => null),
+  ]) : [null, null];
   const save = saveTrackingMap.bind(null, operatorId);
   const versionFields = versions && <>
     <input type="hidden" name="head" value={versions.head?.id ?? ''} />
@@ -60,6 +67,20 @@ export default async function Page(props: SectionProps) {
         </> : <p role="status">Map versions are temporarily unavailable.</p>}
       </>}
     </section> : <p>Map editing is unavailable for this workspace.</p>}
+    {session && <section>
+      <h2>Van operating hours</h2>
+      {hours ? <form action={saveTrackingHours.bind(null, operatorId)}>
+        <p>Times are local to Shkodra. Overnight hours end the next day. GPS processing pauses outside enabled hours.</p>
+        <label><input type="checkbox" name="enabled" defaultChecked={hours.enabled} /> Enable operating hours</label>
+        {trackingWeekdays.map((day, index) => <fieldset key={day}>
+          <legend>{day}</legend>
+          <label><input type="checkbox" name={`day-${index}`} defaultChecked={hours.week[index] !== null} /> Operating day</label>
+          <label> Opens <input type="time" name={`open-${index}`} defaultValue={hours.week[index]?.open} /></label>
+          <label> Closes <input type="time" name={`close-${index}`} defaultValue={hours.week[index]?.close} /></label>
+        </fieldset>)}
+        <button type="submit">Save operating hours</button>
+      </form> : <p role="status">Operating hours are unavailable.</p>}
+    </section>}
     <p><Link href="/route">Open the public route map</Link></p>
     <AdminSectionContext identity={context} />
   </>;

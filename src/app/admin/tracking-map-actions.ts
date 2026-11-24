@@ -1,6 +1,7 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+import { trackingWeekFromForm } from '@/modules/tracking/service-hours';
 import { requirePermission } from '@/modules/identity/require-permission';
 import { connectTrackingAdmin, disconnectTrackingAdmin, readTrackingVersions, trackingAdminSession } from '@/modules/tracking/admin-server';
 
@@ -61,4 +62,20 @@ export async function saveTrackingMap(operatorId: string, form: FormData) {
     if (error instanceof SyntaxError) result = 'invalid';
   }
   finish(operatorId, result);
+}
+
+export async function saveTrackingHours(operatorId: string, form: FormData) {
+  const session = await trackingAdminSession(operatorId);
+  if (!session) finish(operatorId, 'connection-failed');
+  const week = trackingWeekFromForm(form);
+  if (!week) finish(operatorId, 'invalid-hours');
+  if (!session.vehicleId) finish(operatorId, 'hours-failed');
+  let saved = false;
+  try {
+    const { error } = await session.client.rpc('save_vehicle_service_hours', {
+      target_vehicle: session.vehicleId, hours_enabled: form.has('enabled'), hours_week: week,
+    });
+    saved = !error;
+  } catch { /* Upstream details remain server-side. */ }
+  finish(operatorId, saved ? 'hours-saved' : 'hours-failed');
 }

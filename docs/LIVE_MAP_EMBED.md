@@ -68,3 +68,7 @@ The opt-in native source also supplies homepage journey status and the Your day 
 ### Admin draft and publish
 
 The native workspace now supports editing map GeoJSON, saving a draft and publishing the saved draft through the tracking project's existing RPC. It requires both website tracking permission and an existing administrator account in the tracking project. The connection expires after at most one hour. No service-role key is used. The current Vercel Preview remains read-only. Draft and publish need an end-to-end check on an isolated tracking project before production. GPS controls, operating hours and the graphical editor remain in the companion.
+
+### Van operating hours
+
+The native workspace reads and saves the default vehicle's weekly hours through the existing tracking Supabase project. It uses the same authenticated RPC and Monday-first Europe/Tirane schedule as the companion and preserves overnight schedules. Preview remains read-only. Graphical editing and remaining GPS controls still need migration and isolated release testing.
