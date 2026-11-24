@@ -56,7 +56,7 @@
                     document.getElementById('gps-source-active').textContent = 'Waiting for selected provider';
                 }
                             showProviderStatus(snapshot, false);
-            } catch (error) {
+            } catch {
                 if (projectId === window.appConfig.projectId && vehicleId === window.appConfig.vehicleId && window.app.state.currentUser) showProviderStatus(null, true);
             }
             finally { requestInFlight = false; }

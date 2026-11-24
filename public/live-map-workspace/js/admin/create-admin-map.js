@@ -18,7 +18,7 @@ window.app.mapService = {
         if (window.app && window.app.state) {
             window.app.state.map = map;
             window.app.state.mapReady = true;
-            window.app.syncLegacyState && window.app.syncLegacyState();
+            window.app.syncLegacyState?.();
         }
 
         return map;

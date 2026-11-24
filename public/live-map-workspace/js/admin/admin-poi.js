@@ -10,7 +10,7 @@
             empty.textContent = 'No POIs to preview.';
             container.appendChild(empty);
         }
-        poiResults.forEach(function(item, index) {
+        poiResults.forEach(function(item) {
             const row = document.createElement('label');
             row.className = 'poi-search-result';
             const checkbox = document.createElement('input');

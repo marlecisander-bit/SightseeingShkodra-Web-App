@@ -189,7 +189,7 @@ function adminRenderMapData(data) {
     window.adminMapData.selectedLayer = null;
     adminRefreshLists();
     if (window.adminMapData.layerGroup.getLayers().length) {
-        try { map.fitBounds(window.adminMapData.layerGroup.getBounds(), { padding: [40, 40] }); } catch (error) {}
+        try { map.fitBounds(window.adminMapData.layerGroup.getBounds(), { padding: [40, 40] }); } catch {}
     }
 }
 
