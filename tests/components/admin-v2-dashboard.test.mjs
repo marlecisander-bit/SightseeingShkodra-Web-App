@@ -38,7 +38,7 @@ test('content editor has no operational KPI, booking/create or calendar actions'
  assert.match(d.body.textContent,/Open page editor/);assert.doesNotMatch(d.body.textContent,/Needs attention/);
  dom.window.close();
 });
-for(const [role,expected] of [['owner',['Home','Bookings','Calendar','Products','Website','More']],['admin',['Home','Bookings','Calendar','Products','Website','More']],['operations',['Home','Bookings','Calendar','Products','More']],['content_editor',['Home','Products','Website','More']]])test(`${role} primary destinations expose only supported capability groups`,()=>{
+for(const [role,expected] of [['owner',['Today','Bookings','Schedule','Products','Website','Settings']],['admin',['Today','Bookings','Schedule','Products','Website','Settings']],['operations',['Today','Bookings','Schedule','Products','Settings']],['content_editor',['Today','Products','Website','Settings']]])test(`${role} primary destinations expose only supported capability groups`,()=>{
  const g=adminNavigationGroups(op,role);assert.deepEqual(g.map(x=>x.label),expected);
  const items=g.flatMap(x=>x.items);assert.equal(new Set(items.map(x=>x.href)).size,items.length);
  assert.equal(items.some(x=>x.id==='email'),role==='owner');assert.equal(items.some(x=>x.id==='products'),true);

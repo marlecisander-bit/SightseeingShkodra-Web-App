@@ -8,7 +8,7 @@ import styles from './calendar.module.css';
 type Product={id:string;title:string;active?:boolean;availability_presentation?:AvailabilityPresentation|null;status?:string;inventory_product_id:string|null};
 export function OperatingCalendarWorkspace({operatorId,calendars,products,selectedSchedule,selectedDate,month,today,timeZone,canPrice,fromBookings=false}:{operatorId:string;calendars:{schedule:ServiceSchedule;title:string;days:CalendarDay[]}[];products:Product[];selectedSchedule?:string;selectedDate:string;month:string;today:string;timeZone:string;canPrice:boolean;fromBookings?:boolean}){
  const router=useRouter();
- const current=calendars.find(c=>c.schedule.id===selectedSchedule)??calendars[0];
+ const current=calendars.find(c=>c.schedule.id===selectedSchedule)??calendars.find(c=>c.schedule.status==='active'&&selectedDate>=c.schedule.start_date&&selectedDate<=c.schedule.end_date&&products.some(p=>(p.inventory_product_id??p.id)===c.schedule.product_id&&p.active!==false&&(p.status===undefined||p.status==='published')))??calendars[0];
  if(!current)return <p>No operating schedule yet. <Link href={`/admin/${operatorId}/products`}>Set up a product schedule</Link></p>;
  const product=products.find(p=>p.id===current.schedule.product_id);
  const offers=products.filter(p=>p.id===current.schedule.product_id||p.inventory_product_id===current.schedule.product_id);

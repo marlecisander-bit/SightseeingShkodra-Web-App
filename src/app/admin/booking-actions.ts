@@ -98,6 +98,14 @@ export async function collectPayment(
 
 /** Explicit UI preparation replaces the old render-time call. Domain logic is unchanged. */
 export async function loadBookingDepartures(operatorId:string,form:FormData){
+  return prepareBookingDepartures(operatorId,null,form);
+}
+
+export async function loadWalkInDepartures(operatorId:string,returnTo:string,form:FormData){
+  return prepareBookingDepartures(operatorId,returnTo,form);
+}
+
+async function prepareBookingDepartures(operatorId:string,returnTo:string|null,form:FormData){
   const {requirePermission}=await import('@/modules/identity/require-permission');
   const {prepareServiceDate}=await import('@/modules/booking/schedules-server');
   const {validBookingDay}=await import('./bookings-presentation');
@@ -109,6 +117,8 @@ export async function loadBookingDepartures(operatorId:string,form:FormData){
   }catch{return {error:'Departures could not be loaded. Check the service date and your scheduling access before retrying.'};}
   const path=`/admin/${encodeURIComponent(operatorId)}/bookings`;
   revalidatePath("/","layout");
+  const departurePath=`/admin/${encodeURIComponent(operatorId)}/departures?view=agenda&date=${day}&schedule=`;
+  if(returnTo?.startsWith(departurePath)&&/^[a-z0-9-]+&time=[0-9%:]+$/i.test(returnTo.slice(departurePath.length)))redirect(returnTo+'&walkIn=1#new-booking');
   redirect(`${path}?date=${day}&create=1&result=departures_ready#new-booking`);
 }
 
@@ -127,4 +137,37 @@ export async function deleteBooking(operatorId:string,bookingId:string,form:Form
  const path=`/admin/${encodeURIComponent(operatorId)}/bookings`;
  revalidatePath("/","layout");revalidatePath(`/admin/${encodeURIComponent(operatorId)}/overview`);revalidatePath(`/admin/${encodeURIComponent(operatorId)}/departures`);
  redirect(`${path}?result=deleted`);
+}
+
+/** Uses the existing locked booking-pass write. Attendance is recorded on the party. */
+export async function checkInDepartureParty(operatorId:string,departureId:string,bookingId:string,form:FormData){
+  if(form.get('confirm')!=='yes')return {error:'Confirm that this party has arrived.'};
+  return recordDepartureCheckIn(operatorId,departureId,{bookingId});
+}
+
+export async function checkInDepartureTicket(operatorId:string,departureId:string,form:FormData){
+  const token=form.get('ticket');
+  if(typeof token!=='string'||!/^[a-f0-9]{64}$/i.test(token.trim()))return {error:'Scan a valid ticket code.'};
+  return recordDepartureCheckIn(operatorId,departureId,{token:token.trim().toLowerCase()});
+}
+
+async function recordDepartureCheckIn(operatorId:string,departureId:string,pass:{bookingId:string}|{token:string}){
+  const {withOperatorService}=await import('@/modules/identity/operator-service');
+  const {resolveBookingPass}=await import('@/modules/booking/pass-server');
+  try{
+    const token=await withOperatorService(operatorId,'bookings.create',async client=>{
+      const query=client.from('bookings').select('order_id,qr_token').eq('operator_id',operatorId).eq('status','confirmed');
+      const booking=await ('bookingId' in pass?query.eq('id',pass.bookingId):query.eq('qr_token',pass.token)).single();
+      if(booking.error||!booking.data.qr_token)throw Error('Pass unavailable');
+      const item=await client.from('booking_items').select('order_id').eq('operator_id',operatorId).eq('order_id',booking.data.order_id).eq('departure_id',departureId).eq('status','confirmed').limit(1).maybeSingle();
+      if(item.error||!item.data)throw Error('Party unavailable');
+      return booking.data.qr_token as string;
+    });
+    const outcome=await resolveBookingPass(operatorId,token,true);
+    if(!['CHECKED_IN','ALREADY_CHECKED_IN'].includes(outcome.status))throw Error('Check-in unavailable');
+    const root=`/admin/${encodeURIComponent(operatorId)}`;
+    revalidatePath(root+'/departures');
+    revalidatePath(root+'/overview');
+    revalidatePath(root+'/bookings');
+  }catch{return {error:'Check-in could not be recorded. Verify that the booking is confirmed for this departure.'};}
 }

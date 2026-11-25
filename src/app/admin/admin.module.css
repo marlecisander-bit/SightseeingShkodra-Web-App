@@ -467,3 +467,28 @@
  .shell .sectionMenu .taskItems,.shell .mobileDrawer .taskItems{gap:2px;}
  .shell .sectionMenu .taskItems a,.shell .mobileDrawer .taskItems a{padding:8px 10px;gap:2px;min-height:44px;}
 }
+
+.headerSearch,.newBooking {display:none}
+.mobileMore:not([hidden]) {position:absolute;inset:auto 8px calc(100% + 6px);padding:8px;display:grid;gap:4px;background:#fff;border:1px solid #ccd5e4;border-radius:12px;box-shadow:0 8px 24px #182d4a26}
+.shell .bottomNavigation .mobileMore a {align-items:flex-start;min-height:44px;padding-inline:12px;font-size:14px}
+.shell .bottomNavigation [aria-current=page] {color:#173dcc;background:#edf3ff;font-weight:700}
+.shell .bottomNavigation a[aria-current=page] > .primaryIcon {background:transparent}
+.shell .taskNavigation a[aria-current=page] {color:#173dcc;background:#edf3ff}
+@media(min-width:1024px){
+ .headerSearch {display:block}
+ .headerSearch input {width:clamp(12rem,22vw,24rem);margin:0}
+ .newBooking {display:inline-flex;align-items:center;min-height:44px;padding:.5rem .8rem;border-radius:8px;background:#173dcc;color:#fff;font-weight:700;text-decoration:none;white-space:nowrap}
+}
+.shell .panel [data-tours-workspace] h1 {font-size:clamp(2rem,4.1vw,3rem);line-height:1.04;font-weight:750;margin:0;letter-spacing:-.035em}
+.shell .panel [data-tours-workspace] h2 {margin:0}
+.shell .headerActions .newBooking {color:#fff}
+.shell .taskNavigation a[aria-current=page] svg {color:inherit}
+@media(max-width:1023px) {
+ .shell:has([data-passenger-list]) :is(.header,.bottomNavigation) {display:none}
+ .shell[data-admin-phase]:has([data-passenger-list]) .workspace {padding-block:calc(8px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-bottom))}
+}
+@media(min-width:1024px){
+ .shell:has(.newBooking) [data-inline-new-booking] {display:none}
+}
+.shell:has([data-tours-workspace]) .workspace {align-content:start}
+.shell .bottomNavigation a[aria-current=page] {color:#173dcc}

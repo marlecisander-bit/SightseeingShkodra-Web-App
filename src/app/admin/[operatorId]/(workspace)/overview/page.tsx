@@ -1,3 +1,4 @@
+import {CalendarPanel} from '../../../calendar-panel';
 import {Suspense} from 'react';
 import {AdminSectionContext} from '../../../admin-workspace-context';
 import {OverviewPanel} from '../../../overview-panel';
@@ -11,7 +12,10 @@ async function DailyOverview({operatorId,role,now}:{operatorId:string;role:Staff
 }
 export default async function Page(props:SectionProps){
  const context=await sectionAccess('overview',props),now=new Date();
- return <>{hasPermission(context.role,'bookings.read')?
+ return <>{hasPermission(context.role,'departures.manage')?
+  <Suspense fallback={<section><h1>Today</h1><p role="status">Loading today’s departures…</p></section>}>
+   <CalendarPanel operatorId={context.operatorId} view="today"/>
+  </Suspense>:hasPermission(context.role,'bookings.read')?
   <Suspense fallback={<OverviewPanel operatorId={context.operatorId} role={context.role} now={now} loading/>}>
    <DailyOverview operatorId={context.operatorId} role={context.role} now={now}/>
   </Suspense>:<OverviewPanel operatorId={context.operatorId} role={context.role} now={now}/>}

@@ -8,7 +8,7 @@ import type {PassengerCategories,PassengerSnapshot} from '@/modules/booking/pass
 import {BookingQr} from '@/components/public/booking-pass';
 import {emailOutcomeLabel} from '@/modules/integrations/email-delivery-status';
 import {ownerEmailEvent,ownerStatus} from './presentation';
-import {validBookingDay,bookingAmount,type BookingRecordView} from './bookings-presentation';
+import {validBookingDay,bookingAmount,bookingPaymentLabel,type BookingRecordView} from './bookings-presentation';
 import {BookingsWorkspace,type BookingEntry} from './bookings-workspace';
 import {BookingRecord} from './booking-record';
 import {BookingDeletionForm} from './booking-deletion-form';
@@ -16,8 +16,9 @@ import {BookingConfirmation} from './booking-confirmation';
 import {StaffPassengers} from './staff-passengers';
 import {MutationForm} from './mutation-form';
 import {SubmitButton} from './submit-button';
-import {manualBooking,cancelBooking,collectPayment,loadBookingDepartures,deleteBooking} from './booking-actions';
+import {manualBooking,cancelBooking,collectPayment,loadBookingDepartures,loadWalkInDepartures,deleteBooking,checkInDepartureParty,checkInDepartureTicket} from './booking-actions';
 import styles from './bookings.module.css';
+import agenda from './departure-agenda.module.css';
 function unavailable(message:string){return <div className={styles.workspace}><h1>Bookings</h1><p role="alert">{message} No partial booking details are shown.</p><Link prefetch={false} href="?">Retry without filters</Link></div>;}
 export async function BookingsPanel({
   operatorId,
@@ -27,7 +28,7 @@ export async function BookingsPanel({
   email,
   requestId,
   q, status, page,
-  booking: selectedBooking,
+  booking: selectedBooking, departure, product, manifest, returnTo, time, inventory, alternatives,
 }: {
   operatorId: string;
   result?: string;
@@ -36,7 +37,7 @@ export async function BookingsPanel({
   email?: string;
   requestId?: string;
   q?:string;status?:string;page?:string;
-  booking?: string;
+  booking?: string; departure?: string; product?: string; manifest?: boolean; returnTo?: string; time?: string; inventory?: string; alternatives?: string[];
 }) {
   const context = await requirePermission(operatorId, "bookings.read");
   const client = await createSessionClient();
@@ -52,22 +53,24 @@ export async function BookingsPanel({
     : departureChoices.gte('service_date',today);
   const query=(q??'').trim().slice(0,200),searchStatus=['confirmed','pending','cancelled','expired'].includes(status??'')?status!:'all';
   const pageNumber=/^[1-9]\d{0,5}$/.test(page??'')?Number(page):1;
-  const [departures,products,searchResult]=await Promise.all([
+  const [departures,products,searchResult,manifestItems]=await Promise.all([
     creating?departureChoices.order('service_date').order('start_time').limit(100):Promise.resolve({data:[],error:null}),
     client.from('products').select('id,title,inventory_product_id,status,type,active').eq('operator_id',operatorId).limit(100),
-    selectedBooking?Promise.resolve(null):withOperatorService(operatorId,'bookings.read',async(service,ctx)=>{
+    selectedBooking||manifest?Promise.resolve(null):withOperatorService(operatorId,'bookings.read',async(service,ctx)=>{
       const result=await service.rpc('search_admin_orders_v1',{p_operator:ctx.operatorId,p_actor:ctx.staffProfileId,p_query:query,p_day:day??null,p_email:searchEmail??null,p_status:searchStatus,p_page:pageNumber});
       if(result.error)throw Error('Booking search unavailable');return result.data as {ids:string[];total:number;page:number;pageSize:number};
     }).catch(()=>undefined),
+    manifest&&departure?client.from('booking_items').select('order_id',{count:'exact'}).eq('operator_id',operatorId).eq('departure_id',departure).eq('status','confirmed'):{data:[],error:null,count:0},
   ]);
-  if(departures.error||products.error||searchResult===undefined)return unavailable('Booking search is temporarily unavailable.');
+  if(manifestItems.error||manifestItems.count!==manifestItems.data?.length||departures.error||products.error||searchResult===undefined)return unavailable('Booking search is temporarily unavailable.');
   const categories=creating&&hasPermission(context.role,'bookings.create')?await withOperatorService(operatorId,'bookings.create',async(service)=>Object.fromEntries(await Promise.all(products.data.map(async(p)=>{const r=await service.rpc('passenger_categories_v1',{p_product:p.id});if(r.error)throw Error('Passenger categories unavailable');return [p.id,r.data as PassengerCategories];})))):{};
   let ordersQuery=client.from('orders').select('id,customer_id,status,total,currency,created_at,collection_mode',{count:'exact'}).eq('operator_id',operatorId).order('created_at',{ascending:false}).order('id',{ascending:false});
   if(selectedBooking){
     const selected=await client.from('bookings').select('order_id').eq('operator_id',operatorId).eq('id',selectedBooking).maybeSingle();
     if(selected.error)return unavailable('Booking is temporarily unavailable.');
     ordersQuery=ordersQuery.in('id',selected.data?[selected.data.order_id]:[]);
-  }else ordersQuery=ordersQuery.in('id',searchResult!.ids);
+  }else if(manifest)ordersQuery=ordersQuery.in('id',[...new Set(manifestItems.data.map(item=>item.order_id))]);
+  else ordersQuery=ordersQuery.in('id',searchResult!.ids);
   const orders = await ordersQuery;
   if (orders.error)
     return unavailable('Orders are temporarily unavailable.');
@@ -124,19 +127,25 @@ export async function BookingsPanel({
   const messages:Record<string,string>={deleted:'Booking permanently deleted. Financial and audit history retained. No refund was issued.',email_queued:'Confirmation emails requested. Check message status after refreshing.',created:'Reservation confirmed. Payment is due at the meeting point.',collected:'Full payment recorded at the meeting point.',cancelled:'Booking cancelled.',review:'Booking cancelled. Refund review requested; no refund has been issued.',departures_ready:'Booking departures loaded for the selected service date.',error:'Unable to complete the action. Check the latest booking details before retrying.'};
   const root=`/admin/${encodeURIComponent(operatorId)}`;
   const usableDepartures=departures.data.filter(d=>categories[d.product_id]);
+  const selectedDeparture=departure??departures.data.find(row=>row.product_id===inventory&&row.start_time.slice(0,5)===time)?.id;
+  const choices=usableDepartures.flatMap(d=>products.data.filter(p=>p.active&&p.status==='published'&&p.type==='van_tour'&&(p.inventory_product_id??p.id)===d.product_id).map(p=>({id:d.id,productId:p.id,label:`${d.service_date} ${d.start_time.slice(0,5)} | ${p.title}`,categories:categories[p.id]})));
+  const departureOffers=choices.filter(option=>option.id===selectedDeparture&&(!product||option.productId===product));
+  const preferred=departureOffers.length===1?departureOffers[0]:undefined;
+  const departureReady=!manifest||departureOffers.length>0;
+  const choicesForBooking=manifest?choices.filter(option=>option.id===selectedDeparture||alternatives?.includes(option.id)):choices;
   const creation=creating&&hasPermission(context.role,'bookings.create')?<section id="new-booking" className={styles.creation}>
-   <div className={styles.creationTitle}><h2>Create booking</h2><Link prefetch={false} href={`${root}/bookings${day?'?date='+day:''}`}>Close</Link></div>
+   <div className={styles.creationTitle}><h2>{manifest?'Add walk-in':'New booking'}</h2><Link prefetch={false} href={returnTo??`${root}/bookings${day?'?date='+day:''}`}>Close</Link></div>
    <p>Confirm a reservation with payment due at the meeting point.</p>
-   <details open={usableDepartures.length===0}><summary>Choose a service date</summary><p>Load this date’s departures before booking. This can add dated departures from the existing schedule; it does not reserve seats.</p>
-    <BookingConfirmation message="Load booking departures for this date? This may prepare dated departures from the schedule, but does not reserve seats."><MutationForm action={loadBookingDepartures.bind(null,operatorId)}><label>Service date<input type="date" name="date" defaultValue={day??today} required/></label><SubmitButton>Load booking departures</SubmitButton></MutationForm></BookingConfirmation>
+   <details open={!usableDepartures.length||!departureReady}><summary>Choose a service date</summary><p>Load this date’s departures before booking. This can add dated departures from the existing schedule; it does not reserve seats.</p>
+    <BookingConfirmation message="Load booking departures for this date? This may prepare dated departures from the schedule, but does not reserve seats."><MutationForm action={returnTo?loadWalkInDepartures.bind(null,operatorId,returnTo):loadBookingDepartures.bind(null,operatorId)}><label>Service date<input type="date" name="date" defaultValue={day??today} readOnly={manifest} required/></label><SubmitButton>Load booking departures</SubmitButton></MutationForm></BookingConfirmation>
    </details>
    <BookingConfirmation message="Confirm this reservation now? Seats will be reserved immediately and full payment will be due at the meeting point."><MutationForm action={manualBooking.bind(null,operatorId)}>
     <input type="hidden" name="request_id" value={requestId&&/^[0-9a-f-]{36}$/i.test(requestId)?requestId:randomUUID()}/>
-    <StaffPassengers departures={usableDepartures.flatMap(d=>products.data.filter(p=>p.active&&p.status==='published'&&p.type==='van_tour'&&(p.inventory_product_id??p.id)===d.product_id).map(p=>({id:d.id,productId:p.id,label:`${d.service_date} ${d.start_time} | ${p.title}`,categories:categories[p.id]})))}/>
+    <StaffPassengers departures={departureReady?choicesForBooking:[]} initialChoice={preferred?`${preferred.productId}/${preferred.id}`:undefined}/>
     <label>Guest name<input name="name" maxLength={200} autoComplete="name" required/></label><label>Email<input name="email" type="email" maxLength={254} autoComplete="email" required/></label><label>Phone<input name="phone" type="tel" maxLength={50} autoComplete="tel"/></label>
-    <SubmitButton disabled={!usableDepartures.length}>Confirm reservation</SubmitButton>
+    <SubmitButton disabled={!usableDepartures.length||!departureReady}>Confirm reservation</SubmitButton>
     {!usableDepartures.length&&<p>No bookable departure with passenger configuration is loaded. Choose a service date above.</p>}
-    <small>Up to 100 scheduled departures are offered. Capacity, cutoff and prices are checked again when confirming.</small>
+    <small>{manifest?'Other available departures for this date are shown when loaded. Capacity, cutoff and prices are checked again when confirming.':'Up to 100 scheduled departures are offered. Capacity, cutoff and prices are checked again when confirming.'}</small>
    </MutationForm></BookingConfirmation>
   </section>:undefined;
   // Index related rows once instead of rescanning every collection for every card.
@@ -144,6 +153,30 @@ export async function BookingsPanel({
   const departureById=new Map(itemDepartures.data.map(d=>[d.id,d])),productById=new Map(products.data.map(p=>[p.id,p]));
   const group=<T extends {order_id:string|null}>(rows:T[])=>{const map=new Map<string,T[]>();for(const row of rows)if(row.order_id){const list=map.get(row.order_id)??[];list.push(row);map.set(row.order_id,list);}return map;};
   const itemsByOrder=group(items.data),paymentsByOrder=group(payments.data),holdsByOrder=group(holds.data);
+  if(manifest){
+   const parties=orders.data.flatMap(order=>{
+    const booking=bookingByOrder.get(order.id);
+    const partyItems=(itemsByOrder.get(order.id)??[]).filter(item=>item.departure_id===departure&&item.status==='confirmed');
+    if(booking?.status!=='confirmed'||!partyItems.length)return [];
+    const guests=partyItems.reduce((sum,item)=>sum+item.quantity,0),seats=partyItems.reduce((sum,item)=>sum+item.occupied_seats,0);
+    const payment=hasPermission(context.role,'payments.collect')?bookingPaymentLabel({payments:paymentsByOrder.get(order.id)??[],collectionMode:order.collection_mode,orderStatus:order.status}):null;
+    return [{booking,name:peopleById.get(order.customer_id)?.name??'Guest unavailable',guests,seats,payment}];
+   });
+   return <>
+    <p>{parties.filter(party=>party.booking.checked_in_at).length} of {parties.length} {parties.length===1?'party':'parties'} checked in</p>
+    {departure&&hasPermission(context.role,'bookings.create')&&<details className={`${agenda.summary} ${agenda.scan}`}><summary>Scan ticket</summary>
+     <p>Use a QR reader that types into this field, or paste the ticket code.</p>
+     <MutationForm action={checkInDepartureTicket.bind(null,operatorId,departure)}><label>Ticket code<input name="ticket" autoComplete="off" spellCheck={false} autoCapitalize="off" maxLength={64} required/></label><SubmitButton>Check in ticket</SubmitButton></MutationForm>
+    </details>}
+    {creation}
+    {parties.length?<ul className={agenda.parties} aria-label="Passenger parties">{parties.map(({booking,name,guests,seats,payment})=><li key={booking.id} className={agenda.party}>
+     <Link prefetch={false} href={`${root}/bookings?booking=${booking.id}`}>{name}</Link>
+     <p>{guests} {guests===1?'guest':'guests'}{guests!==seats&&` · ${seats} seats used`}</p>
+     <div className={agenda.partyStatus}><span data-checked={booking.checked_in_at?true:undefined}>{booking.checked_in_at?'Checked in':'Awaiting check-in'}</span>{payment&&<span data-due={payment==='Due at meeting point'?true:undefined}>{payment}</span>}</div>
+     {departure&&booking.qr_token&&!booking.checked_in_at&&hasPermission(context.role,'bookings.create')&&<BookingConfirmation message={`Check in ${name}’s party?`}><MutationForm action={checkInDepartureParty.bind(null,operatorId,departure,booking.id)}><input type="hidden" name="confirm" value="yes"/><SubmitButton className={agenda.checkIn} aria-label={`Check in ${name}’s party`}>Check in</SubmitButton></MutationForm></BookingConfirmation>}
+    </li>)}</ul>:<p>No confirmed passenger bookings for this departure.</p>}
+   </>;
+  }
   const entries:BookingEntry[]=orders.data.map(order=>{
    const person=peopleById.get(order.customer_id),booking=bookingByOrder.get(order.id),orderItems=itemsByOrder.get(order.id)??[],orderPayments=paymentsByOrder.get(order.id)??[];
    const row:BookingRecordView={id:order.id,bookingId:booking?.id,reference:booking?.booking_reference??'Pending reservation',name:person?.name??'Guest unavailable',email:person?.email,phone:person?.phone,status:booking?.status??order.status,orderStatus:order.status,total:order.total,currency:order.currency,collectionMode:order.collection_mode,checkedInAt:booking?.checked_in_at,hasQr:!!booking?.qr_token,payments:orderPayments,items:orderItems.map(i=>{const d=departureById.get(i.departure_id);return {productId:i.product_id,product:productById.get(i.product_id)?.title??'Product unavailable',date:d?.service_date,time:d?.start_time,quantity:i.quantity,seats:i.occupied_seats,status:i.status,snapshot:i.passenger_snapshot as PassengerSnapshot|null};})};
