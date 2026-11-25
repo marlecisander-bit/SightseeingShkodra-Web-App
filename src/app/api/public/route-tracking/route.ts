@@ -1,9 +1,9 @@
 import { readPublicMap } from '@/modules/tracking/public-map-server';
-import { freshRoutePosition, recentRoutePosition, routeEta } from '@/modules/tracking/route-itinerary';
+import { freshRoutePosition, lastKnownRoutePosition, routeEta } from '@/modules/tracking/route-itinerary';
 
 export async function GET(request: Request) {
   const data = await readPublicMap(request.signal);
-  const lastPosition = recentRoutePosition(data?.snapshot.positions[0]);
+  const lastPosition = lastKnownRoutePosition(data?.snapshot.positions[0]);
   const position = freshRoutePosition(lastPosition);
   return Response.json({
     mapVersion: data?.mapVersion ?? null,
