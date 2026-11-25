@@ -47,6 +47,7 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
   const [locationMessage, setLocationMessage] = useState('');
   const locationRequest = useRef(0);
   const [times, setTimes] = useState(planner.times);
+  const [scheduleLoaded, setScheduleLoaded] = useState(planner.times !== null);
   const [observedAt, setObservedAt] = useState(initialObservedAt);
   const selectedIndex = stops.findIndex(stop => stop.id === selection);
   const selected = stops[selectedIndex];
@@ -114,6 +115,7 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
   }, [canTrack, initialLastKnown, initialPosition, mapVersion]);
 
   useEffect(() => {
+    if (panel !== 'departures') return;
     const controller = new AbortController();
     let busy = false;
     async function refresh() {
@@ -125,12 +127,16 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
         const next: DayPlannerData = await response.json();
         if (!controller.signal.aborted) setTimes(next.date === plannerClock().date && next.product?.slug === scheduleProduct ? next.times : null);
       } catch { if (!controller.signal.aborted) setTimes(null); }
-      finally { busy = false; }
+      finally {
+        busy = false;
+        if (!controller.signal.aborted) setScheduleLoaded(true);
+      }
     }
+    void refresh();
     const timer = setInterval(refresh, 60_000);
     document.addEventListener('visibilitychange', refresh);
     return () => { controller.abort(); clearInterval(timer); document.removeEventListener('visibilitychange', refresh); };
-  }, [scheduleProduct]);
+  }, [panel, scheduleProduct]);
 
   function show(next: Exclude<Panel, null>, id: string | null = null) {
     if (next !== 'location') locationRequest.current += 1;
@@ -251,7 +257,7 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
           </>}
           {panel === 'departures' && <><h2>Departures</h2>{planner.product && <p>{planner.title}</p>}<p>Today · Shkodra local time</p>
             {times?.length ? <ul className={styles.times}>{times.map(time => <li key={time}><time>{time}</time></li>)}</ul>
-              : <p>{times ? 'No service scheduled today.' : 'The timetable is currently unavailable.'}</p>}
+              : <p>{times ? 'No service scheduled today.' : scheduleLoaded ? 'The timetable is currently unavailable.' : 'Loading the timetable…'}</p>}
             <p>Scheduled departures. Seats are confirmed in booking.</p>
             {activeProduct ? <ProductBookingLink className="p-button p-button-booking" product={activeProduct}>Check availability</ProductBookingLink>
               : <BookButton>Check availability</BookButton>}

@@ -1,9 +1,10 @@
 "use server";
 import { hasPermission } from "@/modules/identity/roles";
 import { ownerActionError } from "./action-error";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { withOperatorService } from "@/modules/identity/operator-service";
 import { validateWebsiteContent, editableWebsiteSections } from "@/modules/content/website-schema";
+import { websitePublicationTag } from "@/modules/content/website-server";
 import { IMAGE_UPLOAD_BYTES, imageSizeError } from "@/modules/content/image-upload";
 
 export async function saveWebsiteSection(operatorId: string, sectionId: string, form: FormData) {
@@ -26,6 +27,7 @@ export async function saveWebsiteSection(operatorId: string, sectionId: string, 
       const result = await client.rpc("save_website_content_v1", { p_operator_id: context.operatorId, p_actor_id: context.staffProfileId, p_content: content, p_expected_updated_at: form.get("updated_at"), p_operation: operation });
       if (result.error) throw Error(result.error.code === "PT409" ? "This homepage changed. Reload before saving; copy your unsaved edits first." : "Unable to save homepage");
     });
+    if (operation === "publish") updateTag(websitePublicationTag(operatorId));
     revalidatePath("/", "layout");
     revalidatePath(`/admin/${operatorId}/content`);
     return { saved: operation === "publish" ? "Published homepage changes." : "Draft saved. The public page is unchanged." };
