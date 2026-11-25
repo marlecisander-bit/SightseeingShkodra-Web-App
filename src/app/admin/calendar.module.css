@@ -120,7 +120,7 @@
 @media(max-width:767px){.operatingWorkspace button.mobileMonth{display:flex!important;}}
 .editorFooter[data-active=true]{position:static;}
 @media(max-width:767px){
- .editorFooter[data-active=true]{position:fixed;left:12px;right:12px;bottom:calc(70px + env(safe-area-inset-bottom));z-index:50;border:1px solid var(--ss-border);border-radius:12px;padding:10px 12px;box-shadow:0 -4px 18px #00000012;}
+ .editorFooter[data-active=true]{position:fixed;left:12px;right:12px;bottom:calc(var(--admin-dock-height,76px) + 4px);z-index:50;border:1px solid var(--ss-border);border-radius:12px;padding:10px 12px;box-shadow:0 -4px 18px #00000012;}
  .editor:has(.editorFooter[data-active=true]){padding-bottom:130px;}
 }
 

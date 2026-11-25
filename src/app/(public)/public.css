@@ -1405,3 +1405,20 @@ html:has([data-route-explorer]) { scrollbar-gutter: auto; }
  .public-site:has([data-route-explorer]) .p-header .p-language { display: none; }
  .public-site:has([data-route-explorer]) .p-header .p-menu-toggle { margin-left: auto; }
 }
+
+/* Keep the planner readable and scrollable on short phone screens. */
+.public-site .p-planner-dialog {
+ max-height:calc(100dvh - max(12px,env(safe-area-inset-top)) - max(12px,env(safe-area-inset-bottom)));
+ padding:clamp(12px,3vw,20px);
+ padding-bottom:max(16px,env(safe-area-inset-bottom));
+ overscroll-behavior:contain;
+ overflow-wrap:anywhere;
+}
+.public-site .p-planner-dialog form {margin-top:12px}
+.public-site .p-planner-dialog h2 {margin-block:0 8px;line-height:1.2}
+
+@media(max-width:359px) {
+ .public-site .p-header .p-header-inner {gap:8px;padding-inline:max(10px,env(safe-area-inset-left)) max(10px,env(safe-area-inset-right))}
+ .public-site .p-header .p-brand-logo {width:clamp(100px,35vw,120px);max-width:100%}
+ .public-site .p-header .p-language {min-width:0}
+}

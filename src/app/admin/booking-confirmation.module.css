@@ -1,0 +1,17 @@
+.dialog {
+ width:min(28rem,calc(100% - max(16px,env(safe-area-inset-left)) - max(16px,env(safe-area-inset-right))));
+ max-height:calc(100dvh - max(16px,env(safe-area-inset-top)) - max(16px,env(safe-area-inset-bottom)));
+ overflow:auto;
+ overscroll-behavior:contain;
+ border:1px solid var(--admin-border);
+ border-radius:12px;
+ padding:16px;
+ color:var(--admin-text);
+ background:var(--admin-surface);
+ box-shadow:0 14px 40px #1723342b;
+}
+.dialog::backdrop {background:#17233480}
+.dialog h2 {font-size:1.125rem;margin:0 0 6px}
+.dialog p {margin:0;overflow-wrap:anywhere}
+.actions {display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;margin-top:14px}
+.actions button {flex:0 1 auto}
