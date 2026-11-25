@@ -196,13 +196,11 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
     onKeyDown={event => {
     if (event.key === 'Escape' && panel) close();
   }}>
+    <h1 className={styles.visuallyHidden}>{routeTitle}</h1>
     <div className={styles.workspace}>
       <div className={styles.map}>
         <MapBoundary><Map routes={routes} stops={stops} boarding={boarding} vehicle={vehicle} lastKnownVehicle={lastKnownVehicle} findVehicle={findVehicle} allowArrivalFocus={allowArrivalFocus}
           selected={canvasSelection} visitor={visitor} centerVisitor={panel === 'location'} reset={reset} zoom={zoom} onSelect={choose} /></MapBoundary>
-        <header className={styles.tour} data-map-obstacle>
-          <h1>{routeTitle}</h1>
-        </header>
         <div className={styles.mapTools} role="group" aria-label="Map view" data-map-obstacle data-map-tools>
           <div className={styles.zoomControls}>
             <button type="button" aria-label="Zoom in" onClick={() => setZoom({ delta: 1 })}>+</button>
