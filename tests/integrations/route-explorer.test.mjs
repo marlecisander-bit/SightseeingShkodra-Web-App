@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { freshRoutePosition, nearestRouteStop, recentRoutePosition, routeBoarding, routeEta, routeItinerary, walkingBoarding } from '../../src/modules/tracking/route-itinerary.ts';
+import { freshRoutePosition, nearestRouteStop, lastKnownRoutePosition, routeBoarding, routeEta, routeItinerary, walkingBoarding } from '../../src/modules/tracking/route-itinerary.ts';
 
 const point = (id, number) => ({ id, name: id, number, kind: 'stop', coordinate: [42, 19] });
 const lines = [[[42, 19], [42.1, 19.1]]];
@@ -48,13 +48,13 @@ test('only an upstream valid next-stop estimate is displayed', () => {
   assert.equal(routeEta(null), null);
 });
 
-test('keeps a valid recent stale fix separate from live tracking for up to ten minutes', () => {
+test('keeps older valid fixes separate from live tracking', () => {
   const position = { vehicleId: 'van', lat: 42, lng: 19, updatedAt: '2026-11-24T08:00:00Z' };
   const observed = Date.parse(position.updatedAt);
   assert.equal(freshRoutePosition(position, observed + 328000), null);
-  assert.equal(recentRoutePosition(position, observed + 328000), position);
-  assert.equal(recentRoutePosition(position, observed + 600000), null);
-  assert.equal(recentRoutePosition(position, observed - 1000), null);
+  assert.equal(lastKnownRoutePosition(position, observed + 328000), position);
+  assert.equal(lastKnownRoutePosition(position, observed + 3600000), position);
+  assert.equal(lastKnownRoutePosition(position, observed - 1000), null);
 });
 
 test('finds the nearest located stop and ignores entries without coordinates', () => {
@@ -88,5 +88,5 @@ test('walking boards fixed tours at the configured pickup and hop-on hop-off at 
 test('live vehicle fixes reject invalid coordinates even when the timestamp is fresh', () => {
   const position = { vehicleId: 'van', lat: 91, lng: 19, updatedAt: new Date().toISOString() };
   assert.equal(freshRoutePosition(position), null);
-  assert.equal(recentRoutePosition({...position, lat: 42, lng: NaN}), null);
+  assert.equal(lastKnownRoutePosition({...position, lat: 42, lng: NaN}), null);
 });

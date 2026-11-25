@@ -7,7 +7,7 @@ import { BookButton, useBooking } from './booking';
 import { RouteControlIcon } from './route-control-icon';
 import { ProductBookingLink } from './product-booking-link';
 import { plannerClock, type DayPlannerData } from '@/modules/content/day-planner';
-import { freshRoutePosition, nearbyBoardingAccuracy, walkingBoarding, recentRoutePosition, routeLastKnownPositionMs, routeLivePositionMs, type RouteBoarding, type RouteStop } from '@/modules/tracking/route-itinerary';
+import { freshRoutePosition, nearbyBoardingAccuracy, walkingBoarding, lastKnownRoutePosition, routeLivePositionMs, type RouteBoarding, type RouteStop } from '@/modules/tracking/route-itinerary';
 import type { Coordinate, PublishedMap } from '@/modules/tracking/published-map';
 import type { Position } from '@/modules/tracking/positions';
 import styles from './route-explorer.module.css';
@@ -57,6 +57,7 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
   const selectedPhoto = selected?.design?.photoUrl ?? selected?.place?.image;
   const canTrack = routes.length > 0 && mapVersion !== null;
   const vehicle = canTrack ? live.position : null;
+  const lastKnownVehicle = canTrack && !vehicle ? live.lastKnown : null;
   const lastKnownTime = observedAt ? new Intl.DateTimeFormat('en-GB', {
     day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Tirane',
   }).format(new Date(observedAt)) : null;
@@ -67,18 +68,12 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
     const controller = new AbortController();
     let busy = false;
     let expires: ReturnType<typeof setTimeout> | undefined;
-    const expire = (lastPosition: Position | null, fresh: boolean) => {
+    const expire = (position: Position | null) => {
       clearTimeout(expires);
-      if (!lastPosition) return;
-      const observed = Date.parse(lastPosition.updatedAt);
+      if (!position) return;
       expires = setTimeout(() => {
-        if (fresh) {
-          setLive({ position: null, lastKnown: recentRoutePosition(lastPosition), eta: null, movement: null });
-          expire(lastPosition, false);
-        } else {
-          setLive({ position: null, lastKnown: null, eta: null, movement: null });
-        }
-      }, Math.max(0, observed + (fresh ? routeLivePositionMs : routeLastKnownPositionMs) - Date.now()));
+        setLive({ position: null, lastKnown: position, eta: null, movement: null });
+      }, Math.max(0, Date.parse(position.updatedAt) + routeLivePositionMs - Date.now()));
     };
     async function refresh() {
       if (busy || document.hidden) return;
@@ -88,24 +83,30 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
         if (!reply.ok) throw Error('Tracking unavailable');
         const data = await reply.json();
         if (controller.signal.aborted) return;
+        if (data.mapVersion == null) throw Error('Tracking unavailable');
         const lastPosition = data.mapVersion === mapVersion
-          ? recentRoutePosition(data.position ?? data.lastKnown) : null;
+          ? lastKnownRoutePosition(data.position ?? data.lastKnown) : null;
         const position = freshRoutePosition(lastPosition);
         const eta = position && typeof data.eta === 'string' && data.eta.length <= 80 ? data.eta : null;
         const movement = position && typeof data.movement === 'string' && data.movement.length <= 180 ? data.movement : null;
-        setLive({ position, lastKnown: position ? null : lastPosition, eta, movement });
+        setLive(current => ({
+          position,
+          lastKnown: position ? null : lastPosition ?? (data.mapVersion === mapVersion
+            ? lastKnownRoutePosition(current.position ?? current.lastKnown) : null),
+          eta, movement,
+        }));
         if (data.mapVersion === mapVersion && typeof data.observedAt === 'string' && Number.isFinite(Date.parse(data.observedAt))) {
           setObservedAt(data.observedAt);
         }
-        expire(lastPosition, !!position);
+        expire(position);
       } catch {
         if (!controller.signal.aborted) {
-          setLive(current => ({ position: null, lastKnown: recentRoutePosition(current.position ?? current.lastKnown), eta: null, movement: null }));
+          clearTimeout(expires);
+          setLive(current => ({ position: null, lastKnown: lastKnownRoutePosition(current.position ?? current.lastKnown), eta: null, movement: null }));
         }
       } finally { busy = false; }
     }
-    const initial = recentRoutePosition(initialPosition ?? initialLastKnown);
-    expire(initial, !!freshRoutePosition(initial));
+    expire(initialPosition);
     void refresh();
     const timer = setInterval(refresh, 10_000);
     document.addEventListener('visibilitychange', refresh);
@@ -191,7 +192,7 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
   }}>
     <div className={styles.workspace}>
       <div className={styles.map}>
-        <MapBoundary><Map routes={routes} stops={stops} boarding={boarding} vehicle={vehicle} findVehicle={findVehicle} allowArrivalFocus={allowArrivalFocus}
+        <MapBoundary><Map routes={routes} stops={stops} boarding={boarding} vehicle={vehicle} lastKnownVehicle={lastKnownVehicle} findVehicle={findVehicle} allowArrivalFocus={allowArrivalFocus}
           selected={canvasSelection} visitor={visitor} centerVisitor={panel === 'location'} reset={reset} zoom={zoom} onSelect={choose} /></MapBoundary>
         <header className={styles.tour} data-map-obstacle>
           <h1>{routeTitle}</h1>
@@ -244,7 +245,7 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
             {locationMessage && <p className={styles.locationStatus} role="status">{locationMessage}</p>}
           </>}
           {panel === 'tracking' && <><h2>Tracking details</h2>
-            <p role="status">{vehicle ? live.movement ?? 'Van location live' : 'Live location unavailable'}</p>
+            <p role="status">{vehicle ? live.movement ?? 'Van location live' : lastKnownVehicle ? 'Showing the last known van position. Live updates are unavailable.' : 'Live location unavailable'}</p>
             {lastKnownTime && <p>Last GPS update at {lastKnownTime}, Shkodra time.</p>}
             {vehicle && live.eta && <p>Next stop in {live.eta}.</p>}
           </>}

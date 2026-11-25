@@ -11,7 +11,7 @@ import styles from './route-explorer.module.css';
 
 type Props = {
   routes: PublishedMap['routes']; stops: RouteStop[]; boarding: RouteBoarding | null;
-  vehicle: Position | null; findVehicle: number; allowArrivalFocus: boolean; selected: string | null; reset: number;
+  vehicle: Position | null; lastKnownVehicle: Position | null; findVehicle: number; allowArrivalFocus: boolean; selected: string | null; reset: number;
   zoom: { delta: number } | null;
   visitor: { coordinate: Coordinate; accuracy: number } | null; centerVisitor: boolean;
   onSelect: (id: string) => void;
@@ -52,7 +52,7 @@ const initialCenter: Coordinate = [42.069, 19.512];
 const tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-export default function RouteExplorerMap({ routes, stops, boarding, vehicle, findVehicle, allowArrivalFocus, selected, reset, zoom, visitor, centerVisitor, onSelect }: Props) {
+export default function RouteExplorerMap({ routes, stops, boarding, vehicle, lastKnownVehicle, findVehicle, allowArrivalFocus, selected, reset, zoom, visitor, centerVisitor, onSelect }: Props) {
   const surface = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const pins = useRef(new Map<string, L.Marker>());
@@ -235,17 +235,26 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, fin
   }, [boarding, routes, selected, stops]);
 
   useEffect(() => {
-    if (!vehicle) { van.current?.remove(); van.current = null; return; }
+    const displayed = vehicle ?? lastKnownVehicle;
+    if (!displayed) { van.current?.remove(); van.current = null; return; }
     if (!map.current) return;
-    const point: Coordinate = [vehicle.lat, vehicle.lng];
-    if (van.current) { van.current.setLatLng(point); return; }
-    van.current = L.marker(point, {
-      icon: L.icon({ iconUrl: '/live-map-workspace/assets/brand/sightseeing-van.svg', className: styles.vanMarker,
-        iconSize: [58, 38], iconAnchor: [29, 19] }),
-      pane: 'tourVehicle', title: 'Live sightseeing van', alt: 'Live sightseeing van',
-      keyboard: false, interactive: false,
-    }).addTo(map.current);
-  }, [vehicle]);
+    const point: Coordinate = [displayed.lat, displayed.lng];
+    const label = vehicle ? 'Live sightseeing van' : 'Last known sightseeing van position';
+    if (!van.current) {
+      van.current = L.marker(point, {
+        icon: L.icon({ iconUrl: '/live-map-workspace/assets/brand/sightseeing-van.svg', className: styles.vanMarker,
+          iconSize: [58, 38], iconAnchor: [29, 19] }),
+        pane: 'tourVehicle', keyboard: false, interactive: false,
+      }).addTo(map.current);
+    } else van.current.setLatLng(point);
+    const icon = van.current.getElement();
+    icon?.setAttribute('alt', label);
+    icon?.setAttribute('title', label);
+    if (vehicle) van.current.unbindTooltip();
+    else if (!van.current.getTooltip()) van.current.bindTooltip('Last known', {
+      permanent: true, direction: 'bottom', offset: [0, 17],
+    });
+  }, [vehicle, lastKnownVehicle]);
 
   useEffect(() => {
     if (!vehicle || !allowArrivalFocus || arrivalFocused.current || Date.now() > arrivalDeadline.current) return;
