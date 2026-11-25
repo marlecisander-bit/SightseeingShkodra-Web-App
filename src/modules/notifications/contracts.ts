@@ -23,6 +23,13 @@ export function safeAdminReturn(value:unknown):string {
   if(key==='product'&&match[2]==='products'&&uuid.test(item))continue;
   if(key==='tab'&&match[2]==='products'&&['details','prices','schedule','website'].includes(item))continue;
   if(key==='booking'&&match[2]==='bookings'&&uuid.test(item))continue;
+  if(match[2]==='departures'){
+   if(key==='view'&&['agenda','calendar','today','prices','tickets','route','live'].includes(item))continue;
+   if(key==='schedule'&&uuid.test(item))continue;
+   if(key==='time'&&/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(item))continue;
+   if(key==='walkIn'&&item==='1')continue;
+  }
+  if(key==='create'&&match[2]==='bookings'&&item==='1')continue;
   if(key==='date'&&['bookings','departures'].includes(match[2])&&/^\d{4}-\d{2}-\d{2}$/.test(item)&&!Number.isNaN(Date.parse(item))&&new Date(item).toISOString().slice(0,10)===item)continue;
   return '/admin';
  }

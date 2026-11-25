@@ -4,7 +4,7 @@ import {requirePermission} from '@/modules/identity/require-permission';
 import {AuthorizationError} from '@/modules/identity/authorization';
 import {adminSections} from '@/modules/identity/admin-navigation';
 import {safeAdminReturn} from '@/modules/notifications/contracts';
-export type SectionSearch={result?:string;product?:string;tab?:string;create?:string;fromBookings?:string;view?:string;history?:string;date?:string;email?:string;requestId?:string;booking?:string;delivery?:string;recipient?:string};
+export type SectionSearch={result?:string;product?:string;tab?:string;create?:string;fromBookings?:string;view?:string;history?:string;date?:string;email?:string;requestId?:string;booking?:string;delivery?:string;recipient?:string;schedule?:string;time?:string;walkIn?:string};
 export type SectionProps={params:Promise<{operatorId:string}>;searchParams:Promise<SectionSearch>};
 export async function sectionAccess(section:string,props:SectionProps){
  const {operatorId}=await props.params;const selected=adminSections.find(item=>item.slug===section)!;
@@ -15,6 +15,8 @@ export async function sectionAccess(section:string,props:SectionProps){
    if(section==='products'){if(search.product)query.set('product',search.product);if(search.tab)query.set('tab',search.tab);}
    if(section==='bookings'&&search.booking)query.set('booking',search.booking);
    if(['bookings','departures'].includes(section)&&search.date)query.set('date',search.date);
+   if(section==='departures'&&search.fromBookings!=='1')for(const key of ['view','schedule','time','walkIn'] as const)if(search[key])query.set(key,search[key]);
+   if(section==='bookings'&&search.create==='1')query.set('create','1');
    // A sign-in round trip must not drop the safe Bookings handoff into legacy dated preparation.
    const returnSection=section==='departures'&&search.fromBookings==='1'?'bookings':section;
    const next=safeAdminReturn(`/admin/${operatorId}/${returnSection}${query.size?'?'+query:''}`);

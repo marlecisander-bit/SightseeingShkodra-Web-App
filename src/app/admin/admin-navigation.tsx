@@ -32,16 +32,24 @@ function TaskItems({items,activeId}:{items:AdminNavItem[];activeId?:string}){
 export function AdminNavigation({groups,section,account}:{groups:AdminNavGroup[];section:string;account:ReactNode}){
  const context=useContextHash(section),active=activeAdminItem(groups,section,context);
  const area=groups.find(group=>group.items.some(item=>item.id===active?.id))?.id;
+ const primary=groups.filter(group=>['overview','bookings','tours'].includes(group.id));
+ const more=groups.filter(group=>!primary.includes(group));
+ const [showMore,setShowMore]=useState(false);
+ const moreActive=more.some(group=>group.id===area);
  return <>
   <aside className={styles.desktopNavigation}>
-   <nav aria-label="Admin navigation" className={styles.taskNavigation}>{groups.map(group=>(group.id==='overview'||group.id==='bookings')?<Link key={group.id} className={styles.homeLink} prefetch={false} href={group.items[0].href} onClick={navigateAdminContext} aria-current={area===group.id?'page':undefined}><AdminIcon name={adminPrimaryIcons[group.id]}/><span>{group.label}</span><NavigationHint/></Link>:<div key={group.id}>{group.id==='tours'&&group.items.some(item=>item.id==='availability')&&<Link className={styles.homeLink} prefetch={false} href={group.items[0].href} onClick={navigateAdminContext} aria-current={active?.id==='availability'?'page':undefined}><AdminIcon name="calendar-check"/><span>Calendar</span><NavigationHint/></Link>}<details className={styles.taskGroup} key={group.id+':'+(area===group.id)} open={area===group.id}>
-    <summary><AdminIcon name={adminPrimaryIcons[group.id]}/><span>{group.id==='tours'?'Tour operations':group.label}</span><span className={styles.chevron}><AdminIcon name="chevron-down" size={16}/></span></summary>
-    <TaskItems items={group.id==='tours'?group.items.filter(item=>item.id!=='availability'):group.items} activeId={active?.id}/>
+   <nav aria-label="Admin navigation" className={styles.taskNavigation}>{groups.map(group=>(group.id==='overview'||group.id==='bookings')?<Link key={group.id} className={styles.homeLink} prefetch={false} href={group.items[0].href} onClick={navigateAdminContext} aria-current={area===group.id?'page':undefined}><AdminIcon name={adminPrimaryIcons[group.id]}/><span>{group.label}</span><NavigationHint/></Link>:<div key={group.id}><details className={styles.taskGroup} key={group.id+':'+(area===group.id)} open={area===group.id}>
+    <summary><AdminIcon name={adminPrimaryIcons[group.id]}/><span>{group.label}</span><span className={styles.chevron}><AdminIcon name="chevron-down" size={16}/></span></summary>
+    <TaskItems items={group.items} activeId={active?.id}/>
    </details></div>)}</nav>
    <details className={styles.accountMenu}><summary>Account</summary>{account}</details>
   </aside>
-  <nav className={styles.bottomNavigation} aria-label="Primary admin navigation" style={{gridTemplateColumns:`repeat(${groups.length},minmax(0,1fr))`}}>
-   {groups.map(group=><Link key={group.id} prefetch={false} href={group.items[0].href} onClick={navigateAdminContext} aria-current={area===group.id?'page':undefined}><span className={styles.primaryIcon}><AdminIcon name={group.id==='tours'?'calendar-days':adminPrimaryIcons[group.id]}/></span><span>{group.id==='tours'?'Calendar':group.label}</span><NavigationHint/></Link>)}
+  <nav className={styles.bottomNavigation} aria-label="Primary admin navigation" style={{gridTemplateColumns:`repeat(${primary.length+Number(more.length>0)},minmax(0,1fr))`}}>
+   {primary.map(group=><Link key={group.id} prefetch={false} href={group.items[0].href} onClick={event=>{setShowMore(false);navigateAdminContext(event);}} aria-current={area===group.id?'page':undefined}><span className={styles.primaryIcon}><AdminIcon name={group.id==='tours'?'calendar-days':adminPrimaryIcons[group.id]}/></span><span>{group.label}</span><NavigationHint/></Link>)}
+   {more.length>0&&<button type="button" aria-expanded={showMore} aria-controls="mobile-admin-more" aria-current={moreActive?'page':undefined} onClick={()=>setShowMore(!showMore)}><AdminIcon name="info"/>More</button>}
+   {more.length>0&&<div id="mobile-admin-more" className={styles.mobileMore} hidden={!showMore} onKeyDown={event=>{if(event.key==='Escape'){setShowMore(false);event.currentTarget.parentElement?.querySelector('button')?.focus();}}}>
+    {more.map(group=><Link key={group.id} prefetch={false} href={group.items[0].href} onClick={()=>setShowMore(false)}>{group.label}</Link>)}
+   </div>}
   </nav>
  </>;
 }

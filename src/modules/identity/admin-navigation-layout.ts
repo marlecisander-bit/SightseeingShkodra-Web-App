@@ -5,7 +5,7 @@ import type {AmenityIconName} from '@/modules/content/hero-amenities';
 export type AdminArea = 'overview'|'bookings'|'tours'|'products'|'website'|'more';
 export type AdminNavItem = {id:string;label:string;section?:string;context?:string;href:string;external?:boolean;note?:string};
 export type AdminNavGroup = {id:AdminArea;label:string;icon:AmenityIconName;items:AdminNavItem[]};
-export const adminAreaLabels:Record<AdminArea,string>={overview:'Home',bookings:'Bookings',tours:'Calendar',products:'Products',website:'Website',more:'More'};
+export const adminAreaLabels:Record<AdminArea,string>={overview:'Today',bookings:'Bookings',tours:'Schedule',products:'Products',website:'Website',more:'Settings'};
 // Presentation only: every destination and action retains independent server authorization.
 export function adminNavigationGroups(operatorId:string,role:StaffRole):AdminNavGroup[]{
  const root=`/admin/${encodeURIComponent(operatorId)}`;
@@ -13,13 +13,12 @@ export function adminNavigationGroups(operatorId:string,role:StaffRole):AdminNav
  const link=(id:string,label:string,section:string,context?:string,note?:string):AdminNavItem=>({id,label,section,context,href:`${root}/${section}${context?'#admin-nav='+context:''}`,note});
  const tour=(id:string,label:string,view:string,context=id):AdminNavItem=>({...link(id,label,'departures',context),href:`${root}/departures?view=${view}#admin-nav=${context}`});
  const groups:AdminNavGroup[]=[
-  {id:'overview',label:'Home',icon:'info',items:[link('overview','Home','overview')]},
+  {id:'overview',label:'Today',icon:'info',items:[link('overview','Today','overview')]},
   {id:'bookings',label:'Bookings',icon:'ticket',items:[link('bookings','Bookings','bookings')]},
-  {id:'tours',label:'Calendar',icon:'van',items:[
-   tour('availability','Calendar','calendar','availability'),
-   tour('today','Today','today'),
+  {id:'tours',label:'Schedule',icon:'van',items:[
+   tour('availability','Day agenda','agenda','availability'),
    ...(hasPermission(role,'tracking.manage')?[
-    link('map-admin','Live Map admin','live-map')
+    link('map-admin','Live service','live-map')
    ]:[])]},
   {id:'products',label:'Products',icon:'ticket',items:[link('products','All products','products'),link('catalog','Suppliers','catalog')]},
   {id:'website',label:'Website',icon:'camera',items:[
@@ -29,7 +28,7 @@ export function adminNavigationGroups(operatorId:string,role:StaffRole):AdminNav
    link('reviews','Guest reviews','reviews'),link('partners','Partners','partners'),
    link('faq','FAQ & policies','content','faq',hasPermission(role,'content.sensitive')?'FAQ, privacy and terms.':'FAQ editor; legal policies remain owner-only.'),
    link('seo','SEO & visibility','content','seo','Search titles and page visibility.')]},
-  {id:'more',label:'More',icon:'info',items:[
+  {id:'more',label:'Settings',icon:'info',items:[
    link('more','Settings & account','more'),
    link('notifications','Notifications & devices','notifications'),
    link('email','Booking emails','email',undefined,'Delivery history and settings.')]

@@ -8,22 +8,22 @@ import {adminNavigationGroups} from '../../src/modules/identity/admin-navigation
 registerHooks({load(url,c,next){if(url.endsWith('.module.css'))return {format:'module',source:'export default new Proxy({}, {get:(_,key)=>String(key)})',shortCircuit:true};return next(url,c);}});
 const {AdminNavigation}=await import('../../src/app/admin/admin-navigation.tsx');
 const props={groups:adminNavigationGroups('fixture','owner'),section:'content',account:React.createElement('a',{href:'/admin'},'Switch workspace')};
-test('six direct mobile links share role-filtered desktop groups; canonical URLs and external behavior survive',()=>{
+test('mobile task links and More preserve role-filtered desktop groups; canonical URLs and external behavior survive',()=>{
  const dom=new JSDOM(renderToStaticMarkup(React.createElement(AdminNavigation,props))),d=dom.window.document;
  assert.equal(d.querySelectorAll('aside details.taskGroup').length,4);
  const home=d.querySelector('aside nav > a');
- assert.equal(home.textContent,'Home');
+ assert.equal(home.textContent,'Today');
  assert.equal(home.getAttribute('href'),'/admin/fixture/overview');
  assert(!d.body.textContent.includes('Today’s overview'));
  const overview=new JSDOM(renderToStaticMarkup(React.createElement(AdminNavigation,{...props,section:'overview'})));
- assert.equal(overview.window.document.querySelector('aside [aria-current=page]').textContent,'Home');
+ assert.equal(overview.window.document.querySelector('aside [aria-current=page]').textContent,'Today');
  assert.equal(overview.window.document.querySelectorAll('aside details.taskGroup[open]').length,0);
  overview.window.close();
  assert.equal(d.querySelectorAll('aside details.taskGroup[open]').length,1);
  assert.equal(d.querySelector('.taskGroup[open] summary').textContent.trim(),'Website');
  const links=[...d.querySelectorAll('nav[aria-label="Primary admin navigation"] > a')];
- assert.deepEqual(links.map(x=>x.textContent),['Home','Bookings','Calendar','Products','Website','More']);
- assert.deepEqual(links.map(x=>x.getAttribute('href')),['/admin/fixture/overview','/admin/fixture/bookings','/admin/fixture/departures?view=calendar#admin-nav=availability','/admin/fixture/products','/admin/fixture/content','/admin/fixture/more']);
+ assert.deepEqual(links.map(x=>x.textContent),['Today','Bookings','Schedule']);
+ assert.deepEqual(links.map(x=>x.getAttribute('href')),['/admin/fixture/overview','/admin/fixture/bookings','/admin/fixture/departures?view=agenda#admin-nav=availability']);
  assert.equal(d.querySelectorAll('aside [aria-current=page]').length,1);
  const mapAdmin=d.querySelector('a[href="/admin/fixture/live-map"]');
  assert.equal(mapAdmin.target,'');
@@ -39,7 +39,8 @@ test('six direct mobile links share role-filtered desktop groups; canonical URLs
  assert.ok(products.querySelector('summary [data-admin-icon="package"]'));
  assert.deepEqual([...products.querySelectorAll('li a')].map(x=>x.textContent),['All products','Suppliers']);
  assert.ok(links[1].querySelector('[data-admin-icon="calendar-check"]'));
- assert.ok(links[3].querySelector('[data-admin-icon="package"]'));
+ assert.equal(d.querySelector('nav[aria-label="Primary admin navigation"] > button').textContent,'More');
+ assert.deepEqual([...d.querySelectorAll('#mobile-admin-more a')].map(link=>link.textContent),['Products','Website','Settings']);
  const bookings=new JSDOM(renderToStaticMarkup(React.createElement(AdminNavigation,{...props,section:'bookings'})));
  assert.deepEqual([...bookings.window.document.querySelectorAll('[aria-current="page"]')].map(x=>x.textContent),['Bookings','Bookings']);
  bookings.window.close();
@@ -58,6 +59,6 @@ test('same-page contexts retain filters, respect dirty state and update active s
   await act(async()=>document.querySelector('aside a[href$="admin-nav=faq"]').click());
   assert.equal(window.location.search,'?existing=kept');assert.equal(window.location.hash,'#admin-nav=faq');
   assert.match(document.querySelector('aside [aria-current=page]').textContent,/FAQ & policies/);
-  assert.equal(document.querySelector('.bottomNavigation [aria-current=page]').textContent,'Website');
+  assert.equal(document.querySelector('.bottomNavigation [aria-current=page]').textContent,'More');
  }finally{await act(async()=>root.unmount());dom.window.close();for(const [name,descriptor]of saved){if(descriptor)Object.defineProperty(globalThis,name,descriptor);else delete globalThis[name];}}
 });

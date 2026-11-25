@@ -1,35 +1,23 @@
-import {activeScheduleOffers,operatingSlots,type DepartureOffer} from '@/modules/dashboard/daily-departures';
+import {type DepartureOffer} from '@/modules/dashboard/daily-departures';
 import type {ReactNode} from 'react';
 import Link from 'next/link';
-import Form from 'next/form';
 import {AdminIcon} from './admin-icon';
 import {hasPermission,type StaffRole} from '@/modules/identity/roles';
-import {bookingAmount} from './bookings-presentation';
+import {DepartureAgenda,type PassengerList} from './departure-agenda';
 import type {CalendarDay} from './operations-calendar';
 import type {ServiceSchedule} from './schedule-editor';
 import styles from './tours.module.css';
-export type ToursView='today'|'calendar'|'prices'|'tickets';
-export const toursView=(value?:string):ToursView=>['today','calendar','prices','tickets'].includes(value??'')?value as ToursView:'calendar';
-export type ToursProjection={today:string;selected:string;timeZone:string;products?:DepartureOffer[];calendars:{schedule:ServiceSchedule;title:string;days:CalendarDay[]}[]};
-export function ToursWorkspace({operatorId,role,view,projection,children,error}:{operatorId:string;role:StaffRole;view:ToursView;projection?:ToursProjection;children?:ReactNode;error?:string}){
+export type ToursView='today'|'agenda'|'calendar'|'prices'|'tickets';
+export const toursView=(value?:string):ToursView=>['today','agenda','calendar','prices','tickets'].includes(value??'')?value as ToursView:'agenda';
+export type ToursProjection={today:string;selected:string;timeZone:string;meeting?:string;products?:DepartureOffer[];calendars:{schedule:ServiceSchedule;title:string;days:CalendarDay[]}[]};
+export function ToursWorkspace({operatorId,role,view,projection,children,error,selectedSchedule,selectedTime,walkIn,passengerList,checkInProgress,liveIssue}:{operatorId:string;role:StaffRole;view:ToursView;projection?:ToursProjection;children?:ReactNode;error?:string;selectedSchedule?:string;selectedTime?:string;walkIn?:boolean;passengerList?:PassengerList;checkInProgress?:(id:string)=>ReactNode;liveIssue?:ReactNode}){
  const root=`/admin/${encodeURIComponent(operatorId)}`,link=(mode:ToursView,date=projection?.selected)=>`${root}/departures?view=${mode}${date?'&date='+date:''}`;
- const tabs:[ToursView,string][]=[['today','Today'],['calendar','Operating calendar']];
- const bookedSeats=projection?.calendars.reduce((total,c)=>total+(c.days.find(d=>d.date===projection.selected)?.slots.reduce((n,s)=>n+s.booked,0)??0),0)??0;
- const localTime=projection?new Intl.DateTimeFormat('en-GB',{timeZone:projection.timeZone,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date()):'';
- const slots=projection?.calendars.flatMap(c=>{const day=c.days.find(d=>d.date===projection.selected);const offers=projection.products?activeScheduleOffers(c.schedule.product_id,projection.products):[];return day&&c.schedule.status==='active'&&offers.length?operatingSlots(day).map(slot=>({...slot,product:offers.map(p=>p.title).join(' / ')})):[];}).sort((a,b)=>a.time.localeCompare(b.time))??[];
- return <div className={styles.tours} data-tours-workspace data-admin-context={view==='today'?'today':view==='calendar'?'availability':view}>
-  <header className={styles.header}><div><p className={styles.eyebrow}>Daily service management</p><h1>{view==='calendar'?'Calendar':'Tour operations'}</h1><p>{view==='today'?'Your operating day':view==='calendar'?'Operating calendar':view==='prices'?'Prices & offers':'Ticket settings'}</p></div><Link prefetch={false} className={styles.primary} href={link(view==='calendar'?'today':'calendar')}><AdminIcon name="calendar-days" size={18}/>{view==='calendar'?'Today’s service':'Open calendar'}</Link></header>
+ if(view==='today'||view==='agenda')return <DepartureAgenda operatorId={operatorId} role={role} view={view} projection={projection} error={error} selectedSchedule={selectedSchedule} selectedTime={selectedTime} walkIn={walkIn} passengerList={passengerList} checkInProgress={checkInProgress} liveIssue={liveIssue}/>;
+ const tabs:[ToursView,string][]=[['agenda','Day agenda'],['calendar','Month planning']];
+ return <div className={styles.tours} data-tours-workspace data-admin-context={view==='calendar'?'availability':view}>
+  <header className={styles.header}><div><h1>{view==='calendar'?'Schedule':'Tour operations'}</h1><p>{view==='calendar'?'Month planning':view==='prices'?'Prices & offers':'Ticket settings'}</p></div><Link prefetch={false} className={styles.primary} href={link(view==='calendar'?'agenda':'calendar')}><AdminIcon name="calendar-days" size={18}/>{view==='calendar'?'Day agenda':'Open calendar'}</Link></header>
   <nav className={styles.tabs} aria-label="Tours workspace">{tabs.map(([mode,label])=><Link prefetch={false} href={link(mode)} key={mode} aria-current={view===mode?'page':undefined}>{label}</Link>)}</nav>
-  {projection&&view==='today'&&<Form className={styles.dateForm} action={`${root}/departures`} prefetch={false}><input type="hidden" name="view" value={view}/><label>Service date<input type="date" name="date" defaultValue={projection.selected} required/></label><button type="submit">Show date</button><Link prefetch={false} href={link(view,projection.today)}>Today</Link><span>{projection.timeZone}</span></Form>}
-  {error&&<p role="alert" className={styles.note}>{error} </p>}
-  {view==='today'&&!error&&<>
-   <p className={styles.note}>Operating service for {projection?.selected}. Paused products and admin-closed dates or times are excluded. Edit date-specific settings in the operating calendar.</p>
-   {projection&&<div className={styles.metrics}><section><span>Scheduled departures</span><strong>{slots.length}</strong></section><section><span>Booked seats shown</span><strong>{bookedSeats}</strong></section><section><span>Next departure</span><strong >{projection?.selected===projection?.today?(slots.find(s=>s.time.slice(0,5)>=localTime)?.time.slice(0,5)??'None remaining'):'Choose today'}</strong></section></div>}
-   <div className={styles.departures} aria-label="Projected departures">{slots.map((slot,i)=><article className={styles.departure} key={`${slot.product}:${slot.time}:${i}`}><div className={styles.departureHeading}><div><strong>{slot.time}</strong><small>{slot.product}</small></div><span className={styles.status}>{slot.open?'Open in schedule':'Closed to new bookings'}</span></div><p><b>{slot.booked} / {slot.capacity}</b> booked seats · {slot.held} held</p><p>{slot.open?slot.remaining:0} remaining in open inventory · {slot.quote?'Adult quote '+bookingAmount(slot.quote.total,'EUR'):'Price unavailable'}</p><div className={styles.links}><Link prefetch={false} href={link('calendar')}>Manage this date <AdminIcon name="arrow-right" size={16}/></Link><Link prefetch={false} href={`${root}/bookings?date=${projection?.selected}`}>Related bookings</Link></div></article>)}</div>
-   {!slots.length&&projection&&<section className={styles.card}><h2>No projected departures</h2><p>No operating departures are available for this date. Review product availability and date closures in the calendar. Existing reservations remain in Bookings.</p></section>}
-   <details className={styles.note}><summary>About these figures</summary><p>Closed departures are excluded from remaining seats. Confirm current availability in the booking flow. This screen does not show live boarding status. Upcoming times use the operator’s local timezone.</p></details>
-   <div className={styles.quick}><Link prefetch={false} href={link('calendar')}>Manage availability</Link>{hasPermission(role,'pricing.manage')&&<Link prefetch={false} href={`${root}/products`}>Update prices</Link>}{hasPermission(role,'catalog.manage')&&<Link prefetch={false} href={`${root}/products`}>Configure tickets</Link>}</div>
-  </>}
+  {error&&<p role="alert" className={styles.note}>{error}</p>}
   {view==='prices'&&<><section className={styles.card}><h2>One place for passenger prices</h2><p>Standard adult, child and infant prices are managed in Products. Date-specific prices and fixed-price, percentage or amount offers use the same calendar’s selected-date controls. Saved reservations retain their agreed prices.</p><div className={styles.links}><Link prefetch={false} href={link('calendar')}>Date prices & offers <AdminIcon name="arrow-right" size={16}/></Link></div></section>{!hasPermission(role,'pricing.manage')&&<p role="note">This role can manage schedules. Pricing changes require existing commercial permissions.</p>}</>}
   {view==='tickets'&&<section className={styles.card}><h2>Tickets & products</h2><p>Manage ticket definitions, product publication, inclusions and supplier relationships in the existing product editor. Product details, passenger ages, prices and homepage cards are managed together in Products.</p>{hasPermission(role,'catalog.manage')?<Link prefetch={false} className={styles.textLink} href={`${root}/products`}>Open Products <AdminIcon name="arrow-right" size={16}/></Link>:<p>Product editing is unavailable for this role.</p>}</section>}
   {children}
