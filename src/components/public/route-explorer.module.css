@@ -15,13 +15,10 @@
 .canvas :global(.leaflet-bottom.leaflet-right) { bottom: 6px; left: 8px; right: auto; }
 .canvas :global(.leaflet-control-attribution) { border-radius: 10px; padding: 2px 7px; }
 .loading { margin: 0; padding: 70px 16px; }
-.tour { position: absolute; z-index: 2; }
-.tour {
-  top: 12px; left: max(12px, env(safe-area-inset-left)); max-width: calc(100% - 24px);
-  display: flex; align-items: center; gap: 6px; padding: 3px 4px 3px 12px;
-  background: white; border-radius: 12px; box-shadow: 0 2px 10px #0002;
+.visuallyHidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
 }
-.page .tour h1 { margin: 0; font-size: 15px; line-height: 1.2; }
 .mapTools { position: absolute; z-index: 2; right: max(14px, env(safe-area-inset-right)); bottom: 91px;
   display: grid; justify-items: end; gap: 8px; }
 .zoomControls { display: flex; background: white; border-radius: 12px; box-shadow: 0 2px 10px #0002; }
@@ -96,8 +93,8 @@
 .pinCaption[data-placement=left] { left: auto; right: 36px; }
 .pinCaption[data-placement=below] { left: 50%; top: 37px; transform: translateX(-50%); text-align: center; }
 .startMarker .pinCaption { background: var(--color-booking-primary, #f5c639); }
-.marker[data-selected=true] .pinNumber, .marker:focus-visible .pinNumber,
-.startMarker[data-selected=true] .pinNumber, .startMarker:focus-visible .pinNumber { box-shadow: 0 0 0 3px #8d1d40; }
+.marker[data-selected=true] .pinNumber,
+.startMarker[data-selected=true] .pinNumber { scale: 1.125; }
 @media (max-width: 1100px) { .page { --route-header: 60px; } }
 @media (max-width: 760px) {
   .page { position: fixed; inset: 0; overflow: hidden; }
@@ -122,6 +119,9 @@
 }
 .photoCaption[data-placement=right] { left: calc(100% + 5px); }
 .photoCaption[data-placement=left] { left: auto; right: calc(100% + 5px); }
-.photoMarker[data-selected=true] :global(.stop-photo-frame) { outline: 3px solid #192d45; }
+.photoMarker[data-selected=true] :global(.stop-portrait) { width: 72px; height: 72px; }
+@media (min-width: 768px) {
+  .photoMarker[data-selected=true] :global(.stop-portrait) { width: 81px; height: 81px; }
+}
 .boardingPhoto :global(.stop-name-pill) { background: var(--color-booking-primary, #f5c639); color: #271b06; text-shadow: none; }
 .photoCaption[data-placement=above], .pinCaption[data-placement=above] { top: auto; bottom: calc(100% + 5px); left: 50%; transform: translateX(-50%); }
