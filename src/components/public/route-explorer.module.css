@@ -120,5 +120,8 @@
 .photoCaption[data-placement=right] { left: calc(100% + 5px); }
 .photoCaption[data-placement=left] { left: auto; right: calc(100% + 5px); }
 .photoMarker[data-selected=true] :global(.stop-portrait) { width: 72px; height: 72px; }
+@media (min-width: 768px) {
+  .photoMarker[data-selected=true] :global(.stop-portrait) { width: 81px; height: 81px; }
+}
 .boardingPhoto :global(.stop-name-pill) { background: var(--color-booking-primary, #f5c639); color: #271b06; text-shadow: none; }
 .photoCaption[data-placement=above], .pinCaption[data-placement=above] { top: auto; bottom: calc(100% + 5px); left: 50%; transform: translateX(-50%); }
