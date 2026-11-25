@@ -1,12 +1,13 @@
 import "server-only";
 import { cache } from "react";
 import { connection } from "next/server";
+import { unstable_cache } from "next/cache";
 import { createClient } from "@supabase/supabase-js";
 import { unavailableWebsiteContent, validateWebsiteContent, type WebsiteContent } from "./website-schema";
 import { withOperatorService } from "../identity/operator-service";
 
 export type WebsiteRecord = { id: string; updated_at: string; published_at: string | null; body: { content: WebsiteContent }; published_body: { content: WebsiteContent } | null };
-// Request-scoped deduplication only; never resurrect stale optional sections on failure.
+// Validate the public snapshot before any shared caching.
 export async function loadWebsitePublication(env: NodeJS.ProcessEnv = process.env, transport: typeof fetch = fetch, report: (event: object) => void = event => console.error(JSON.stringify(event))): Promise<{ content: WebsiteContent; published: boolean; unavailable?: boolean }> {
   const operator = env.PUBLIC_OPERATOR_ID;
   const missing = ["PUBLIC_OPERATOR_ID", "NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SECRET_KEY"].filter(key => !env[key]);
@@ -28,9 +29,28 @@ export async function loadWebsitePublication(env: NodeJS.ProcessEnv = process.en
     return { content, published: true };
   } catch { return unavailable(stage); }
 }
+export function websitePublicationTag(operatorId: string) {
+  return `public-website:${operatorId.toLowerCase()}`;
+}
 export const getWebsitePublication = cache(async () => {
   await connection();
-  return loadWebsitePublication();
+  const { PUBLIC_OPERATOR_ID: operator, NEXT_PUBLIC_SUPABASE_URL: url } = process.env;
+  if (!operator || !url || !process.env.SUPABASE_SECRET_KEY) return loadWebsitePublication();
+  type Publication = Awaited<ReturnType<typeof loadWebsitePublication>>;
+  class Unpublished extends Error {
+    constructor(readonly publication: Publication) { super("No published snapshot"); }
+  }
+  const read = unstable_cache(async () => {
+    const publication = await loadWebsitePublication();
+    if (!publication.published) throw new Unpublished(publication);
+    return publication;
+  }, ["website-publication-v1", operator, url], { tags: [websitePublicationTag(operator)], revalidate: 60 });
+  try {
+    return await read();
+  } catch (error) {
+    if (error instanceof Unpublished) return error.publication;
+    return loadWebsitePublication();
+  }
 });
 export async function getPublishedWebsite() { return (await getWebsitePublication()).content; }
 

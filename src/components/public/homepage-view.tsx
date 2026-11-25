@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {ProductBookingCards} from './product-booking-cards';
 import type {BookableProduct} from '@/modules/booking/products';
 import { PartnersSection } from './partners-section';
@@ -12,8 +13,27 @@ import { ActionLink } from "./ui";
 import { homepageVisible, websitePlaces, type WebsiteContent } from "@/modules/content/website-schema";
 import type { Homepage } from "@/modules/content/homepage";
 
-export function HomepageView({ home, content: c, reviews = {reviews:[],settings:defaultReviewSettings}, places, planner, partners = [],products = [],preview=false }: { products?:BookableProduct[]; preview?:boolean; partners?:Partner[]; planner?:DayPlannerData; home: Homepage; content: WebsiteContent; reviews?: ReviewSelection; places?: ReturnType<typeof websitePlaces> }) {
+type HomepageDetailsProps = {
+  content: WebsiteContent;
+  stops?: DayPlannerData['stops'];
+  reviews?: ReviewSelection;
+  places?: ReturnType<typeof websitePlaces>;
+  partners?: Partner[];
+};
+export function HomepageDetails({ content: c, stops, reviews = {reviews:[],settings:defaultReviewSettings}, places, partners = [] }: HomepageDetailsProps) {
   const destinations = places ?? websitePlaces(c);
+  return <>
+    {homepageVisible(c,"route") && <section id="route" className="p-section p-container p-home-stops" aria-label="Route and stops">
+      <div className="p-home-route-heading"><div><p className="p-eyebrow">{c["homeRoute.eyebrow"]}</p>
+      <h2>{routeHeading(c["homeRoute.title"],stops?.length)}</h2><p>{c["homeRoute.text"]}</p></div><ActionLink href="/route">{c["homeRoute.action"]}</ActionLink></div>
+      <HomepageJourney stops={stops??[]} places={destinations} learnLabel={c['labels.destination']}/>
+    </section>}
+    {homepageVisible(c,"reviews") && <GuestReviews labels={c} selection={reviews} eyebrow={c["reviews.eyebrow"]} title={c["reviews.title"]} subtitle={c["reviews.text"]}/>}
+    <PartnersSection content={c} partners={partners}/>
+  </>;
+}
+
+export function HomepageView({ home, content: c, reviews, places, planner, partners, products = [], preview=false, details }: { details?: ReactNode; products?:BookableProduct[]; preview?:boolean; partners?:Partner[]; planner?:DayPlannerData; home: Homepage; content: WebsiteContent; reviews?: ReviewSelection; places?: ReturnType<typeof websitePlaces> }) {
   const offers=products.length?products:home.product?[{active:home.product.active,availability:home.product.availability,unavailableMessage:home.product.unavailableMessage,displayOrder:home.product.displayOrder,id:home.product.id,title:home.product.title,slug:home.product.slug,mode:'selected_departure' as const,minutes:120}]:[];
   const cards=offers.map(p=>p.id===home.product?.id&&!p.card?{...p,card:{image:c['hero.desktop'],alt:c['hero.alt'],description:c['hero.description']??'',order:0,enabled:true}}:p);
   return <HomepageJourneyProvider enabled={!preview&&homepageVisible(c,"route")}><main id="main-content" className={`p-home${homepageVisible(c,"hero") ? "" : " p-home-no-hero"}`}>
@@ -21,12 +41,6 @@ export function HomepageView({ home, content: c, reviews = {reviews:[],settings:
     {homepageVisible(c,"hero") ? <HomepageHero content={c}>
       <ProductBookingCards embedded products={cards} content={c} preview={preview} fares={home.product&&home.heroFare?{[home.product.id]:home.heroFare}:{}}/>
     </HomepageHero> : <ProductBookingCards products={cards} content={c} preview={preview} fares={home.product&&home.heroFare?{[home.product.id]:home.heroFare}:{}}/>}
-    {homepageVisible(c,"route") && <section id="route" className="p-section p-container p-home-stops" aria-label="Route and stops">
-      <div className="p-home-route-heading"><div><p className="p-eyebrow">{c["homeRoute.eyebrow"]}</p>
-      <h2>{routeHeading(c["homeRoute.title"],planner?.stops?.length)}</h2><p>{c["homeRoute.text"]}</p></div><ActionLink href="/route">{c["homeRoute.action"]}</ActionLink></div>
-      <HomepageJourney stops={planner?.stops??[]} places={destinations} learnLabel={c['labels.destination']}/>
-    </section>}
-    {homepageVisible(c,"reviews") && <GuestReviews labels={c} selection={reviews} eyebrow={c["reviews.eyebrow"]} title={c["reviews.title"]} subtitle={c["reviews.text"]}/>}
-    <PartnersSection content={c} partners={partners}/>
+    {details ?? <HomepageDetails content={c} stops={planner?.stops} reviews={reviews} places={places} partners={partners}/>}
   </main></HomepageJourneyProvider>;
 }
