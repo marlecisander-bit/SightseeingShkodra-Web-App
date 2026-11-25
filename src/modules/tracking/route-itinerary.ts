@@ -11,14 +11,21 @@ export type RouteBoarding = { stopId?: string | null; name: string; directions: 
 export const routeLivePositionMs = 90_000;
 export const routeLastKnownPositionMs = 600_000;
 
+function positionAge(position: Position | null | undefined, now: number) {
+  if (!position || typeof position.lat !== 'number' || !Number.isFinite(position.lat) ||
+      Math.abs(position.lat) > 90 || typeof position.lng !== 'number' ||
+      !Number.isFinite(position.lng) || Math.abs(position.lng) > 180) return NaN;
+  return now - Date.parse(position.updatedAt);
+}
+
 export function freshRoutePosition(position?: Position | null, now = Date.now()) {
-  const age = position ? now - Date.parse(position.updatedAt) : NaN;
+  const age = positionAge(position, now);
   return position && Number.isFinite(age) && age >= 0 && age < routeLivePositionMs ? position : null;
 }
 
 // The companion also limits historical GPS context to ten minutes.
 export function recentRoutePosition(position?: Position | null, now = Date.now()) {
-  const age = position ? now - Date.parse(position.updatedAt) : NaN;
+  const age = positionAge(position, now);
   return position && Number.isFinite(age) && age >= 0 && age < routeLastKnownPositionMs ? position : null;
 }
 
@@ -62,6 +69,27 @@ export function nearestRouteStop(location: Coordinate, stops: RouteStop[]) {
     if (!nearest || distance < nearest.distance) nearest = { stop, coordinate: stop.coordinate, distance };
   }
   return nearest;
+}
+
+export const nearbyBoardingAccuracy = 100;
+
+export function walkingBoarding(
+  mode: NonNullable<DayPlannerData['product']>['mode'] | undefined,
+  boarding: RouteBoarding | null,
+  stops: RouteStop[],
+  visitor: { coordinate: Coordinate; accuracy: number } | null,
+) {
+  const closest = mode === 'whole_day' && visitor && visitor.accuracy <= nearbyBoardingAccuracy
+    ? nearestRouteStop(visitor.coordinate, stops)
+    : null;
+  const useStop = closest && closest.stop.id !== boarding?.stopId;
+  const coordinate = useStop ? closest.coordinate : boarding?.coordinate ?? closest?.coordinate;
+  const name = useStop ? closest.stop.name : boarding?.name ?? closest?.stop.name;
+  if (!name) return null;
+  const url = coordinate
+    ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(coordinate.join(','))}&travelmode=walking`
+    : boarding?.url;
+  return { name, coordinate, url, walking: !!coordinate, directions: useStop ? '' : boarding?.directions };
 }
 
 export function routeBoarding(meeting: MeetingPoint | null, map?: PublishedMap): RouteBoarding | null {

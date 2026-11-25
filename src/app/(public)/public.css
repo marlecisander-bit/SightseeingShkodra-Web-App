@@ -1390,6 +1390,8 @@ body:has(.p-booking-dialog[open]) {
 }
 
 /* Route controls own the map viewport and its safe-area clearance. */
+html:has([data-route-explorer]) { scrollbar-gutter: auto; }
+.public-site:has([data-route-explorer]) .p-global-footer,
 .public-site:has([data-route-explorer]) [data-seasonal-announcement] > [aria-label="Seasonal announcement"],
 .public-site:has([data-route-explorer]) a[aria-label="Contact Sightseeing Shkodra on WhatsApp"] { display: none; }
 @media (max-width: 1100px) {
@@ -1399,7 +1401,6 @@ body:has(.p-booking-dialog[open]) {
  .public-site:has([data-route-explorer]) .p-header { --p-header-height: 76px; height: calc(76px + env(safe-area-inset-top)); }
 }
 @media (max-width: 760px) {
- .public-site:has([data-route-explorer]) .p-global-footer { display: none; }
  .public-site:has([data-route-explorer]) .p-header .p-header-book,
  .public-site:has([data-route-explorer]) .p-header .p-language { display: none; }
  .public-site:has([data-route-explorer]) .p-header .p-menu-toggle { margin-left: auto; }
