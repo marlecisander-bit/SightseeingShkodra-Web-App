@@ -47,7 +47,7 @@ test('workspace makes scope and limits explicit, omits unsupported Upcoming and 
 });
 async function harness(tree,run){
  const dom=new JSDOM('<div id="root"></div>',{url:'http://localhost/admin'}),saved=new Map();
- for(const name of ['window','self','document','navigator','HTMLElement','Element','Node','Event','MouseEvent','IS_REACT_ACT_ENVIRONMENT']){saved.set(name,Object.getOwnPropertyDescriptor(globalThis,name));Object.defineProperty(globalThis,name,{configurable:true,writable:true,value:name==='IS_REACT_ACT_ENVIRONMENT'?true:dom.window[name]});}
+ for(const name of ['window','self','document','navigator','HTMLElement','HTMLFormElement','Element','Node','Event','MouseEvent','IS_REACT_ACT_ENVIRONMENT']){saved.set(name,Object.getOwnPropertyDescriptor(globalThis,name));Object.defineProperty(globalThis,name,{configurable:true,writable:true,value:name==='IS_REACT_ACT_ENVIRONMENT'?true:dom.window[name]});}
  const {createRoot}=await import('react-dom/client');const root=createRoot(document.querySelector('#root'));
  try{await act(async()=>root.render(tree));await run(dom,root);}finally{await act(async()=>root.unmount());dom.window.close();for(const [n,v]of saved)if(v)Object.defineProperty(globalThis,n,v);else delete globalThis[n];}
 }
@@ -61,9 +61,17 @@ test('status selection filters locally and can reset empty loaded results withou
 });
 test('confirmation cancellation prevents the existing mutation handler; accepting calls it once with unchanged form fields',async()=>{
  let calls=0;const tree=React.createElement(BookingConfirmation,{message:'Confirm synthetic action?'},React.createElement(MutationForm,{action:async data=>{calls++;assert.equal(data.get('confirm'),'yes');}},React.createElement('input',{name:'confirm',type:'hidden',value:'yes'}),React.createElement('button',{type:'submit'},'Submit')));
- await harness(tree,async dom=>{const form=document.querySelector('form');dom.window.confirm=()=>false;await act(async()=>form.dispatchEvent(new dom.window.Event('submit',{bubbles:true,cancelable:true})));assert.equal(calls,0);dom.window.confirm=()=>true;
- // Node FormData lacks the browser form constructor.
- const previous=globalThis.FormData;globalThis.FormData=dom.window.FormData;try{await act(async()=>form.dispatchEvent(new dom.window.Event('submit',{bubbles:true,cancelable:true})));assert.equal(calls,1);}finally{globalThis.FormData=previous;}
+ await harness(tree,async dom=>{
+  const dialog=document.querySelector('dialog');
+  dialog.showModal=()=>{dialog.open=true;};dialog.close=()=>{dialog.open=false;};
+  const submit=document.querySelector('form button'),[back,confirm]=dialog.querySelectorAll('button');
+  const previous=globalThis.FormData;globalThis.FormData=dom.window.FormData;
+  try{
+   await act(async()=>submit.click());assert(dialog.open);assert.equal(document.activeElement,back);
+   await act(async()=>back.click());assert(!dialog.open);assert.equal(calls,0);
+   await act(async()=>submit.click());assert(dialog.open);
+   await act(async()=>confirm.click());assert(!dialog.open);assert.equal(calls,1);
+  }finally{globalThis.FormData=previous;}
  });
 });
 

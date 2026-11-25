@@ -357,11 +357,11 @@
 .shell button[data-admin-action=primary] {background:var(--admin-primary);color:#fff;border-color:transparent;}
 .shell button[data-admin-action=primary]:not(:disabled):hover {background:var(--admin-primary-hover);color:#fff;}
 
-.shell :is(.taskItems,.bottomNavigation) a{position:relative}
-.shell .navigationHint{position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 2px var(--admin-primary);opacity:0;transition:opacity 120ms ease;}
-.shell .navigationHint[data-pending=true]{opacity:1}
+.shell :is(.homeLink,.taskItems a,.bottomNavigation a){position:relative}
+.shell .navigationHint{position:absolute;inset-inline-end:8px;inset-block-end:8px;width:10px;height:2px;border-radius:2px;pointer-events:none;background:currentColor;opacity:0}
+.shell .navigationHint[data-pending=true]{opacity:.75}
 .panelLoading{min-height:320px;padding:16px 0}.panelLoading>div{height:48px;max-width:680px;margin:16px 0;background:#f1f1ee;border-radius:10px}.panelLoading>div:last-child{max-width:460px}
-@media(prefers-reduced-motion:reduce){.shell .navigationHint{transition:none}}
+
 
 /* Admin V2 Phase 1: shell/chrome only. Editor-specific layouts and actions stay unchanged. */
 .shell[data-admin-phase=v2-phase-1] {--admin-background:#F4F6F8;--admin-text:#172334;--admin-text-muted:#566579;--admin-border:#E2E7ED;--admin-sidebar:224px;--ss-font:Arial,Helvetica,sans-serif;font-family:var(--ss-font);}
@@ -492,3 +492,31 @@
 }
 .shell:has([data-tours-workspace]) .workspace {align-content:start}
 .shell .bottomNavigation a[aria-current=page] {color:#173dcc}
+
+/* Shared admin layout rhythm. Keep native controls usable on touch hardware. */
+.shell[data-admin-phase] {
+ --admin-focus:#173dcc;
+ --admin-dock-height:calc(72px + env(safe-area-inset-bottom));
+ --admin-content-padding:clamp(12px,2vw,20px);
+}
+.shell[data-admin-phase] .workspace {gap:16px}
+.shell[data-admin-phase] .panel {overflow-wrap:anywhere}
+.shell[data-admin-phase] .panel:not(:has([data-tours-workspace],[data-dashboard],[data-bookings-workspace],[data-more-panel],[data-products-workspace],[data-email-workspace],[data-website-workspace])) {padding:var(--admin-content-padding)}
+.shell .panel :is(h1,h2,h3) {text-wrap:balance}
+.shell .panel h1 {margin-block:0 10px}
+.shell .panel :is(header h2,h2:first-child) {margin-block:0 8px}
+.shell .panel :is(header h3,h3:first-child) {margin-block:0 6px}
+.shell .mutationFields {gap:8px 12px;align-items:start}
+.shell .mutationFields > :is(label,fieldset) {min-width:0}
+.shell .mutationFields > button {justify-self:start}
+.shell .taskNavigation {gap:2px}
+.shell .taskNavigation :is(.homeLink,.taskGroup > summary) {min-height:44px;padding-block:7px}
+.shell .taskNavigation .taskItems a {padding-block:7px}
+.shell .taskGroup[open] > summary {background:#edf3ff;color:#173dcc}
+.shell .taskGroup[open] > summary svg {color:inherit}
+.shell .panel :is(button,.secondary,:global(.ss-button)) {text-align:center}
+@media (max-width:767px) {
+ .shell[data-admin-phase] .workspace {padding-inline:max(12px,env(safe-area-inset-left)) max(12px,env(safe-area-inset-right))}
+ .shell .panel form[method=get] {gap:8px;padding:10px;margin-bottom:12px}
+ .shell .panel form[method=get] > label {min-width:0;flex:1 1 9rem}
+}
