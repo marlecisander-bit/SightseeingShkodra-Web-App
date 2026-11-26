@@ -1190,7 +1190,7 @@ body:has(.p-booking-dialog[open]) {
 /* Ease phone headline sizing into the unchanged desktop scale. */
 
 /* Homepage information flow; shared Tour, booking and map pages retain their styling. */
-.public-site .p-home .p-section{padding-block:64px}
+.public-site .p-home .p-section{padding-block:clamp(28px,5vw,64px)}
 .public-site .p-home .p-section-heading{margin-bottom:28px}
 .public-site .p-home-service{background:var(--ss-sand,#fff8ee)}
 .public-site .p-home-service-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}
@@ -1205,7 +1205,6 @@ body:has(.p-booking-dialog[open]) {
 .public-site .p-home-service-summary small{font-size:13px;display:block;max-width:45ch}
 .public-site .p-home-service iframe{height:320px}
 @media(max-width:900px){
- .public-site .p-home .p-section{padding-block:40px}
  .public-site .p-home .p-section-heading{gap:16px;margin-bottom:22px}
  .public-site .p-home .p-section h2{font-size:clamp(28px,4vw,32px);line-height:1.12}
  .public-site .p-home-service-grid{grid-template-columns:1fr;gap:24px}
