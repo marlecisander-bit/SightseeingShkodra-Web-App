@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { freshRoutePosition, nearestRouteStop, lastKnownRoutePosition, routeBoarding, routeEta, routeItinerary, walkingBoarding } from '../../src/modules/tracking/route-itinerary.ts';
+import { freshRoutePosition, nearestRouteStop, lastKnownRoutePosition, routeBoarding, routeEta, routeItinerary, walkingBoarding, walkingToNearestStop } from '../../src/modules/tracking/route-itinerary.ts';
 
 const point = (id, number) => ({ id, name: id, number, kind: 'stop', coordinate: [42, 19] });
 const lines = [[[42, 19], [42.1, 19.1]]];
@@ -89,4 +89,22 @@ test('live vehicle fixes reject invalid coordinates even when the timestamp is f
   const position = { vehicleId: 'van', lat: 91, lng: 19, updatedAt: new Date().toISOString() };
   assert.equal(freshRoutePosition(position), null);
   assert.equal(lastKnownRoutePosition({...position, lat: 42, lng: NaN}), null);
+});
+
+test('Find me links the visitor to the nearest mapped stop on foot', () => {
+  const stops = [
+    { id: 'unmapped', name: 'Unmapped' },
+    { id: 'centre', name: 'Centre', coordinate: [42.068, 19.512] },
+    { id: 'lake', name: 'Lake', coordinate: [42.048, 19.472] },
+  ];
+  const visitor = { coordinate: [42.049, 19.473], accuracy: 20 };
+  const nearest = walkingToNearestStop(stops, visitor);
+  assert.equal(nearest.stop.id, 'lake');
+  const url = new URL(nearest.url);
+  assert.equal(url.origin, 'https://www.google.com');
+  assert.equal(url.searchParams.get('origin'), '42.049,19.473');
+  assert.equal(url.searchParams.get('destination'), '42.048,19.472');
+  assert.equal(url.searchParams.get('travelmode'), 'walking');
+  assert.equal(walkingToNearestStop(stops, { ...visitor, accuracy: 300 }), null);
+  assert.equal(walkingToNearestStop(stops.slice(0, 1), visitor), null);
 });

@@ -11,9 +11,9 @@ import styles from './route-explorer.module.css';
 
 type Props = {
   routes: PublishedMap['routes']; stops: RouteStop[]; boarding: RouteBoarding | null;
-  vehicle: Position | null; lastKnownVehicle: Position | null; findVehicle: number; allowArrivalFocus: boolean; selected: string | null; reset: number;
+  vehicle: Position | null; lastKnownVehicle: Position | null; findVehicle: number; followingVan: boolean; onManualView: () => void; selected: string | null; reset: number;
   zoom: { delta: number } | null;
-  visitor: { coordinate: Coordinate; accuracy: number } | null; centerVisitor: boolean;
+  visitor: { coordinate: Coordinate; accuracy: number } | null; centerVisitor: boolean; locationTarget?: Coordinate;
   onSelect: (id: string) => void;
 };
 
@@ -48,18 +48,22 @@ function keepVisible(instance: L.Map, coordinate: L.LatLngExpression, padding: n
   if (!best.equals(original)) instance.panBy(original.subtract(best), { animate: false });
 }
 
+const followZoom = 16;
 const initialCenter: Coordinate = [42.069, 19.512];
 const tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-export default function RouteExplorerMap({ routes, stops, boarding, vehicle, lastKnownVehicle, findVehicle, allowArrivalFocus, selected, reset, zoom, visitor, centerVisitor, onSelect }: Props) {
+export default function RouteExplorerMap({ routes, stops, boarding, vehicle, lastKnownVehicle, findVehicle, followingVan, onManualView, selected, reset, zoom, visitor, centerVisitor, locationTarget, onSelect }: Props) {
   const surface = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const pins = useRef(new Map<string, L.Marker>());
   const van = useRef<L.Marker | null>(null);
   const lastFind = useRef(0);
-  const arrivalDeadline = useRef(0);
-  const arrivalFocused = useRef(false);
+  const vehicleLat = (vehicle ?? lastKnownVehicle)?.lat;
+  const vehicleLng = (vehicle ?? lastKnownVehicle)?.lng;
+  const targetLat = locationTarget?.[0];
+  const targetLng = locationTarget?.[1];
+  const manualView = useEffectEvent(() => onManualView());
   const choose = useEffectEvent((id: string) => onSelect(id));
 
   const placeLabels = useEffectEvent(() => {
@@ -101,7 +105,7 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, las
       scrollWheelZoom: true, zoomControl: false, zoomAnimation: false, zoomSnap: 0.25, minZoom: 3,
     }).setView(initialCenter, 13);
     map.current = instance;
-    arrivalDeadline.current = Date.now() + 15_000;
+    instance.on('dragstart', manualView);
     instance.createPane('tourVehicle').style.zIndex = '625';
     instance.createPane('tourVisitor').style.zIndex = '624';
     const tiles = L.tileLayer(tileUrl, { maxZoom: 19, attribution, referrerPolicy: 'strict-origin' }).addTo(instance);
@@ -227,6 +231,7 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, las
     const frame = requestAnimationFrame(() => {
       if (marker) {
         instance.invalidateSize({ animate: false });
+        instance.panTo(marker.getLatLng(), { animate: false });
         keepVisible(instance, marker.getLatLng(), 38);
       }
       placeLabels();
@@ -257,29 +262,18 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, las
   }, [vehicle, lastKnownVehicle]);
 
   useEffect(() => {
-    if (!vehicle || !allowArrivalFocus || arrivalFocused.current || Date.now() > arrivalDeadline.current) return;
+    if (!followingVan || vehicleLat === undefined || vehicleLng === undefined) return;
     const frame = requestAnimationFrame(() => {
       const instance = map.current;
       if (!instance) return;
-      arrivalFocused.current = true;
-      instance.invalidateSize({ animate: false });
-      instance.setView([vehicle.lat, vehicle.lng], 16, { animate: false });
-    });
-    return () => cancelAnimationFrame(frame);
-  }, [allowArrivalFocus, vehicle]);
-
-  useEffect(() => {
-    if (!vehicle || !map.current || lastFind.current === findVehicle) return;
-    const frame = requestAnimationFrame(() => {
-      const instance = map.current;
-      if (!instance) return;
+      const requested = lastFind.current !== findVehicle;
       lastFind.current = findVehicle;
       instance.invalidateSize({ animate: false });
-      instance.setView([vehicle.lat, vehicle.lng], Math.max(15, instance.getZoom()), { animate: false });
-      keepVisible(instance, [vehicle.lat, vehicle.lng], 32);
+      instance.setView([vehicleLat, vehicleLng], requested ? Math.max(followZoom, instance.getZoom()) : followZoom, { animate: false });
+      keepVisible(instance, [vehicleLat, vehicleLng], 32);
     });
     return () => cancelAnimationFrame(frame);
-  }, [findVehicle, vehicle]);
+  }, [findVehicle, followingVan, vehicleLat, vehicleLng]);
 
   useEffect(() => {
     const instance = map.current;
@@ -301,14 +295,32 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, las
       const instance = map.current;
       if (!instance) return;
       instance.invalidateSize({ animate: false });
-      keepVisible(instance, visitor.coordinate, 18);
+      if (targetLat === undefined || targetLng === undefined) {
+        instance.setView(visitor.coordinate, followZoom, { animate: false });
+        keepVisible(instance, visitor.coordinate, 18);
+        return;
+      }
+      const canvas = instance.getContainer();
+      const rect = canvas.getBoundingClientRect();
+      const panel = canvas.closest('[data-route-explorer]')?.querySelector('#route-panel')?.getBoundingClientRect();
+      const right = panel && panel.top < rect.bottom && panel.left < rect.right ? rect.right - panel.left : 0;
+      instance.fitBounds([visitor.coordinate, [targetLat, targetLng]], {
+        paddingTopLeft: [42, 32],
+        paddingBottomRight: [Math.ceil(right) + 42, Math.min(110, instance.getSize().y * .27)],
+        maxZoom: followZoom, animate: false,
+      });
     });
     return () => cancelAnimationFrame(frame);
-  }, [centerVisitor, visitor]);
+  }, [centerVisitor, visitor, targetLat, targetLng]);
 
   useEffect(() => {
     if (zoom && map.current) map.current.setZoom(map.current.getZoom() + zoom.delta, { animate: false });
   }, [zoom]);
 
-  return <div ref={surface} className={styles.canvas} role="region" aria-label="Interactive tour map" />;
+  return <div ref={surface} className={styles.canvas} role="region" aria-label="Interactive tour map"
+    onWheelCapture={onManualView} onDoubleClickCapture={onManualView}
+    onTouchStartCapture={event => { if (event.touches.length > 1) onManualView(); }}
+    onKeyDownCapture={event => {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', '+', '-', '='].includes(event.key)) onManualView();
+    }} />;
 }
