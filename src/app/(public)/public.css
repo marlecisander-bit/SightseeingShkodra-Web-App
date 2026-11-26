@@ -1287,7 +1287,7 @@ body:has(.p-booking-dialog[open]) {
  .public-site .p-footer-legal{gap:0 12px;font-size:12px}
 }
 @media(max-width:767px){
- .public-site .p-global-footer{padding-block:12px max(12px,env(safe-area-inset-bottom))}
+ .public-site .p-global-footer{padding-block:8px max(8px,env(safe-area-inset-bottom))}
  .public-site .p-footer-inner{grid-template-columns:clamp(60px,calc(100vw - 280px),120px) minmax(0,1fr) auto;grid-template-areas:"logo social social" "identity identity identity" "legal legal staff";gap:4px}
  .public-site .p-footer-logo{width:clamp(60px,calc(100vw - 280px),120px)}
  .public-site .p-footer-social{gap:0;justify-self:end}
