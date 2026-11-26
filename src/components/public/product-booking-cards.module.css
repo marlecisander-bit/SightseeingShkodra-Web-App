@@ -4,7 +4,7 @@
 .grid::-webkit-scrollbar{display:none;}
 .carousel[data-count="1"] .grid{grid-auto-columns:100%;max-width:440px;margin-inline:auto;justify-content:start;}
 .card{display:flex;flex-direction:column;min-width:0;width:100%;scroll-snap-align:start;background:var(--ss-white,#fff);color:var(--ss-charcoal);border:1px solid var(--ss-border);border-radius:20px;overflow:hidden;box-shadow:0 10px 32px #172b4224;}
-.card>:global(.p-media),.placeholder{width:100%;height:auto;aspect-ratio:16/10;flex-shrink:0;border-radius:0;}
+.card.card>:global(.p-media),.placeholder{width:100%;height:auto;aspect-ratio:16/9;flex-shrink:0;border-radius:0;}
 .card>:global(.p-media) :global(img){object-fit:cover;}
 .placeholder{display:grid;place-items:center;background:var(--ss-sand);color:var(--ss-muted);}
 .body{display:flex;flex:1;flex-direction:column;align-items:flex-start;gap:10px;padding:16px;min-width:0;}
@@ -32,7 +32,7 @@
  .grid{grid-auto-columns:86%;gap:14px;}
  .navigation{display:none;}
  .pagination{display:flex;}
- .card>:global(.p-media),.placeholder{aspect-ratio:1.9;}
+ .card.card>:global(.p-media),.placeholder{aspect-ratio:1.9;}
  :global(.public-site) .body>h3{font-size:23px;}
  .body{padding:18px;gap:12px;}
  .badges li{font-size:12px;}
@@ -50,7 +50,7 @@
  .embedded .grid{grid-auto-columns:88vw;grid-template-rows:repeat(6,auto);gap:10px;row-gap:0;align-items:stretch;flex:0 0 auto;margin-inline-end:calc(-1 * max(16px,env(safe-area-inset-right)));padding:4px max(0px,calc(12vw - max(16px,env(safe-area-inset-left)))) 6px 0;scroll-padding-inline-start:0;}
  .embedded .carousel[data-count="1"] .grid{grid-auto-columns:100%;padding-inline-end:0;margin-inline-end:0;}
  .embedded .card{display:grid;grid-row:span 6;grid-template-rows:subgrid;row-gap:0;border-radius:16px;box-shadow:0 8px 22px #03112624;}
- .embedded .card>:global(.p-media),.embedded .placeholder{grid-row:1;aspect-ratio:16/9;height:auto;min-height:0;flex:none;}
+ .embedded .card.card>:global(.p-media),.embedded .placeholder{grid-row:1;aspect-ratio:16/9;height:auto;min-height:0;flex:none;}
  .embedded .card>:global(.p-media) :global(img){object-position:center 60%;}
  .embedded .body{display:grid;grid-row:2/span 5;grid-template-rows:subgrid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);column-gap:10px;row-gap:0;align-items:stretch;padding:12px;flex:initial;}
  :global(.public-site) .embedded .body>h3{grid-row:1;grid-column:1/-1;align-self:start;font-size:clamp(19px,5.2vw,22px);line-height:1.2;letter-spacing:-.025em;margin:0 0 6px;}
@@ -97,7 +97,7 @@
  .embedded,.embedded .carousel{display:flex;flex-direction:column;}
  .embedded .grid{grid-auto-columns:88vw;grid-template-rows:repeat(7,auto);column-gap:10px;row-gap:0;align-items:stretch;flex:0 0 auto;margin-inline-end:calc(-1 * max(16px,env(safe-area-inset-right)));padding:4px max(0px,calc(12vw - max(16px,env(safe-area-inset-left)))) 4px 0;}
  .embedded .card{display:grid;grid-row:span 7;grid-template-rows:subgrid;row-gap:0;border-radius:20px;}
- .embedded .card>:global(.p-media),.embedded .placeholder{grid-row:1;aspect-ratio:auto;height:clamp(96px,calc(28svh - 70px),200px);min-height:0;max-height:none;}
+ .embedded .card.card>:global(.p-media),.embedded .placeholder{grid-row:1;aspect-ratio:auto;height:clamp(96px,calc(28svh - 70px),200px);min-height:0;max-height:none;}
  .embedded .card>:global(.p-media) :global(img){object-fit:cover;object-position:center 70%;transform:none;animation:none;transition:none;}
  .embedded .body{display:grid;grid-row:2/span 6;grid-template-rows:subgrid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);column-gap:10px;row-gap:0;padding:clamp(10px,1.5svh,16px);}
  :global(.public-site) .embedded .body>h3{grid-row:1;grid-column:1/-1;font-size:clamp(1.1875rem,5.2vw,1.4375rem);line-height:1.2;margin:0 0 5px;}
@@ -110,6 +110,15 @@
  .embedded .legacyAvailability{display:none;}.embedded .pagination{display:flex;margin-top:0;}
 }
 @media(max-width:599px) and (max-height:700px){
- .embedded .card>:global(.p-media),.embedded .placeholder{height:clamp(96px,15svh,110px);}
+ .embedded .card.card>:global(.p-media),.embedded .placeholder{height:clamp(96px,15svh,110px);}
  .embedded .body{padding:10px;}:global(.public-site) .embedded .body>h3{font-size:1.1875rem;}
+}
+
+/* Use the tablet width for two offers without enlarging either photograph. */
+@media (min-width: 600px) and (max-width: 1023px) {
+ .embedded .grid{grid-auto-columns:calc((100% - 14px)/2);}
+ .embedded .carousel[data-count="1"] .grid{grid-auto-columns:100%;}
+}
+@media (min-width: 600px) and (max-width: 900px) and (max-height: 500px) and (orientation: landscape) and (pointer: coarse) {
+ .embedded .grid{grid-auto-columns:100%;margin-inline-end:0;padding-inline-end:2px;}
 }

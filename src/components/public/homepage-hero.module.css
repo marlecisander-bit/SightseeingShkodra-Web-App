@@ -163,18 +163,18 @@
 
 /* Approved composition: sharp foreground offers over one restrained CMS photograph. */
 :global(.public-site) .composed{padding:0;background:var(--ss-charcoal);}
-.composed .visual{display:block;min-height:0;padding:calc(var(--hero-header-offset,var(--p-header-height)) + 32px) max(var(--ss-gutter),calc((100% - 1360px)/2)) 40px;}
-.composed .layout{position:relative;z-index:2;display:grid;grid-template-columns:minmax(240px,.9fr) minmax(0,1.7fr);align-items:center;gap:clamp(24px,3vw,48px);width:100%;max-width:1360px;margin-inline:auto;min-width:0;}
+.composed .visual{display:block;min-height:0;padding:calc(var(--hero-header-offset,var(--p-header-height)) + 32px) max(var(--ss-gutter),calc((100% - 1360px)/2)) clamp(16px,4svh,40px);}
+.composed .layout{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.8fr);align-items:center;gap:clamp(24px,3vw,48px);width:100%;max-width:1360px;margin-inline:auto;min-width:0;}
 .composed .visual .intro{display:block;flex:none;max-width:none;margin:0;min-width:0;}
-:global(.public-site) .composed .intro h1{font-size:clamp(44px,5vw,72px);line-height:1.02;max-width:100%;margin-bottom:24px;}
+:global(.public-site) .composed .intro h1{font-size:clamp(2rem,4.7vw,4.5rem);line-height:1.06;overflow-wrap:anywhere;max-width:100%;margin-bottom:24px;}
 :global(.public-site) .composed .subtitle{font-size:16px;max-width:32ch;margin:0;}
-.composed .media img{filter:blur(1.8px);transform:scale(1.012);}
+.composed .media img{filter:blur(1.8px);transform:none;}
 .composed .visual::after{background:linear-gradient(90deg,rgba(12,20,27,.62),rgba(12,20,27,.26) 56%,rgba(12,20,27,.18)),linear-gradient(0deg,rgba(12,20,27,.65),transparent 65%);}
 .composed .visual::before{display:none;}
 @media(max-width:1023px){
- .composed .visual{padding:calc(var(--hero-header-offset,calc(var(--p-header-height) + env(safe-area-inset-top))) + 24px) max(16px,env(safe-area-inset-left)) 24px max(16px,env(safe-area-inset-right));}
- .composed .layout{grid-template-columns:minmax(0,1fr);gap:28px;}
- :global(.public-site) .composed .intro h1{font-size:clamp(38px,7vw,56px);max-width:100%;margin-bottom:18px;}
+ .composed .visual{padding:calc(var(--hero-header-offset,calc(var(--p-header-height) + env(safe-area-inset-top))) + clamp(12px,2.5svh,24px)) max(16px,env(safe-area-inset-left)) clamp(12px,2.5svh,24px) max(16px,env(safe-area-inset-right));}
+ .composed .layout{grid-template-columns:minmax(0,1fr);gap:clamp(12px,2.7svh,28px);}
+ :global(.public-site) .composed .intro h1{font-size:clamp(2rem,5.4vw,3.5rem);max-width:100%;margin-bottom:clamp(8px,1.75svh,18px);}
  :global(.public-site) .composed .eyebrow{font-size:11px;margin-bottom:14px;}
  .composed .visual::after{background:linear-gradient(180deg,rgba(12,20,27,.25),rgba(12,20,27,.4) 35%,rgba(12,20,27,.75));}
 }
@@ -223,4 +223,9 @@
  :global(.public-site) .composed .subtitle{font-size:.875rem;line-height:1.4;margin:0;}
  .composed .media img{transform:none;animation:none;transition:none;filter:none;object-position:var(--hero-phone-position,var(--hero-mobile-position));}
  .composed .visual::after{background:linear-gradient(180deg,#05162aa6,#05162a8f 40%,#05162ac9);}
+}
+
+/* Short landscape screens use the width available beside the headline. */
+@media (min-width: 600px) and (max-width: 900px) and (max-height: 500px) and (orientation: landscape) and (pointer: coarse) {
+ .composed .layout{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);align-items:start;}
 }
