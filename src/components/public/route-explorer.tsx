@@ -7,7 +7,7 @@ import { BookButton, useBooking } from './booking';
 import { RouteControlIcon } from './route-control-icon';
 import { ProductBookingLink } from './product-booking-link';
 import { plannerClock, type DayPlannerData } from '@/modules/content/day-planner';
-import { freshRoutePosition, nearbyBoardingAccuracy, walkingBoarding, lastKnownRoutePosition, routeLivePositionMs, type RouteBoarding, type RouteStop } from '@/modules/tracking/route-itinerary';
+import { freshRoutePosition, nearbyBoardingAccuracy, walkingBoarding, walkingToNearestStop, lastKnownRoutePosition, routeLivePositionMs, type RouteBoarding, type RouteStop } from '@/modules/tracking/route-itinerary';
 import type { Coordinate, PublishedMap } from '@/modules/tracking/published-map';
 import type { Position } from '@/modules/tracking/positions';
 import styles from './route-explorer.module.css';
@@ -42,7 +42,7 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
   const panelClose = useRef<HTMLButtonElement>(null);
   const previousControl = useRef<HTMLElement | null>(null);
   const [findVehicle, setFindVehicle] = useState(0);
-  const [allowArrivalFocus, setAllowArrivalFocus] = useState(true);
+  const [followingVan, setFollowingVan] = useState(true);
   const [visitor, setVisitor] = useState<VisitorLocation | null>(null);
   const [locationMessage, setLocationMessage] = useState('');
   const locationRequest = useRef(0);
@@ -54,7 +54,11 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
   const canvasSelection = panel === 'stop' || panel === 'boarding' ? selection : null;
   const stopsPanelOpen = panel === 'stops' || panel === 'stop' || panel === 'boarding' || panel === 'departures';
   const scheduleProduct = planner.product?.slug;
+  const nearest = walkingToNearestStop(stops, visitor);
   const pickup = walkingBoarding(planner.product?.mode, boarding, stops, visitor);
+  const locationTarget = nearest?.coordinate ?? pickup?.coordinate;
+  const showFixedPickup = nearest && planner.product?.mode === 'selected_departure' && boarding &&
+    nearest.stop.id !== boarding.stopId;
   const selectedPhoto = selected?.design?.photoUrl ?? selected?.place?.image;
   const canTrack = routes.length > 0 && mapVersion !== null;
   const vehicle = canTrack ? live.position : null;
@@ -147,6 +151,7 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
   }
   function choose(id: string) {
     const boardingId = id === 'boarding' || (boarding?.coordinate && id === boarding.stopId);
+    setFollowingVan(false);
     show(boardingId ? 'boarding' : 'stop', boardingId ? 'boarding' : id);
   }
   function close(restoreFocus = true) {
@@ -156,6 +161,7 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
     if (restoreFocus) previousControl.current?.focus({ preventScroll: true });
   }
   function findMe() {
+    setFollowingVan(false);
     show('location');
     setVisitor(null);
     if (!navigator.geolocation) {
@@ -174,7 +180,7 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
         return;
       }
       setVisitor({ coordinate: [latitude, longitude], accuracy });
-      setLocationMessage(planner.product?.mode === 'whole_day' && accuracy > nearbyBoardingAccuracy
+      setLocationMessage(accuracy > nearbyBoardingAccuracy
         ? 'Your location is too approximate to choose a nearby stop.' : '');
     }, error => {
       if (request !== locationRequest.current) return;
@@ -190,25 +196,19 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
   }, [panel]);
 
   return <main id="main-content" data-route-explorer className={styles.page}
-    onPointerDownCapture={() => setAllowArrivalFocus(false)}
-    onWheelCapture={() => setAllowArrivalFocus(false)}
-    onKeyDownCapture={() => setAllowArrivalFocus(false)}
     onKeyDown={event => {
     if (event.key === 'Escape' && panel) close();
   }}>
     <h1 className={styles.visuallyHidden}>{routeTitle}</h1>
     <div className={styles.workspace}>
       <div className={styles.map}>
-        <MapBoundary><Map routes={routes} stops={stops} boarding={boarding} vehicle={vehicle} lastKnownVehicle={lastKnownVehicle} findVehicle={findVehicle} allowArrivalFocus={allowArrivalFocus}
-          selected={canvasSelection} visitor={visitor} centerVisitor={panel === 'location'} reset={reset} zoom={zoom} onSelect={choose} /></MapBoundary>
+        <MapBoundary><Map routes={routes} stops={stops} boarding={boarding} vehicle={vehicle} lastKnownVehicle={lastKnownVehicle} findVehicle={findVehicle} followingVan={followingVan} onManualView={() => setFollowingVan(false)}
+          selected={canvasSelection} visitor={visitor} centerVisitor={panel === 'location'} locationTarget={locationTarget} reset={reset} zoom={zoom} onSelect={choose} /></MapBoundary>
         <div className={styles.mapTools} role="group" aria-label="Map view" data-map-obstacle data-map-tools>
           <div className={styles.zoomControls}>
-            <button type="button" aria-label="Zoom in" onClick={() => setZoom({ delta: 1 })}>+</button>
-            <button type="button" aria-label="Zoom out" onClick={() => setZoom({ delta: -1 })}>−</button>
+            <button type="button" aria-label="Zoom in" onClick={() => { setFollowingVan(false); setZoom({ delta: 1 }); }}>+</button>
+            <button type="button" aria-label="Zoom out" onClick={() => { setFollowingVan(false); setZoom({ delta: -1 }); }}>−</button>
           </div>
-          <button type="button" onClick={() => { close(false); setVisitor(null); setReset(value => value + 1); }}>
-            <RouteControlIcon name="route" />Full route
-          </button>
         </div>
       </div>
       {panel && <section className={`${styles.panel} ${panel === 'boarding' || panel === 'location' ? styles.boardingPanel : ''}`} id="route-panel" aria-label={panel === 'stop' ? selected?.name : panel === 'location' ? 'Boarding directions' : panel === 'tracking' ? 'Tracking details' : panel} data-map-obstacle>
@@ -240,13 +240,16 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
             <button type="button" onClick={() => show('departures')}>View departures</button>
           </>}
           {panel === 'location' && <>
-            <p className={styles.kicker}>Boarding point</p>
-            <h2>{pickup?.name ?? 'Boarding details unavailable'}</h2>
-            {pickup?.directions && <p>{pickup.directions}</p>}
-            {pickup?.url && <a className={styles.directions} href={pickup.url} target="_blank" rel="noopener noreferrer">
-              {pickup.walking ? 'Walking directions' : 'Get directions'}
+            <p className={styles.kicker}>{nearest ? 'Nearest stop' : 'Boarding point'}</p>
+            <h2>{nearest?.stop.place?.name ?? nearest?.stop.name ?? pickup?.name ?? 'Boarding details unavailable'}</h2>
+            {!nearest && pickup?.directions && <p>{pickup.directions}</p>}
+            {(nearest?.url ?? pickup?.url) && <a className={styles.directions} href={nearest?.url ?? pickup?.url} target="_blank" rel="noopener noreferrer">
+              {nearest || pickup?.walking ? 'Walking directions in Google Maps' : 'Get directions'}
             </a>}
+            {showFixedPickup && <p>For scheduled tours, meet at <a href={boarding.url} target="_blank" rel="noopener noreferrer">{boarding.name}</a>.</p>}
             {locationMessage && <p className={styles.locationStatus} role="status">{locationMessage}</p>}
+            {locationMessage && !visitor && locationMessage !== 'Finding your location…' &&
+              <button type="button" onClick={findMe}>Try again</button>}
           </>}
           {panel === 'tracking' && <><h2>Tracking details</h2>
             <p role="status">{vehicle ? live.movement ?? 'Van location live' : lastKnownVehicle ? 'Showing the last known van position. Live updates are unavailable.' : 'Live location unavailable'}</p>
@@ -267,10 +270,17 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
           onClick={() => panel === 'stops' ? close() : show('stops')}><RouteControlIcon name="stops" />Stops</button>
         <button type="button" aria-expanded={panel === 'location'} aria-controls={panel === 'location' ? 'route-panel' : undefined} onClick={() => panel === 'location' ? close() : findMe()}><RouteControlIcon name="me" />Find me</button>
         <button type="button" aria-expanded={panel === 'tracking'} aria-controls={panel === 'tracking' ? 'route-panel' : undefined} onClick={() => {
-          if (panel === 'tracking') { close(); return; }
+          if (panel === 'tracking' && followingVan) { close(); return; }
           show('tracking');
-          if (vehicle) setFindVehicle(value => value + 1);
+          setFollowingVan(true);
+          setFindVehicle(value => value + 1);
         }}><RouteControlIcon name="van" />Find van</button>
+        <button type="button" onClick={() => {
+          close(false);
+          setVisitor(null);
+          setFollowingVan(false);
+          setReset(value => value + 1);
+        }}><RouteControlIcon name="route" />Route</button>
       </nav>
     </div>
   </main>;

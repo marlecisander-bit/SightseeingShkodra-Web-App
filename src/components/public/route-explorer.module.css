@@ -34,7 +34,7 @@
 }
 .bar {
   position: absolute; z-index: 3; bottom: max(28px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
-  display: grid; grid-template-columns: repeat(3, minmax(100px, 1fr)); gap: 3px; padding: 5px;
+  display: grid; grid-template-columns: repeat(4, minmax(100px, 1fr)); gap: 3px; padding: 5px;
   border: 1px solid #dfdbd4; border-radius: 15px; background: white; box-shadow: 0 3px 14px #23172129;
 }
 .page .bar button {
@@ -105,7 +105,7 @@
   .panelBody { padding: 21px max(16px, env(safe-area-inset-right)) 15px max(16px, env(safe-area-inset-left)); }
   .panel::before { content: ''; position: absolute; z-index: 1; top: 7px; left: 50%; transform: translateX(-50%); width: 35px; height: 4px; border-radius: 4px; background: #c9c3c4; pointer-events: none; }
   .mapTools { bottom: 29px; }
-  .bar { grid-area: 3 / 1; position: static; transform: none; grid-template-columns: repeat(3, minmax(0, 1fr));
+  .bar { grid-area: 3 / 1; position: static; transform: none; grid-template-columns: repeat(4, minmax(0, 1fr));
     border-width: 1px 0 0; border-radius: 0; box-shadow: none; padding: 4px max(5px, env(safe-area-inset-right)) max(4px, env(safe-area-inset-bottom)) max(5px, env(safe-area-inset-left)); }
 }
 @media (max-height: 480px) {

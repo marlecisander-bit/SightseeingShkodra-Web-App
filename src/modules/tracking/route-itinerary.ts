@@ -71,6 +71,19 @@ export function nearestRouteStop(location: Coordinate, stops: RouteStop[]) {
 
 export const nearbyBoardingAccuracy = 100;
 
+export function walkingToNearestStop(stops: RouteStop[], visitor: { coordinate: Coordinate; accuracy: number } | null) {
+  if (!visitor || visitor.accuracy > nearbyBoardingAccuracy) return null;
+  const nearest = nearestRouteStop(visitor.coordinate, stops);
+  if (!nearest) return null;
+  const query = new URLSearchParams({
+    api: '1',
+    origin: visitor.coordinate.join(','),
+    destination: nearest.coordinate.join(','),
+    travelmode: 'walking',
+  });
+  return { ...nearest, url: `https://www.google.com/maps/dir/?${query}` };
+}
+
 export function walkingBoarding(
   mode: NonNullable<DayPlannerData['product']>['mode'] | undefined,
   boarding: RouteBoarding | null,
