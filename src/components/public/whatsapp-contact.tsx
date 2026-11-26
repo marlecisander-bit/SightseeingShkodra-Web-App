@@ -19,13 +19,13 @@ export function WhatsAppContact({href,label,desktop,mobile,excludePaths=[]}:{hre
    node.style.visibility='';
    const phoneHero=window.matchMedia('(max-width:599px), (max-width:900px) and (max-height:500px) and (orientation:landscape) and (pointer:coarse)').matches&&!!document.querySelector('#home-hero #experiences');
    const heroControls=phoneHero?'#home-hero [aria-label="Choose experience"] button,#home-hero [data-product-details]>summary,#home-hero [data-all-amenities],#home-hero [data-mobile-amenities] button,[role="tooltip"]':'';
+   const footerLinks=window.matchMedia('(max-width:767px)').matches?'.p-global-footer a':'';
    const rect=node.getBoundingClientRect();
    const viewportHeight=document.documentElement.clientHeight;
-   // Clear sticky checkout actions and the product card price/booking controls.
-   // Other ordinary page sections do not affect the floating contact.
-   const blockers=Array.from(document.querySelectorAll([bookingControls,heroControls].filter(Boolean).join(','))).filter(element=>{
+   // Keep booking controls and mobile footer links reachable.
+   const blockers=Array.from(document.querySelectorAll([bookingControls,heroControls,footerLinks].filter(Boolean).join(','))).filter(element=>{
     const position=getComputedStyle(element).position;
-    return element.matches('[data-product-booking]')||(phoneHero&&element.matches(heroControls))||position==='fixed'||position==='sticky';
+    return element.matches('[data-product-booking],.p-global-footer a')||(phoneHero&&element.matches(heroControls))||position==='fixed'||position==='sticky';
    }).map(element=>element.getBoundingClientRect()).filter(r=>r.width>0&&r.height>0&&r.bottom>0&&r.top<viewportHeight&&rect.left<r.right+12&&rect.right>r.left-12).sort((a,b)=>b.top-a.top);
    // Keep the fixed bottom anchor; never move the contact up the page.
    node.style.visibility=whatsappDock(rect,blockers,(document.querySelector('.p-header')?.getBoundingClientRect().bottom??0)+8)===null?'hidden':'';

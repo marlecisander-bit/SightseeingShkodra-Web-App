@@ -3,6 +3,5 @@
 :global(body:has(dialog[open])) .contact,:global(body:has(.p-navigation.is-open)) .contact{display:none}
 @media(min-width:768px){.contact[data-desktop=false]{display:none}}
 @media(max-width:767px){.contact{--whatsapp-gap:16px;width:52px;height:52px;padding:10px}.contact span{display:none}.contact[data-mobile=false]{display:none}:global(body:has(.p-flow input:focus)) .contact,:global(body:has(.p-flow select:focus)) .contact,:global(body:has(.p-flow textarea:focus)) .contact{display:none}}
-/* Leave footer links above the reserved floating-button corner. */
+/* Leave desktop footer links above the reserved floating-button corner. */
 @media(min-width:768px){:global(body):has(.contact[data-desktop=true]) :global(.p-global-footer){padding-bottom:calc(96px + env(safe-area-inset-bottom));}}
-@media(max-width:767px){:global(body):has(.contact[data-mobile=true]) :global(.p-global-footer){padding-bottom:calc(80px + env(safe-area-inset-bottom));}}
