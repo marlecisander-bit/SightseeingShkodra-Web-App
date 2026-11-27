@@ -18,6 +18,8 @@
 .canvas[data-tiles=unavailable] { background: #e5e9df; }
 .canvas :global(.leaflet-bottom.leaflet-right) { bottom: 6px; left: 8px; right: auto; }
 .canvas :global(.leaflet-control-attribution) { border-radius: 10px; padding: 2px 7px; }
+.canvas .mapboxBrand { margin-left: 8px; margin-bottom: 30px; display: block; }
+.mapboxBrand img { display: block; width: 88px; height: 23px; }
 .loading { margin: 0; padding: 70px 16px; }
 .visuallyHidden {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
