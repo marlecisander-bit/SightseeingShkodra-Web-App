@@ -51,7 +51,7 @@ export function routeItinerary(publishedStops: DayPlannerData['stops'], map: Pub
     : (publishedStops ?? []).map(stop => ({
       id: stop.id, name: stop.label.replace(/^Stop \d+ - /, ''), place: placeFor(stop.id),
     }));
-  return { stops, lines: routes.flatMap(route => route.lines) };
+  return { stops, pois: (map?.points ?? []).filter(point => point.kind === 'poi'), lines: routes.flatMap(route => route.lines) };
 }
 
 export function nearestRouteStop(location: Coordinate, stops: RouteStop[]) {

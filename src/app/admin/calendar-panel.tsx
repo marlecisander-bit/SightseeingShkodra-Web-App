@@ -27,7 +27,7 @@ async function LiveServiceIssue({operatorId}:{operatorId:string}){
  const position=data?.snapshot.positions[0];
  const age=position?now.getTime()-Date.parse(position.updatedAt):NaN;
  if(Number.isFinite(age)&&age>=-30_000&&age<=staleAfterMs)return null;
- return <div className={agendaStyles.issue}><AdminIcon name="info" size={18}/><strong>{position?'GPS update delayed':'GPS location unavailable'}</strong><Link prefetch={false} href={`/admin/${operatorId}/live-map`}>View live service</Link></div>;
+ return <div className={agendaStyles.issue}><AdminIcon name="info" size={18}/><strong>{position?'GPS update delayed':'GPS location unavailable'}</strong><Link prefetch={false} href={`/admin/${operatorId}/live-map`}>Live tracking and operational stops</Link></div>;
 }
 
 async function CheckInProgress({operatorId,departure}:{operatorId:string;departure:string}){

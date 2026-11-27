@@ -49,11 +49,13 @@ export async function readPublicMap(requestSignal?: AbortSignal, includeServiceH
       positions: position ? [position] : [],
     };
     const mapVersion = map.data?.id ?? null;
+    const reportedVersion: unknown = tracking.data?.snapshot?.stop?.map_version_id;
+    const snapshotMapVersion = typeof reportedVersion === 'string' || typeof reportedVersion === 'number' ? reportedVersion : null;
     const publishedMap = projectPublishedMap(map.data?.map_data);
     const journey = position ? projectNativeJourney(
       tracking.data?.snapshot, publishedMap, mapVersion, project.id, project.default_vehicle_id,
     ) : null;
-    return { mapVersion, map: publishedMap, snapshot, journey, ...(includeServiceHours ? {serviceHours:hours.error?null:hours.data} : {}) };
+    return { mapVersion, snapshotMapVersion, map: publishedMap, snapshot, journey, ...(includeServiceHours ? {serviceHours:hours.error?null:hours.data} : {}) };
   } catch {
     return null;
   }

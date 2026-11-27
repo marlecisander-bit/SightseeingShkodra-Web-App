@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ActionLink, SectionHeading } from "@/components/public/ui";
-import { LiveMapEmbed } from "@/components/public/live-map-embed";
 
 import { getPublishedWebsite } from "@/modules/content/website-server";
 export const metadata: Metadata = {
@@ -54,7 +53,6 @@ export default async function YourDay() {
           </Button>
         </section>
         <div>
-          <LiveMapEmbed />
           <ActionLink href="/route">Track van</ActionLink>
           <nav className="p-section-nav" aria-label="Travel support">
             {sectionVisible(c,"departures")&&<Link href="/route#journey-departures">Timetable & boarding</Link>}

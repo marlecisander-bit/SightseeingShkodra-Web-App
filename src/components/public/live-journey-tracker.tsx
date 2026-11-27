@@ -9,9 +9,9 @@ import {hasLiveJourneyPosition,type JourneySnapshot} from '@/modules/tracking/jo
 import styles from './live-journey-tracker.module.css';
 
 /** Presentation only: selection never changes the iframe's authoritative journey. */
-export function LiveJourneyTracker({stops, places, journey, stale=false, showStatus=true, onMap, learnLabel='Explore destination', mapLabel='View on map',cards=false}: {
+export function LiveJourneyTracker({stops, places, journey, stale=false, closed=false, showStatus=true, onMap, learnLabel='Explore destination', mapLabel='View on map',cards=false}: {
  cards?:boolean; stops:readonly {id:string;label:string}[]; places:readonly StopPlace[];
- journey?:JourneySnapshot|null; stale?:boolean; showStatus?:boolean; onMap?:(id:string)=>void;
+ journey?:JourneySnapshot|null; stale?:boolean; closed?:boolean; showStatus?:boolean; onMap?:(id:string)=>void;
  learnLabel?:string; mapLabel?:string;
 }) {
  const selectorId=useId();
@@ -29,7 +29,7 @@ export function LiveJourneyTracker({stops, places, journey, stale=false, showSta
     <span className={styles.vehicle}><MapVanIcon/></span>
     <div role="status">
      <p className={styles.eyebrow}><span className={styles.dot} data-live={live}/>{(!cards||live)?'Live journey':lastKnown?'Last known stop':'Tracking unavailable'}</p>
-     <h3>{(!cards||live)?(!stale&&next&&!current&&(!cards||reliableEta)?`Next destination: ${next.name}`:sightseeingStatus(items,journey,stale)):(stale?'Live connection interrupted':journey?.movement)||lastKnown?.label||'Live updates temporarily unavailable'}</h3>
+     <h3>{closed ? 'Tracking is outside scheduled operating hours.' : (!cards||live)?(!stale&&next&&!current&&(!cards||reliableEta)?`Next destination: ${next.name}`:sightseeingStatus(items,journey,stale)):(stale?'Live connection interrupted':journey?.movement)||lastKnown?.label||'Live updates temporarily unavailable'}</h3>
      {!stale&&journey&&!journey.unavailable&&next&&<p>{cards&&!reliableEta?'Next on route':'Next stop'}: {next.number} of {items.length}{current?` · ${next.name}`:''}</p>}
      {(!cards||reliableEta)&&!current&&next?.eta?<p className={styles.eta}>ETA: {next.eta}</p>:<p>Next on route: {sequenceNext?.name||'Unavailable'} · ETA unavailable</p>}
     </div>

@@ -18,7 +18,7 @@ export const homepageVisibilitySections = ["hero", "intro", "route", "live", "de
 export function sectionVisible(content: WebsiteContent, section: string) { return content[`${section}.showOnHomepage`] !== "false"; }
 export const homepageVisible = sectionVisible;
 export function visibilityScope(section: string) {
- return ({hero:'on Homepage',route:'on Homepage, Route stop overview and Your day sample; Route map stays available',live:'on homepage live amenity; Route map stays available',departures:'on Route departures and Your day boarding link; booking availability stays available',reviews:'on Homepage Guest Reviews',partners:'on Homepage partner section'} as Record<string,string>)[section] ?? 'on Homepage';
+ return ({hero:'on Homepage',route:'on Homepage, Route stop overview and Your day sample; Route map stays available',live:'on homepage live amenity; Route map stays available',departures:'on Route departures and the Your day timetable link; booking availability stays available',reviews:'on Homepage Guest Reviews',partners:'on Homepage partner section'} as Record<string,string>)[section] ?? 'on Homepage';
 }
 export function visibleWebsiteLink(link: string, content: WebsiteContent) {
   const resolved = resolveWebsiteLink(link);
@@ -118,7 +118,7 @@ const homepageEditorOrder = ["hero","homeRoute","route","reviews","partners"];
 export const homepageEditorSections = websiteSections.filter(s => !["seasonal","heroAmenities","intro","how","live","departures","notebook","final","faq","whatsapp","destinations","navigation","footer","seo",...legalSections.map(s=>s.id),...pageSections.map(p=>p.id),...editorialSections.filter(p=>p.id!=="homeRoute").map(p=>p.id)].includes(s.id)).map(s => s.id === "hero" ? {...s,fields:s.fields.filter(f=>!["hero.description","hero.track","hero.discover"].includes(f.key))} : s.id === "reviews" ? {...s,title:"Guest Reviews",fields:s.fields.filter(f => f.key !== "reviews.second")} : s.id === "route" ? {...s,fields:s.fields.filter(f=>f.key!=="route.text")} : s.id === "how" ? {...s,title:"How it works"} : s).sort((a,b)=>homepageEditorOrder.indexOf(a.id)-homepageEditorOrder.indexOf(b.id));
 export const destinationEditorSections = websiteSections.filter(s => s.id === "destinations").map(s => ({ ...s, title: "Destination content", fields: s.fields.filter(f => f.key.startsWith("place.")) }));
 export const globalEditorSections = websiteSections.filter(s=>["seasonal","whatsapp","navigation","footer","seo",...legalSections.map(s=>s.id)].includes(s.id)).map(s=>s.id==="footer"?{...s,fields:footerFields}:s.id==="navigation"?{...s,fields:s.fields.filter(f=>!["nav.mobileBook","nav.mobileMap"].includes(f.key))}:s.id==="seo"?{...s,fields:s.fields.filter(f=>!["seo.image","seo.alt"].includes(f.key))}:s);
-export const publicPageEditorSections = [...editorialSections.filter(s=>s.id!=="homeRoute").map(s=>s.id==="editorialLabels"?{...s,fields:s.fields.filter(f=>!["labels.tour","labels.ticket","labels.faq","bookingDialog.text"].includes(f.key))}:s.id==="routePage"?{...s,fields:[...s.fields,...websiteSections.find(section=>section.id==="departures")!.fields.filter(f=>f.kind==="visibility")]}:s),...pageSections.filter(s=>s.id!=="tourPage"),websiteSections.find(s=>s.id==="faq")!];
+export const publicPageEditorSections = [...editorialSections.filter(s=>s.id!=="homeRoute").map(s=>s.id==="editorialLabels"?{...s,fields:s.fields.filter(f=>!["labels.tour","labels.ticket","labels.faq","bookingDialog.text"].includes(f.key))}:s.id==="routePage"?{...s,fields:[...s.fields.filter(f=>f.key!=="routePage.mapAction"),...websiteSections.find(section=>section.id==="departures")!.fields.filter(f=>f.kind==="visibility")]}:s),...pageSections.filter(s=>s.id!=="tourPage"),websiteSections.find(s=>s.id==="faq")!];
 export const editableWebsiteSections: {id:string;title:string;fields:WebsiteField[]}[] = [...homepageEditorSections, ...globalEditorSections, ...publicPageEditorSections];
 export const websiteEditorGroups = {homepage:homepageEditorSections,destinations:destinationEditorSections,pages:publicPageEditorSections,global:globalEditorSections};
 export const websiteFields = [...new Map(websiteSections.flatMap(section => section.fields).map(f=>[f.key,f])).values()];
@@ -162,7 +162,7 @@ export function retiredTourLink(link: string) { return /^\/tour\/?(?:[?#]|$)/.te
 export function resolveWebsiteLink(link: string) {
   if(retiredTourLink(link)) {
     const anchor=link.split('#')[1];
-    return anchor==='faq'?'/faq':anchor==='included'?'/book':'/route';
+    return anchor==='faq'?'/faq':anchor==='included'?'/book':anchor==='timetable'?'/route#journey-departures':'/route';
   }
   return ["/live","/#route"].includes(link) ? "/route" : link === "/#booking" ? "/book" : link === "/#destinations" ? "/explore" : link;
 }

@@ -1,4 +1,4 @@
-import {plannerClock} from './day-planner';
+import {plannerClock, type DayPlannerData} from './day-planner';
 
 // Editorial communication only: these values never control inventory or pricing.
 export const seasonalDefaults:Record<string,string> = {
@@ -25,4 +25,19 @@ export function validateSeasonalAnnouncement(content:Record<string,string>){
 export function seasonalActive(content:Record<string,string>,now=new Date()){
  const date=plannerClock(now).date;
  return content['seasonal.enabled']==='true'&&validDate(content['seasonal.start']??'')&&validDate(content['seasonal.end']??'')&&content['seasonal.start']<=date&&date<=content['seasonal.end'];
+}
+
+
+// Exact service and itinerary matching keeps notices for exceptions and future routes editorial.
+export function seasonalServiceFacts(content: Record<string, string>, planner: DayPlannerData, now = new Date()) {
+ const normalized = (value: string) => value.normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+ const published = planner.stops?.map(stop => stop.label.replace(/^Stop\s+\d+\s*[-–—:]\s*/i, '')) ?? [];
+ const advertised = (content['seasonal.stops'] ?? '').split('\n').map(normalized).filter(Boolean);
+ const title = normalized(planner.title);
+ const description = normalized(`${content['seasonal.popupTitle'] ?? ''} ${content['seasonal.description'] ?? ''}`);
+ if (!seasonalActive(content, now) || planner.date !== plannerClock(now).date || !planner.product ||
+     !title || !(` ${description} `).includes(` ${title} `) || !published.length ||
+     advertised.length !== published.length || published.some((name, index) => normalized(name) !== advertised[index]) ||
+     planner.times === null) return null;
+ return { stops: published, departures: planner.times.join(' · ') || 'No scheduled departures today' };
 }
