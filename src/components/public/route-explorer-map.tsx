@@ -50,8 +50,51 @@ function keepVisible(instance: L.Map, coordinate: L.LatLngExpression, padding: n
 
 const followZoom = 16;
 const initialCenter: Coordinate = [42.069, 19.512];
-const tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+const openStreetMapUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+const mapboxStyle = 'marleci-sander/cmwz84yfg00xg01qxcu5p99k1';
+const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN?.trim();
+const mapboxUrl = mapboxToken?.startsWith('pk.')
+  ? `https://api.mapbox.com/styles/v1/${mapboxStyle}/tiles/512/{z}/{x}/{y}?access_token=${encodeURIComponent(mapboxToken)}`
+  : null;
+const openStreetMapAttribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+const mapboxAttribution = '&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> ' +
+  openStreetMapAttribution + ' · <a href="https://apps.mapbox.com/feedback/">Improve this map</a>';
+
+function addBasemap(map: L.Map, canvas: HTMLElement) {
+  const options: L.TileLayerOptions = { maxZoom: 19, referrerPolicy: 'strict-origin' };
+  function showOpenStreetMap() {
+    const fallback = L.tileLayer(openStreetMapUrl, { ...options, attribution: openStreetMapAttribution + ' contributors' });
+    fallback.on('tileerror', () => canvas.setAttribute('data-tiles', 'unavailable'));
+    fallback.on('tileload', () => canvas.removeAttribute('data-tiles'));
+    fallback.addTo(map);
+  }
+
+  if (!mapboxUrl) {
+    showOpenStreetMap();
+    return;
+  }
+
+  const tiles = L.tileLayer(mapboxUrl, { ...options, tileSize: 512, zoomOffset: -1, attribution: mapboxAttribution });
+  const brand = new L.Control({ position: 'bottomleft' });
+  brand.onAdd = () => {
+    const link = L.DomUtil.create('a', styles.mapboxBrand);
+    link.href = 'https://www.mapbox.com/';
+    const logo = L.DomUtil.create('img', '', link);
+    logo.src = '/images/mapbox-logo.svg';
+    logo.alt = 'Mapbox';
+    return link;
+  };
+  let consecutiveErrors = 0;
+  tiles.on('tileload', () => { consecutiveErrors = 0; });
+  tiles.on('tileerror', () => {
+    if (++consecutiveErrors < 3 || !map.hasLayer(tiles)) return;
+    tiles.remove();
+    brand.remove();
+    showOpenStreetMap();
+  });
+  brand.addTo(map);
+  tiles.addTo(map);
+}
 
 export default function RouteExplorerMap({ routes, stops, boarding, vehicle, lastKnownVehicle, findVehicle, followingVan, onManualView, selected, reset, zoom, visitor, centerVisitor, locationTarget, onSelect }: Props) {
   const surface = useRef<HTMLDivElement>(null);
@@ -108,9 +151,7 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, las
     instance.on('dragstart', manualView);
     instance.createPane('tourVehicle').style.zIndex = '625';
     instance.createPane('tourVisitor').style.zIndex = '624';
-    const tiles = L.tileLayer(tileUrl, { maxZoom: 19, attribution, referrerPolicy: 'strict-origin' }).addTo(instance);
-    tiles.on('tileerror', () => surface.current?.setAttribute('data-tiles', 'unavailable'));
-    tiles.on('tileload', () => surface.current?.removeAttribute('data-tiles'));
+    addBasemap(instance, surface.current);
     instance.on('moveend resize', placeLabels);
     const observer = new ResizeObserver(() => { instance.invalidateSize({ animate: false }); placeLabels(); });
     observer.observe(surface.current);
