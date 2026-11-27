@@ -1,7 +1,5 @@
-# Tracking prototypes (inactive on public pages)
+# Website tracking
 
-The connected public map is components/public/live-map-embed.tsx, which embeds the independent tracking app. See docs/LIVE_MAP_EMBED.md and the approved amendment in docs/DECISIONS.md.
+The public Route page uses Leaflet and reads published geometry and current tracking from the existing tracking Supabase project. The homepage uses the same status endpoint. The admin map workspace uses the existing tracking account and publication operations.
 
-This directory retains earlier experimental SharedMap presentation, the unused vehicle_positions reader and ported presentation functions. Only development preview/tests use the renderer. They are not the production tracking source and must not be wired as a competing GPS pipeline. No device writer or scheduler exists here.
-
-See docs/PHASE_6_AUDIT.md for the current acceptance boundary.
+The former iframe bridge is retained for the local paired preview. SharedMap and the earlier vehicle_positions reader remain available to their development and regression consumers. See [the audit implementation evidence](../../../docs/END-TO-END-AUDIT-IMPLEMENTATION-2026-11-27.md).

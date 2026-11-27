@@ -10,7 +10,7 @@ import type { RouteBoarding, RouteStop } from '@/modules/tracking/route-itinerar
 import styles from './route-explorer.module.css';
 
 type Props = {
-  routes: PublishedMap['routes']; stops: RouteStop[]; boarding: RouteBoarding | null;
+  routes: PublishedMap['routes']; stops: RouteStop[]; pois: PublishedMap['points']; boarding: RouteBoarding | null;
   vehicle: Position | null; lastKnownVehicle: Position | null; findVehicle: number; followingVan: boolean; onManualView: () => void; selected: string | null; reset: number;
   zoom: { delta: number } | null;
   visitor: { coordinate: Coordinate; accuracy: number } | null; centerVisitor: boolean; locationTarget?: Coordinate;
@@ -50,57 +50,15 @@ function keepVisible(instance: L.Map, coordinate: L.LatLngExpression, padding: n
 
 const followZoom = 16;
 const initialCenter: Coordinate = [42.069, 19.512];
-const openStreetMapUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-const mapboxStyle = 'marleci-sander/cmwz84yfg00xg01qxcu5p99k1';
-const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN?.trim();
-const mapboxUrl = mapboxToken?.startsWith('pk.')
-  ? `https://api.mapbox.com/styles/v1/${mapboxStyle}/tiles/512/{z}/{x}/{y}?access_token=${encodeURIComponent(mapboxToken)}`
-  : null;
-const openStreetMapAttribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
-const mapboxAttribution = '&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> ' +
-  openStreetMapAttribution + ' · <a href="https://apps.mapbox.com/feedback/">Improve this map</a>';
+const tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-function addBasemap(map: L.Map, canvas: HTMLElement) {
-  const options: L.TileLayerOptions = { maxZoom: 19, referrerPolicy: 'strict-origin' };
-  function showOpenStreetMap() {
-    const fallback = L.tileLayer(openStreetMapUrl, { ...options, attribution: openStreetMapAttribution + ' contributors' });
-    fallback.on('tileerror', () => canvas.setAttribute('data-tiles', 'unavailable'));
-    fallback.on('tileload', () => canvas.removeAttribute('data-tiles'));
-    fallback.addTo(map);
-  }
-
-  if (!mapboxUrl) {
-    showOpenStreetMap();
-    return;
-  }
-
-  const tiles = L.tileLayer(mapboxUrl, { ...options, tileSize: 512, zoomOffset: -1, attribution: mapboxAttribution });
-  const brand = new L.Control({ position: 'bottomleft' });
-  brand.onAdd = () => {
-    const link = L.DomUtil.create('a', styles.mapboxBrand);
-    link.href = 'https://www.mapbox.com/';
-    const logo = L.DomUtil.create('img', '', link);
-    logo.src = '/images/mapbox-logo.svg';
-    logo.alt = 'Mapbox';
-    return link;
-  };
-  let consecutiveErrors = 0;
-  tiles.on('tileload', () => { consecutiveErrors = 0; });
-  tiles.on('tileerror', () => {
-    if (++consecutiveErrors < 3 || !map.hasLayer(tiles)) return;
-    tiles.remove();
-    brand.remove();
-    showOpenStreetMap();
-  });
-  brand.addTo(map);
-  tiles.addTo(map);
-}
-
-export default function RouteExplorerMap({ routes, stops, boarding, vehicle, lastKnownVehicle, findVehicle, followingVan, onManualView, selected, reset, zoom, visitor, centerVisitor, locationTarget, onSelect }: Props) {
+export default function RouteExplorerMap({ routes, stops, pois, boarding, vehicle, lastKnownVehicle, findVehicle, followingVan, onManualView, selected, reset, zoom, visitor, centerVisitor, locationTarget, onSelect }: Props) {
   const surface = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const pins = useRef(new Map<string, L.Marker>());
   const van = useRef<L.Marker | null>(null);
+  const lastFit = useRef<number | null>(null);
   const lastFind = useRef(0);
   const vehicleLat = (vehicle ?? lastKnownVehicle)?.lat;
   const vehicleLng = (vehicle ?? lastKnownVehicle)?.lng;
@@ -151,11 +109,15 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, las
     instance.on('dragstart', manualView);
     instance.createPane('tourVehicle').style.zIndex = '625';
     instance.createPane('tourVisitor').style.zIndex = '624';
-    addBasemap(instance, surface.current);
+    const canvas = surface.current;
+    const tiles = L.tileLayer(tileUrl, { maxZoom: 19, attribution, referrerPolicy: 'strict-origin' });
+    tiles.on('tileerror', () => canvas.setAttribute('data-tiles', 'unavailable'));
+    tiles.on('tileload', () => canvas.removeAttribute('data-tiles'));
+    tiles.addTo(instance);
     instance.on('moveend resize', placeLabels);
     const observer = new ResizeObserver(() => { instance.invalidateSize({ animate: false }); placeLabels(); });
     observer.observe(surface.current);
-    return () => { observer.disconnect(); instance.remove(); map.current = null; van.current = null; };
+    return () => { observer.disconnect(); instance.remove(); map.current = null; van.current = null; lastFit.current = null; };
   }, []);
 
   useEffect(() => {
@@ -172,7 +134,7 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, las
       }).addTo(group);
     }
 
-    function addPin(id: string, location: Coordinate, number: string, name: string, design?: StopDesign) {
+    function addPin(id: string, location: Coordinate, number: string, name: string, design?: StopDesign, poi = false) {
       const start = id === 'boarding';
       const content = document.createElement('span');
       const label = document.createElement('span');
@@ -212,7 +174,7 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, las
         content.append(body, label);
       }
 
-      const title = start ? `Start here: ${name}` : `Stop ${number}: ${name}`;
+      const title = poi ? name : start ? `Start here: ${name}` : `Stop ${number}: ${name}`;
       const marker = L.marker(location, {
         icon: L.divIcon({ className: design ? `stop-photo-marker ${styles.photoMarker} ${start ? styles.boardingPhoto : ''}` : start ? styles.startMarker : styles.marker,
           html: content, iconSize: design ? [44, 44] : [34, 34], iconAnchor: design ? [22, 22] : [17, start ? 30 : 17] }),
@@ -231,33 +193,36 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, las
     }
     stops.forEach((stop, index) => {
       if (!stop.coordinate || (boarding?.coordinate && boarding.stopId === stop.id)) return;
-      const sourceName = stop.name;
+      const sourceName = stop.place?.name ?? stop.name;
       const name = sourceName.replace(/^Stop\s+\d+\s*[-–—:]\s*/i, '').trim() || sourceName;
       addPin(stop.id, stop.coordinate, stop.design?.number ?? String(index + 1), name, stop.design);
     });
+    for (const poi of pois) addPin(poi.id, poi.coordinate, '•', poi.name, undefined, true);
     if (boarding?.coordinate) addPin('boarding', boarding.coordinate, '●', boarding.name, stops.find(stop => stop.id === boarding.stopId)?.design);
     placeLabels();
     return () => { group.remove(); markers.clear(); };
-  }, [boarding, routes, stops]);
+  }, [boarding, pois, routes, stops]);
 
   useEffect(() => {
     const instance = map.current;
     if (!instance) return;
+    if (lastFit.current === reset) return;
     const frame = requestAnimationFrame(() => {
       instance.invalidateSize({ animate: false });
       const bounds = L.latLngBounds([...routes.flatMap(route => route.lines.flat()), ...stops.flatMap(stop => stop.coordinate ? [stop.coordinate] : []),
-        ...(boarding?.coordinate ? [boarding.coordinate] : [])]);
+        ...pois.map(poi => poi.coordinate), ...(boarding?.coordinate ? [boarding.coordinate] : [])]);
       const size = instance.getSize();
       const top = Math.min(66, size.y * .18);
       const bottom = Math.min(size.x > 760 ? 140 : 94, size.y * .26);
-      if (bounds.isValid()) instance.fitBounds(bounds, {
+      if (!bounds.isValid()) return;
+      lastFit.current = reset;
+      instance.fitBounds(bounds, {
         paddingTopLeft: [37, top], paddingBottomRight: [37, bottom], maxZoom: 15, animate: false,
       });
-      else instance.setView(initialCenter, 13, { animate: false });
       placeLabels();
     });
     return () => cancelAnimationFrame(frame);
-  }, [boarding, routes, reset, stops]);
+  }, [boarding, pois, routes, reset, stops]);
 
   useEffect(() => {
     const instance = map.current;
@@ -278,7 +243,7 @@ export default function RouteExplorerMap({ routes, stops, boarding, vehicle, las
       placeLabels();
     });
     return () => cancelAnimationFrame(frame);
-  }, [boarding, routes, selected, stops]);
+  }, [boarding, pois, routes, selected, stops]);
 
   useEffect(() => {
     const displayed = vehicle ?? lastKnownVehicle;

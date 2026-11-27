@@ -2,15 +2,19 @@
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { Component, useEffect, useRef, useState, type ReactNode } from 'react';
+import { Component, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { BookButton, useBooking } from './booking';
 import { RouteControlIcon } from './route-control-icon';
 import { ProductBookingLink } from './product-booking-link';
 import { plannerClock, type DayPlannerData } from '@/modules/content/day-planner';
-import { freshRoutePosition, nearbyBoardingAccuracy, walkingBoarding, walkingToNearestStop, lastKnownRoutePosition, routeLivePositionMs, type RouteBoarding, type RouteStop } from '@/modules/tracking/route-itinerary';
+import { nearbyBoardingAccuracy, routeBoarding, routeItinerary, walkingBoarding, walkingToNearestStop, type RoutePlace } from '@/modules/tracking/route-itinerary';
+import { expireRouteStatus, routeStatusDeadline, type RouteStatus } from '@/modules/tracking/route-status';
+import { sectionVisible, type WebsiteContent } from '@/modules/content/website-schema';
+import type { MeetingPoint } from '@/modules/booking/meeting-point';
 import type { Coordinate, PublishedMap } from '@/modules/tracking/published-map';
-import type { Position } from '@/modules/tracking/positions';
 import styles from './route-explorer.module.css';
+
+const emptyRoutes: PublishedMap['routes'] = [];
 
 const Map = dynamic(() => import('./route-explorer-map'), {
   ssr: false, loading: () => <p className={styles.loading} role="status">Loading map…</p>,
@@ -28,17 +32,25 @@ type VisitorLocation = { coordinate: Coordinate; accuracy: number };
 
 type Panel = 'stops' | 'departures' | 'stop' | 'boarding' | 'tracking' | 'location' | null;
 
-export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, mapVersion, initialPosition, initialLastKnown = null, initialEta = null, initialMovement = null, initialObservedAt = null }: {
-  planner: DayPlannerData; routeTitle: string; routes: PublishedMap['routes']; stops: RouteStop[];
-  boarding: RouteBoarding | null; mapVersion: string | number | null; initialPosition: Position | null; initialLastKnown?: Position | null; initialEta?: string | null; initialMovement?: string | null; initialObservedAt?: string | null;
+export function RouteExplorer({ planner, initialMap, initialStatus, places, fallbackStops, meeting, content, preview = false, previewPanel = 'stops' }: {
+  planner: DayPlannerData; initialMap?: PublishedMap; initialStatus: RouteStatus;
+  places: RoutePlace[]; fallbackStops: DayPlannerData['stops']; meeting: MeetingPoint | null;
+  content: WebsiteContent; preview?: boolean; previewPanel?: 'stops' | 'departures';
 }) {
+  const [data, setData] = useState({ map: initialMap, status: initialStatus });
+  const [trackingError, setTrackingError] = useState(initialStatus.mapVersion === null);
+  const refreshTracking = useRef<(() => void) | null>(null);
+  const { map, status: live } = data;
+  const { stops, pois } = useMemo(() => routeItinerary(fallbackStops, map, places), [fallbackStops, map, places]);
+  const boarding = useMemo(() => routeBoarding(meeting, map), [meeting, map]);
+  const routes = map?.routes ?? emptyRoutes;
+  const showDepartures = sectionVisible(content, 'departures');
   const { products } = useBooking();
   const activeProduct = products.find(product => product.active !== false && product.slug === planner.product?.slug);
-  const [panel, setPanel] = useState<Panel>(null);
+  const [requestedPanel, setPanel] = useState<Panel>(preview ? previewPanel : null);
   const [selection, select] = useState<string | null>(null);
   const [reset, setReset] = useState(0);
   const [zoom, setZoom] = useState<{delta: number} | null>(null);
-  const [live, setLive] = useState({ position: initialPosition, lastKnown: initialLastKnown, eta: initialEta, movement: initialMovement });
   const panelClose = useRef<HTMLButtonElement>(null);
   const previousControl = useRef<HTMLElement | null>(null);
   const [findVehicle, setFindVehicle] = useState(0);
@@ -48,9 +60,11 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
   const locationRequest = useRef(0);
   const [times, setTimes] = useState(planner.times);
   const [scheduleLoaded, setScheduleLoaded] = useState(planner.times !== null);
-  const [observedAt, setObservedAt] = useState(initialObservedAt);
+  const observedAt = live.observedAt;
   const selectedIndex = stops.findIndex(stop => stop.id === selection);
   const selected = stops[selectedIndex];
+  const selectedPoi = pois.find(poi => poi.id === selection);
+  const panel = requestedPanel === 'stop' && !selected && !selectedPoi ? 'stops' : requestedPanel;
   const canvasSelection = panel === 'stop' || panel === 'boarding' ? selection : null;
   const stopsPanelOpen = panel === 'stops' || panel === 'stop' || panel === 'boarding' || panel === 'departures';
   const scheduleProduct = planner.product?.slug;
@@ -59,8 +73,8 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
   const locationTarget = nearest?.coordinate ?? pickup?.coordinate;
   const showFixedPickup = nearest && planner.product?.mode === 'selected_departure' && boarding &&
     nearest.stop.id !== boarding.stopId;
-  const selectedPhoto = selected?.design?.photoUrl ?? selected?.place?.image;
-  const canTrack = routes.length > 0 && mapVersion !== null;
+  const selectedPhoto = selected?.place?.image ?? selected?.design?.photoUrl;
+  const canTrack = routes.length > 0 && live.mapVersion !== null;
   const vehicle = canTrack ? live.position : null;
   const lastKnownVehicle = canTrack && !vehicle ? live.lastKnown : null;
   const lastKnownTime = observedAt ? new Intl.DateTimeFormat('en-GB', {
@@ -69,57 +83,67 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
 
 
   useEffect(() => {
-    if (!canTrack) return;
+    if (preview) return;
+    let version = initialStatus.mapVersion;
     const controller = new AbortController();
     let busy = false;
-    let expires: ReturnType<typeof setTimeout> | undefined;
-    const expire = (position: Position | null) => {
-      clearTimeout(expires);
-      if (!position) return;
-      expires = setTimeout(() => {
-        setLive({ position: null, lastKnown: position, eta: null, movement: null });
-      }, Math.max(0, Date.parse(position.updatedAt) + routeLivePositionMs - Date.now()));
-    };
     async function refresh() {
       if (busy || document.hidden) return;
       busy = true;
       try {
-        const reply = await fetch('/api/public/route-tracking', { signal: controller.signal, cache: 'no-store' });
+        const reply = await fetch('/api/public/route-tracking?geometry=' + encodeURIComponent(String(version ?? '')), {
+          signal: AbortSignal.any([controller.signal, AbortSignal.timeout(12_000)]), cache: 'no-store',
+        });
         if (!reply.ok) throw Error('Tracking unavailable');
-        const data = await reply.json();
+        const { map: nextMap, ...status }: RouteStatus & { map?: PublishedMap } = await reply.json();
         if (controller.signal.aborted) return;
-        if (data.mapVersion == null) throw Error('Tracking unavailable');
-        const lastPosition = data.mapVersion === mapVersion
-          ? lastKnownRoutePosition(data.position ?? data.lastKnown) : null;
-        const position = freshRoutePosition(lastPosition);
-        const eta = position && typeof data.eta === 'string' && data.eta.length <= 80 ? data.eta : null;
-        const movement = position && typeof data.movement === 'string' && data.movement.length <= 180 ? data.movement : null;
-        setLive(current => ({
-          position,
-          lastKnown: position ? null : lastPosition ?? (data.mapVersion === mapVersion
-            ? lastKnownRoutePosition(current.position ?? current.lastKnown) : null),
-          eta, movement,
-        }));
-        if (data.mapVersion === mapVersion && typeof data.observedAt === 'string' && Number.isFinite(Date.parse(data.observedAt))) {
-          setObservedAt(data.observedAt);
-        }
-        expire(position);
+        if (status.mapVersion == null) throw Error('Tracking unavailable');
+        if (version != null && Number(status.mapVersion) < Number(version)) return;
+        const changed = String(status.mapVersion) !== String(version);
+        if (changed && !nextMap) throw Error('Map version unavailable');
+        version = status.mapVersion;
+        setData(current => ({ map: changed ? nextMap : current.map, status: expireRouteStatus(status) }));
+        setTrackingError(false);
       } catch {
         if (!controller.signal.aborted) {
-          clearTimeout(expires);
-          setLive(current => ({ position: null, lastKnown: lastKnownRoutePosition(current.position ?? current.lastKnown), eta: null, movement: null }));
+          setTrackingError(true);
+          setData(current => ({ ...current, status: expireRouteStatus(current.status, Date.now(), true) }));
         }
       } finally { busy = false; }
     }
-    expire(initialPosition);
+    refreshTracking.current = refresh;
     void refresh();
     const timer = setInterval(refresh, 10_000);
     document.addEventListener('visibilitychange', refresh);
-    return () => { controller.abort(); clearInterval(timer); clearTimeout(expires); document.removeEventListener('visibilitychange', refresh); };
-  }, [canTrack, initialLastKnown, initialPosition, mapVersion]);
+    window.addEventListener('online', refresh);
+    return () => {
+      refreshTracking.current = null;
+      controller.abort();
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', refresh);
+      window.removeEventListener('online', refresh);
+    };
+  }, [initialStatus.mapVersion, preview]);
 
   useEffect(() => {
-    if (panel !== 'departures') return;
+    const deadline = routeStatusDeadline(live);
+    if (deadline === null) return;
+    const timer = setTimeout(() => setData(current => current.status === live
+      ? { ...current, status: expireRouteStatus(live) } : current), Math.max(0, deadline - Date.now()) + 1);
+    return () => clearTimeout(timer);
+  }, [live]);
+
+  useEffect(() => {
+    function syncTimetable() {
+      if (window.location.hash === '#journey-departures') setPanel(showDepartures ? 'departures' : 'stops');
+    }
+    syncTimetable();
+    window.addEventListener('hashchange', syncTimetable);
+    return () => window.removeEventListener('hashchange', syncTimetable);
+  }, [showDepartures]);
+
+  useEffect(() => {
+    if (preview || !showDepartures || panel !== 'departures') return;
     const controller = new AbortController();
     let busy = false;
     async function refresh() {
@@ -140,7 +164,7 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
     const timer = setInterval(refresh, 60_000);
     document.addEventListener('visibilitychange', refresh);
     return () => { controller.abort(); clearInterval(timer); document.removeEventListener('visibilitychange', refresh); };
-  }, [panel, scheduleProduct]);
+  }, [panel, preview, scheduleProduct, showDepartures]);
 
   function show(next: Exclude<Panel, null>, id: string | null = null) {
     if (next !== 'location') locationRequest.current += 1;
@@ -195,23 +219,24 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
     if (panel) panelClose.current?.focus({ preventScroll: true });
   }, [panel]);
 
-  return <main id="main-content" data-route-explorer className={styles.page}
+  return <main id="main-content" data-route-explorer={preview ? undefined : true} className={preview ? `${styles.page} ${styles.preview}` : styles.page}
     onKeyDown={event => {
     if (event.key === 'Escape' && panel) close();
   }}>
-    <h1 className={styles.visuallyHidden}>{routeTitle}</h1>
+    <h1 className={preview ? undefined : styles.visuallyHidden}>{content['routePage.title'] || map?.routes[0]?.name || 'Tour route'}</h1>
     <div className={styles.workspace}>
       <div className={styles.map}>
-        <MapBoundary><Map routes={routes} stops={stops} boarding={boarding} vehicle={vehicle} lastKnownVehicle={lastKnownVehicle} findVehicle={findVehicle} followingVan={followingVan} onManualView={() => setFollowingVan(false)}
-          selected={canvasSelection} visitor={visitor} centerVisitor={panel === 'location'} locationTarget={locationTarget} reset={reset} zoom={zoom} onSelect={choose} /></MapBoundary>
-        <div className={styles.mapTools} role="group" aria-label="Map view" data-map-obstacle data-map-tools>
+        {preview ? <p className={styles.loading}>Map and live tracking are disabled in this saved draft preview.</p> : <MapBoundary><Map routes={routes} stops={stops} pois={pois} boarding={boarding} vehicle={vehicle} lastKnownVehicle={lastKnownVehicle} findVehicle={findVehicle} followingVan={followingVan} onManualView={() => setFollowingVan(false)}
+          selected={canvasSelection} visitor={visitor} centerVisitor={panel === 'location'} locationTarget={locationTarget} reset={reset} zoom={zoom} onSelect={choose} /></MapBoundary>}
+        {!preview && <div className={styles.mapTools} role="group" aria-label="Map view" data-map-obstacle data-map-tools>
+          {trackingError && !preview && <button type="button" onClick={() => refreshTracking.current?.()}>Retry tracking</button>}
           <div className={styles.zoomControls}>
             <button type="button" aria-label="Zoom in" onClick={() => { setFollowingVan(false); setZoom({ delta: 1 }); }}>+</button>
             <button type="button" aria-label="Zoom out" onClick={() => { setFollowingVan(false); setZoom({ delta: -1 }); }}>−</button>
           </div>
-        </div>
+        </div>}
       </div>
-      {panel && <section className={`${styles.panel} ${panel === 'boarding' || panel === 'location' ? styles.boardingPanel : ''}`} id="route-panel" aria-label={panel === 'stop' ? selected?.name : panel === 'location' ? 'Boarding directions' : panel === 'tracking' ? 'Tracking details' : panel} data-map-obstacle>
+      {panel && <section className={`${styles.panel} ${panel === 'boarding' || panel === 'location' ? styles.boardingPanel : ''}`} id="route-panel" aria-label={panel === 'stop' ? selected?.name ?? selectedPoi?.name : panel === 'location' ? 'Boarding directions' : panel === 'tracking' ? 'Tracking details' : panel} data-map-obstacle>
         <button ref={panelClose} className={styles.close} type="button" aria-label="Close panel" onClick={() => close()}>×</button>
         <div className={styles.panelBody} data-panel-scroll>
           {panel === 'stop' && selected && <>
@@ -231,13 +256,19 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
             {boarding?.directions && <p>{boarding.directions}</p>}
             {boarding ? <a className={styles.directions} href={boarding.url} target="_blank" rel="noopener noreferrer">Get directions</a> : <p>Boarding details are currently unavailable.</p>}
           </>}
-          {panel === 'stops' && <><h2>Stops</h2>
+          {panel === 'stop' && selectedPoi && <><p className={styles.kicker}>Place of interest</p><h2>{selectedPoi.name}</h2>
+            {selectedPoi.description && <p>{selectedPoi.description}</p>}</>}
+          {panel === 'stops' && <><p className={styles.kicker}>{content['routePage.eyebrow']}</p><h2>{content['routePage.stops'] || 'Stops'}</h2>
+            {content['routePage.text'] && <p>{content['routePage.text']}</p>}
             {stops.length ? <ol className={styles.stops}>{stops.map((stop, index) => <li key={stop.id}>
               <button type="button" onClick={() => choose(stop.id)}><b>{index + 1}</b> {boarding?.stopId === stop.id ? 'Start here' : stop.place?.name ?? stop.name}</button>
             </li>)}</ol> : <p>The itinerary is currently unavailable.</p>}
             {boarding && !stops.some(stop => stop.id === boarding.stopId) &&
               <button type="button" onClick={() => choose('boarding')}>Boarding point</button>}
-            <button type="button" onClick={() => show('departures')}>View departures</button>
+            {pois.length > 0 && <><h3>Places of interest</h3><ul className={styles.stops}>{pois.map(poi => <li key={poi.id}>
+              <button type="button" onClick={() => choose(poi.id)}>{poi.name}</button>
+            </li>)}</ul></>}
+            {showDepartures && <button type="button" onClick={() => show('departures')}>View departures</button>}
           </>}
           {panel === 'location' && <>
             <p className={styles.kicker}>{nearest ? 'Nearest stop' : 'Boarding point'}</p>
@@ -252,11 +283,11 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
               <button type="button" onClick={findMe}>Try again</button>}
           </>}
           {panel === 'tracking' && <><h2>Tracking details</h2>
-            <p role="status">{vehicle ? live.movement ?? 'Van location live' : lastKnownVehicle ? 'Showing the last known van position. Live updates are unavailable.' : 'Live location unavailable'}</p>
+            <p role="status">{live.closed ? 'Tracking is outside scheduled operating hours.' : vehicle ? live.movement ?? 'Van location live' : lastKnownVehicle ? 'Showing the last known van position. Live updates are unavailable.' : 'Live location unavailable'}</p>
             {lastKnownTime && <p>Last GPS update at {lastKnownTime}, Shkodra time.</p>}
             {vehicle && live.eta && <p>Next stop in {live.eta}.</p>}
           </>}
-          {panel === 'departures' && <><h2>Departures</h2>{planner.product && <p>{planner.title}</p>}<p>Today · Shkodra local time</p>
+          {panel === 'departures' && showDepartures && <><h2 id="journey-departures">{content['routePage.departures'] || 'Departures'}</h2>{planner.product && <p>{planner.title}</p>}<p>Today · Shkodra local time</p>
             {times?.length ? <ul className={styles.times}>{times.map(time => <li key={time}><time>{time}</time></li>)}</ul>
               : <p>{times ? 'No service scheduled today.' : scheduleLoaded ? 'The timetable is currently unavailable.' : 'Loading the timetable…'}</p>}
             <p>Scheduled departures. Seats are confirmed in booking.</p>
@@ -268,8 +299,8 @@ export function RouteExplorer({ planner, routeTitle, routes, stops, boarding, ma
       <nav className={styles.bar} aria-label="Map controls" data-map-obstacle>
         <button type="button" aria-controls={stopsPanelOpen ? 'route-panel' : undefined} aria-expanded={stopsPanelOpen}
           onClick={() => panel === 'stops' ? close() : show('stops')}><RouteControlIcon name="stops" />Stops</button>
-        <button type="button" aria-expanded={panel === 'location'} aria-controls={panel === 'location' ? 'route-panel' : undefined} onClick={() => panel === 'location' ? close() : findMe()}><RouteControlIcon name="me" />Find me</button>
-        <button type="button" aria-expanded={panel === 'tracking'} aria-controls={panel === 'tracking' ? 'route-panel' : undefined} onClick={() => {
+        <button type="button" disabled={preview} aria-expanded={panel === 'location'} aria-controls={panel === 'location' ? 'route-panel' : undefined} onClick={() => panel === 'location' ? close() : findMe()}><RouteControlIcon name="me" />Find me</button>
+        <button type="button" disabled={preview} aria-expanded={panel === 'tracking'} aria-controls={panel === 'tracking' ? 'route-panel' : undefined} onClick={() => {
           if (panel === 'tracking' && followingVan) { close(); return; }
           show('tracking');
           setFollowingVan(true);

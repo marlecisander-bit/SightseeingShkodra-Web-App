@@ -6,15 +6,17 @@ import styles from "./live-map.module.css";
 
 import {EmbeddedMapStatus} from './embedded-map-status';
 import {type JourneySnapshot} from '@/modules/tracking/journey-contract';
-import { publicMapBinding, publicMapUrl, websiteExternalStatusEnabled, localMapPreviewEnabled } from '@/modules/tracking/public-map-binding';
 import { connectJourneyBridge } from "@/modules/tracking/journey-bridge";
 
-export function LiveMapEmbed({ priority = false, presentation = "compact", collapseRecovery = false, onJourney, selectedStopId, localPreview = false, background = false, configuredStops = [] }: { configuredStops?:{id:string;label:string}[]; priority?: boolean; collapseRecovery?: boolean; presentation?: "full" | "compact"; onJourney?:(snapshot:JourneySnapshot|null,reason?:'stale'|'loading')=>void; selectedStopId?:string; localPreview?:boolean; background?:boolean }) {
-  // Fixed loopback paired preview only; production always uses the canonical binding.
-  const preview = process.env.NODE_ENV === 'development' && (localPreview || localMapPreviewEnabled);
-  const externalStatus = preview || websiteExternalStatusEnabled;
-  const mapOrigin = preview ? 'http://127.0.0.1:4199' : publicMapBinding.origin;
-  const mapUrl = preview ? `${mapOrigin}/live-map.html?project=sightseeing-shkodra` : publicMapUrl;
+export function LiveMapEmbed(props: Parameters<typeof LocalMapEmbed>[0]) {
+  if (process.env.NODE_ENV !== 'development') return null;
+  return <LocalMapEmbed {...props} />;
+}
+
+function LocalMapEmbed({ priority = false, presentation = "compact", collapseRecovery = false, onJourney, selectedStopId, background = false, configuredStops = [] }: { configuredStops?:{id:string;label:string}[]; priority?: boolean; collapseRecovery?: boolean; presentation?: "full" | "compact"; onJourney?:(snapshot:JourneySnapshot|null,reason?:'stale'|'loading')=>void; selectedStopId?:string; background?:boolean }) {
+  const externalStatus = true;
+  const mapOrigin = 'http://127.0.0.1:4199';
+  const mapUrl = `${mapOrigin}/live-map.html?project=sightseeing-shkodra`;
   const container = useRef<HTMLDivElement>(null);
   const [initialized, setInitialized] = useState(!background);
   useEffect(() => {
@@ -72,7 +74,7 @@ export function LiveMapEmbed({ priority = false, presentation = "compact", colla
     return () => clearTimeout(timer);
   }, [initialized,reload,loadCycle]);
   return <div ref={container} data-map-initialized={initialized} className={`interactive-widget ${styles.embed}${background?` ${styles.background}`:""}`} aria-hidden={background||undefined} inert={background||undefined} data-journey-source={background||undefined} data-presentation={presentation} data-journey={!!onJourney}>
-    {!background&&preview&&<p role="note">Local paired preview · simulated tracking data</p>}
+    {!background&&<p role="note">Local paired preview · simulated tracking data</p>}
     <div className={styles.surface}>
     {!background&&externalStatus&&<EmbeddedMapStatus snapshot={journey} configuredStops={configuredStops.length?configuredStops:lastStops} display={journey?.embeddedDisplay} reason={statusReason} unavailable={slow} onStop={id=>frame.current?.contentWindow?.postMessage({type:"shkodra:select-stop",version:1,id},mapOrigin)}/>}
     <div className={styles.viewport}>

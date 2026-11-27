@@ -5,8 +5,7 @@ import React,{act} from 'react';
 import {JSDOM} from 'jsdom';
 registerHooks({load(url,context,next){if(url.endsWith('.module.css'))return {format:'module',source:'export default {}',shortCircuit:true};return next(url,context);}});
 const {LiveJourneyTracker}=await import('../../src/components/public/live-journey-tracker.tsx');
-const {HomepageJourney,HomepageJourneyProvider,useHomepageJourney}=await import('../../src/components/public/homepage-journey.tsx');
-function Feed({journey,stale}){const live=useHomepageJourney();const receive=live?.receive;React.useEffect(()=>receive?.(journey,stale?'stale':undefined),[journey,stale,receive]);return null;}
+const {HomepageJourney,HomepageJourneyProvider}=await import('../../src/components/public/homepage-journey.tsx');
 test('selection survives tracking advances and expired transport; keyboard and map actions use the selected stop',async()=>{
  const dom=new JSDOM('<div id="root"></div>',{url:'http://localhost'});
  const saved=new Map();
@@ -37,7 +36,7 @@ test('selection survives tracking advances and expired transport; keyboard and m
   const scenarios=[snapshot(0),snapshot(1),snapshot(4),{...snapshot(2),stops:snapshot(2).stops.map((s,i)=>({...s,state:i===2?'next':i===0?'departed':'upcoming'}))},null];
   for(const journey of scenarios){for(const stale of [false,true]){
    await act(async()=>root.render(React.createElement(React.Fragment,null,
-    React.createElement(HomepageJourneyProvider,null,React.createElement(Feed,{journey,stale}),React.createElement('div',{'data-page':'home'},React.createElement(HomepageJourney,{stops,places:[]}))),
+    React.createElement(HomepageJourneyProvider,{enabled:false},React.createElement('div',{'data-page':'home'},React.createElement(HomepageJourney,{stops,places:[]}))),
     React.createElement('div',{'data-page':'route'},React.createElement(LiveJourneyTracker,{stops,places:[],journey,stale})))));
    await act(async()=>{await new Promise(resolve=>setTimeout(resolve,50));});
    const states=page=>[...document.querySelectorAll(`[data-page="${page}"] [data-state]`)].map(node=>node.dataset.state);

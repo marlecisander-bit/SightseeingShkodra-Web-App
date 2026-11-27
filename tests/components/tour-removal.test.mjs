@@ -27,7 +27,7 @@ test('historical navigation removes the Tour entry and preserves Route, FAQ and 
  const items=publicNavigation(c);
  assert.ok(!items.some(i=>i.href.startsWith('/tour')||i.label==='Tour'));
  for(const href of ['/','/route','/faq','/explore'])assert.ok(items.some(i=>i.href===href));
- assert.equal(resolveWebsiteLink('/tour#faq'),'/faq');assert.equal(resolveWebsiteLink('/tour#timetable'),'/route');assert.equal(resolveWebsiteLink('/tour#included'),'/book');
+ assert.equal(resolveWebsiteLink('/tour#faq'),'/faq');assert.equal(resolveWebsiteLink('/tour#timetable'),'/route#journey-departures');assert.equal(resolveWebsiteLink('/tour#included'),'/book');
  assert.equal(resolveWebsiteLink('/book'),'/book');assert.equal(resolveWebsiteLink('/tourist'),'/tourist');
  validateWebsiteContent(c);assert.equal(JSON.stringify(c),before);
  const html=renderToStaticMarkup(h(PathnameContext.Provider,{value:'/'},h(BookingProvider,{content:c,preview:true},h(Header,{content:c}),h(Footer,{content:c,previewPathname:'/'}))));

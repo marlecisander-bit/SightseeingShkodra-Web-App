@@ -51,7 +51,7 @@ test('retired notebook and invitation stay absent after saved flags are enabled;
 });
 test('shared section flags remove secondary Live consumers but preserve independent map and booking',()=>{
  const c={...initialWebsiteContent,...Object.fromEntries(['route','live','departures','reviews'].map(id=>[id+'.showOnHomepage','false']))};
- const live=render(h(LiveView,{c,places:[]}));assert.ok(live.includes('<h1>Live map</h1>'));assert.ok(live.includes('<iframe'));assert.ok(!live.includes(c['route.title']));assert.ok(!live.includes(c['live.title']));
+ const live=render(h(LiveView,{c,places:[]}));assert.ok(live.includes('<h1>Live map</h1>'));assert.ok(!live.includes('<iframe'));assert.ok(live.includes('href="/route"'));assert.ok(!live.includes(c['route.title']));assert.ok(!live.includes(c['live.title']));
  const homepage=render(h(HomepageView,{home,content:c,reviews,places:[]}));assert.ok(!homepage.includes('id="route"'));
 });
 test('unavailable publication never restores visible defaults, and optional anchors follow their sections',()=>{
@@ -67,7 +67,7 @@ test('unified journey shares visibility flags while prioritizing one map without
  for(const visible of [true,false,true]){
  const content={...initialWebsiteContent,'route.showOnHomepage':String(visible),'departures.showOnHomepage':String(visible),'live.showOnHomepage':'false'};
  const html=render(h(RouteJourney,{content,initial,places:[]}));
- assert.equal((html.match(/<iframe/g)||[]).length,1);
+ assert.equal((html.match(/<iframe/g)||[]).length,0);
  assert.equal(html.includes('id="journey-title"'),visible);
  assert.equal(html.includes('id="journey-departures"'),visible);
  assert.equal(html.includes('Book your day'),false);

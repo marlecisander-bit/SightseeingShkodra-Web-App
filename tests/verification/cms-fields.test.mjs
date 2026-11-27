@@ -34,12 +34,12 @@ test('complete disposable verification has no unexpected failures and reports kn
 test('new request/client proofs reject stale or disconnected copy',async()=>{
  const {renderYourDay}=await import('../../scripts/cms-verification/request-route.mjs');
  const {renderClientProbe}=await import('../../scripts/cms-verification/client.mjs');
- for(const key of ['labels.destination','route.eyebrow','route.title','routePage.mapAction','bookingDialog.title']){
+ for(const key of ['labels.destination','route.eyebrow','route.title','bookingDialog.title']){
   const field=active.find(f=>f.key===key),value=fixtureValue(field),base=preparedContent(key);
   const probe=key.startsWith('route.')?renderYourDay:c=>renderClientProbe(key,c);
   assert.equal(checkField(field,value,await probe({...base,[key]:value})).status,'PASS',key);
   assert.equal(checkField(field,value,await probe(base)).status,'FAIL',key);
-  if(key.startsWith('route.')){const hidden=await probe({...base,[key]:value,'route.showOnHomepage':'false'});assert.equal(checkField(field,value,hidden).status,'FAIL');assert.ok(hidden.html.includes('iframe'));}
+  if(key.startsWith('route.')){const hidden=await probe({...base,[key]:value,'route.showOnHomepage':'false'});assert.equal(checkField(field,value,hidden).status,'FAIL');assert.ok(!hidden.html.includes('iframe'));}
  }
 });
 

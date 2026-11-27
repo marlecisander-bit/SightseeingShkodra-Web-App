@@ -25,8 +25,23 @@ test('route order alone never marks an earlier stop passed; stationary next-on-r
 test('unavailable GPS and closed service preserve upstream copy and cannot claim current tracking',()=>{
  for(const destination of ['Location unavailable','Tours have finished for today']){const html=render({display:{...display,destination,live:false},snapshot:{...fresh(),phase:'UNKNOWN',presentationKind:'unavailable',confidence:{position:'unavailable',eta:'unavailable'}}});assert(html.includes(destination));assert.match(html,/Tracking unavailable/);assert(!html.includes('LIVE'));assert(!html.includes('Arrival in 8 min'));}
 });
-test('external panel gate preserves canonical iframe, handshake opt-in and map controls',async()=>{
- const {LiveMapEmbed}=await import('../../src/components/public/live-map-embed.tsx');const {websiteExternalStatusEnabled}=await import('../../src/modules/tracking/public-map-binding.ts');const html=renderToStaticMarkup(React.createElement(LiveMapEmbed,{presentation:'full'}));assert.equal(html.includes('websiteStatus='),websiteExternalStatusEnabled);assert.equal(html.includes('Van journey information'),websiteExternalStatusEnabled);assert(html.includes('allow="geolocation"'));assert(html.includes('Interact with map'));assert(html.includes('Reload map'));assert(html.includes('embed=1'));if(process.env.NODE_ENV!=='development')assert(!html.includes('127.0.0.1'));
+test('the preserved bridge opens on loopback in development only', async () => {
+ const {LiveMapEmbed}=await import('../../src/components/public/live-map-embed.tsx');
+ const original=process.env.NODE_ENV;
+ try {
+  process.env.NODE_ENV='production';
+  assert.equal(renderToStaticMarkup(React.createElement(LiveMapEmbed,{presentation:'full'})),'');
+  process.env.NODE_ENV='development';
+  const html=renderToStaticMarkup(React.createElement(LiveMapEmbed,{presentation:'full'}));
+  assert.match(html,/127\.0\.0\.1:4199/);
+  assert.match(html,/websiteStatus=external-v1/);
+  assert.match(html,/allow="geolocation"/);
+  assert.match(html,/Reload map/);
+  assert.doesNotMatch(html,/netlify\.app/);
+ } finally {
+  if(original===undefined)delete process.env.NODE_ENV;
+  else process.env.NODE_ENV=original;
+ }
 });
 test('missing live stop projection retains the actual configured route count',()=>{
  const configuredStops=Array.from({length:7},(_,i)=>({id:String(i),label:'Configured destination '+i}));

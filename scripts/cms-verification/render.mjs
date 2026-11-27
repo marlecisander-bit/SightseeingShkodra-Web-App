@@ -11,7 +11,8 @@ const {HomepageView}=await import('../../src/components/public/homepage-view.tsx
 const {Footer}=await import('../../src/components/public/ui.tsx');
 const {ExploreView,GuideView}=await import('../../src/components/public/editorial-pages.tsx');
 const {PageIntro}=await import('../../src/components/public/page-intro.tsx');
-const {RouteJourney}=await import('../../src/components/public/route-journey.tsx');
+const {RouteExplorer}=await import('../../src/components/public/route-explorer.tsx');
+const {routePublicStatus}=await import('../../src/modules/tracking/route-status.ts');
 const {FaqPage}=await import('../../src/components/public/faq-page.tsx');
 const {LegalPage}=await import('../../src/components/public/legal-page.tsx');
 const {WhatsAppContact}=await import('../../src/components/public/whatsapp-contact.tsx');
@@ -33,8 +34,10 @@ export function renderConsumer(key,c,extra={}){
  if(key.startsWith('footer.'))return {route:'shared footer',consumer:'Footer',html:render(Footer,{content:c,googleReviewsUrl:settings.google_reviews_url})};
  if(key.startsWith('whatsapp.'))return {route:'shared public contact',consumer:'whatsappLink + WhatsAppContact',html:render(WhatsAppContact,{href:whatsappLink(c),label:c['whatsapp.label'],desktop:c['whatsapp.desktop']==='true',mobile:c['whatsapp.mobile']==='true'})};
  if(key.startsWith('partners.'))return {route:'/',consumer:'PartnersSection',html:render(PartnersSection,{content:c,partners:[partner]})};
- if(key==='departures.showOnHomepage')return {route:'/route',consumer:'RouteJourney',html:render(RouteJourney,{content:c,initial:planner,places:[place]})};
- if(key.startsWith('routePage.'))return {route:'/route',consumer:'RouteJourney',html:render(RouteJourney,{content:c,initial:planner,places:[place]})};
+ if(key==='departures.showOnHomepage'||key.startsWith('routePage.')){
+  const previewPanel=key==='departures.showOnHomepage'||key==='routePage.departures'?'departures':'stops';
+  return {route:'/route',consumer:'RouteExplorer',html:render(RouteExplorer,{content:c,planner,places:[place],fallbackStops:planner.stops,initialStatus:routePublicStatus(null),meeting:null,preview:true,previewPanel})};
+ }
  if(key.startsWith('explorePage.')||key==='labels.guide')return {route:'/explore',consumer:'ExploreView',html:render(ExploreView,{c,places:[place]})};
  if(/^(bookPage|dayPage)\./.test(key))return {route:key.startsWith('bookPage')?'/book':'/your-day',consumer:'PageIntro',html:render(PageIntro,{content:c,prefix:key.split('.')[0]})};
  if(key==='faq.items'||key==='tourPage.faqTitle')return {route:'/faq',consumer:'FaqPage',html:render(FaqPage,{content:c,inclusions:extra.inclusions??'Synthetic product inclusions'})};
