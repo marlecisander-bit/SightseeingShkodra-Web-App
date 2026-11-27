@@ -241,6 +241,7 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
     availability.refresh();
   }
   const chosen = attempt?.selection ?? selection;
+  const phoneHelpId = checkoutFormId + "-phone-help";
   const selectionLabel = [chosen.date ? bookingDate(chosen.date,mobileDialog) : "", (attempt?.time ?? selected?.startTime)?.slice(0,5)].filter(Boolean).join(" · ");
   if (restoring) return <p role="status">Restoring your selection…</p>;
   return (
@@ -255,8 +256,8 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
               ? "Your booking was cancelled."
               : "Your order needs attention."
           : attempt?.hold
-            ? mobileDialog ? "Review your booking" : review ? "Review and confirm" : "Review your booking"
-            : selectionStep === 1 ? mobileDialog?"Choose your date":"When would you like to go?" : mobileDialog?"Who's coming?":"Who’s coming?"}
+            ? review && !mobileDialog ? "Review and confirm" : "Contact details"
+            : selectionStep === 1 ? "Date and departure" : "Passengers"}
       </h2>
 
       <div className="p-flow-layout"><div className="p-flow-main">
@@ -289,13 +290,13 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
           {!order && (
             <p role="timer" aria-label="Time remaining">
               {active
-                ? `Seats reserved for ${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, "0")}`
-                : "Your reserved time has ended. No seats are secured."}
+                ? `Seats held for ${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, "0")}`
+                : "Seat hold expired. Choose a departure again."}
             </p>
           )}
-          {!order && attempt.hold.passengerSnapshot&&<BookingPriceBreakdown snapshot={attempt.hold.passengerSnapshot}/>}
+          {!order && attempt.hold.passengerSnapshot && <details className="p-ticket-price-details"><summary>Price breakdown</summary><BookingPriceBreakdown snapshot={attempt.hold.passengerSnapshot} showTotal={false}/></details>}
           {order ? (
-            <><BookingPassCard order={order}/><Button className="p-button p-button-booking" onClick={reset}>{order.status === "cancelled" ? "Book another day" : "Book another day"}</Button></>
+            <><BookingPassCard order={order}/><Button className="p-button p-button-booking" onClick={reset}>Book another day</Button></>
           ) : active ? (
             <form id={checkoutFormId}
               onSubmit={(event) => {
@@ -315,7 +316,7 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
                 });
               }}
             >
-              {(!review||mobileDialog) && <div className="p-contact-fields"><h3>Contact details</h3><p>* Required fields</p><Field label="Full name *">
+              {(!review||mobileDialog) && <div className="p-contact-fields"><Field label="Full name">
                 <input
                   required
                   maxLength={200}
@@ -327,7 +328,7 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
                   }
                 />
               </Field>
-              <Field label="Email address *">
+              <Field label="Email address">
                 <input
                   type="email"
                   required
@@ -340,7 +341,7 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
                   }
                 />
               </Field>
-              <Field label="Phone number *">
+              <Field label="Phone number">
                 <input
                   type="tel"
                   required
@@ -350,18 +351,20 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
                   autoComplete="tel"
                   inputMode="tel"
                   placeholder="+355 69 123 4567"
+                  aria-label="Phone number"
+                  aria-describedby={phoneHelpId}
                   value={customer.phone}
                   disabled={busy || Boolean(submitted)}
                   onChange={(e) =>
                     setCustomer({ ...customer, phone: e.target.value })
                   }
                 />
-              <small>Country code required. WhatsApp preferred.</small>
+              <small id={phoneHelpId}>Include country code. WhatsApp preferred.</small>
               </Field>
               </div>}
-              {mobileDialog&&<p className="p-mobile-confirmation-terms">Pay at the meeting point. Online changes and cancellation close 15 minutes before departure.</p>}
-              {review && !mobileDialog && <div className="p-review-contact"><h3>Contact details</h3><p>{customer.name}<br/>{customer.email}{customer.phone && <><br/>{customer.phone}</>}</p><Button type="button" className="p-text-button" disabled={busy || Boolean(submitted)} onClick={()=>setReview(false)}>Edit contact details</Button><p>Pay at the meeting point. Online changes and cancellation close 15 minutes before departure.</p></div>}
-              <BookingAction selectionLabel={selectionLabel} form={checkoutFormId} total={attempt.total} currency={attempt.hold.passengerSnapshot?.currency??availability.quote?.currency??"EUR"}>
+              {mobileDialog&&<p className="p-mobile-confirmation-terms">Pay at the meeting point. Change or cancel online up to 15 minutes before departure.</p>}
+              {review && !mobileDialog && <div className="p-review-contact"><h3>Contact details</h3><p>{customer.name}<br/>{customer.email}{customer.phone && <><br/>{customer.phone}</>}</p><Button type="button" className="p-text-button" disabled={busy || Boolean(submitted)} onClick={()=>setReview(false)}>Edit contact details</Button><p>Pay at the meeting point. Change or cancel online up to 15 minutes before departure.</p></div>}
+              <BookingAction form={checkoutFormId} total={attempt.total} currency={attempt.hold.passengerSnapshot?.currency??availability.quote?.currency??"EUR"}>
                 <Button type="button" className="p-text-button p-booking-back" disabled={busy || Boolean(submitted)} onClick={() => { if(review&&!mobileDialog) setReview(false); else void perform(restart); }}>Back</Button><Button className={`p-button p-button-booking p-transaction-action`} disabled={busy || !active}>
                 {busy
                   ? review||mobileDialog ? "Confirming booking…" : "Saving…"
@@ -371,13 +374,13 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
               </Button></BookingAction>
             </form>
           ) : null}
-          {!order && (
+          {!order && (!active || (review && !mobileDialog)) && (
             <Button
               className="p-text-button"
               disabled={busy}
               onClick={() => void perform(restart)}
             >
-              Edit date, passengers or departure
+              Change trip details
             </Button>
           )}
         </>
@@ -395,18 +398,13 @@ export function CheckoutFlow({productHeading=true,mobileDialog=false,onDialogSta
               ? "Reserving seats…"
               : attempt
                 ? "Retry reserving these seats"
-                : mobileDialog ? "Continue" : selectionStep === 1 ? "Continue to passengers" : "Continue to review"}
+                : "Continue"}
           </Button></BookingAction>
-          {attempt && (
-            <p>
-              Retry safely without reserving twice.
-            </p>
-          )}
         </>
       )}
       </div>
 
-      {!order && <BookingSummary experience={mobileDialog&&step===3?product?.title:undefined} meetingPoint={mobileDialog&&step===3?currentMeetingPoint:undefined} date={chosen.date} time={attempt?.time??selected?.startTime} counts={chosen.passengers??{adult:chosen.guests,child:0,infant:0}} total={attempt?.total??selected?.passengerQuote?.total} currency={availability.quote?.currency}/>}
+      {!order && <BookingSummary compact meetingPoint={mobileDialog&&step===3?currentMeetingPoint:undefined} date={chosen.date} time={attempt?.time??selected?.startTime} counts={chosen.passengers??{adult:chosen.guests,child:0,infant:0}} total={attempt?.total??selected?.passengerQuote?.total} currency={availability.quote?.currency}/>}
       </div>
 
     </div>

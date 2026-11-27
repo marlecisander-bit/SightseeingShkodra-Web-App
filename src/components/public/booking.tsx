@@ -196,7 +196,7 @@ export function BookingProvider({ children, content: suppliedContent, preview = 
         onKeyDown={(event) => {
           if (event.key !== "Tab") return;
           const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>(
-            "button:not(:disabled), input:not(:disabled), select:not(:disabled), a[href]",
+            "button:not(:disabled), input:not(:disabled), select:not(:disabled), a[href], summary",
           )).filter(control => control.getClientRects().length > 0 && !control.closest("[inert], [hidden]"));
           const first = controls[0];
           const last = controls[controls.length - 1];
@@ -271,11 +271,11 @@ export function BookButton({
     </Button>
   );
 }
-export function QuantityStepper({ preserveDeparture = false,showPrices=false }: { preserveDeparture?: boolean;showPrices?:boolean }) {
+export function QuantityStepper({ preserveDeparture = false,showPrices=false,showLegend=true }: { preserveDeparture?: boolean;showPrices?:boolean;showLegend?:boolean }) {
  const {selection,setSelection,availability}=useBooking();const counts=selection.passengers??{adult:selection.guests,child:0,infant:0};
  function change(k:keyof PassengerCounts,n:number){const passengers={...counts,[k]:n};setSelection({...selection,passengers,guests:passengerKeys.reduce((sum,key)=>sum+passengers[key],0),departureId:preserveDeparture?selection.departureId:""});}
  const quote=availability.quote?.departures.find(d=>d.id===selection.departureId)?.passengerQuote;
- return <PassengerSelector showPrices={showPrices} priceLines={quote?.lines} currency={quote?.currency} counts={counts} categories={availability.categories} onChange={change} canRemove={k=>!(counts[k]===0 || (k==="adult" && counts.adult===1 && (counts.child>0 || counts.infant>0)))} canAdd={k=>!(selection.guests>=100 || (k!=="adult" && counts.adult===0))}/>;
+ return <PassengerSelector showLegend={showLegend} showPrices={showPrices} priceLines={quote?.lines} currency={quote?.currency} counts={counts} categories={availability.categories} onChange={change} canRemove={k=>!(counts[k]===0 || (k==="adult" && counts.adult===1 && (counts.child>0 || counts.infant>0)))} canAdd={k=>!(selection.guests>=100 || (k!=="adult" && counts.adult===0))}/>;
 }
 export function BookingFields({ stage = "all", mobileDialog=false }: { stage?: "all" | "when" | "who";mobileDialog?:boolean }) {
   const { selection, setSelection, availability } = useBooking();
@@ -291,9 +291,9 @@ export function BookingFields({ stage = "all", mobileDialog=false }: { stage?: "
   }
   return (
     <div className="p-booking-fields">
-      <div className="p-booking-party">{stage !== "who" && <>{mobileDialog?<MobileBookingDate value={selection.date} onChange={updateDate} quote={availability.quote} checkDate={availability.checkDate}/>:<BookingDateSelector value={selection.date} onChange={updateDate}/>}</>} {stage !== "when" && <QuantityStepper preserveDeparture showPrices={mobileDialog}/>}</div>
-      {stage !== "who" && <DepartureSelector showPrices={mobileDialog} currency={availability.quote?.currency} departures={departures} value={selected?.id??""} loading={availability.loading} onChange={departureId=>setSelection({...selection,departureId})}/> }
-      <AvailabilityStatus compact={mobileDialog}/>
+      <div className="p-booking-party">{stage !== "who" && <>{mobileDialog?<MobileBookingDate value={selection.date} onChange={updateDate} quote={availability.quote} checkDate={availability.checkDate}/>:<BookingDateSelector value={selection.date} onChange={updateDate}/>}</>} {stage !== "when" && <QuantityStepper preserveDeparture showPrices={mobileDialog || stage === "who"} showLegend={stage === "all"}/>}</div>
+      {stage !== "who" && <DepartureSelector showLocalTime={stage !== "all"} showPrices={mobileDialog || stage === "when"} currency={availability.quote?.currency} departures={departures} value={selected?.id??""} loading={availability.loading} onChange={departureId=>setSelection({...selection,departureId})}/> }
+      <AvailabilityStatus compact={mobileDialog || stage !== "all"}/>
     </div>
   );
 }
@@ -309,7 +309,7 @@ export function AvailabilityStatus({compact=false}:{compact?:boolean}={}) {
   return (
     <div className="p-availability-status" role="status" aria-live="polite">
       {!selection.date ? (
-        <p>Choose a date.</p>
+        compact ? null : <p>Choose a date.</p>
       ) : availability.loading ? (
         <p>Checking availability…</p>
       ) : availability.error ? (
@@ -326,10 +326,10 @@ export function AvailabilityStatus({compact=false}:{compact?:boolean}={}) {
             <NoDepartures />
           ) : !quote.departures.some((d) => d.available) ? (
             <p>
-              {quote.departures.every(departure=>departure.remaining===0)?"Departures on this date are sold out. Choose another date.":"No departure has enough seats for your group. Choose another date or change your guest count."}
+              {quote.departures.every(departure=>departure.remaining===0)?"Sold out on this date. Choose another date.":"Not enough seats. Change your date or passenger count."}
             </p>
           ) : null}
-          {selection.departureId &&
+          {selection.departureId && quote.departures.some(d => d.available) &&
             !quote.departures.some(
               (d) => d.id === selection.departureId && d.available,
             ) && (
@@ -526,7 +526,7 @@ export function BookingEntry({mobileDialog=false,onDialogStateChange}: {mobileDi
   const [selected,setSelected]=useState<BookableProduct|null>(null);
   if(selected)return <BookingProvider product={selected}><CheckoutFlow mobileDialog={mobileDialog} onDialogStateChange={onDialogStateChange}/></BookingProvider>;
   return <section className={styles.products} aria-labelledby="booking-experience-title"><h2 id="booking-experience-title">Choose your experience</h2>
-    {products.length ? products.map(product=><button key={product.id} type="button" disabled={product.active===false} onClick={()=>setSelected(product)}><strong>{product.title}</strong><span>{product.active===false?product.unavailableMessage||"Temporarily unavailable":"Select →"}</span></button>) : <p role="status">Experiences are unavailable right now. Please try again later.</p>}
+    {products.length ? products.map(product=><button key={product.id} type="button" disabled={product.active===false} onClick={()=>setSelected(product)}><strong>{product.title}</strong><span aria-hidden={product.active!==false}>{product.active===false?product.unavailableMessage||"Unavailable":"→"}</span></button>) : <p role="status">Experiences are unavailable right now. Please try again later.</p>}
   </section>;
 }
 export function BookingFlow({productHeading=true}: {productHeading?:boolean} = {}) {

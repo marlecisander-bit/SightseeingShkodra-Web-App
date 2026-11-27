@@ -8,7 +8,7 @@ export function TourSummary({products,content,meeting,inclusions}:{products:Book
  if(!visible.length)return null;
  const winter=seasonalActive(content),origin=seoConfig().origin;
  const daily=visible.find(product=>/daily ticket/i.test(product.title));
- return <section className={styles.summary} aria-labelledby="tour-information"><h2 id="tour-information">Your sightseeing experience</h2>
+ return <details className={styles.summary}><summary id="tour-information">Tour and boarding details</summary>
  <div className={styles.grid}>{visible.map(product=>{
  const panorama=product.id==='7d7257f2-ee83-43cf-85bf-5dba3bbf5196';
  const stops=panorama&&winter?content['seasonal.stops'].split('\n').filter(Boolean):[];
@@ -23,5 +23,5 @@ export function TourSummary({products,content,meeting,inclusions}:{products:Book
  {product.active===false?<p>{product.unavailableMessage||'Temporarily unavailable'}</p>:<a href={'/book?productId='+product.id}>Book {product.title}</a>}
  {url&&<script type="application/ld+json" dangerouslySetInnerHTML={{__html:safeJsonLd({'@context':'https://schema.org','@type':'TouristTrip','@id':url,url,name:product.title,description,provider:{'@id':origin+'/#organization'},...(stops.length?{itinerary:{'@type':'ItemList',itemListElement:stops.map((name,index)=>({'@type':'ListItem',position:index+1,name}))}}:{})})}}/>}
  </article>;
- })}</div></section>;
+ })}</div></details>;
 }
